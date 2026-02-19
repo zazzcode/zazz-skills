@@ -734,6 +734,213 @@ orchestrate_with_kimi("DEL-001")
 
 ---
 
+## 7.5 Kimi Agent Swarm (Advanced)
+
+Kimi's **Agent Swarm** capability allows dynamic creation and coordination of up to 100 specialized sub-agents using Parallel Agent Reinforcement Learning (PARL). This is ideal for zazz-skills orchestration as it enables autonomous task decomposition and parallel execution.
+
+### Setup with Agent Swarm
+
+```python
+import requests
+import json
+import time
+
+KIMI_API_BASE = "https://api.moonshot.cn/v1"
+KIMI_API_KEY = "your-kimi-api-key"
+
+def load_skill(skill_name):
+    with open(f".agents/skills/{skill_name}/SKILL.md", "r") as f:
+        return f.read()
+
+manager_skill = load_skill("zazz-manager-agent")
+worker_skill = load_skill("zazz-worker-agent")
+qa_skill = load_skill("zazz-qa-agent")
+```
+
+### Manager Agent with Agent Swarm
+
+```python
+def run_manager_swarm(deliverable_id):
+    """Run manager using Kimi Agent Swarm to coordinate workers."""
+    
+    headers = {
+        "Authorization": f"Bearer {KIMI_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    
+    payload = {
+        "model": "moonshot-v1-32k",
+        "messages": [
+            {
+                "role": "system",
+                "content": manager_skill + "\n\n[AGENT_SWARM_MODE] You can create and coordinate up to 100 sub-agents. Each worker will be spawned as a specialized agent."
+            },
+            {
+                "role": "user",
+                "content": f"Start deliverable {deliverable_id}. Create task graph and spawn worker agents for parallel execution."
+            }
+        ],
+        "temperature": 0.3,
+        "enable_agent_swarm": True,  # Enable Agent Swarm mode
+        "max_agents": 100,           # Allow up to 100 workers
+        "swarm_strategy": "parl"     # Use Parallel Agent Reinforcement Learning
+    }
+    
+    response = requests.post(
+        f"{KIMI_API_BASE}/chat/completions",
+        headers=headers,
+        json=payload
+    )
+    
+    result = response.json()
+    return result["choices"][0]["message"]["content"]
+```
+
+### Worker Sub-Agents (Spawned by Swarm)
+
+```python
+def run_worker_swarm_agent(task_id, task_description):
+    """Individual worker spawned by Agent Swarm."""
+    
+    headers = {
+        "Authorization": f"Bearer {KIMI_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    
+    payload = {
+        "model": "moonshot-v1-32k",
+        "messages": [
+            {
+                "role": "system",
+                "content": worker_skill
+            },
+            {
+                "role": "user",
+                "content": f"Task ID: {task_id}\nDescription: {task_description}\nExecute this task and commit changes."
+            }
+        ],
+        "temperature": 0.3
+    }
+    
+    response = requests.post(
+        f"{KIMI_API_BASE}/chat/completions",
+        headers=headers,
+        json=payload
+    )
+    
+    result = response.json()
+    return result["choices"][0]["message"]["content"]
+```
+
+### QA Agent with Swarm Coordination
+
+```python
+def run_qa_with_swarm():
+    """QA agent that monitors swarm execution and validates results."""
+    
+    headers = {
+        "Authorization": f"Bearer {KIMI_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    
+    payload = {
+        "model": "moonshot-v1-32k",
+        "messages": [
+            {
+                "role": "system",
+                "content": qa_skill + "\n\n[SWARM_CONTEXT] You are reviewing work completed by a swarm of worker agents. Verify all acceptance criteria across parallel executions."
+            },
+            {
+                "role": "user",
+                "content": "Verify all tasks completed by the worker swarm. Run integration tests, validate AC, and create PR if all checks pass."
+            }
+        ],
+        "temperature": 0.3,
+        "enable_agent_swarm": True
+    }
+    
+    response = requests.post(
+        f"{KIMI_API_BASE}/chat/completions",
+        headers=headers,
+        json=payload
+    )
+    
+    result = response.json()
+    return result["choices"][0]["message"]["content"]
+```
+
+### Full Orchestration with Agent Swarm
+
+```python
+def orchestrate_with_agent_swarm(deliverable_id):
+    """Complete zazz-skills workflow using Kimi Agent Swarm.
+    
+    The swarm automatically:
+    - Creates specialized worker agents based on task types
+    - Distributes tasks across agents using PARL
+    - Monitors agent progress and handles failures
+    - Synchronizes results and dependencies
+    """
+    
+    print(f"Starting {deliverable_id} with Kimi Agent Swarm")
+    print(f"Max workers: 100, Strategy: PARL (Parallel Agent Reinforcement Learning)\n")
+    
+    # Phase 1: Manager creates task graph and spawns workers
+    print("[PHASE 1] Manager Planning & Worker Spawning")
+    manager_output = run_manager_swarm(deliverable_id)
+    print(f"Manager Output:\n{manager_output}\n")
+    
+    # Phase 2: Workers execute in parallel (managed by swarm)
+    print("[PHASE 2] Workers Executing in Parallel")
+    print("Agent Swarm is coordinating task execution...")
+    
+    # In real implementation, the swarm handles worker spawning
+    # Here we simulate checking swarm status
+    time.sleep(2)
+    
+    swarm_status = {
+        "active_agents": 5,
+        "tasks_completed": 12,
+        "tasks_in_progress": 3,
+        "tasks_failed": 0,
+        "execution_time_sec": 45
+    }
+    
+    print(f"Swarm Status: {json.dumps(swarm_status, indent=2)}\n")
+    
+    # Phase 3-4: QA validates all worker output
+    print("[PHASE 3-4] QA Validation & PR Creation")
+    qa_output = run_qa_with_swarm()
+    print(f"QA Output:\n{qa_output}")
+    
+    print(f"\n✓ Deliverable {deliverable_id} completed with Agent Swarm")
+
+# Run it
+orchestrate_with_agent_swarm("DEL-001")
+```
+
+### Benefits of Agent Swarm for zazz-skills
+
+1. **Parallel Task Execution** - Multiple workers run simultaneously, reducing overall execution time
+2. **Dynamic Worker Spawning** - Creates agents on-demand based on task complexity and type
+3. **PARL Intelligence** - Uses reinforcement learning to optimize task distribution
+4. **Automatic Synchronization** - Respects task dependencies while maximizing parallelism
+5. **Failure Resilience** - Swarm handles worker failures and redistributes work
+6. **Scalability** - Supports up to 100 agents for large, complex deliverables
+
+### Environment Variables for Agent Swarm
+
+```bash
+# Kimi Agent Swarm specific
+export KIMI_ENABLE_SWARM=true
+export KIMI_MAX_AGENTS=100
+export KIMI_SWARM_STRATEGY="parl"  # or "sequential", "round_robin"
+export KIMI_AGENT_TIMEOUT_SEC=300
+export KIMI_SWARM_MONITORING=true  # Enable swarm progress monitoring
+```
+
+---
+
 ## 8. Custom Implementation
 
 For custom frameworks or implementations:

@@ -97,6 +97,7 @@ These skills are framework-agnostic. Use them with:
 - **CrewAI** - Use as role backstory + task
 - **AutoGen** - Use as agent system message
 - **OpenAI Swarm** - Use as agent instructions
+- **Kimi Agent Swarm** - Use with dynamic worker spawning (up to 100 agents)
 
 Example: Loading with Claude API
 ```python
