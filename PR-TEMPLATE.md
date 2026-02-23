@@ -13,7 +13,7 @@
 
 ## Summary
 
-{One-paragraph summary of what this deliverable accomplishes. Reference the DED/PRD.}
+{One-paragraph summary of what this deliverable accomplishes. Reference the SPEC and PLAN.}
 
 ---
 
@@ -179,8 +179,8 @@
 ## Related Links
 
 - **Deliverable**: [Link to Zazz Board deliverable]
-- **DED**: [Link to detailed engineering document]
-- **Plan**: [Link to implementation plan]
+- **SPEC**: [Link to deliverable specification]
+- **PLAN**: [Link to implementation plan]
 - **Task Graph**: [Link to Zazz Board task view]
 - **CI/CD Run**: [Link to automated test results]
 

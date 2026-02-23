@@ -43,9 +43,9 @@ The Zazz Board workflow operates as an **agent swarm** where multiple LLM agents
 
 ---
 
-## 2. Supported Agent Frameworks
+## 3. Supported Agent Frameworks
 
-The skill is designed to work with agent frameworks that support independent agent contexts:
+The methodology is designed to work with agent frameworks that support independent agent contexts:
 
 **Recommended:**
 - **Anthropic Claude** (Claude 3.5 Sonnet/Opus) via Bedrock or direct API with custom orchestration
@@ -62,7 +62,7 @@ Each agent invocation must be **independent** with distinct system prompts and m
 
 ---
 
-## 3. Agent Roles and Responsibilities
+## 4. Agent Roles and Responsibilities
 
 ### Coordinator Agent (Planner & Orchestrator)
 
@@ -164,11 +164,18 @@ Each agent invocation must be **independent** with distinct system prompts and m
 
 ## 5. Inter-Agent Communication Architecture
 
-### Primary Channel: Zazz Board API
+### Primary Channel (MVP): Terminal Human↔Agent Interaction
 
-**Task Comments & Notes:**
-|- Worker posts questions as task comments via API
-|- Coordinator responds with decisions in same thread
+**MVP interaction model:**
+- Human and agents coordinate primarily through terminal prompts and responses
+- Decisions made in terminal interaction are summarized and posted to Zazz Board task notes/comments
+- Task notes/comments serve as the durable audit trail while API orchestration is maturing
+
+### Target Channel: Zazz Board API
+
+**Task Comments & Notes (target state):**
+- Worker posts questions as task comments via API
+- Coordinator responds with decisions in same thread
 - All communications timestamped and logged
 - Provides audit trail for escalations
 
@@ -299,14 +306,14 @@ File-level locks to prevent concurrent edits and merge conflicts.
 Timestamped event log for debugging and compliance.
 
 ```
-2026-02-19T00:40:00Z [MANAGER] Deliverable DEL-001 selected
-2026-02-19T00:40:05Z [MANAGER] Created task graph with 12 tasks
+2026-02-19T00:40:00Z [COORDINATOR] Deliverable DEL-001 selected
+2026-02-19T00:40:05Z [COORDINATOR] Created task graph with 12 tasks
 2026-02-19T00:40:10Z [WORKER_1] Picked up TASK-1
 2026-02-19T00:40:12Z [WORKER_1] Acquired lock on src/config.ts
 2026-02-19T00:41:30Z [WORKER_1] Completed TASK-1, committed abc123def
 2026-02-19T00:41:32Z [WORKER_1] Released lock on src/config.ts
 2026-02-19T00:42:00Z [WORKER_1] Question posted for TASK-5
-2026-02-19T00:42:30Z [MANAGER] Answered WORKER_1 question for TASK-5
+2026-02-19T00:42:30Z [COORDINATOR] Answered WORKER_1 question for TASK-5
 2026-02-19T00:43:00Z [QA] Escalation: complex rework needed
 ```
 
@@ -315,8 +322,9 @@ Timestamped event log for debugging and compliance.
 ## 6. Communication Polling Strategy
 
 All agents poll for updates every **10-30 seconds**.
+This section describes **target-state API-driven orchestration**. In MVP mode, coordination can be terminal-first, with important interaction outcomes posted to board task notes/comments.
 
-### Manager Polling
+### Coordinator Polling
 
 ```
 LOOP every 10 seconds:
@@ -328,9 +336,6 @@ LOOP every 10 seconds:
   6. If all tasks COMPLETED → signal QA to start
 ```
 
-### Coordinator Polling
-
-(Same as above)
 
 ### Worker Polling
 
@@ -416,11 +421,11 @@ def release_lock(file_path, agent_id):
 - Enforced via `.zazz/agent-locks.json`
 
 **Rule 2: Task Dependencies for Shared Files**
-|- If Task A and Task B both edit `src/auth.ts` → create `DEPENDS_ON` relation
-|- Coordinator ensures Task B only starts after Task A completes and releases lock
+- If Task A and Task B both edit `src/auth.ts` → create `DEPENDS_ON` relation
+- Coordinator ensures Task B only starts after Task A completes and releases lock
 
 **Rule 3: Coordinator Reviews High-Conflict Areas**
-|- If >2 tasks need to touch the same file → Coordinator creates explicit dependency chain (A → B → C)
+- If >2 tasks need to touch the same file → Coordinator creates explicit dependency chain (A → B → C)
 - May ask QA to review merged changes after all tasks complete
 
 **Rule 4: Commit Atomicity**
@@ -429,9 +434,9 @@ def release_lock(file_path, agent_id):
 - Example: `TASK-5: Add async auth handler [worker_1]`
 
 **Rule 5: Lock Timeout Safety**
-|- If agent crashes, lock expires after timeout (default 10 min)
-|- Other agents can reclaim expired locks
-|- Coordinator detects missing heartbeats and reassigns tasks
+- If agent crashes, lock expires after timeout (default 10 min)
+- Other agents can reclaim expired locks
+- Coordinator detects missing heartbeats and reassigns tasks
 
 ---
 
@@ -442,7 +447,7 @@ def release_lock(file_path, agent_id):
 **1. Coordinator Initializes:**
 ```
 1. Human or API triggers: "Start deliverable DEL-001"
-2. Coordinator reads deliverable, DED, plan from API
+2. Coordinator reads deliverable, SPEC, and PLAN from API
 3. Coordinator creates `.zazz/agent-state.json` with deliverable context
 4. Coordinator fetches OpenAPI spec from {API_BASE_URL}/docs/json
 5. Coordinator writes spec to `.zazz/api-spec.json`
@@ -464,7 +469,7 @@ def release_lock(file_path, agent_id):
 1. Read deliverable acceptance criteria from API
 2. Prepare test environment (install deps, setup DB, etc.)
 3. Set status to "waiting" in agent-state.json
-4. Wait for Manager signal (all tasks COMPLETED)
+4. Wait for Coordinator signal (all tasks COMPLETED)
 ```
 
 ### Shutdown (When Deliverable Completes or Fails)
@@ -495,7 +500,7 @@ def release_lock(file_path, agent_id):
 1. Review PR if created
 2. Merge or request changes
 3. Decide on next deliverable
-4. Signal new Manager to start from Step 1
+4. Signal new Coordinator to start from Step 1
 ```
 
 ---
@@ -509,14 +514,14 @@ def release_lock(file_path, agent_id):
 - If agent's `last_ping` is older than threshold → assume crashed
 
 **Timeouts:**
-- **Manager timeout**: 60 seconds (Workers escalate to human if Manager unresponsive)
-- **Worker timeout**: 120 seconds (Manager reassigns task)
-- **QA timeout**: 120 seconds (Manager escalates to human)
+- **Coordinator timeout**: 60 seconds (Workers escalate to human if Coordinator unresponsive)
+- **Worker timeout**: 120 seconds (Coordinator reassigns task)
+- **QA timeout**: 120 seconds (Coordinator escalates to human)
 
 **Deadlock Detection:**
-- Task marked `BLOCKED` for > 5 minutes without Manager response → escalate to human
-- Circular dependency detected in task graph → Manager re-plans (should not happen; indicates planning error)
-- File lock held for > 2x expected task duration → Manager investigates and may force release
+- Task marked `BLOCKED` for > 5 minutes without Coordinator response → escalate to human
+- Circular dependency detected in task graph → Coordinator re-plans (should not happen; indicates planning error)
+- File lock held for > 2x expected task duration → Coordinator investigates and may force release
 
 ### Logging and Audit Trail
 

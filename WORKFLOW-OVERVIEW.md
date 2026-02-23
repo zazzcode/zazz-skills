@@ -5,6 +5,11 @@ This document explains the high-level workflow and how the agent skills work tog
 The Zazz methodology prioritizes **clear specification** and **detailed planning** as the foundation for autonomous multi-agent development. A comprehensive Deliverable Specification (SPEC) defines what should be built with explicit acceptance criteria and test requirements. A detailed Implementation Plan (PLAN) decomposes the SPEC into executable tasks with test requirements (unit, API, E2E) integrated at every step.
 
 **Testing is not an afterthought**—it is woven throughout the workflow from SPEC to task completion.
+This document describes two workflow levels:
+- **Deliverable-level workflow (human-led)**: define/approve SPEC and PLAN, then review deliverable outcomes.
+- **Task-level workflow (agent-led)**: execute tasks, coordinate dependencies, and surface questions/escalations.
+MVP note: the Zazz Board API integration is still being finalized; agent skills currently define target behavior and will align fully once the Swagger/OpenAPI endpoint is finalized.
+During MVP execution, human-to-agent coordination is terminal-first; important interaction outcomes are later posted into task notes/comments on Zazz Board for auditability.
 
 ---
 
@@ -48,7 +53,7 @@ The Zazz methodology prioritizes **clear specification** and **detailed planning
    - All acceptance criteria
    - All test requirements (unit, API, E2E)
    - Technical constraints and dependencies
-   - Reference to Reference Architecture
+   - Alignment with the project Reference Architecture
 3. Decomposes SPEC into phases and steps:
    - Group related work into logical phases
    - Identify task dependencies and parallelization opportunities
@@ -157,8 +162,8 @@ Tasks are ordered by dependencies so that:
 **Rework Task Numbering**:
 Rework tasks are numbered hierarchically:
 - Original task: `2.3` (PLAN Phase 2, Step 3)
-- First rework iteration: `2.3.1` (PLAN PLAN Phase 2, Step 3, Rework Iteration 1)
-- Second rework iteration: `2.3.2` (PLAN PLAN Phase 2, Step 3, Rework Iteration 2)
+- First rework iteration: `2.3.1` (PLAN Phase 2, Step 3, Rework Iteration 1)
+- Second rework iteration: `2.3.2` (PLAN Phase 2, Step 3, Rework Iteration 2)
 - And so on...
 
 This creates a clear audit trail showing which tasks required multiple rework cycles.
@@ -220,7 +225,7 @@ This creates a clear audit trail showing which tasks required multiple rework cy
    git status → "working tree clean"
    ```
 
-2. Creates PR using `pr-template.md` with:
+2. Creates PR using `PR-TEMPLATE.md` with:
    - Deliverable ID and project code
    - **Acceptance Criteria Status** - Each AC with verification evidence
    - **Testing Summary** - Test results (unit, integration, E2E, performance)
@@ -302,8 +307,15 @@ Loop back to Phase 1
 ```
 
 ### Communication Channels
+**Primary (MVP): Terminal interaction**
+- Human-to-agent clarifications and approvals happen in terminal sessions
+- Agents follow terminal instructions and summarize decisions clearly
 
-**Primary: Zazz Board API**
+**Board sync (MVP): Zazz Board task notes/comments**
+- Post key clarifications, decisions, blockers, and outcomes to task notes/comments
+- Treat board notes as the durable audit trail for what happened during terminal interaction
+
+**Target state: Zazz Board API-first orchestration**
 - Task creation/status updates
 - Task comments (worker questions, coordinator answers, QA findings)
 - Deliverable status updates
@@ -373,7 +385,7 @@ Total: ~43 minutes
 - Indicates planning error (should not happen)
 - Escalate to human for clarification
 
-See `docs/error-handling.md` for complete scenarios and recovery procedures.
+See `AGENT-ARCHITECTURE.md` section 10 for current MVP scenarios and recovery procedures.
 
 ---
 
@@ -383,7 +395,7 @@ See `docs/error-handling.md` for complete scenarios and recovery procedures.
 2. **Review AGENT-ARCHITECTURE.md** - Understand agent roles, communication, concurrency control
 3. **Set up environment** - Configure variables per `README.md`
 4. **Test with single deliverable** - Run complete workflow end-to-end
-5. **Monitor with observability** - Check `docs/monitoring.md` for debugging
+5. **Monitor with observability** - Check `AGENT-ARCHITECTURE.md` section 9 for current MVP guidance
 
 ---
 
@@ -393,4 +405,4 @@ See `docs/error-handling.md` for complete scenarios and recovery procedures.
 - **AGENT-ARCHITECTURE.md** - Technical architecture, agent roles, communication
 - **.agents/skills/** - Individual skill definitions
 - **TEMPLATES/** - Reusable templates (task prompts, PR, state files)
-- **docs/** - Detailed reference (error handling, monitoring, performance)
+- **docs/** - Planned detailed reference (error handling, monitoring, performance)

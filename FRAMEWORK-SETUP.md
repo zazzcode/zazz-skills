@@ -571,7 +571,7 @@ def load_skill(skill_name):
     with open(f".agents/skills/{skill_name}/SKILL.md", "r") as f:
         return f.read()
 
-manager_skill = load_skill("coordinator-agent")
+coordinator_skill = load_skill("coordinator-agent")
 worker_skill = load_skill("worker-agent")
 qa_skill = load_skill("qa-agent")
 ```
@@ -752,7 +752,7 @@ def load_skill(skill_name):
     with open(f".agents/skills/{skill_name}/SKILL.md", "r") as f:
         return f.read()
 
-manager_skill = load_skill("coordinator-agent")
+coordinator_skill = load_skill("coordinator-agent")
 worker_skill = load_skill("worker-agent")
 qa_skill = load_skill("qa-agent")
 ```

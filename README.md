@@ -21,12 +21,25 @@ Each agent loads one of these role-specific skills:
 - **qa-agent** - Verifies acceptance criteria and quality, creates rework tasks and PRs
 - **spec-builder-agent** - Helps requestor create comprehensive Deliverable Specifications through interactive questioning
 
-Each agent has **independent context** and communicates via the Zazz Board API and local shared state files.
+Each agent has **independent context** and communicates through terminal interaction (MVP), with synchronization to Zazz Board notes/comments and local shared state files.
+
+## Methodology Core Terminology
+- **Deliverable Specification (SPEC)**: Source-of-truth requirements and acceptance criteria.
+- **Implementation Plan (PLAN)**: Execution decomposition derived from the SPEC.
+- **Reference Architecture**: Project-level technical guidance (stack, conventions, constraints) that SPEC/PLAN reference.
+
+## Two Workflow Levels
+- **Deliverable-level workflow (human-led)**: Define/approve SPEC and PLAN, review merge-ready results.
+- **Task-level workflow (agent-led)**: Execute and coordinate tasks with human interaction only when needed.
+
+## MVP Status
+This repository is an MVP documentation/skills package. The Zazz Board API integration skill is intentionally draft while the API is still being finalized. Once ready, agents will use the published Swagger/OpenAPI endpoint through the shared `zazz-board-api` rule skill for task retrieval and status updates.
+For the MVP execution model, **human ↔ agent interaction happens primarily in terminal sessions**. Key decisions, clarifications, and outcomes from terminal interaction should then be **posted to task notes/comments on Zazz Board** to preserve traceability.
 
 ## Quick Start
 
 1. Clone/install this skill collection
-2. Set environment variables (see `ARCHITECTURE.md`)
+2. Set environment variables (see `AGENT-ARCHITECTURE.md`)
 3. Create a Deliverable Specification (SPEC) with spec-builder-agent
 4. Coordinator creates Implementation Plan (PLAN) by decomposing SPEC
 5. Trigger implementation workflow:
@@ -51,16 +64,32 @@ Each agent has **independent context** and communicates via the Zazz Board API a
 - **TEMPLATES/** - Task prompt template, state file schemas, SPEC and PLAN document templates
 
 **For reference:**
-- **ARCHITECTURE.md** - Technical architecture (agent roles, communication, concurrency)
-- **docs/** - Deep dives (error handling, monitoring, case studies)
+- **AGENT-ARCHITECTURE.md** - Technical architecture (agent roles, communication, concurrency)
 
-## Directory Structure
+## Current Maturity (MVP)
+
+### What is ready
+- Core docs are in place: `README.md`, `WORKFLOW-OVERVIEW.md`, `AGENT-ARCHITECTURE.md`, `FRAMEWORK-SETUP.md`
+- Draft role skills are in place:
+  - `.agents/skills/spec-builder-agent/SKILL.md`
+  - `.agents/skills/coordinator-agent/SKILL.md`
+  - `.agents/skills/worker-agent/SKILL.md`
+  - `.agents/skills/qa-agent/SKILL.md`
+- Required rule skill is in place:
+  - `.agents/skills/zazz-board-api/SKILL.md`
+
+### In progress
+- Example artifacts referenced by docs are not fully populated yet
+- Template/reference folders are not fully populated yet
+- API contract details in skills are still draft-level while Zazz Board API evolves
+
+## Target Directory Structure (In Progress)
 
 ```
 zazz-skills/
 ├── README.md                           # This file
 ├── WORKFLOW-OVERVIEW.md                # High-level workflow phases
-├── ARCHITECTURE.md                     # Technical architecture & reference
+├── AGENT-ARCHITECTURE.md               # Technical architecture & reference
 │
 ├── .agents/skills/                     # Skills directory (Warp compatible)
 │   ├── zazz-board-api/                 # Required: All agents use this
@@ -93,14 +122,13 @@ zazz-skills/
 │
 ├── TEMPLATES/                          # Reusable templates
 │   ├── task-prompt-template.md         # Template for creating task prompts
-│   ├── pr-template.md                  # PR template for QA
+│   ├── PR-TEMPLATE.md                  # PR template for QA
 │   ├── agent-state.json.template       # Template for .zazz/agent-state.json
 │   ├── agent-locks.json.template       # Template for .zazz/agent-locks.json
 │   ├── agent-messages.json.template    # Template for .zazz/agent-messages.json
 │   └── audit.log.template              # Template for .zazz/audit.log
 │
-└── docs/                               # Detailed reference docs
-    ├── agent-architecture.md           # Deep dive: orchestration, comms, concurrency
+└── docs/                               # Detailed reference docs (planned)
     ├── error-handling.md               # Error scenarios and recovery
     ├── monitoring.md                   # Heartbeat, deadlock detection, logging
     ├── performance-tuning.md           # Optimization and benchmarks
@@ -134,7 +162,7 @@ response = client.messages.create(
 
 ## Environment Setup
 
-Required variables (see `ARCHITECTURE.md` for full list):
+Required variables (see `AGENT-ARCHITECTURE.md` for full list):
 
 ```bash
 # Zazz Board API
@@ -195,8 +223,9 @@ Coordinator breaks PLAN into tasks with dependencies (DEPENDS_ON, COORDINATES_WI
 4. **PR & Review** (QA + Coordinator) - Create PR with evidence, update deliverable status
 
 ### Communication
-
-- **Primary:** Zazz Board API (task comments, status updates)
+- **Primary (MVP):** Terminal interaction between human and agents
+- **Board sync (MVP):** Post key terminal decisions, clarifications, blockers, and outcomes to task notes/comments
+- **Target state:** Zazz Board API orchestration (task comments, status updates)
 - **Secondary:** `.zazz/agent-messages.json` (local file queue)
 - **State:** `.zazz/agent-state.json` (heartbeat, agent status)
 - **Locks:** `.zazz/agent-locks.json` (file-level locks)
@@ -209,21 +238,21 @@ Coordinator breaks PLAN into tasks with dependencies (DEPENDS_ON, COORDINATES_WI
 4. **QA** - Test isolation, detailed evidence, escalate complex issues early
 5. **Reliability** - Frequent commits, heartbeats, idempotent operations
 
-See `ARCHITECTURE.md` section 10 for complete best practices list.
+See `AGENT-ARCHITECTURE.md` section 10 for complete best practices list.
 
 ## Next Steps
 
-1. Read **WORKFLOW-OVERVIEW.md** to understand the four phases
+1. Read **WORKFLOW-OVERVIEW.md** to understand the five stages (0-4)
 2. Review **.agents/skills/** for individual skill content
-3. Check **ARCHITECTURE.md** for technical details
+3. Check **AGENT-ARCHITECTURE.md** for technical details
 4. Set up environment variables and test with a single deliverable
 
 ## Support
 
-- For agent architecture questions → `ARCHITECTURE.md`
+- For agent architecture questions → `AGENT-ARCHITECTURE.md`
 - For step-by-step procedures → See individual skill files
-- For error handling → `docs/error-handling.md`
-- For monitoring/observability → `docs/monitoring.md`
+- For error handling (current MVP) → `AGENT-ARCHITECTURE.md` section 10
+- For monitoring/observability (current MVP) → `AGENT-ARCHITECTURE.md` section 9
 
 ## License
 
@@ -232,5 +261,5 @@ See `ARCHITECTURE.md` section 10 for complete best practices list.
 ## Version
 
 **Version**: 1.0.0  
-**Last Updated**: 2026-02-19  
+**Last Updated**: 2026-02-23  
 **Status**: Draft (awaiting Zazz Board API completion)
