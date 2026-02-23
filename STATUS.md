@@ -10,13 +10,13 @@
 ### Documentation Updates (This Session)
 - [x] **README.md** - Updated with new agent terminology, SPEC/PLAN concepts, Reference Architecture
 - [x] **WORKFLOW-OVERVIEW.md** - Added Phase 0 (SPEC Creation), updated Phase 1-4 with new terminology, emphasized testing throughout, clarified adaptive PLAN refinement
-- [x] **agent-architecture.md** - Updated Coordinator (formerly Manager), Worker, and QA roles; added SPEC/PLAN context
+|- [x] **AGENT-ARCHITECTURE.md** - Updated Coordinator (formerly "manager"), Worker, and QA roles; added SPEC/PLAN context
 - [x] **FRAMEWORK-SETUP.md** - Updated all agent name references to new terminology
 
 ### Original Documentation
 - [x] **README.md** - Skill collection overview, SPEC/PLAN concepts, key concepts
 - [x] **WORKFLOW-OVERVIEW.md** - High-level workflow phases (0-4), skill integration
-- [x] **ARCHITECTURE.md** - Technical architecture, agent roles, communication, concurrency control, error handling
+|- [x] **AGENT-ARCHITECTURE.md** - Technical architecture, agent roles, communication, concurrency control, error handling
 - [x] **FRAMEWORK-SETUP.md** - Setup guides for 8 frameworks:
   - Warp
   - Claude API (Direct)
@@ -28,8 +28,8 @@
   - Custom implementations
 
 ### Templates
-- [x] **pr-template.md** - PR template for QA agent with full verification sections
-- [x] **agent-architecture.md** - Detailed agent architecture (moved from main docs)
+|- [x] **PR-TEMPLATE.md** - PR template for QA agent with full verification sections
+|- [x] **AGENT-ARCHITECTURE.md** - Detailed agent architecture (moved from main docs)
 
 ### Obsolete/Archived
 - [x] **zazz-skills-refactored.md** - Consolidated into README.md (can be deleted)
@@ -102,16 +102,16 @@ mkdir -p .agents/skills/zazz-board-api-helper/examples
 
 ### Templates (Medium Priority)
 
-- [ ] **TEMPLATES/task-prompt-template.md** - Template for Manager to use when creating task prompts
-- [ ] **TEMPLATES/agent-state.json.template** - Template for `.zazz/agent-state.json`
-- [ ] **TEMPLATES/agent-locks.json.template** - Template for `.zazz/agent-locks.json`
-- [ ] **TEMPLATES/agent-messages.json.template** - Template for `.zazz/agent-messages.json`
-- [ ] **TEMPLATES/audit.log.template** - Template for `.zazz/audit.log`
+|- [ ] **TEMPLATES/TASK-PROMPT-TEMPLATE.md** - Template for Coordinator to use when creating task prompts
+|- [ ] **TEMPLATES/AGENT-STATE.JSON.TEMPLATE** - Template for `.zazz/agent-state.json`
+|- [ ] **TEMPLATES/AGENT-LOCKS.JSON.TEMPLATE** - Template for `.zazz/agent-locks.json`
+|- [ ] **TEMPLATES/AGENT-MESSAGES.JSON.TEMPLATE** - Template for `.zazz/agent-messages.json`
+|- [ ] **TEMPLATES/AUDIT.LOG.TEMPLATE** - Template for `.zazz/audit.log`
 
 ### Examples (Medium Priority)
 
-- [ ] `.agents/skills/zazz-manager-agent/examples/example-task-graph.json` - Sample task graph
-- [ ] `.agents/skills/zazz-manager-agent/examples/example-escalation.md` - Sample escalation
+|- [ ] `.agents/skills/coordinator-agent/examples/example-task-graph.json` - Sample task graph
+|- [ ] `.agents/skills/coordinator-agent/examples/example-escalation.md` - Sample escalation
 - [ ] `.agents/skills/zazz-worker-agent/examples/example-task-execution.md` - Sample task execution
 - [ ] `.agents/skills/zazz-worker-agent/examples/example-commit.txt` - Sample commit format
 - [ ] `.agents/skills/zazz-qa-agent/examples/example-rework-plan.md` - Sample rework plan
@@ -132,7 +132,7 @@ mkdir -p .agents/skills/zazz-board-api-helper/examples
 zazz-skills/
 ├── README.md                           ✅ Done
 ├── WORKFLOW-OVERVIEW.md                ✅ Done
-├── ARCHITECTURE.md                     ✅ Done (renamed/moved)
+├── AGENT-ARCHITECTURE.md               ✅ Done (renamed/moved)
 ├── FRAMEWORK-SETUP.md                  ✅ Done
 ├── STATUS.md                           ✅ Done (this file)
 │
@@ -162,16 +162,16 @@ zazz-skills/
 │   │
 │   └── zazz-board-api-helper/
 │       ├── SKILL.md                    ⚡ TODO
-│       └── examples/
-│           └── example-api-calls.md    ⚡ TODO
+│   └── examples/
+│       ├── example-pr.md           ⚡ TODO
 │
 ├── TEMPLATES/                          ⏳ TODO: Create templates
-│   ├── task-prompt-template.md         ⏳ TODO
-│   ├── pr-template.md                  ✅ Done (will move here from root)
-│   ├── agent-state.json.template       ⏳ TODO
-│   ├── agent-locks.json.template       ⏳ TODO
-│   ├── agent-messages.json.template    ⏳ TODO
-│   └── audit.log.template              ⏳ TODO
+│   ├── TASK-PROMPT-TEMPLATE.md         ⏳ TODO
+│   ├── PR-TEMPLATE.md                  ✅ Done (will move here from root)
+│   ├── AGENT-STATE.JSON.TEMPLATE       ⏳ TODO
+│   ├── AGENT-LOCKS.JSON.TEMPLATE       ⏳ TODO
+│   ├── AGENT-MESSAGES.JSON.TEMPLATE    ⏳ TODO
+│   └── AUDIT.LOG.TEMPLATE              ⏳ TODO
 │
 └── docs/                               ⏳ TODO: Create deep-dive docs
     ├── error-handling.md               ⏳ TODO
@@ -191,14 +191,14 @@ zazz-skills/
 3. **Provide feedback** on:
    - Architecture approach
    - Communication patterns
-   - Multi-deliverable manager strategy
+   - Multi-deliverable coordinator strategy
    - Any missing concepts
 
 ### For AI Assistant (Next Session)
 
 1. **Create .agents/skills/ directory structure**
 2. **Write three SKILL.md files** (highest priority):
-   - Manager skill (orchestration + planning)
+   - Coordinator skill (orchestration + planning)
    - Worker skill (implementation + communication)
    - QA skill (verification + PR creation)
 3. **Create example files** to demonstrate skill usage
@@ -209,7 +209,7 @@ zazz-skills/
 
 ## Key Design Decisions Made
 
-✅ **Multi-agent teams** - Three independent agents (Manager, Worker, QA)
+✅ **Multi-agent teams** - Three independent agents (Coordinator, Worker, QA)
 ✅ **Skill-based approach** - Each agent role has its own skill file
 ✅ **Framework-agnostic** - Works with Warp, Claude API, CrewAI, Swarm, Kimi, etc.
 ✅ **API-first communication** - Primary channel is Zazz Board API
@@ -217,8 +217,8 @@ zazz-skills/
 ✅ **Sequential phases** - Clear workflow phases (Plan → Implement → QA → PR → Reset)
 ✅ **No circular dependencies** - Task graph must be acyclic
 ✅ **Single writer per file** - Enforced via `.zazz/agent-locks.json`
-✅ **QA creates PR** - Not Manager (QA has test/verification context)
-✅ **Manager manages multiple deliverables** - Sequential approach for v1, parallel for Phase 2
+✅ **QA creates PR** - Not Coordinator (QA has test/verification context)
+✅ **Coordinator manages multiple deliverables** - Sequential approach for v1, parallel for Phase 2
 
 ---
 
@@ -252,7 +252,7 @@ zazz-skills/
 2. Should skills be framework-specific or generic?
    - **Decision**: Generic markdown with framework-specific examples in FRAMEWORK-SETUP.md
 
-3. Should Manager spawn workers/QA or just coordinate?
+3. Should Coordinator spawn workers/QA or just coordinate?
    - **Decision**: Coordinate; framework handles spawning
 
 4. How long should file locks be held?

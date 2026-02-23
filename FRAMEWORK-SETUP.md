@@ -43,7 +43,7 @@ zazz-skills/
 ### Usage with oz CLI
 
 ```bash
-# Run Manager skill
+# Run Coordinator skill
 oz agent run --skill "coordinator-agent" \
   --prompt "Start deliverable DEL-001 from project APP"
 
@@ -56,8 +56,8 @@ oz agent run --skill "coordinator-agent" \
 For multi-agent orchestration in Warp:
 
 ```bash
-# Create agent profile for manager
-oz agent profile create zazz-manager \
+# Create agent profile for coordinator
+oz agent profile create zazz-coordinator \
   --skill coordinator-agent \
   --model claude-3-5-sonnet
 
@@ -72,7 +72,7 @@ oz agent profile create zazz-qa \
   --model claude-3-5-sonnet
 
 # Run with profiles
-oz agent run --profile zazz-manager \
+oz agent run --profile zazz-coordinator \
   --prompt "Start DEL-001"
 ```
 
@@ -101,7 +101,7 @@ def load_skill(skill_name):
     with open(f".agents/skills/{skill_name}/SKILL.md", "r") as f:
         return f.read()
 
-manager_skill = load_skill("coordinator-agent")
+coordinator_skill = load_skill("coordinator-agent")
 worker_skill = load_skill("worker-agent")
 qa_skill = load_skill("qa-agent")
 ```
@@ -109,13 +109,13 @@ qa_skill = load_skill("qa-agent")
 ### Coordinator Agent
 
 ```python
-def run_manager_agent(deliverable_id):
-    """Run manager for a single deliverable."""
+def run_coordinator_agent(deliverable_id):
+    """Run coordinator for a single deliverable."""
     
     response = client.messages.create(
         model="claude-3-5-sonnet-20241022",
         max_tokens=4096,
-        system=manager_skill,
+        system=coordinator_skill,
         messages=[
             {
                 "role": "user",
@@ -189,9 +189,9 @@ def orchestrate_deliverable(deliverable_id, num_workers=2):
     
     print(f"Starting deliverable {deliverable_id}")
     
-    # Phase 1: Manager planning
-    manager_output = run_manager_agent(deliverable_id)
-    print(f"Manager created task graph:\n{manager_output}\n")
+    # Phase 1: Coordinator planning
+    coordinator_output = run_coordinator_agent(deliverable_id)
+    print(f"Coordinator created task graph:\n{coordinator_output}\n")
     
     # Phase 2: Workers implementation (parallel)
     import threading
@@ -231,7 +231,7 @@ def load_skill(skill_name):
         return f.read()
 
 llm = ChatAnthropic(model="claude-3-5-sonnet-20241022")
-manager_skill = load_skill("coordinator-agent")
+coordinator_skill = load_skill("coordinator-agent")
 worker_skill = load_skill("worker-agent")
 qa_skill = load_skill("qa-agent")
 ```
@@ -249,12 +249,12 @@ class WorkflowState(TypedDict):
     rework_cycles: int
     pr_created: bool
 
-def manager_node(state: WorkflowState):
-    """Manager: Plan and create task graph."""
+def coordinator_node(state: WorkflowState):
+    """Coordinator: Plan and create task graph."""
     response = llm.invoke([
         {
             "role": "system",
-            "content": manager_skill
+            "content": coordinator_skill
         },
         {
             "role": "user",
@@ -306,15 +306,15 @@ def qa_node(state: WorkflowState):
 
 # Build graph
 workflow = StateGraph(WorkflowState)
-workflow.add_node("manager", manager_node)
+workflow.add_node("coordinator", coordinator_node)
 workflow.add_node("workers", workers_node)
 workflow.add_node("qa", qa_node)
 
-workflow.add_edge("manager", "workers")
+workflow.add_edge("coordinator", "workers")
 workflow.add_edge("workers", "qa")
 workflow.add_edge("qa", END)
 
-workflow.set_entry_point("manager")
+workflow.set_entry_point("coordinator")
 app = workflow.compile()
 
 # Run it
@@ -339,8 +339,8 @@ def load_skill(skill_name):
 ### Agent Definitions
 
 ```python
-manager_agent = Agent(
-    role="Zazz Manager",
+coordinator_agent = Agent(
+    role="Zazz Coordinator",
     goal="Orchestrate deliverable workflow",
     backstory=load_skill("coordinator-agent"),
     tools=[...],  # Zazz Board API tools
@@ -369,7 +369,7 @@ qa_agent = Agent(
 ```python
 plan_task = Task(
     description="Select deliverable DEL-001 and create task graph",
-    agent=manager_agent,
+    agent=coordinator_agent,
     expected_output="Task graph with dependencies"
 )
 
@@ -390,7 +390,7 @@ qa_task = Task(
 
 ```python
 crew = Crew(
-    agents=[manager_agent, worker_agent, qa_agent],
+    agents=[coordinator_agent, worker_agent, qa_agent],
     tasks=[plan_task, implement_task, qa_task],
     verbose=2
 )
@@ -423,8 +423,8 @@ config_list = [
 ### Agent Definitions
 
 ```python
-manager = AssistantAgent(
-    name="Manager",
+coordinator = AssistantAgent(
+    name="Coordinator",
     system_message=load_skill("coordinator-agent"),
     llm_config={"config_list": config_list}
 )
@@ -452,14 +452,14 @@ user_proxy = UserProxyAgent(
 ### Multi-Agent Conversation
 
 ```python
-# Manager starts
+# Coordinator starts
 user_proxy.initiate_chat(
-    manager,
+    coordinator,
     message="Start deliverable DEL-001"
 )
 
-# Manager hands off to workers
-# Workers communicate with each other and manager
+# Coordinator hands off to workers
+# Workers communicate with each other and coordinator
 # QA takes over after workers done
 ```
 
@@ -482,8 +482,8 @@ client = Swarm(api_key="your-api-key")
 ### Agent Definitions with Handoffs
 
 ```python
-manager_agent = Agent(
-    name="Manager",
+coordinator_agent = Agent(
+    name="Coordinator",
     instructions=load_skill("coordinator-agent"),
     functions=[create_task_graph, get_deliverable, ...]
 )
@@ -507,7 +507,7 @@ def handoff_to_workers():
 def handoff_to_qa():
     return qa_agent
 
-manager_agent.functions.append(
+coordinator_agent.functions.append(
     {
         "name": "handoff_to_workers",
         "description": "Hand off to workers to execute tasks",
@@ -515,7 +515,7 @@ manager_agent.functions.append(
     }
 )
 
-manager_agent.functions.append(
+coordinator_agent.functions.append(
     {
         "name": "handoff_to_qa",
         "description": "Hand off to QA agent",
@@ -534,7 +534,7 @@ messages = [
     }
 ]
 
-agent = manager_agent
+agent = coordinator_agent
 while True:
     response = client.run(
         agent=agent,
@@ -579,8 +579,8 @@ qa_skill = load_skill("qa-agent")
 ### Coordinator Agent
 
 ```python
-def run_manager_with_kimi(deliverable_id):
-    """Run manager agent using Kimi API."""
+def run_coordinator_with_kimi(deliverable_id):
+    """Run coordinator agent using Kimi API."""
     
     headers = {
         "Authorization": f"Bearer {KIMI_API_KEY}",
@@ -592,7 +592,7 @@ def run_manager_with_kimi(deliverable_id):
         "messages": [
             {
                 "role": "system",
-                "content": manager_skill
+                "content": coordinator_skill
             },
             {
                 "role": "user",
@@ -706,9 +706,9 @@ def orchestrate_with_kimi(deliverable_id, num_workers=2):
     
     print(f"Starting {deliverable_id} with Kimi")
     
-    # Phase 1: Manager
-    manager_output = run_manager_with_kimi(deliverable_id)
-    print(f"Manager:\n{manager_output}\n")
+    # Phase 1: Coordinator
+    coordinator_output = run_coordinator_with_kimi(deliverable_id)
+    print(f"Coordinator:\n{coordinator_output}\n")
     
     # Phase 2: Workers (parallel)
     import threading
@@ -760,8 +760,8 @@ qa_skill = load_skill("qa-agent")
 ### Coordinator Agent with Agent Swarm
 
 ```python
-def run_manager_swarm(deliverable_id):
-    """Run manager using Kimi Agent Swarm to coordinate workers."""
+def run_coordinator_swarm(deliverable_id):
+    """Run coordinator using Kimi Agent Swarm to coordinate workers."""
     
     headers = {
         "Authorization": f"Bearer {KIMI_API_KEY}",
@@ -773,7 +773,7 @@ def run_manager_swarm(deliverable_id):
         "messages": [
             {
                 "role": "system",
-                "content": manager_skill + "\n\n[AGENT_SWARM_MODE] You can create and coordinate up to 100 sub-agents. Each worker will be spawned as a specialized agent."
+                "content": coordinator_skill + "\n\n[AGENT_SWARM_MODE] You can create and coordinate up to 100 sub-agents. Each worker will be spawned as a specialized agent."
             },
             {
                 "role": "user",
@@ -885,10 +885,10 @@ def orchestrate_with_agent_swarm(deliverable_id):
     print(f"Starting {deliverable_id} with Kimi Agent Swarm")
     print(f"Max workers: 100, Strategy: PARL (Parallel Agent Reinforcement Learning)\n")
     
-    # Phase 1: Manager creates task graph and spawns workers
-    print("[PHASE 1] Manager Planning & Worker Spawning")
-    manager_output = run_manager_swarm(deliverable_id)
-    print(f"Manager Output:\n{manager_output}\n")
+    # Phase 1: Coordinator creates task graph and spawns workers
+    print("[PHASE 1] Coordinator Planning & Worker Spawning")
+    coordinator_output = run_coordinator_swarm(deliverable_id)
+    print(f"Coordinator Output:\n{coordinator_output}\n")
     
     # Phase 2: Workers execute in parallel (managed by swarm)
     print("[PHASE 2] Workers Executing in Parallel")
@@ -966,8 +966,8 @@ class ZazzAgent:
         )
 
 # Usage
-manager = ZazzAgent("manager", "coordinator-agent")
-output = manager.invoke("Start deliverable DEL-001")
+coordinator = ZazzAgent("coordinator", "coordinator-agent")
+output = coordinator.invoke("Start deliverable DEL-001")
 
 worker = ZazzAgent("worker", "worker-agent")
 output = worker.invoke("Poll for tasks")
@@ -983,8 +983,8 @@ output = qa.invoke("Verify and create PR")
 ```bash
 export ZAZZ_API_BASE_URL="http://localhost:3000"
 export ZAZZ_API_TOKEN="your-token"
-export AGENT_ID="manager|worker_1|qa"
-export AGENT_ROLE="manager|worker|qa"
+export AGENT_ID="coordinator|worker_1|qa"
+export AGENT_ROLE="coordinator|worker|qa"
 export ZAZZ_WORKSPACE="/path/to/project"
 export ZAZZ_STATE_DIR="${ZAZZ_WORKSPACE}/.zazz"
 

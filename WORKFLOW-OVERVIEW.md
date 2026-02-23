@@ -283,20 +283,20 @@ After Phase 4 completes:
 
 ```
 Phase 1: Planning
-  Manager Skill (.agents/skills/zazz-manager-agent/SKILL.md)
+  Coordinator Skill (.agents/skills/coordinator-agent/SKILL.md)
     ↓
 Phase 2: Implementation
-  Worker Skill (.agents/skills/zazz-worker-agent/SKILL.md)
-  Manager Skill (monitors + responds)
+  Worker Skill (.agents/skills/worker-agent/SKILL.md)
+  Coordinator Skill (monitors + responds)
     ↓
 Phase 3: QA & Rework
-  QA Skill (.agents/skills/zazz-qa-agent/SKILL.md)
-  Manager Skill (escalations + rework planning)
+  QA Skill (.agents/skills/qa-agent/SKILL.md)
+  Coordinator Skill (escalations + rework planning)
   Worker Skill (executes rework)
     ↓
 Phase 4: PR & Review
   QA Skill (creates PR)
-  Manager Skill (monitors + resets)
+  Coordinator Skill (monitors + resets)
     ↓
 Loop back to Phase 1
 ```
@@ -305,7 +305,7 @@ Loop back to Phase 1
 
 **Primary: Zazz Board API**
 - Task creation/status updates
-- Task comments (worker questions, manager answers, QA findings)
+- Task comments (worker questions, coordinator answers, QA findings)
 - Deliverable status updates
 - Commit messages
 
@@ -322,7 +322,7 @@ Loop back to Phase 1
 For a moderate deliverable with 8 tasks, 1 rework cycle:
 
 ```
-00:00 - 00:05  Phase 1: Manager selects deliverable, creates 8 tasks
+00:00 - 00:05  Phase 1: Coordinator selects deliverable, creates 8 tasks
 00:05 - 00:25  Phase 2: Workers execute 8 tasks in parallel
                 (respecting dependencies, acquiring file locks)
 00:25 - 00:35  Phase 3: QA verifies AC, runs tests
@@ -338,7 +338,7 @@ Total: ~43 minutes
 
 ## Key Principles
 
-1. **Sequential Phases** - Each phase depends on previous (Manager → Workers → QA → PR)
+1. **Sequential Phases** - Each phase depends on previous (Coordinator → Workers → QA → PR)
 2. **Parallel Within Phase** - Workers can execute tasks in parallel (respecting locks)
 3. **Explicit Dependencies** - No circular dependencies, all relations declared upfront
 4. **Single Writer Per File** - File locks prevent concurrent edits
@@ -353,23 +353,23 @@ Total: ~43 minutes
 **Worker crashes mid-task:**
 - Git changes lost (intentional - atomic commits)
 - Task reverted to `TO_DO`
-- Manager detects via heartbeat timeout
-- Manager releases file locks
+- Coordinator detects via heartbeat timeout
+- Coordinator releases file locks
 - Task reassigned to available worker
 
-**Manager unresponsive (>60 sec no heartbeat):**
+**Coordinator unresponsive (>60 sec no heartbeat):**
 - Workers detect timeout
 - Workers mark current tasks as `BLOCKED`
 - Escalation logged to `.zazz/audit.log`
-- Human intervention or failover Manager needed
+- Human intervention or failover Coordinator needed
 
 **QA timeout:**
-- Manager detects via heartbeat
+- Coordinator detects via heartbeat
 - Spawns new QA agent
 - QA re-runs tests from scratch (tests should be idempotent)
 
 **Circular dependency detected:**
-- Manager re-analyzes plan
+- Coordinator re-analyzes plan
 - Indicates planning error (should not happen)
 - Escalate to human for clarification
 
@@ -379,8 +379,8 @@ See `docs/error-handling.md` for complete scenarios and recovery procedures.
 
 ## Next Steps
 
-1. **Read skill definitions** - Start with Manager skill (`.agents/skills/zazz-manager-agent/SKILL.md`)
-2. **Review ARCHITECTURE.md** - Understand agent roles, communication, concurrency control
+1. **Read skill definitions** - Start with Coordinator skill (`.agents/skills/coordinator-agent/SKILL.md`)
+2. **Review AGENT-ARCHITECTURE.md** - Understand agent roles, communication, concurrency control
 3. **Set up environment** - Configure variables per `README.md`
 4. **Test with single deliverable** - Run complete workflow end-to-end
 5. **Monitor with observability** - Check `docs/monitoring.md` for debugging
@@ -390,7 +390,7 @@ See `docs/error-handling.md` for complete scenarios and recovery procedures.
 ## Related Documents
 
 - **README.md** - Skill collection overview
-- **ARCHITECTURE.md** - Technical architecture, agent roles, communication
+- **AGENT-ARCHITECTURE.md** - Technical architecture, agent roles, communication
 - **.agents/skills/** - Individual skill definitions
 - **TEMPLATES/** - Reusable templates (task prompts, PR, state files)
 - **docs/** - Detailed reference (error handling, monitoring, performance)

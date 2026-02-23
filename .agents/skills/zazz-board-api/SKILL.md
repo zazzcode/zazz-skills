@@ -1,8 +1,15 @@
-# Zazz Board API Helper Skill
+---
+name: "Zazz Board API"
+type: "rule"
+description: "Required API skill for all agents to communicate and manage deliverables"
+required_for: ["coordinator", "worker", "qa", "spec-builder"]
+---
 
-**Role**: Documents Zazz Board API usage for agents creating and managing deliverables and tasks
+# Zazz Board API (Required Rule Skill)
 
-**Used By**: Coordinator Agent (primarily), Worker Agent, QA Agent
+**Purpose**: Defines how all agents communicate via the Zazz Board API for creating/managing deliverables and tasks
+
+**Required By**: All agents (Coordinator, Worker, QA, Spec-Builder) MUST use this API
 
 ---
 
@@ -14,6 +21,14 @@ The Zazz Board API provides REST endpoints for managing deliverables and tasks. 
 - Posting task comments and questions
 - Updating task status
 - Managing task relations (dependencies)
+
+---
+
+## Quick Reference
+
+**API Documentation (Swagger/OpenAPI)**: `{ZAZZ_API_BASE_URL}/docs`
+
+Open this URL in a browser to explore the full API interactively while developing.
 
 ---
 

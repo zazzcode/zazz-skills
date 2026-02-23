@@ -6,7 +6,33 @@ The Zazz workflow operates on a **SPEC-driven** foundation where a clear Deliver
 
 ---
 
-## 1. Overview
+## 1. Skill Types
+
+Zazz methodology defines two types of skills:
+
+### Rule Skills (Required)
+
+These are **methodology requirements** that ALL agents must follow:
+
+**zazz-board-api** (type: `rule`)
+- Required by: All agents (coordinator, worker, qa, spec-builder)
+- Purpose: Defines the communication API and how to use it
+- Not optional—without this, agents cannot coordinate
+
+### Role Skills
+
+These define an agent's responsibilities:
+
+- **coordinator-agent** - Orchestration and planning
+- **worker-agent** - Task execution
+- **qa-agent** - Quality verification
+- **spec-builder-agent** - Requirements gathering
+
+Each agent loads its one role skill, plus all required rule skills.
+
+---
+
+## 2. Overview
 
 The Zazz Board workflow operates as an **agent swarm** where multiple LLM agents (Coordinator, Worker(s), QA) work collaboratively on a single deliverable. Each agent:
 - Has **independent context** and role-specific system prompts
@@ -136,13 +162,13 @@ Each agent invocation must be **independent** with distinct system prompts and m
 
 ---
 
-## 4. Inter-Agent Communication Architecture
+## 5. Inter-Agent Communication Architecture
 
 ### Primary Channel: Zazz Board API
 
 **Task Comments & Notes:**
-- Worker posts questions as task comments via API
-- Manager responds with decisions in same thread
+|- Worker posts questions as task comments via API
+|- Coordinator responds with decisions in same thread
 - All communications timestamped and logged
 - Provides audit trail for escalations
 
@@ -211,7 +237,7 @@ Queue of inter-agent messages for rapid communication.
   {
     "id": "msg-001",
     "from": "worker_1",
-    "to": "manager",
+    "to": "coordinator",
     "type": "question",
     "task_id": "TASK-5",
     "content": "Should we use async/await or promises for this API call?",
@@ -220,7 +246,7 @@ Queue of inter-agent messages for rapid communication.
   },
   {
     "id": "msg-002",
-    "from": "manager",
+    "from": "coordinator",
     "to": "worker_1",
     "type": "answer",
     "reply_to": "msg-001",
@@ -231,7 +257,7 @@ Queue of inter-agent messages for rapid communication.
   {
     "id": "msg-003",
     "from": "qa",
-    "to": "manager",
+    "to": "coordinator",
     "type": "escalation",
     "task_id": null,
     "content": "Found 3 interdependent issues requiring refactor of auth flow. Need rework plan.",
@@ -286,7 +312,7 @@ Timestamped event log for debugging and compliance.
 
 ---
 
-## 5. Communication Polling Strategy
+## 6. Communication Polling Strategy
 
 All agents poll for updates every **10-30 seconds**.
 
@@ -301,6 +327,10 @@ LOOP every 10 seconds:
   5. Update agent-state.json heartbeat
   6. If all tasks COMPLETED → signal QA to start
 ```
+
+### Coordinator Polling
+
+(Same as above)
 
 ### Worker Polling
 
@@ -324,14 +354,14 @@ LOOP every 20 seconds:
   3. If yes → start QA phase:
      a. Run tests
      b. Analyze code
-     c. Create rework tasks or escalate to Manager
+     c. Create rework tasks or escalate to Coordinator
   4. If all QA checks pass → create PR
   5. Update agent-state.json heartbeat
 ```
 
 ---
 
-## 6. Concurrency Control & File Conflict Avoidance
+## 7. Concurrency Control & File Conflict Avoidance
 
 ### File Lock Mechanism
 
@@ -386,11 +416,11 @@ def release_lock(file_path, agent_id):
 - Enforced via `.zazz/agent-locks.json`
 
 **Rule 2: Task Dependencies for Shared Files**
-- If Task A and Task B both edit `src/auth.ts` → create `DEPENDS_ON` relation
-- Manager ensures Task B only starts after Task A completes and releases lock
+|- If Task A and Task B both edit `src/auth.ts` → create `DEPENDS_ON` relation
+|- Coordinator ensures Task B only starts after Task A completes and releases lock
 
-**Rule 3: Manager Reviews High-Conflict Areas**
-- If >2 tasks need to touch the same file → Manager creates explicit dependency chain (A → B → C)
+**Rule 3: Coordinator Reviews High-Conflict Areas**
+|- If >2 tasks need to touch the same file → Coordinator creates explicit dependency chain (A → B → C)
 - May ask QA to review merged changes after all tasks complete
 
 **Rule 4: Commit Atomicity**
@@ -399,26 +429,26 @@ def release_lock(file_path, agent_id):
 - Example: `TASK-5: Add async auth handler [worker_1]`
 
 **Rule 5: Lock Timeout Safety**
-- If agent crashes, lock expires after timeout (default 10 min)
-- Other agents can reclaim expired locks
-- Manager detects missing heartbeats and reassigns tasks
+|- If agent crashes, lock expires after timeout (default 10 min)
+|- Other agents can reclaim expired locks
+|- Coordinator detects missing heartbeats and reassigns tasks
 
 ---
 
-## 7. Agent Initialization & Cleanup
+## 8. Agent Initialization & Cleanup
 
 ### Startup (When Deliverable Selected)
 
-**1. Manager Initializes:**
+**1. Coordinator Initializes:**
 ```
 1. Human or API triggers: "Start deliverable DEL-001"
-2. Manager reads deliverable, DED, plan from API
-3. Manager creates `.zazz/agent-state.json` with deliverable context
-4. Manager fetches OpenAPI spec from {API_BASE_URL}/docs/json
-5. Manager writes spec to `.zazz/api-spec.json`
-6. Manager creates task graph via API (POST tasks with relations)
-7. Manager spawns or signals Worker and QA agents to start
-8. Manager begins polling loop
+2. Coordinator reads deliverable, DED, plan from API
+3. Coordinator creates `.zazz/agent-state.json` with deliverable context
+4. Coordinator fetches OpenAPI spec from {API_BASE_URL}/docs/json
+5. Coordinator writes spec to `.zazz/api-spec.json`
+6. Coordinator creates task graph via API (POST tasks with relations)
+7. Coordinator spawns or signals Worker and QA agents to start
+8. Coordinator begins polling loop
 ```
 
 **2. Workers Initialize:**
@@ -439,7 +469,7 @@ def release_lock(file_path, agent_id):
 
 ### Shutdown (When Deliverable Completes or Fails)
 
-**1. Manager Cleanup:**
+**1. Coordinator Cleanup:**
 ```
 1. Mark deliverable status:
    - IN_REVIEW if QA passed and PR created
@@ -448,7 +478,7 @@ def release_lock(file_path, agent_id):
 2. Update agent-state.json with final status
 3. Archive logs to `.zazz/archive/DEL-001/`
 4. Signal all agents to reset (set status to IDLE)
-5. Manager resets own context
+5. Coordinator resets own context
 ```
 
 **2. All Agents Cleanup:**
@@ -470,7 +500,7 @@ def release_lock(file_path, agent_id):
 
 ---
 
-## 8. Monitoring and Observability
+## 9. Monitoring and Observability
 
 ### Heartbeat / Deadlock Detection
 
@@ -505,35 +535,35 @@ def release_lock(file_path, agent_id):
 
 ---
 
-## 9. Error Handling & Recovery
+## 10. Error Handling & Recovery
 
 ### Agent Crash Scenarios
 
-**If Manager crashes:**
+**If Coordinator crashes:**
 ```
 1. Workers detect missing heartbeat (last_ping > 60 sec ago)
-2. Workers mark their current tasks as BLOCKED with reason "Manager unavailable"
+2. Workers mark their current tasks as BLOCKED with reason "Coordinator unavailable"
 3. Workers log escalation to `.zazz/audit.log`
-4. Human or failover Manager instance restarts
-5. New Manager reads agent-state.json to resume deliverable
-6. Manager reviews BLOCKED tasks and reassigns or answers
+4. Human or failover Coordinator instance restarts
+5. New Coordinator reads agent-state.json to resume deliverable
+6. Coordinator reviews BLOCKED tasks and reassigns or answers
 ```
 
 **If Worker crashes mid-task:**
 ```
 1. Git commit is atomic; if not committed, changes are lost (intentional)
 2. Task status remains IN_PROGRESS
-3. Manager detects missing heartbeat (last_ping > 120 sec ago)
-4. Manager reverts task status to TO_DO
-5. Manager releases any file locks held by crashed worker
-6. Manager reassigns task to available worker or spawns new worker
+3. Coordinator detects missing heartbeat (last_ping > 120 sec ago)
+4. Coordinator reverts task status to TO_DO
+5. Coordinator releases any file locks held by crashed worker
+6. Coordinator reassigns task to available worker or spawns new worker
 ```
 
 **If QA crashes:**
 ```
 1. Partial test results may be lost
-2. Manager detects missing heartbeat
-3. Manager spawns new QA agent
+2. Coordinator detects missing heartbeat
+3. Coordinator spawns new QA agent
 4. New QA re-runs tests from scratch (tests should be idempotent)
 ```
 
@@ -542,8 +572,8 @@ def release_lock(file_path, agent_id):
 **Git merge conflicts:**
 ```
 1. Workers commit to branch; git attempts auto-merge
-2. If conflict detected → Worker marks task as BLOCKED, notifies Manager
-3. Manager assigns conflict resolution to QA or specialized worker
+2. If conflict detected → Worker marks task as BLOCKED, notifies Coordinator
+3. Coordinator assigns conflict resolution to QA or specialized worker
 4. If unresolvable → escalate to human with conflict details
 ```
 
@@ -551,8 +581,8 @@ def release_lock(file_path, agent_id):
 ```
 1. If two agents update same task status simultaneously → API returns 409 Conflict
 2. Loser agent retries after reading latest task state
-3. Manager resolves by checking timestamps; uses most recent valid state
-4. If ambiguity → Manager escalates to human
+3. Coordinator resolves by checking timestamps; uses most recent valid state
+4. If ambiguity → Coordinator escalates to human
 ```
 
 **Lock conflicts:**
@@ -561,26 +591,26 @@ def release_lock(file_path, agent_id):
 2. File X already locked by another worker
 3. Worker checks if tasks have DEPENDS_ON relation:
    - If yes → wait for dependency to complete
-   - If no (planning error) → notify Manager to create dependency
+   - If no (planning error) → notify Coordinator to create dependency
 4. Worker polls every 30 sec until lock released
 ```
 
 ---
 
-## 10. Best Practices
+## 11. Best Practices
 
 ### Task Design
-1. **Task prompts should be self-contained** – Workers should not need to ask Manager basic questions
+1. **Task prompts should be self-contained** – Workers should not need to ask Coordinator basic questions
 2. **Include explicit acceptance criteria** – Each criterion should be testable
 3. **Provide code examples** – Show expected patterns, not just descriptions
 4. **Limit task scope** – One task = one file or one coherent feature slice
 5. **Declare file dependencies upfront** – List files to be edited in task prompt
 
 ### Communication
-6. **Manager should poll frequently** – Every 10-30 seconds to catch blockers early
+6. **Coordinator should poll frequently** – Every 10-30 seconds to catch blockers early
 7. **Workers should ask questions immediately** – Don't guess; clarify unclear prompts
 8. **Log all decisions** – Update task comments via API for audit trail
-9. **Escalate ambiguity, don't guess** – If unclear, ask Manager; if Manager unclear, escalate to human
+9. **Escalate ambiguity, don't guess** – If unclear, ask Coordinator; if Coordinator unclear, escalate to human
 
 ### Concurrency
 10. **Lock timeouts should be generous** – If task takes ~5 min, set expiry to 10 min
@@ -592,7 +622,7 @@ def release_lock(file_path, agent_id):
 14. **QA should run tests in isolation** – Use test timeouts to prevent hanging
 15. **QA analyzes code, not just tests** – Check performance, security, best practices
 16. **Create detailed rework tasks** – Include reproduction steps, expected vs. actual
-17. **Escalate complex issues early** – Don't create 5 interdependent rework tasks; ask Manager to re-plan
+17. **Escalate complex issues early** – Don't create 5 interdependent rework tasks; ask Coordinator to re-plan
 
 ### Reliability
 18. **Agents should never auto-retry decisions** – Always escalate ambiguity
@@ -602,7 +632,7 @@ def release_lock(file_path, agent_id):
 
 ---
 
-## 11. Environment Variables
+## 12. Environment Variables
 
 All agents require these environment variables:
 
@@ -612,8 +642,8 @@ export ZAZZ_API_BASE_URL="http://localhost:3000"
 export ZAZZ_API_TOKEN="your-api-token"
 
 # Agent identity
-export AGENT_ID="manager|worker_1|worker_2|qa"
-export AGENT_ROLE="manager|worker|qa"
+export AGENT_ID="coordinator|worker_1|worker_2|qa"
+export AGENT_ROLE="coordinator|worker|qa"
 
 # LLM provider
 export LLM_PROVIDER="anthropic|openai"
@@ -633,12 +663,12 @@ export FILE_LOCK_TIMEOUT_MIN=10
 
 ---
 
-## 12. Implementation Checklist
+## 13. Implementation Checklist
 
 **To implement this agent swarm architecture:**
 
 - [ ] Choose agent framework (Claude API, LangGraph, CrewAI, etc.)
-- [ ] Write system prompts for Manager, Worker, QA roles
+- [ ] Write system prompts for Coordinator, Worker, QA roles
 - [ ] Implement polling loops (10-30 sec intervals)
 - [ ] Implement file lock mechanism (`.zazz/agent-locks.json`)
 - [ ] Implement message queue (`.zazz/agent-messages.json`)
@@ -646,7 +676,7 @@ export FILE_LOCK_TIMEOUT_MIN=10
 - [ ] Implement audit logging (`.zazz/audit.log`)
 - [ ] Create Zazz Board API client (fetch spec, CRUD tasks, post comments)
 - [ ] Handle agent crash recovery (timeout detection, task reassignment)
-- [ ] Add escalation paths (worker→manager, QA→manager, manager→human)
+- [ ] Add escalation paths (worker→coordinator, QA→coordinator, coordinator→human)
 - [ ] Test with single deliverable, single worker
 - [ ] Test with multiple workers (parallelization)
 - [ ] Test with file lock conflicts (concurrent edits)
@@ -655,14 +685,14 @@ export FILE_LOCK_TIMEOUT_MIN=10
 
 ---
 
-## 13. Future Enhancements
+## 14. Future Enhancements
 
 **Phase 2 improvements (after initial implementation):**
 
 1. **Dynamic worker scaling** – Spawn more workers when task queue grows
 2. **Specialized workers** – Frontend, backend, database workers with different skill sets
 3. **Parallel QA** – Multiple QA agents review independent task groups
-4. **Predictive lock acquisition** – Manager pre-assigns file locks based on task graph
+4. **Predictive lock acquisition** – Coordinator pre-assigns file locks based on task graph
 5. **WebSocket communication** – Replace polling with real-time push notifications
 6. **Distributed deployment** – Multiple laptops/servers coordinating via API (not local files)
 7. **Agent performance metrics** – Track task completion time, question frequency, rework rate
@@ -676,12 +706,12 @@ export FILE_LOCK_TIMEOUT_MIN=10
 
 ```mermaid
 graph TD
-    START[Human: Select Deliverable] --> MANAGER_INIT[Manager: Initialize & Create Task Graph]
-    MANAGER_INIT --> WORKERS[Workers: Poll for Tasks]
+    START[Human: Select Deliverable] --> COORDINATOR_INIT[Coordinator: Initialize & Create Task Graph]
+    COORDINATOR_INIT --> WORKERS[Workers: Poll for Tasks]
     WORKERS --> EXEC{Execute Task}
-    EXEC -->|Question| ASK[Worker: Ask Manager]
-    ASK --> MANAGER_RESP[Manager: Clarify or Escalate]
-    MANAGER_RESP --> EXEC
+    EXEC -->|Question| ASK[Worker: Ask Coordinator]
+    ASK --> COORDINATOR_RESP[Coordinator: Clarify or Escalate]
+    COORDINATOR_RESP --> EXEC
     EXEC -->|Clear| COMMIT[Worker: Commit & Complete]
     COMMIT --> CHECK{All Tasks Done?}
     CHECK -->|No| WORKERS
@@ -689,9 +719,9 @@ graph TD
     QA_START --> QA_RESULT{Issues Found?}
     QA_RESULT -->|Simple| REWORK[QA: Create Rework Tasks]
     REWORK --> WORKERS
-    QA_RESULT -->|Complex| ESCALATE[QA: Escalate to Manager]
-    ESCALATE --> MANAGER_PLAN[Manager: Create Rework Plan]
-    MANAGER_PLAN --> WORKERS
+    QA_RESULT -->|Complex| ESCALATE[QA: Escalate to Coordinator]
+    ESCALATE --> COORDINATOR_PLAN[Coordinator: Create Rework Plan]
+    COORDINATOR_PLAN --> WORKERS
     QA_RESULT -->|Pass| PR[QA: Create PR]
     PR --> END[Deliverable: IN_REVIEW]
 ```
@@ -700,14 +730,12 @@ graph TD
 
 ```mermaid
 sequenceDiagram
-    participant M as Manager
+    participant C as Coordinator
     participant W1 as Worker 1
     participant W2 as Worker 2
     participant Q as QA
-    participant State as .zazz/agent-state.json
-
-    loop Every 10 seconds
-        M->>State: Update last_ping
+    participant State as .zazz/agent-state.js    loop Every 10 seconds
+        C->>State: Update last_ping
         W1->>State: Update last_ping
         W2->>State: Update last_ping
         Q->>State: Update last_ping
@@ -715,11 +743,11 @@ sequenceDiagram
 
     Note over W2: Worker 2 crashes
 
-    M->>State: Check heartbeats
-    M->>M: Detect W2 timeout (120s)
-    M->>State: Mark W2 as CRASHED
-    M->>State: Release W2 file locks
-    M->>M: Reassign W2's task to W1
+    C->>State: Check heartbeats
+    C->>C: Detect W2 timeout (120s)
+    C->>State: Mark W2 as CRASHED
+    C->>State: Release W2 file locks
+    C->>C: Reassign W2's task to W1
 ```
 
 ### File Lock Flow

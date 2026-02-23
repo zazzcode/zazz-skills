@@ -6,13 +6,20 @@ A collection of LLM agent skills for autonomous software development using the Z
 
 ## Overview
 
-Five complementary skills for multi-agent teams:
+### Required Infrastructure Skill
+
+Every agent MUST use this methodology rule:
+
+- **zazz-board-api** (type: `rule`) - Required API for all agents to communicate and manage deliverables/tasks
+
+### Role Skills
+
+Each agent loads one of these role-specific skills:
 
 - **coordinator-agent** - Orchestrates deliverable workflow, decomposes SPEC into PLAN, manages adaptive task creation
 - **worker-agent** - Implements tasks with test-driven development (code, tests, commits)
 - **qa-agent** - Verifies acceptance criteria and quality, creates rework tasks and PRs
 - **spec-builder-agent** - Helps requestor create comprehensive Deliverable Specifications through interactive questioning
-- **zazz-board-api-helper** - Documents Zazz Board API for creating/updating deliverables and tasks
 
 Each agent has **independent context** and communicates via the Zazz Board API and local shared state files.
 
@@ -56,6 +63,11 @@ zazz-skills/
 ├── ARCHITECTURE.md                     # Technical architecture & reference
 │
 ├── .agents/skills/                     # Skills directory (Warp compatible)
+│   ├── zazz-board-api/                 # Required: All agents use this
+│   │   ├── SKILL.md
+│   │   └── examples/
+│   │       └── example-api-calls.md
+│   │
 │   ├── coordinator-agent/
 │   │   ├── SKILL.md
 │   │   └── examples/
@@ -74,15 +86,10 @@ zazz-skills/
 │   │       ├── example-rework-plan.md
 │   │       └── example-pr.md
 │   │
-│   ├── spec-builder-agent/
-│   │   ├── SKILL.md
-│   │   └── examples/
-│   │       └── example-spec.md
-│   │
-│   └── zazz-board-api-helper/
+│   └── spec-builder-agent/
 │       ├── SKILL.md
 │       └── examples/
-│           └── example-api-calls.md
+│           └── example-spec.md
 │
 ├── TEMPLATES/                          # Reusable templates
 │   ├── task-prompt-template.md         # Template for creating task prompts
