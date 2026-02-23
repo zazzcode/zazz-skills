@@ -1,15 +1,21 @@
 # Zazz Skills Development Status
 
-**Date**: 2026-02-19  
-**Status**: Phase 1 - Foundation Complete
+**Date**: 2026-02-23  
+**Status**: Phase 2 - Terminology & Documentation Update
 
 ---
 
 ## ✅ Completed
 
-### Documentation
-- [x] **README.md** - Skill collection overview, quick start, key concepts
-- [x] **WORKFLOW-OVERVIEW.md** - High-level workflow phases (1-4), skill integration, timeline
+### Documentation Updates (This Session)
+- [x] **README.md** - Updated with new agent terminology, SPEC/PLAN concepts, Reference Architecture
+- [x] **WORKFLOW-OVERVIEW.md** - Added Phase 0 (SPEC Creation), updated Phase 1-4 with new terminology, emphasized testing throughout, clarified adaptive PLAN refinement
+- [x] **agent-architecture.md** - Updated Coordinator (formerly Manager), Worker, and QA roles; added SPEC/PLAN context
+- [x] **FRAMEWORK-SETUP.md** - Updated all agent name references to new terminology
+
+### Original Documentation
+- [x] **README.md** - Skill collection overview, SPEC/PLAN concepts, key concepts
+- [x] **WORKFLOW-OVERVIEW.md** - High-level workflow phases (0-4), skill integration
 - [x] **ARCHITECTURE.md** - Technical architecture, agent roles, communication, concurrency control, error handling
 - [x] **FRAMEWORK-SETUP.md** - Setup guides for 8 frameworks:
   - Warp
@@ -35,41 +41,64 @@
 
 ### Skills Implementation (High Priority)
 
-**Phase 1.1 - Create .agents/skills directory structure**
+**Phase 2.1 - Create .agents/skills directory structure**
 ```bash
-mkdir -p .agents/skills/zazz-manager-agent/examples
-mkdir -p .agents/skills/zazz-worker-agent/examples
-mkdir -p .agents/skills/zazz-qa-agent/examples
+mkdir -p .agents/skills/coordinator-agent/examples
+mkdir -p .agents/skills/worker-agent/examples
+mkdir -p .agents/skills/qa-agent/examples
+mkdir -p .agents/skills/spec-builder-agent/examples
+mkdir -p .agents/skills/zazz-board-api-helper/examples
 ```
 
-**Phase 1.2 - Create three SKILL.md files**
+**Phase 2.2 - Create SKILL.md files (Five total)**
 
-- [ ] `.agents/skills/zazz-manager-agent/SKILL.md`
+- [ ] `.agents/skills/coordinator-agent/SKILL.md`
   - YAML frontmatter (name, description)
-  - System prompt for Manager agent
-  - Instructions for Phase 1 (deliverable selection & planning)
-  - Instructions for Phase 3 (rework management)
-  - Instructions for Phase 4 (reset/cleanup)
-  - Best practices for management
-  - Example Manager inputs/outputs
+  - System prompt for Coordinator agent
+  - Instructions for Phase 1 (SPEC decomposition & PLAN creation)
+  - Instructions for Phase 2 (adaptive task creation as progress occurs)
+  - Instructions for Phase 3 (rework planning & PLAN refinement)
+  - Best practices for coordination
+  - Example Coordinator inputs/outputs
 
-- [ ] `.agents/skills/zazz-worker-agent/SKILL.md`
+- [ ] `.agents/skills/worker-agent/SKILL.md`
   - YAML frontmatter
   - System prompt for Worker agent
-  - Instructions for Phase 2 (task execution)
+  - Instructions for Phase 2 (task execution with integrated testing)
   - File locking procedures
+  - Test-driven task execution (unit, API, E2E)
   - Question/clarification protocol
   - Commit format requirements
   - Example Worker inputs/outputs
 
-- [ ] `.agents/skills/zazz-qa-agent/SKILL.md`
+- [ ] `.agents/skills/qa-agent/SKILL.md`
   - YAML frontmatter
   - System prompt for QA agent
-  - Instructions for Phase 3 (verification & rework)
-  - Test execution procedures
+  - Instructions for Phase 3 (AC verification + test execution)
+  - Test execution procedures (unit, API, E2E, performance, security)
+  - Test-driven rework task creation
   - Code analysis checklist
+  - Interaction with requestor (human)
   - PR creation process
   - Example QA inputs/outputs
+
+- [ ] `.agents/skills/spec-builder-agent/SKILL.md`
+  - YAML frontmatter
+  - System prompt for spec-builder-agent
+  - Interactive questioning process to clarify requirements
+  - Acceptance criteria definition
+  - Test requirement identification (unit, API, E2E)
+  - Reference to Reference Architecture
+  - SPEC document creation
+  - Example SPEC output
+
+- [ ] `.agents/skills/zazz-board-api-helper/SKILL.md`
+  - Documentation of Zazz Board API usage
+  - How to create/update deliverables
+  - How to create/update tasks with dependencies
+  - How to post task comments
+  - How to update task status
+  - Example API calls
 
 ### Templates (Medium Priority)
 
@@ -107,25 +136,34 @@ zazz-skills/
 ├── FRAMEWORK-SETUP.md                  ✅ Done
 ├── STATUS.md                           ✅ Done (this file)
 │
-├── .agents/skills/                     ⏳ TODO: Create directory structure
-│   ├── zazz-manager-agent/
-│   │   ├── SKILL.md                    ⏳ TODO
+├── .agents/skills/                     ⚡ TODO: Create directory structure
+│   ├── coordinator-agent/
+│   │   ├── SKILL.md                    ⚡ TODO
 │   │   └── examples/
-│   │       ├── example-task-graph.json ⏳ TODO
-│   │       └── example-escalation.md   ⏳ TODO
+│   │       ├── example-plan.md         ⚡ TODO
+│   │       └── example-task-graph.json ⚡ TODO
 │   │
-│   ├── zazz-worker-agent/
-│   │   ├── SKILL.md                    ⏳ TODO
+│   ├── worker-agent/
+│   │   ├── SKILL.md                    ⚡ TODO
 │   │   └── examples/
-│   │       ├── example-task-execution.md ⏳ TODO
-│   │       └── example-commit.txt      ⏳ TODO
+│   │       ├── example-task-execution.md ⚡ TODO
+│   │       └── example-commit.txt      ⚡ TODO
 │   │
-│   └── zazz-qa-agent/
-│       ├── SKILL.md                    ⏳ TODO
-│       ├── pr-template.md              ✅ Done (exists at root, move here)
+│   ├── qa-agent/
+│   │   ├── SKILL.md                    ⚡ TODO
+│   │   └── examples/
+│   │       ├── example-rework-plan.md  ⚡ TODO
+│   │       └── example-pr.md           ⚡ TODO
+│   │
+│   ├── spec-builder-agent/
+│   │   ├── SKILL.md                    ⚡ TODO
+│   │   └── examples/
+│   │       └── example-spec.md         ⚡ TODO
+│   │
+│   └── zazz-board-api-helper/
+│       ├── SKILL.md                    ⚡ TODO
 │       └── examples/
-│           ├── example-rework-plan.md  ⏳ TODO
-│           └── example-pr.md           ⏳ TODO
+│           └── example-api-calls.md    ⚡ TODO
 │
 ├── TEMPLATES/                          ⏳ TODO: Create templates
 │   ├── task-prompt-template.md         ⏳ TODO

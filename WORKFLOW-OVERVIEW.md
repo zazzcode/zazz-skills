@@ -1,142 +1,216 @@
 # Zazz Workflow Overview
 
-This document explains the high-level workflow and how the three agent skills (Manager, Worker, QA) work together to complete a deliverable.
+This document explains the high-level workflow and how the agent skills work together to complete a deliverable.
+
+The Zazz methodology prioritizes **clear specification** and **detailed planning** as the foundation for autonomous multi-agent development. A comprehensive Deliverable Specification (SPEC) defines what should be built with explicit acceptance criteria and test requirements. A detailed Implementation Plan (PLAN) decomposes the SPEC into executable tasks with test requirements (unit, API, E2E) integrated at every step.
+
+**Testing is not an afterthought**—it is woven throughout the workflow from SPEC to task completion.
 
 ---
 
-## Four Workflow Phases
+## Five Workflow Stages (0-4)
 
-### Phase 1: Deliverable Selection & Planning (Manager Agent)
+### Stage 0: SPEC Creation (Requestor + spec-builder-agent)
 
-**Goal**: Understand the deliverable and create a task graph with dependencies.
+**Goal**: Create a clear, comprehensive Deliverable Specification that defines what should be delivered.
 
-**Manager Agent Actions:**
-1. Receives request to start a deliverable (human signal or API poll)
-2. Fetches deliverable from Zazz Board API:
-   - Detailed Engineering Document (DED)
-   - Implementation Plan
-   - Product Requirements Document (PRD)
-   - Acceptance Criteria
-3. Analyzes plan and breaks it into tasks
-4. Fetches OpenAPI spec from `{ZAZZ_API_BASE_URL}/docs/json` and caches to `.zazz/api-spec.json`
-5. Creates task graph via API with:
-   - Task title, goal, instructions
+**spec-builder-agent Actions:**
+1. Guides requestor through interactive questioning to clarify requirements
+2. Captures functional requirements and edge cases
+3. Defines acceptance criteria (AC) - clear, testable statements
+4. Identifies test requirements:
+   - Unit test scenarios
+   - API integration test scenarios  
+   - End-to-end test scenarios
+   - Performance/load test thresholds (if applicable)
+   - Security test requirements (if applicable)
+5. References project Reference Architecture document (tech stack, DB, frameworks)
+6. Documents constraints, dependencies, assumptions
+7. Creates {deliverable-name}-SPEC.md stored in project repo/shared drive
+
+**Outputs:**
+- {deliverable-name}-SPEC.md - The source of truth
+- Clear, testable acceptance criteria
+- Explicit test requirements
+- Ready for approval before Phase 1
+
+**Key Principle**: SPEC is NOT edited during development. Changes tracked in Change Notes sections for audit trail.
+
+---
+
+### Stage 1: Planning (Coordinator Agent)
+
+**Goal**: Decompose the approved SPEC into a detailed Implementation Plan with task definitions and test requirements.
+
+**Coordinator Agent Actions:**
+1. Receives approved {deliverable-name}-SPEC.md
+2. Analyzes SPEC and extracts:
+   - All acceptance criteria
+   - All test requirements (unit, API, E2E)
+   - Technical constraints and dependencies
+   - Reference to Reference Architecture
+3. Decomposes SPEC into phases and steps:
+   - Group related work into logical phases
+   - Identify task dependencies and parallelization opportunities
+   - Plan test tasks (unit test creation, API test creation, E2E test creation)
+4. Creates {deliverable-name}-PLAN.md with:
+   - Phases and steps
+   - Per-task acceptance criteria (derived from SPEC)
+   - Per-task test requirements (what tests to create/run)
+   - Task dependencies and file locks (which files each task modifies)
+   - Estimated complexity and order of execution
+5. Fetches OpenAPI spec from `{ZAZZ_API_BASE_URL}/docs/json` and caches to `.zazz/api-spec.json`
+6. Initializes `.zazz/agent-state.json` with deliverable and PLAN context
+7. Creates task graph via Zazz Board API with:
+   - Task title, goal, instructions (derived from PLAN)
    - Self-contained prompts (Task Prompt Template)
    - Task relations: DEPENDS_ON, COORDINATES_WITH
    - Files to modify (for lock management)
-6. Initializes `.zazz/agent-state.json` with deliverable context
-7. Signals workers and QA that tasks are ready
+   - Test criteria for each task
+8. Signals workers and QA that PLAN is approved and tasks are ready
 
 **Outputs:**
-- Task graph with N tasks and dependencies
-- `.zazz/agent-state.json` with deliverable context
+- {deliverable-name}-PLAN.md - Detailed implementation plan with phases and steps
+- `.zazz/agent-state.json` with deliverable and PLAN context
 - `.zazz/api-spec.json` (cached OpenAPI spec)
+- Initial task graph via Zazz Board API (only tasks with no dependencies)
 - Workers ready to poll for tasks
-- QA waiting for Manager signal
+- QA ready for Phase 2
 
-**Duration:** 2-5 minutes (task creation + analysis)
+**Key Principle**: Only tasks with no dependencies are created initially. As workers complete tasks and learning occurs, Coordinator creates additional tasks based on PLAN phases, allowing the plan to be adapted and refined during development.
 
 ---
 
-### Phase 2: Implementation (Worker Agents)
+### Stage 2: Implementation (Worker Agents)
 
-**Goal**: Execute tasks and produce working code with tests.
+**Goal**: Execute tasks from PLAN and produce working code with all tests passing.
+
+**Task Types in PLAN:**
+- **Feature/Code Tasks**: Write code for features
+- **Test Creation Tasks**: Create unit test suites, API tests, or E2E tests
+- **Test Execution Tasks**: Run tests and document results
+
+Tasks are ordered by dependencies so that:
+- Feature code is written and tested with unit tests
+- Test creation tasks create API or E2E test suites
+- Subsequent tasks run the test suites against features
 
 **Worker Agent Actions:**
-1. Polls every 15 seconds for tasks with status `TO_DO` and satisfied dependencies
+1. Polls for tasks with status `TO_DO` and satisfied dependencies
 2. When task found:
    - Acquires file locks via `.zazz/agent-locks.json`
    - Updates task status to `IN_PROGRESS`
-   - Reads task prompt (Goal, Instructions, Tech Spec, AC, Tests)
-3. Implements per task requirements:
-   - Writes code following project conventions (AGENTS.md)
-   - Runs tests to verify AC
-   - May ask Manager questions if prompt unclear (posts to task comments)
+   - Reads task prompt (Goal, Instructions, Test Requirements, AC, Reference Architecture)
+3. Executes per task type:
+   - **Code task**: Writes code, creates unit tests, runs tests until passing
+   - **Test creation task**: Creates API/E2E test suites with test cases
+   - **Test execution task**: Runs test suite, captures results, documents evidence
+   - All tests must pass before task completion
+   - May ask Coordinator questions if prompt unclear (posts to task comments)
 4. Commits changes with format: `TASK-{id}: {description} [{agent_id}]`
 5. Releases file locks
 6. Updates task status to `COMPLETED`
 7. Updates heartbeat in `.zazz/agent-state.json`
 8. Repeats until no more `TO_DO` tasks
 
-**Manager's Role During Phase 2:**
-- Polls every 10-30 seconds for `BLOCKED` tasks
+**Coordinator's Role During Phase 2:**
+- Polls for `BLOCKED` tasks and worker questions
 - Responds to worker questions via task comments
-- Escalates ambiguous questions to human-in-loop
-- Monitors for worker timeouts (>120 sec = missing heartbeat)
+- Escalates ambiguous questions or scope changes to human-in-loop
+- Monitors for worker timeouts and missing heartbeats
+- As tasks complete, creates next set of tasks with no dependencies from PLAN
+- Tracks progress and refines PLAN as learning occurs (documents changes in Change Notes)
 
 **Outputs:**
-- All tasks with status `COMPLETED`
-- Code committed to worktree/branch
+- All initial and subsequent tasks with status `COMPLETED`
+- Code committed to worktree/branch with all tests passing
 - All file locks released
 - Complete audit trail in task comments
-
-**Duration:** Depends on task complexity (typically 5-30 minutes for moderate deliverable)
+- Updated PLAN with any refinements made during execution
 
 ---
 
-### Phase 3: QA & Rework (QA Agent + Manager)
-
-**Goal**: Verify quality and fix any issues found.
+### Stage 3: QA & Verification (QA Agent + Coordinator)
+**Goal**: Verify all Acceptance Criteria are met, all tests pass, and deliverable is complete.
 
 **QA Agent Actions:**
-1. Waits for Manager signal that all tasks `COMPLETED`
-2. Verifies Acceptance Criteria:
-   - Reviews each AC from deliverable
-   - Checks against implemented code
-   - Confirms per task comments and commits
-3. Runs Tests:
-   - Unit tests: captures results
-   - Integration tests: captures results
-   - E2E tests: captures results
-   - Performance tests: measures against spec
-   - Security scan: identifies vulnerabilities
-4. Analyzes Code:
-   - Performance: response times, memory, database queries
-   - Security: vulnerabilities, authentication, authorization
-   - Best Practices: patterns, error handling, logging
+1. Waits for Coordinator signal that all tasks `COMPLETED`
+2. Reviews SPEC to understand all requirements and acceptance criteria
+3. Verifies each Acceptance Criterion:
+   - Tests the feature/code against the AC statement from SPEC
+   - Documents evidence (test results, screenshots, logs)
+   - Confirms implementation matches requirements
+4. Runs all tests defined in SPEC and PLAN:
+   - Unit test suite: confirms all pass, captures results
+   - API integration tests: confirms all pass, captures results
+   - E2E tests: confirms all pass, captures results
+   - Performance tests: measures against spec thresholds, documents results
+   - Security tests: identifies vulnerabilities, documents findings
+5. Analyzes Code Quality:
+   - Performance: response times, memory, queries vs thresholds
+   - Security: vulnerabilities, authentication, authorization gaps
+   - Best Practices: error handling, logging, code patterns
+6. Interacts with requestor (human) to confirm deliverable meets expectations
 
 **If Issues Found:**
 
-**Simple isolated issue** (affects 1-2 files, low risk):
-- QA creates rework task via API
+**Rework Task Numbering**:
+Rework tasks are numbered hierarchically:
+- Original task: `2.3` (PLAN Phase 2, Step 3)
+- First rework iteration: `2.3.1` (PLAN PLAN Phase 2, Step 3, Rework Iteration 1)
+- Second rework iteration: `2.3.2` (PLAN PLAN Phase 2, Step 3, Rework Iteration 2)
+- And so on...
+
+This creates a clear audit trail showing which tasks required multiple rework cycles.
+
+**Simple isolated issue** (affects 1-2 files, low risk, passes updated tests):
+- QA creates rework task via API with clear description of issue and test case
+- Task ID: `{original_task_id}.{rework_iteration}` (e.g., `2.3.1` if `2.3` needs rework)
 - Sets task status to `TO_DO`
 - Creates REWORK_FOR relation to original task
 - Workers pick up and execute like Phase 2
+- QA verifies fix passes tests
 
-**Complex interdependent issues** (2+ fixes, architectural impact):
-- QA escalates to Manager with summary
-- Manager analyzes interdependencies
-- Manager creates rework sub-plan (like Phase 1) with:
-  - Individual rework tasks
+**Complex interdependent issues** (2+ fixes, architectural impact, test failures across modules):
+- QA escalates to Coordinator with detailed summary:
+  - What AC is not met
+  - Which tests are failing and why
+  - Impact on other components
+- Coordinator analyzes interdependencies and test failures
+- Coordinator creates rework sub-plan with:
+  - Individual rework tasks addressing root causes
   - Dependencies between fixes
-  - Execution order
+  - Updated test requirements for each fix
+  - Verification order
 - Workers execute rework tasks
-- QA verifies fixes
+- QA verifies each fix passes updated tests and retests AC
 
-**Manager's Role During Phase 3:**
+**Coordinator's Role During Phase 3:**
 - Monitors for rework tasks created by QA
-- Analyzes complex escalations
+- Analyzes complex escalations and test failures
 - Creates rework sub-plans for interdependent fixes
-- Escalates architectural questions to human-in-loop
+- Updates PLAN with Change Notes documenting decisions and rationale
+- Escalates unresolvable issues or scope changes to human-in-loop
+- Ensures all rework is tracked for audit trail
 
-**Rework Loop:**
-- QA creates/receives rework tasks
-- Workers execute
-- QA verifies fixes
-- Repeat until all issues resolved
+**Rework Loop (if issues found):**
+- QA creates/receives rework tasks with failing test evidence
+- Workers execute fixes and ensure all tests pass
+- QA verifies fixes against tests and AC
+- Repeat until all AC met and all tests passing
 
 **Outputs:**
-- All AC verified
-- All tests passing
-- No security issues (critical/high)
-- No performance issues
+- All AC from SPEC verified and met
+- All tests passing (unit, API, E2E, performance, security)
+- All test evidence captured and documented
+- Code quality confirmed (performance, security, best practices)
+- PLAN updated with any changes and documented in Change Notes
+- Requestor (human) confirmed deliverable meets expectations
 - Ready for PR
-
-**Duration:** Depends on issue complexity (typically 5-20 minutes + rework time)
 
 ---
 
-### Phase 4: PR & Review (QA Agent + Manager)
+### Stage 4: PR & Review (QA Agent + Coordinator)
 
 **Goal**: Create PR with full verification evidence and update status.
 
@@ -160,7 +234,7 @@ This document explains the high-level workflow and how the three agent skills (M
 
 4. Logs PR creation to `.zazz/audit.log`
 
-**Manager's Role During Phase 4:**
+**Coordinator's Role During Phase 4:**
 - Monitors PR creation
 - Logs completion event
 - Prepares to reset state
@@ -186,14 +260,14 @@ This document explains the high-level workflow and how the three agent skills (M
 
 After Phase 4 completes:
 
-**Manager Reset:**
+**Coordinator Reset:**
 1. Archives logs to `.zazz/archive/{deliverable_id}/`
 2. Clears task graph
 3. Releases all file locks
 4. Clears `.zazz/agent-messages.json`
 5. Updates `.zazz/agent-state.json` to reset state
 6. Signals workers/QA to set status `IDLE`
-7. Returns to Phase 1 to select next deliverable
+7. Returns to Phase 0 to support next SPEC or Phase 1 to create next PLAN
 
 **Worker & QA Reset:**
 - Clear task-specific context

@@ -1,16 +1,19 @@
 # Agent Teams and Swarms Architecture
 
-Supplemental documentation for `zazz-skills.md` covering agent orchestration, communication, and control mechanisms.
+Supplemental documentation for Zazz methodology covering agent orchestration, communication, and control mechanisms.
+
+The Zazz workflow operates on a **SPEC-driven** foundation where a clear Deliverable Specification defines requirements, and a detailed Implementation Plan decomposes the SPEC into executable tasks. Agents work collaboratively to execute the PLAN, refining it as learning occurs.
 
 ---
 
 ## 1. Overview
 
-The Zazz Board workflow operates as an **agent swarm** where multiple LLM agents (Manager, Worker(s), QA) work collaboratively on a single deliverable. Each agent:
+The Zazz Board workflow operates as an **agent swarm** where multiple LLM agents (Coordinator, Worker(s), QA) work collaboratively on a single deliverable. Each agent:
 - Has **independent context** and role-specific system prompts
 - Runs as a **separate LLM instance** (not sub-agents sharing context)
 - Communicates via **explicit message passing**
 - Operates on a **shared worktree/branch** on a single laptop or server
+- Works from **shared SPEC and PLAN documents** stored in project repo/shared drive
 
 ---
 
@@ -35,82 +38,101 @@ Each agent invocation must be **independent** with distinct system prompts and m
 
 ## 3. Agent Roles and Responsibilities
 
-### Manager Agent (Planner & Orchestrator)
+### Coordinator Agent (Planner & Orchestrator)
 
 **System Prompt Characteristics:**
-- Strategic thinker; breaks down plans into task graphs
+- Strategic thinker; decomposes SPEC into PLAN with detailed task definitions
+- Creates task graph respecting dependencies and parallelization
 - Monitors task completion; detects blockers and escalations
 - Responds to worker questions or escalates to human
 - Creates rework sub-plans for complex issues
 - Enforces dependency rules and file conflict avoidance
+- Adapts PLAN as learning occurs during development
 
 **Memory/Context:**
-- Current deliverable ID, project code, DED/plan docs
-- Task graph (nodes, edges, status)
+- Current deliverable ID, project code
+- Approved {deliverable-name}-SPEC.md
+- Working {deliverable-name}-PLAN.md with phases and steps
+- Task graph (nodes, edges, status, test requirements)
 - Communication log with workers and QA
 - Pending escalations and decisions
+- Change Notes tracking decisions made during execution
 
 **Responsibilities:**
-- Select deliverable with approved plan
-- Retrieve and analyze DED/plan documents
+- Receive approved SPEC
+- Decompose SPEC into detailed PLAN with task definitions
 - Create task graph with dependencies (DEPENDS_ON, COORDINATES_WITH)
-- Poll for task completion every 10-30 seconds
-- Respond to worker questions within 2 minutes
+- Create only independent tasks initially; create dependent tasks as progress allows
+- Fetch and cache Reference Architecture and OpenAPI specs
+- Respond to worker questions and escalate ambiguous issues
+- Monitor task progress and refine PLAN based on learning
 - Create rework sub-plans when QA escalates complex issues
-- Escalate to human for design/architecture decisions
-- Update agent-state.json heartbeat every 10 seconds
+- Document all decisions in PLAN Change Notes
+- Escalate scope changes or architecture questions to human
+- Update agent-state.json heartbeat
 
 ### Worker Agent(s) (Implementers)
 
 **System Prompt Characteristics:**
-- Execution-focused; follows instructions precisely
-- Asks questions when prompt/AC is unclear
-- Respects task dependencies and collaboration rules
-- Commits after each task
-- Reports completion or blockers
+- Execution-focused; follows task instructions precisely
+- Understands test-driven development; writes/runs tests for every task
+- Asks Coordinator questions when prompt/AC is unclear
+- Respects task dependencies and file locks
+- Commits atomically after each task
+- Reports completion or blockers immediately
 
 **Memory/Context:**
-- Current task (goal, instructions, AC, tech spec)
-- Project conventions (AGENTS.md, tech stack)
+- Current task (goal, instructions, AC, test requirements)
+- Reference Architecture (tech stack, frameworks, patterns)
+- Deliverable SPEC (for context on what's being built)
 - Recent code changes and commit history
-- Questions/clarifications from Manager
+- Questions/clarifications from Coordinator
 
 **Responsibilities:**
 - Poll for tasks with status TO_DO and satisfied dependencies
 - Acquire file locks before editing
-- Implement per task prompt and acceptance criteria
-- Ask Manager questions if prompt is ambiguous
-- Commit changes with task ID after completion
+- Implement per task instructions and acceptance criteria
+- Execute task based on type (code, test creation, test execution)
+- Create and run unit tests; create API/E2E tests as required by PLAN
+- Ensure all tests pass before marking task complete
+- Ask Coordinator questions if prompt is ambiguous
+- Commit changes with format: `TASK-{id}: {description} [{agent_id}]`
 - Update task status to COMPLETED via API
 - Release file locks after commit
-- Update agent-state.json heartbeat every 10 seconds
+- Update agent-state.json heartbeat
 
 ### QA Agent (Verifier & Reviewer)
 
 **System Prompt Characteristics:**
-- Quality-focused; thorough in validation
-- Identifies flaws: code quality, performance, security, AC violations
-- Creates detailed rework tasks with clear reproduction steps
-- Escalates complex issues to Manager for re-planning
-- Ensures all commits are in place before PR
+- Quality-focused; thoroughly validates against SPEC
+- Test-driven mindset; focuses on test evidence and AC verification
+- Identifies flaws: AC violations, test failures, code quality issues, security/performance gaps
+- Creates detailed rework tasks with failing test evidence and clear reproduction steps
+- Escalates complex issues to Coordinator for re-planning
+- Ensures all commits are in place and tests passing before PR
 
 **Memory/Context:**
-- Deliverable acceptance criteria
-- Test execution results
-- Code analysis findings (performance, security, best practices)
+- Deliverable {deliverable-name}-SPEC.md with all AC
+- Implementation {deliverable-name}-PLAN.md
+- All test results (unit, API, E2E, performance, security)
+- Code analysis findings and evidence
 - Rework tasks created and their status
+- Requestor expectations and context
 
 **Responsibilities:**
-- Wait for Manager signal that all tasks are COMPLETED
-- Verify all acceptance criteria are met
-- Run automated tests (unit, integration, e2e)
-- Analyze code: performance, security, best practices
-- Create rework tasks for single isolated issues
-- Escalate to Manager for complex/interdependent issues
+- Wait for Coordinator signal that all tasks are COMPLETED
+- Review SPEC to understand all requirements and AC
+- Verify each AC is met by running tests and code analysis
+- Run all automated tests (unit, API, E2E, performance, security)
+- Analyze code quality (performance vs thresholds, security gaps, best practices)
+- Document all test evidence and AC verification
+- Create rework tasks for single isolated issues with failing test evidence
+- Escalate to Coordinator for complex/interdependent issues with test failure analysis
+- Interact with requestor (human) to confirm deliverable meets expectations
 - Ensure all files are committed before creating PR
-- Create PR from template
+- Create PR from template with full evidence of AC verification and test results
 - Update deliverable status to IN_REVIEW
-- Update agent-state.json heartbeat every 10 seconds
+- Update agent-state.json heartbeat
 
 ---
 
@@ -153,10 +175,10 @@ Shared state snapshot showing active agents and their current status.
   "task_graph_hash": "abc123xyz",
   "pending_escalations": 0,
   "agents": {
-    "manager": {
+    "coordinator": {
       "status": "polling",
       "last_ping": "2026-02-19T00:42:58Z",
-      "current_activity": "monitoring_tasks"
+      "current_activity": "creating_dependent_tasks"
     },
     "worker_1": {
       "status": "executing",
@@ -173,7 +195,7 @@ Shared state snapshot showing active agents and their current status.
     "qa": {
       "status": "waiting",
       "last_ping": "2026-02-19T00:42:55Z",
-      "current_activity": "waiting_for_task_completion",
+      "current_activity": "waiting_for_all_tasks_completion",
       "locked_files": []
     }
   }

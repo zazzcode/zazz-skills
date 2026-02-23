@@ -32,11 +32,11 @@ Place skills in `.agents/skills/` (or `.warp/skills/`):
 ```bash
 zazz-skills/
 └── .agents/skills/
-    ├── zazz-manager-agent/
+    ├── coordinator-agent/
     │   └── SKILL.md
-    ├── zazz-worker-agent/
+    ├── worker-agent/
     │   └── SKILL.md
-    └── zazz-qa-agent/
+    └── qa-agent/
         └── SKILL.md
 ```
 
@@ -44,7 +44,7 @@ zazz-skills/
 
 ```bash
 # Run Manager skill
-oz agent run --skill "zazz-manager-agent" \
+oz agent run --skill "coordinator-agent" \
   --prompt "Start deliverable DEL-001 from project APP"
 
 # The skill is automatically discovered and loaded
@@ -58,17 +58,17 @@ For multi-agent orchestration in Warp:
 ```bash
 # Create agent profile for manager
 oz agent profile create zazz-manager \
-  --skill zazz-manager-agent \
+  --skill coordinator-agent \
   --model claude-3-5-sonnet
 
 # Create agent profile for worker
 oz agent profile create zazz-worker \
-  --skill zazz-worker-agent \
+  --skill worker-agent \
   --model claude-3-5-sonnet
 
 # Create agent profile for QA
 oz agent profile create zazz-qa \
-  --skill zazz-qa-agent \
+  --skill qa-agent \
   --model claude-3-5-sonnet
 
 # Run with profiles
@@ -101,12 +101,12 @@ def load_skill(skill_name):
     with open(f".agents/skills/{skill_name}/SKILL.md", "r") as f:
         return f.read()
 
-manager_skill = load_skill("zazz-manager-agent")
-worker_skill = load_skill("zazz-worker-agent")
-qa_skill = load_skill("zazz-qa-agent")
+manager_skill = load_skill("coordinator-agent")
+worker_skill = load_skill("worker-agent")
+qa_skill = load_skill("qa-agent")
 ```
 
-### Manager Agent
+### Coordinator Agent
 
 ```python
 def run_manager_agent(deliverable_id):
@@ -231,9 +231,9 @@ def load_skill(skill_name):
         return f.read()
 
 llm = ChatAnthropic(model="claude-3-5-sonnet-20241022")
-manager_skill = load_skill("zazz-manager-agent")
-worker_skill = load_skill("zazz-worker-agent")
-qa_skill = load_skill("zazz-qa-agent")
+manager_skill = load_skill("coordinator-agent")
+worker_skill = load_skill("worker-agent")
+qa_skill = load_skill("qa-agent")
 ```
 
 ### Graph Definition
@@ -342,7 +342,7 @@ def load_skill(skill_name):
 manager_agent = Agent(
     role="Zazz Manager",
     goal="Orchestrate deliverable workflow",
-    backstory=load_skill("zazz-manager-agent"),
+    backstory=load_skill("coordinator-agent"),
     tools=[...],  # Zazz Board API tools
     verbose=True
 )
@@ -350,7 +350,7 @@ manager_agent = Agent(
 worker_agent = Agent(
     role="Zazz Worker",
     goal="Implement tasks autonomously",
-    backstory=load_skill("zazz-worker-agent"),
+    backstory=load_skill("worker-agent"),
     tools=[...],  # Git, file operations tools
     verbose=True
 )
@@ -358,7 +358,7 @@ worker_agent = Agent(
 qa_agent = Agent(
     role="Zazz QA",
     goal="Verify quality and create PRs",
-    backstory=load_skill("zazz-qa-agent"),
+    backstory=load_skill("qa-agent"),
     tools=[...],  # Test, security scan tools
     verbose=True
 )
@@ -425,19 +425,19 @@ config_list = [
 ```python
 manager = AssistantAgent(
     name="Manager",
-    system_message=load_skill("zazz-manager-agent"),
+    system_message=load_skill("coordinator-agent"),
     llm_config={"config_list": config_list}
 )
 
 worker = AssistantAgent(
     name="Worker",
-    system_message=load_skill("zazz-worker-agent"),
+    system_message=load_skill("worker-agent"),
     llm_config={"config_list": config_list}
 )
 
 qa = AssistantAgent(
     name="QA",
-    system_message=load_skill("zazz-qa-agent"),
+    system_message=load_skill("qa-agent"),
     llm_config={"config_list": config_list}
 )
 
@@ -484,19 +484,19 @@ client = Swarm(api_key="your-api-key")
 ```python
 manager_agent = Agent(
     name="Manager",
-    instructions=load_skill("zazz-manager-agent"),
+    instructions=load_skill("coordinator-agent"),
     functions=[create_task_graph, get_deliverable, ...]
 )
 
 worker_agent = Agent(
     name="Worker",
-    instructions=load_skill("zazz-worker-agent"),
+    instructions=load_skill("worker-agent"),
     functions=[get_available_tasks, implement_task, commit_changes, ...]
 )
 
 qa_agent = Agent(
     name="QA",
-    instructions=load_skill("zazz-qa-agent"),
+    instructions=load_skill("qa-agent"),
     functions=[verify_ac, run_tests, create_pr, ...]
 )
 
@@ -571,12 +571,12 @@ def load_skill(skill_name):
     with open(f".agents/skills/{skill_name}/SKILL.md", "r") as f:
         return f.read()
 
-manager_skill = load_skill("zazz-manager-agent")
-worker_skill = load_skill("zazz-worker-agent")
-qa_skill = load_skill("zazz-qa-agent")
+manager_skill = load_skill("coordinator-agent")
+worker_skill = load_skill("worker-agent")
+qa_skill = load_skill("qa-agent")
 ```
 
-### Manager Agent
+### Coordinator Agent
 
 ```python
 def run_manager_with_kimi(deliverable_id):
@@ -752,12 +752,12 @@ def load_skill(skill_name):
     with open(f".agents/skills/{skill_name}/SKILL.md", "r") as f:
         return f.read()
 
-manager_skill = load_skill("zazz-manager-agent")
-worker_skill = load_skill("zazz-worker-agent")
-qa_skill = load_skill("zazz-qa-agent")
+manager_skill = load_skill("coordinator-agent")
+worker_skill = load_skill("worker-agent")
+qa_skill = load_skill("qa-agent")
 ```
 
-### Manager Agent with Agent Swarm
+### Coordinator Agent with Agent Swarm
 
 ```python
 def run_manager_swarm(deliverable_id):
@@ -966,13 +966,13 @@ class ZazzAgent:
         )
 
 # Usage
-manager = ZazzAgent("manager", "zazz-manager-agent")
+manager = ZazzAgent("manager", "coordinator-agent")
 output = manager.invoke("Start deliverable DEL-001")
 
-worker = ZazzAgent("worker", "zazz-worker-agent")
+worker = ZazzAgent("worker", "worker-agent")
 output = worker.invoke("Poll for tasks")
 
-qa = ZazzAgent("qa", "zazz-qa-agent")
+qa = ZazzAgent("qa", "qa-agent")
 output = qa.invoke("Verify and create PR")
 ```
 

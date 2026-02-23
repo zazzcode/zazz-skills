@@ -6,11 +6,13 @@ A collection of LLM agent skills for autonomous software development using the Z
 
 ## Overview
 
-Three complementary skills for multi-agent teams:
+Five complementary skills for multi-agent teams:
 
-- **zazz-manager-agent** - Orchestrates deliverable workflow (planning, coordination, escalation)
-- **zazz-worker-agent** - Implements tasks (code, tests, commits)
-- **zazz-qa-agent** - Verifies quality and creates pull requests
+- **coordinator-agent** - Orchestrates deliverable workflow, decomposes SPEC into PLAN, manages adaptive task creation
+- **worker-agent** - Implements tasks with test-driven development (code, tests, commits)
+- **qa-agent** - Verifies acceptance criteria and quality, creates rework tasks and PRs
+- **spec-builder-agent** - Helps requestor create comprehensive Deliverable Specifications through interactive questioning
+- **zazz-board-api-helper** - Documents Zazz Board API for creating/updating deliverables and tasks
 
 Each agent has **independent context** and communicates via the Zazz Board API and local shared state files.
 
@@ -18,14 +20,16 @@ Each agent has **independent context** and communicates via the Zazz Board API a
 
 1. Clone/install this skill collection
 2. Set environment variables (see `ARCHITECTURE.md`)
-3. Trigger a deliverable workflow:
+3. Create a Deliverable Specification (SPEC) with spec-builder-agent
+4. Coordinator creates Implementation Plan (PLAN) by decomposing SPEC
+5. Trigger implementation workflow:
    ```bash
    # Using Warp
-   oz agent run --skill "zazz-manager-agent" \
-     --prompt "Start deliverable DEL-001 from project APP"
+   oz agent run --skill "coordinator-agent" \
+     --prompt "Start deliverable DEL-001 with approved SPEC and create PLAN"
    
    # Using another framework (Claude, CrewAI, etc.)
-   # Load skill from .agents/skills/zazz-manager-agent/SKILL.md
+   # Load skill from .agents/skills/coordinator-agent/SKILL.md
    ```
 
 ## Documentation Structure
@@ -35,9 +39,9 @@ Each agent has **independent context** and communicates via the Zazz Board API a
 - **FRAMEWORK-SETUP.md** - How to use zazz-skills with your agent framework (Warp, Claude, CrewAI, Kimi, etc.)
 
 **For agents/developers:**
-- **.agents/skills/** - Individual skill definitions (Manager, Worker, QA)
+- **.agents/skills/** - Individual skill definitions for all five agents
   - Each skill has system prompt + instructions + examples
-- **TEMPLATES/** - PR template, task prompt template, state file schemas
+- **TEMPLATES/** - Task prompt template, state file schemas, SPEC and PLAN document templates
 
 **For reference:**
 - **ARCHITECTURE.md** - Technical architecture (agent roles, communication, concurrency)
@@ -52,24 +56,33 @@ zazz-skills/
 ├── ARCHITECTURE.md                     # Technical architecture & reference
 │
 ├── .agents/skills/                     # Skills directory (Warp compatible)
-│   ├── zazz-manager-agent/
-│   │   ├── SKILL.md                    # Skill definition (system prompt + instructions)
+│   ├── coordinator-agent/
+│   │   ├── SKILL.md
 │   │   └── examples/
-│   │       ├── example-task-graph.json
-│   │       └── example-escalation.md
+│   │       ├── example-plan.md
+│   │       └── example-task-graph.json
 │   │
-│   ├── zazz-worker-agent/
+│   ├── worker-agent/
 │   │   ├── SKILL.md
 │   │   └── examples/
 │   │       ├── example-task-execution.md
 │   │       └── example-commit.txt
 │   │
-│   └── zazz-qa-agent/
+│   ├── qa-agent/
+│   │   ├── SKILL.md
+│   │   └── examples/
+│   │       ├── example-rework-plan.md
+│   │       └── example-pr.md
+│   │
+│   ├── spec-builder-agent/
+│   │   ├── SKILL.md
+│   │   └── examples/
+│   │       └── example-spec.md
+│   │
+│   └── zazz-board-api-helper/
 │       ├── SKILL.md
-│       ├── pr-template.md              # PR template (referenced in skill)
 │       └── examples/
-│           ├── example-rework-plan.md
-│           └── example-pr.md
+│           └── example-api-calls.md
 │
 ├── TEMPLATES/                          # Reusable templates
 │   ├── task-prompt-template.md         # Template for creating task prompts
@@ -101,14 +114,14 @@ These skills are framework-agnostic. Use them with:
 
 Example: Loading with Claude API
 ```python
-with open('.agents/skills/zazz-manager-agent/SKILL.md') as f:
+with open('.agents/skills/coordinator-agent/SKILL.md') as f:
     system_prompt = f.read()
 
 response = client.messages.create(
     model="claude-3-5-sonnet-20241022",
     max_tokens=4096,
     system=system_prompt,
-    messages=[{"role": "user", "content": "Start deliverable DEL-001"}]
+    messages=[{"role": "user", "content": "Start deliverable DEL-001 with SPEC"}]
 )
 ```
 
@@ -122,8 +135,8 @@ export ZAZZ_API_BASE_URL="http://localhost:3000"
 export ZAZZ_API_TOKEN="your-api-token"
 
 # Agent identity
-export AGENT_ID="manager|worker_1|worker_2|qa"
-export AGENT_ROLE="manager|worker|qa"
+export AGENT_ID="coordinator|worker_1|worker_2|qa"
+export AGENT_ROLE="coordinator|worker|qa"
 
 # LLM provider
 export LLM_PROVIDER="anthropic|openai"
@@ -146,24 +159,33 @@ export FILE_LOCK_TIMEOUT_MIN=10
 ### Deliverable
 
 A complete feature, bugfix, or project module with:
-- Detailed Engineering Document (DED)
-- Implementation Plan
-- Product Requirements Document (PRD)
-- Acceptance Criteria
+- **Deliverable Specification (SPEC)** - {deliverable-name}-SPEC.md - The source of truth defining what should be delivered, created interactively with spec-builder-agent
+- **Implementation Plan (PLAN)** - {deliverable-name}-PLAN.md - Detailed decomposition of SPEC into phases, steps, and tasks with acceptance criteria, created by coordinator-agent
+- **Reference Architecture** - Project-level document defining tech stack, DB, frameworks, and architecture patterns that SPEC can reference
+- **Acceptance Criteria** - Clear, testable criteria for verifying deliverable is complete
+
+### SPEC and PLAN Immutability
+
+**SPEC and PLAN cannot be edited during development.** Instead:
+- Changes are tracked in task notes and Change Notes sections within the documents
+- Decisions and clarifications are logged as close to the original requirement as possible
+- Creates a permanent audit trail of what changed and why
 
 ### Task Graph
 
-Manager breaks deliverable into tasks with dependencies (DEPENDS_ON, COORDINATES_WITH):
+Coordinator breaks PLAN into tasks with dependencies (DEPENDS_ON, COORDINATES_WITH):
 - Single writer per file (enforced via locks)
 - Tasks respect dependencies (only start when prerequisites done)
 - No circular dependencies (acyclic)
+- Tasks created as-needed during execution, not all upfront
 
-### Workflow Phases
+### Workflow Stages
 
-1. **Planning** (Manager) - Select deliverable, create task graph
-2. **Implementation** (Workers) - Execute tasks, commit changes
-3. **QA & Rework** (QA + Manager) - Verify quality, fix issues
-4. **PR & Review** (QA + Manager) - Create PR, update status
+0. **SPEC Creation** (Requestor + spec-builder-agent) - Create {deliverable-name}-SPEC.md with clear requirements and AC
+1. **Planning** (Coordinator) - Create {deliverable-name}-PLAN.md by decomposing SPEC, define task graph
+2. **Implementation** (Workers) - Execute tasks from PLAN, commit changes
+3. **QA & Rework** (QA + Coordinator) - Verify quality against AC, fix issues, refine PLAN as needed
+4. **PR & Review** (QA + Coordinator) - Create PR with evidence, update deliverable status
 
 ### Communication
 
