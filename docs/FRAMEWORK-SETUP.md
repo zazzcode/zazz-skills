@@ -79,10 +79,10 @@ oz agent run --profile zazz-coordinator \
 ### Communication in Warp
 
 Agents communicate through:
-- **Zazz Board API** (primary)
-- **Local files** (`.zazz/agent-state.json`, etc.)
+- **Zazz Board API** (primary; includes pub/sub for agent state and messaging)
+- **Local files** (`.zazz/agent-locks.json`, `.zazz/audit.log`)
 
-Warp's context is isolated per agent invocation, so communication is via API + files.
+Warp's context is isolated per agent invocation, so communication is via API + local lock/audit files.
 
 ---
 

@@ -2,25 +2,27 @@
 
 This document explains the high-level workflow and how the agent skills work together to complete a deliverable.
 
-The Zazz methodology prioritizes **clear specification** and **detailed planning** as the foundation for autonomous multi-agent development. A comprehensive Deliverable Specification (SPEC) defines what should be built with explicit acceptance criteria and test requirements. A detailed Implementation Plan (PLAN) decomposes the SPEC into executable tasks with test requirements (unit, API, E2E) integrated at every step.
+The Zazz framework prioritizes **clear specification** and **detailed planning** as the foundation for autonomous multi-agent development. A comprehensive Deliverable Specification (SPEC) defines what should be built with explicit acceptance criteria and test requirements. The Planner agent performs a one-shot decomposition of the SPEC into a detailed Implementation Plan (PLAN) with test requirements (unit, API, E2E) integrated at every step. The Coordinator takes over once execution starts.
 
-**Testing is not an afterthought**—it is woven throughout the workflow from SPEC to task completion.
+**Test-driven development (TDD) is a core differentiator.** Unlike frameworks that treat testing as a separate phase, Zazz embeds TDD at every level. Every deliverable and task has well-defined test requirements and acceptance criteria before work begins. Workers create and run tests per task; QA verifies via test evidence; rework tasks include failing tests that demonstrate the issue.
+
 This document describes two workflow levels:
-- **Deliverable-level workflow (human-led)**: define/approve SPEC and PLAN, then review deliverable outcomes.
-- **Task-level workflow (agent-led)**: execute tasks, coordinate dependencies, and surface questions/escalations.
+- **Deliverable-level workflow (Deliverable Owner-led)**: The Deliverable Owner defines/approves SPEC and PLAN, performs final acceptance, and conducts PR review and merge.
+- **Task-level workflow (agent-led)**: Execute tasks, coordinate dependencies, and surface questions/escalations.
+
 MVP note: the Zazz Board API integration is still being finalized; agent skills currently define target behavior and will align fully once the Swagger/OpenAPI endpoint is finalized.
-During MVP execution, human-to-agent coordination is terminal-first; important interaction outcomes are later posted into task notes/comments on Zazz Board for auditability.
+During MVP execution, Deliverable Owner-to-agent coordination is terminal-first; important interaction outcomes are later posted into task notes/comments on Zazz Board for auditability.
 
 ---
 
 ## Five Workflow Stages (0-4)
 
-### Stage 0: SPEC Creation (Requestor + spec-builder-agent)
+### Stage 0: SPEC Creation (Deliverable Owner + spec-builder-agent)
 
 **Goal**: Create a clear, comprehensive Deliverable Specification that defines what should be delivered.
 
 **spec-builder-agent Actions:**
-1. Guides requestor through interactive questioning to clarify requirements
+1. Guides Deliverable Owner through interactive questioning to clarify requirements
 2. Captures functional requirements and edge cases
 3. Defines acceptance criteria (AC) - clear, testable statements
 4. Identifies test requirements:
@@ -29,7 +31,7 @@ During MVP execution, human-to-agent coordination is terminal-first; important i
    - End-to-end test scenarios
    - Performance/load test thresholds (if applicable)
    - Security test requirements (if applicable)
-5. References project Reference Architecture document (tech stack, DB, frameworks)
+5. References project STANDARDS.md (tech stack, DB, frameworks)
 6. Documents constraints, dependencies, assumptions
 7. Creates {deliverable-name}-SPEC.md stored in project repo/shared drive
 
@@ -43,46 +45,30 @@ During MVP execution, human-to-agent coordination is terminal-first; important i
 
 ---
 
-### Stage 1: Planning (Coordinator Agent)
+### Stage 1: Planning (Planner Agent + Coordinator Agent)
 
-**Goal**: Decompose the approved SPEC into a detailed Implementation Plan with task definitions and test requirements.
+**Goal**: Decompose the approved SPEC into a detailed Implementation Plan; once approved, Coordinator creates tasks and begins execution.
 
-**Coordinator Agent Actions:**
+**Planner Agent Actions** (one-shot, does not participate in execution):
 1. Receives approved {deliverable-name}-SPEC.md
-2. Analyzes SPEC and extracts:
-   - All acceptance criteria
-   - All test requirements (unit, API, E2E)
-   - Technical constraints and dependencies
-   - Alignment with the project Reference Architecture
-3. Decomposes SPEC into phases and steps:
-   - Group related work into logical phases
-   - Identify task dependencies and parallelization opportunities
-   - Plan test tasks (unit test creation, API test creation, E2E test creation)
-4. Creates {deliverable-name}-PLAN.md with:
-   - Phases and steps
-   - Per-task acceptance criteria (derived from SPEC)
-   - Per-task test requirements (what tests to create/run)
-   - Task dependencies and file locks (which files each task modifies)
-   - Estimated complexity and order of execution
-5. Fetches OpenAPI spec from `{ZAZZ_API_BASE_URL}/docs/json` and caches to `.zazz/api-spec.json`
-6. Initializes `.zazz/agent-state.json` with deliverable and PLAN context
-7. Creates task graph via Zazz Board API with:
-   - Task title, goal, instructions (derived from PLAN)
-   - Self-contained prompts (Task Prompt Template)
-   - Task relations: DEPENDS_ON, COORDINATES_WITH
-   - Files to modify (for lock management)
-   - Test criteria for each task
-8. Signals workers and QA that PLAN is approved and tasks are ready
+2. Decomposes SPEC into manageable chunks, phased and sequenced
+3. Assigns files to tasks using file names and conventions
+4. Identifies parallel sequences where tasks can run without impacting the same files
+5. Creates {deliverable-name}-PLAN.md with phases, steps, per-task AC, test requirements, file assignments, and dependencies (DEPENDS_ON, COORDINATES_WITH)
+6. **Output**: {deliverable-name}-PLAN.md. Owner reviews and approves; deliverable moves to Ready.
+
+**Coordinator Agent Actions** (takes over once plan approved):
+1. Subscribes to plan approval events; when deliverable moves to Ready, picks it up
+2. Creates initial tasks via Zazz Board API per the PLAN (only tasks with no dependencies)
+3. Hands out tasks to workers; adds follow-on tasks as prerequisites complete
+4. Monitors progress; adjusts PLAN when change mechanism invoked; documents in Change Notes
 
 **Outputs:**
-- {deliverable-name}-PLAN.md - Detailed implementation plan with phases and steps
-- `.zazz/agent-state.json` with deliverable and PLAN context
-- `.zazz/api-spec.json` (cached OpenAPI spec)
-- Initial task graph via Zazz Board API (only tasks with no dependencies)
-- Workers ready to poll for tasks
-- QA ready for Phase 2
+- {deliverable-name}-PLAN.md (from Planner)
+- Initial task graph via Zazz Board API (Coordinator creates tasks from PLAN)
+- Workers ready to poll for tasks; QA ready for Phase 2
 
-**Key Principle**: Only tasks with no dependencies are created initially. As workers complete tasks and learning occurs, Coordinator creates additional tasks based on PLAN phases, allowing the plan to be adapted and refined during development.
+**Key Principle**: Planner does one-shot decomposition; Coordinator executes the PLAN. Only tasks with no dependencies are created initially. As workers complete tasks, Coordinator creates additional tasks based on PLAN phases.
 
 ---
 
@@ -103,25 +89,24 @@ Tasks are ordered by dependencies so that:
 **Worker Agent Actions:**
 1. Polls for tasks with status `TO_DO` and satisfied dependencies
 2. When task found:
-   - Acquires file locks via `.zazz/agent-locks.json`
+   - Acquires file locks for the task via `.zazz/agent-locks.json`
    - Updates task status to `IN_PROGRESS`
-   - Reads task prompt (Goal, Instructions, Test Requirements, AC, Reference Architecture)
+   - Reads task prompt (Goal, Instructions, Test Requirements, AC, STANDARDS.md)
 3. Executes per task type:
    - **Code task**: Writes code, creates unit tests, runs tests until passing
    - **Test creation task**: Creates API/E2E test suites with test cases
    - **Test execution task**: Runs test suite, captures results, documents evidence
-   - All tests must pass before task completion
+   - All tests must pass before signaling ready for QA
    - May ask Coordinator questions if prompt unclear (posts to task comments)
-4. Commits changes with format: `TASK-{id}: {description} [{agent_id}]`
-5. Releases file locks
-6. Updates task status to `COMPLETED`
-7. Updates heartbeat in `.zazz/agent-state.json`
-8. Repeats until no more `TO_DO` tasks
+4. **Commits** changes with format: `TASK-{id}: {description} [{agent_id}]` (commit stamp in work tree)
+5. Transfers locks to task (files stay locked until QA signs off); worker is released
+6. Updates task status to `QA` (ready for QA)
+7. Repeats until no more `TO_DO` tasks
 
 **Coordinator's Role During Phase 2:**
 - Polls for `BLOCKED` tasks and worker questions
 - Responds to worker questions via task comments
-- Escalates ambiguous questions or scope changes to human-in-loop
+- Escalates ambiguous questions or scope changes to Deliverable Owner
 - Monitors for worker timeouts and missing heartbeats
 - As tasks complete, creates next set of tasks with no dependencies from PLAN
 - Tracks progress and refines PLAN as learning occurs (documents changes in Change Notes)
@@ -138,10 +123,12 @@ Tasks are ordered by dependencies so that:
 ### Stage 3: QA & Verification (QA Agent + Coordinator)
 **Goal**: Verify all Acceptance Criteria are met, all tests pass, and deliverable is complete.
 
+**QA Agent Design**: The QA agent is specifically designed to **find issues** and **validate acceptance criteria**. **Fresh context per evaluation**—each task evaluation and the final deliverable review start with cleared context. Evaluates results against AC and tests (worker has already committed). When all pass: marks task complete and **releases all file locks** for that task. When AC or TDD criteria are not met, QA creates rework content and messages the Coordinator; locks stay (rework inherits them).
+
 **QA Agent Actions:**
 1. Waits for Coordinator signal that all tasks `COMPLETED`
 2. Reviews SPEC to understand all requirements and acceptance criteria
-3. Verifies each Acceptance Criterion:
+3. Actively verifies each Acceptance Criterion (seeks to find issues, not rubber-stamp):
    - Tests the feature/code against the AC statement from SPEC
    - Documents evidence (test results, screenshots, logs)
    - Confirms implementation matches requirements
@@ -155,7 +142,7 @@ Tasks are ordered by dependencies so that:
    - Performance: response times, memory, queries vs thresholds
    - Security: vulnerabilities, authentication, authorization gaps
    - Best Practices: error handling, logging, code patterns
-6. Interacts with requestor (human) to confirm deliverable meets expectations
+6. Interacts with Deliverable Owner to confirm deliverable meets expectations
 
 **If Issues Found:**
 
@@ -169,15 +156,13 @@ Rework tasks are numbered hierarchically:
 This creates a clear audit trail showing which tasks required multiple rework cycles.
 
 **Simple isolated issue** (affects 1-2 files, low risk, passes updated tests):
-- QA creates rework task via API with clear description of issue and test case
-- Task ID: `{original_task_id}.{rework_iteration}` (e.g., `2.3.1` if `2.3` needs rework)
-- Sets task status to `TO_DO`
-- Creates REWORK_FOR relation to original task
-- Workers pick up and execute like Phase 2
-- QA verifies fix passes tests
+- QA creates rework task content (full context: failing test, AC violated, reproduction steps, relevant files, expected vs actual)
+- QA messages Coordinator; Coordinator creates rework task (ID: `{original_task_id}.{rework_iteration}`, e.g., `2.3.1`)
+- Any available worker picks up and executes (workers are released when ready for QA; original worker has moved on)
+- QA verifies fix passes tests and satisfies AC
 
 **Complex interdependent issues** (2+ fixes, architectural impact, test failures across modules):
-- QA escalates to Coordinator with detailed summary:
+- QA messages Coordinator with detailed summary:
   - What AC is not met
   - Which tests are failing and why
   - Impact on other components
@@ -191,15 +176,15 @@ This creates a clear audit trail showing which tasks required multiple rework cy
 - QA verifies each fix passes updated tests and retests AC
 
 **Coordinator's Role During Phase 3:**
-- Monitors for rework tasks created by QA
+- Creates rework tasks when QA provides the task content (QA authors the rework card; Coordinator creates the task in plan and graph)
 - Analyzes complex escalations and test failures
 - Creates rework sub-plans for interdependent fixes
 - Updates PLAN with Change Notes documenting decisions and rationale
-- Escalates unresolvable issues or scope changes to human-in-loop
+- Escalates unresolvable issues or scope changes to Deliverable Owner
 - Ensures all rework is tracked for audit trail
 
 **Rework Loop (if issues found):**
-- QA creates/receives rework tasks with failing test evidence
+- QA creates rework task content (full context for a fresh worker); Coordinator creates the task. Any available worker picks up rework.
 - Workers execute fixes and ensure all tests pass
 - QA verifies fixes against tests and AC
 - Repeat until all AC met and all tests passing
@@ -210,7 +195,7 @@ This creates a clear audit trail showing which tasks required multiple rework cy
 - All test evidence captured and documented
 - Code quality confirmed (performance, security, best practices)
 - PLAN updated with any changes and documented in Change Notes
-- Requestor (human) confirmed deliverable meets expectations
+- Deliverable Owner confirmed deliverable meets expectations
 - Ready for PR
 
 ---
@@ -233,7 +218,7 @@ This creates a clear audit trail showing which tasks required multiple rework cy
    - **Rework History** - All cycles with root causes and resolutions
    - **Files Changed** - New, modified, deleted files
    - **Dependencies** - Any new or updated packages
-   - **QA Sign-off** - Approval for human review
+   - **QA Sign-off** - Approval for Deliverable Owner review
 
 3. Updates deliverable status to `IN_REVIEW` via API
 
@@ -243,9 +228,10 @@ This creates a clear audit trail showing which tasks required multiple rework cy
 - Monitors PR creation
 - Logs completion event
 - Prepares to reset state
-- Notifies (if needed) that PR ready for human review
+- Notifies (if needed) that PR ready for Deliverable Owner review
 
-**Human Reviewer Actions:**
+**Deliverable Owner Actions (Final Acceptance & PR Review):**
+- Performs final acceptance that deliverable meets expectations
 - Reviews PR on GitHub/GitLab
 - Checks code quality, architecture, documentation
 - Approves or requests changes
@@ -255,7 +241,7 @@ This creates a clear audit trail showing which tasks required multiple rework cy
 - PR created with full verification evidence
 - Deliverable status: `IN_REVIEW`
 - Audit trail complete
-- Ready for human review and merge
+- Ready for Deliverable Owner review and merge
 
 **Duration:** Immediate (PR creation < 1 minute)
 
@@ -269,15 +255,14 @@ After Phase 4 completes:
 1. Archives logs to `.zazz/archive/{deliverable_id}/`
 2. Clears task graph
 3. Releases all file locks
-4. Clears `.zazz/agent-messages.json`
-5. Updates `.zazz/agent-state.json` to reset state
-6. Signals workers/QA to set status `IDLE`
-7. Returns to Phase 0 to support next SPEC or Phase 1 to create next PLAN
+4. Resets agent state via Zazz Board API (pub/sub)
+5. Signals workers/QA to set status `IDLE`
+6. Returns to Phase 0 to support next SPEC or Phase 1 to create next PLAN
 
 **Worker & QA Reset:**
 - Clear task-specific context
 - Release any held locks
-- Set status to `IDLE` in agent-state.json
+- Set status to `IDLE` via Zazz Board API (pub/sub)
 - Ready for next deliverable
 
 ---
@@ -308,8 +293,10 @@ Loop back to Phase 1
 
 ### Communication Channels
 **Primary (MVP): Terminal interaction**
-- Human-to-agent clarifications and approvals happen in terminal sessions
+- Deliverable Owner-to-agent clarifications and approvals happen in terminal sessions
 - Agents follow terminal instructions and summarize decisions clearly
+
+**Slack (when supported):** Only the Coordinator has a Slack account. Worker and QA communicate with the Deliverable Owner through the Coordinator.
 
 **Board sync (MVP): Zazz Board task notes/comments**
 - Post key clarifications, decisions, blockers, and outcomes to task notes/comments
@@ -321,10 +308,10 @@ Loop back to Phase 1
 - Deliverable status updates
 - Commit messages
 
-**Secondary: Local Files**
-- `.zazz/agent-state.json` - Heartbeat, agent status
-- `.zazz/agent-messages.json` - Message queue for rapid comms
-- `.zazz/agent-locks.json` - File-level locks
+**Agent state & messaging:** Zazz Board API pub/sub (heartbeat, agent status, agent-to-agent communication)
+
+**Local files:**
+- `.zazz/agent-locks.json` - Task-level file locks (held until QA signs off)
 - `.zazz/audit.log` - Event log
 
 ---
@@ -338,11 +325,11 @@ For a moderate deliverable with 8 tasks, 1 rework cycle:
 00:05 - 00:25  Phase 2: Workers execute 8 tasks in parallel
                 (respecting dependencies, acquiring file locks)
 00:25 - 00:35  Phase 3: QA verifies AC, runs tests
-                QA finds 2 issues → creates 2 rework tasks
+                QA finds 2 issues → messages Coordinator to create 2 rework tasks
 00:35 - 00:40  Phase 3 (Rework): Workers execute 2 rework tasks
 00:40 - 00:42  Phase 3 (Verify): QA verifies fixes
 00:42 - 00:43  Phase 4: QA creates PR with evidence
-00:43         Ready for human review
+00:43         Ready for Deliverable Owner review
 Total: ~43 minutes
 ```
 
@@ -350,13 +337,13 @@ Total: ~43 minutes
 
 ## Key Principles
 
-1. **Sequential Phases** - Each phase depends on previous (Coordinator → Workers → QA → PR)
+1. **Sequential Phases** - Each phase depends on previous (Planner → Coordinator → Workers → QA → PR)
 2. **Parallel Within Phase** - Workers can execute tasks in parallel (respecting locks)
 3. **Explicit Dependencies** - No circular dependencies, all relations declared upfront
 4. **Single Writer Per File** - File locks prevent concurrent edits
 5. **Independent Contexts** - Each agent has separate context (not shared)
 6. **Explicit Communication** - Questions/decisions logged via API or local files
-7. **No Auto-Retry** - Ambiguous situations escalated to human, not auto-retried
+7. **No Auto-Retry** - Ambiguous situations escalated to Deliverable Owner, not auto-retried
 
 ---
 
@@ -373,7 +360,7 @@ Total: ~43 minutes
 - Workers detect timeout
 - Workers mark current tasks as `BLOCKED`
 - Escalation logged to `.zazz/audit.log`
-- Human intervention or failover Coordinator needed
+- Deliverable Owner intervention or failover Coordinator needed
 
 **QA timeout:**
 - Coordinator detects via heartbeat
@@ -383,7 +370,7 @@ Total: ~43 minutes
 **Circular dependency detected:**
 - Coordinator re-analyzes plan
 - Indicates planning error (should not happen)
-- Escalate to human for clarification
+- Escalate to Deliverable Owner for clarification
 
 See `AGENT-ARCHITECTURE.md` section 10 for current MVP scenarios and recovery procedures.
 
@@ -391,7 +378,7 @@ See `AGENT-ARCHITECTURE.md` section 10 for current MVP scenarios and recovery pr
 
 ## Next Steps
 
-1. **Read skill definitions** - Start with Coordinator skill (`.agents/skills/coordinator-agent/SKILL.md`)
+1. **Read skill definitions** - Start with Planner skill (`.agents/skills/planner-agent/SKILL.md`) and Coordinator skill (`.agents/skills/coordinator-agent/SKILL.md`)
 2. **Review AGENT-ARCHITECTURE.md** - Understand agent roles, communication, concurrency control
 3. **Set up environment** - Configure variables per `README.md`
 4. **Test with single deliverable** - Run complete workflow end-to-end

@@ -2,7 +2,7 @@
 name: "Zazz Board API"
 type: "rule"
 description: "Required API skill for all agents to communicate and manage deliverables"
-required_for: ["coordinator", "worker", "qa", "spec-builder"]
+required_for: ["planner", "coordinator", "worker", "qa", "spec-builder"]
 ---
 
 # Zazz Board API (Required Rule Skill)
@@ -21,6 +21,7 @@ The Zazz Board API provides REST endpoints for managing deliverables and tasks. 
 - Posting task comments and questions
 - Updating task status
 - Managing task relations (dependencies)
+- **Agent pub/sub (MVP):** Redis pub/sub backend exposed via API endpoints—heartbeat, agent status, agent-to-agent messaging
 
 ---
 
@@ -221,6 +222,19 @@ Fetch all comments for a task.
   }
 ]
 ```
+
+---
+
+## Agent Pub/Sub (MVP)
+
+Redis pub/sub backend, exposed via Zazz Board API endpoints. Agents **pull/subscribe** via the API to receive events. Use cases:
+
+- **Plan approval**: When a deliverable's plan is approved, an event is published. The Coordinator subscribes and picks up plan approval messages to create the initial task graph.
+- **Heartbeat**: Publish `last_ping` every ~10 seconds; others detect crashes via timeout
+- **Agent status**: Publish IDLE, EXECUTING, BLOCKED, WAITING
+- **Agent-to-agent messaging**: Questions, escalations, responses (alternative to polling task comments)
+
+Exact endpoint paths TBD; see Swagger at `{ZAZZ_API_BASE_URL}/docs` when implemented.
 
 ---
 

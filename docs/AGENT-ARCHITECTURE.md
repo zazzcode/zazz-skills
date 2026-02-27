@@ -2,7 +2,7 @@
 
 Supplemental documentation for Zazz methodology covering agent orchestration, communication, and control mechanisms.
 
-The Zazz workflow operates on a **SPEC-driven** foundation where a clear Deliverable Specification defines requirements, and a detailed Implementation Plan decomposes the SPEC into executable tasks. Agents work collaboratively to execute the PLAN, refining it as learning occurs.
+The Zazz workflow operates on a **SPEC-driven** foundation where a clear Deliverable Specification defines requirements, and a detailed Implementation Plan decomposes the SPEC into executable tasks. **Test-driven development (TDD)** is embedded throughout—every deliverable and task has well-defined test requirements and acceptance criteria. Agents work collaboratively to execute the PLAN, refining it as learning occurs.
 
 ---
 
@@ -15,7 +15,7 @@ Zazz methodology defines two types of skills:
 These are **methodology requirements** that ALL agents must follow:
 
 **zazz-board-api** (type: `rule`)
-- Required by: All agents (coordinator, worker, qa, spec-builder)
+- Required by: All agents (planner, coordinator, worker, qa, spec-builder)
 - Purpose: Defines the communication API and how to use it
 - Not optional—without this, agents cannot coordinate
 
@@ -23,7 +23,8 @@ These are **methodology requirements** that ALL agents must follow:
 
 These define an agent's responsibilities:
 
-- **coordinator-agent** - Orchestration and planning
+- **planner-agent** - One-shot SPEC decomposition into PLAN
+- **coordinator-agent** - Execution coordination (task creation, handoff, adjustments)
 - **worker-agent** - Task execution
 - **qa-agent** - Quality verification
 - **spec-builder-agent** - Requirements gathering
@@ -34,12 +35,12 @@ Each agent loads its one role skill, plus all required rule skills.
 
 ## 2. Overview
 
-The Zazz Board workflow operates as an **agent swarm** where multiple LLM agents (Coordinator, Worker(s), QA) work collaboratively on a single deliverable. Each agent:
-- Has **independent context** and role-specific system prompts
+The Zazz Board provides two separate kanban boards: the **Deliverable Board** (for Deliverable Owner and humans) and the **Task Board** (for agents). Agents work from the Task Board; do not confuse the two. The workflow operates as an **agent swarm** where multiple LLM agents (Planner, Coordinator, Worker(s), QA) work collaboratively on a single deliverable. The Planner runs one-shot for decomposition; the Coordinator takes over once execution starts. Each deliverable has **one git worktree and branch**—all agents work against the same worktree. Each agent:
+- Has **independent context** and role-specific system prompts; worker context is cleared between tasks; QA context is fresh per evaluation
 - Runs as a **separate LLM instance** (not sub-agents sharing context)
 - Communicates via **explicit message passing**
-- Operates on a **shared worktree/branch** on a single laptop or server
-- Works from **shared SPEC and PLAN documents** stored in project repo/shared drive
+- Operates on the **shared worktree/branch** for that deliverable (single laptop or server)
+- Works from **shared SPEC and PLAN documents** stored in the worktree
 
 ---
 
@@ -64,68 +65,83 @@ Each agent invocation must be **independent** with distinct system prompts and m
 
 ## 4. Agent Roles and Responsibilities
 
-### Coordinator Agent (Planner & Orchestrator)
+### Planner Agent (One-Shot Decomposition)
 
 **System Prompt Characteristics:**
-- Strategic thinker; decomposes SPEC into PLAN with detailed task definitions
-- Creates task graph respecting dependencies and parallelization
+- Decomposes SPEC into manageable chunks, phased and sequenced
+- Assigns files to tasks using file names and conventions
+- Identifies parallel sequences where tasks can run without impacting the same files
+- Maps SPEC AC and test requirements to each task
+- Outputs PLAN.md; does not participate in execution
+
+**Memory/Context:**
+- Approved {deliverable-name}-SPEC.md
+- STANDARDS.md (for file conventions, project structure)
+- Project file structure
+
+**Responsibilities:**
+- Read SPEC completely
+- Decompose into phases and steps
+- Assign files to tasks; identify parallel sequences
+- Define DEPENDS_ON and COORDINATES_WITH
+- Produce {deliverable-name}-PLAN.md
+- **Trigger:** Invoked when Owner requests a plan (e.g., after SPEC approval)
+
+### Coordinator Agent (Execution Orchestrator)
+
+**System Prompt Characteristics:**
+- Takes over once execution starts (after plan approval)
+- Creates tasks from PLAN via API; hands out tasks to workers
 - Monitors task completion; detects blockers and escalations
-- Responds to worker questions or escalates to human
-- Creates rework sub-plans for complex issues
-- Enforces dependency rules and file conflict avoidance
-- Adapts PLAN as learning occurs during development
+- Responds to worker questions or escalates to Deliverable Owner
+- Creates rework tasks from QA content
+- Adjusts PLAN when change mechanism invoked; documents in Change Notes
 
 **Memory/Context:**
 - Current deliverable ID, project code
-- Approved {deliverable-name}-SPEC.md
-- Working {deliverable-name}-PLAN.md with phases and steps
+- Approved {deliverable-name}-PLAN.md (from Planner)
 - Task graph (nodes, edges, status, test requirements)
 - Communication log with workers and QA
 - Pending escalations and decisions
 - Change Notes tracking decisions made during execution
 
 **Responsibilities:**
-- Receive approved SPEC
-- Decompose SPEC into detailed PLAN with task definitions
-- Create task graph with dependencies (DEPENDS_ON, COORDINATES_WITH)
-- Create only independent tasks initially; create dependent tasks as progress allows
-- Fetch and cache Reference Architecture and OpenAPI specs
-- Respond to worker questions and escalate ambiguous issues
-- Monitor task progress and refine PLAN based on learning
-- Create rework sub-plans when QA escalates complex issues
+- Subscribe to plan approval events; create tasks from PLAN via API
+- Hand out tasks to workers; add follow-on tasks as prerequisites complete
+- Monitor task progress; adjust PLAN when warranted (document in Change Notes)
+- Create rework tasks when QA provides content
 - Document all decisions in PLAN Change Notes
-- Escalate scope changes or architecture questions to human
-- Update agent-state.json heartbeat
+- Escalate scope changes or architecture questions to Deliverable Owner
+- Update heartbeat via Zazz Board API (pub/sub)
 
 ### Worker Agent(s) (Implementers)
 
 **System Prompt Characteristics:**
 - Execution-focused; follows task instructions precisely
 - Understands test-driven development; writes/runs tests for every task
-- Asks Coordinator questions when prompt/AC is unclear
+- Asks Deliverable Owner questions when prompt/AC is unclear
 - Respects task dependencies and file locks
 - Commits atomically after each task
 - Reports completion or blockers immediately
 
 **Memory/Context:**
 - Current task (goal, instructions, AC, test requirements)
-- Reference Architecture (tech stack, frameworks, patterns)
+- Sequence of tasks that do not have parallelizable nodes; allows more efficient single-agent implementation on a set of related tasks
+- STANDARDS.md (tech stack, frameworks, patterns)
 - Deliverable SPEC (for context on what's being built)
 - Recent code changes and commit history
-- Questions/clarifications from Coordinator
 
 **Responsibilities:**
-- Poll for tasks with status TO_DO and satisfied dependencies
+- Poll for tasks with status READY
 - Acquire file locks before editing
 - Implement per task instructions and acceptance criteria
 - Execute task based on type (code, test creation, test execution)
 - Create and run unit tests; create API/E2E tests as required by PLAN
-- Ensure all tests pass before marking task complete
-- Ask Coordinator questions if prompt is ambiguous
+- Ensure all tests pass before signaling ready for QA
+- Ask Deliverable Owner questions if prompt is ambiguous
 - Commit changes with format: `TASK-{id}: {description} [{agent_id}]`
-- Update task status to COMPLETED via API
-- Release file locks after commit
-- Update agent-state.json heartbeat
+- Signal "ready for QA" (update task status to QA via API); locks transfer to task—worker does not release them
+- Update heartbeat via Zazz Board API (pub/sub)
 
 ### QA Agent (Verifier & Reviewer)
 
@@ -138,12 +154,13 @@ Each agent invocation must be **independent** with distinct system prompts and m
 - Ensures all commits are in place and tests passing before PR
 
 **Memory/Context:**
+- **Fresh context per evaluation**—each task evaluation and final deliverable review start with cleared context; no accumulation across evaluations
 - Deliverable {deliverable-name}-SPEC.md with all AC
 - Implementation {deliverable-name}-PLAN.md
 - All test results (unit, API, E2E, performance, security)
 - Code analysis findings and evidence
 - Rework tasks created and their status
-- Requestor expectations and context
+- Deliverable Owner expectations and context
 
 **Responsibilities:**
 - Wait for Coordinator signal that all tasks are COMPLETED
@@ -154,152 +171,48 @@ Each agent invocation must be **independent** with distinct system prompts and m
 - Document all test evidence and AC verification
 - Create rework tasks for single isolated issues with failing test evidence
 - Escalate to Coordinator for complex/interdependent issues with test failure analysis
-- Interact with requestor (human) to confirm deliverable meets expectations
+- Interact with Deliverable Owner to confirm deliverable meets expectations
 - Ensure all files are committed before creating PR
 - Create PR from template with full evidence of AC verification and test results
 - Update deliverable status to IN_REVIEW
-- Update agent-state.json heartbeat
 
 ---
 
-## 5. Inter-Agent Communication Architecture
+## 5. Inter-Agent and Deliverable Owner Communication Architecture
 
-### Primary Channel (MVP): Terminal Human↔Agent Interaction
+### Primary Channel (MVP): Terminal Deliverable Owner↔Agent Interaction
 
 **MVP interaction model:**
-- Human and agents coordinate primarily through terminal prompts and responses
-- Decisions made in terminal interaction are summarized and posted to Zazz Board task notes/comments
+- Deliverable Owner and agents coordinate primarily through terminal prompts and responses
+- Decisions made in terminal interaction are summarized and posted to Task Board task notes/comments
 - Task notes/comments serve as the durable audit trail while API orchestration is maturing
 
 ### Target Channel: Zazz Board API
 
 **Task Comments & Notes (target state):**
 - Worker posts questions as task comments via API
-- Coordinator responds with decisions in same thread
+- Deliverable Owner responds with decisions in same thread
 - All communications timestamped and logged
 - Provides audit trail for escalations
 
 **Task Status Flags:**
 - `TO_DO` – Ready to be picked up
 - `IN_PROGRESS` – Agent actively working
-- `BLOCKED` – Worker awaiting clarification
+- `BLOCKED` – Worker awaiting clarification (state; task stays in context, no Blocked column on board)
 - `COMPLETED` – Task finished; ready for next phase
-- `ESCALATED` – Requires human intervention
 
 **Custom Fields (Optional):**
 - `assigned_to_agent` – Which agent owns this task
-- `awaiting_response_from` – Which agent worker is waiting for
-- `escalation_reason` – Why escalated (design decision, ambiguity, etc.)
 - `files_modified` – List of files changed by this task
 
-### Secondary Channel: Shared Local State Files
+### Slack Channel (When Supported)
 
-For single laptop/server deployments, use file-based messaging to supplement API.
+When the framework supports Slack integration:
+- **Only the Coordinator agent has a Slack account** — Workers and QA do not have their own Slack accounts
+- **All agent-to-Owner communication flows through the Coordinator** — Worker questions, QA escalations, and status updates are relayed to the Coordinator; the Coordinator posts to Slack and relays Owner responses back to the originating agent
+- This design minimizes the number of Slack accounts to maintain (one per Coordinator instance)
 
-#### `.zazz/agent-state.json`
 
-Shared state snapshot showing active agents and their current status.
-
-```json
-{
-  "deliverable_id": "DEL-001",
-  "project_code": "APP",
-  "branch": "zazz/DEL-001",
-  "task_graph_hash": "abc123xyz",
-  "pending_escalations": 0,
-  "agents": {
-    "coordinator": {
-      "status": "polling",
-      "last_ping": "2026-02-19T00:42:58Z",
-      "current_activity": "creating_dependent_tasks"
-    },
-    "worker_1": {
-      "status": "executing",
-      "last_ping": "2026-02-19T00:42:50Z",
-      "current_activity": "task_5",
-      "locked_files": ["src/auth.ts"]
-    },
-    "worker_2": {
-      "status": "idle",
-      "last_ping": "2026-02-19T00:42:30Z",
-      "current_activity": null,
-      "locked_files": []
-    },
-    "qa": {
-      "status": "waiting",
-      "last_ping": "2026-02-19T00:42:55Z",
-      "current_activity": "waiting_for_all_tasks_completion",
-      "locked_files": []
-    }
-  }
-}
-```
-
-#### `.zazz/agent-messages.json`
-
-Queue of inter-agent messages for rapid communication.
-
-```json
-[
-  {
-    "id": "msg-001",
-    "from": "worker_1",
-    "to": "coordinator",
-    "type": "question",
-    "task_id": "TASK-5",
-    "content": "Should we use async/await or promises for this API call?",
-    "timestamp": "2026-02-19T00:42:00Z",
-    "status": "awaiting_response"
-  },
-  {
-    "id": "msg-002",
-    "from": "coordinator",
-    "to": "worker_1",
-    "type": "answer",
-    "reply_to": "msg-001",
-    "content": "Use async/await; see tech spec section 3.2 for error handling pattern.",
-    "timestamp": "2026-02-19T00:42:30Z",
-    "status": "acknowledged"
-  },
-  {
-    "id": "msg-003",
-    "from": "qa",
-    "to": "coordinator",
-    "type": "escalation",
-    "task_id": null,
-    "content": "Found 3 interdependent issues requiring refactor of auth flow. Need rework plan.",
-    "timestamp": "2026-02-19T00:43:00Z",
-    "status": "pending"
-  }
-]
-```
-
-#### `.zazz/agent-locks.json`
-
-File-level locks to prevent concurrent edits and merge conflicts.
-
-```json
-{
-  "locked_files": [
-    {
-      "path": "src/auth.ts",
-      "locked_by": "worker_1",
-      "task_id": "TASK-3",
-      "lock_acquired": "2026-02-19T00:42:00Z",
-      "lock_expires": "2026-02-19T00:52:00Z",
-      "reason": "implementing JWT validation"
-    },
-    {
-      "path": "src/middleware/cors.ts",
-      "locked_by": "worker_2",
-      "task_id": "TASK-7",
-      "lock_acquired": "2026-02-19T00:42:15Z",
-      "lock_expires": "2026-02-19T00:50:15Z",
-      "reason": "adding CORS headers"
-    }
-  ]
-}
-```
 
 #### `.zazz/audit.log`
 
@@ -330,9 +243,9 @@ This section describes **target-state API-driven orchestration**. In MVP mode, c
 LOOP every 10 seconds:
   1. Poll task API: GET /projects/:code/deliverables/:id/tasks
   2. Check for BLOCKED tasks (worker questions)
-  3. Check agent-messages.json for new questions or escalations
-  4. Respond to questions or escalate to human
-  5. Update agent-state.json heartbeat
+  3. Check pub/sub (Zazz Board API) for new questions or escalations
+  4. Respond to questions or escalate to Deliverable Owner
+  5. Update heartbeat via Zazz Board API (pub/sub)
   6. If all tasks COMPLETED → signal QA to start
 ```
 
@@ -341,34 +254,40 @@ LOOP every 10 seconds:
 
 ```
 LOOP every 15 seconds:
-  1. Check agent-messages.json for responses to my questions
+  1. Check pub/sub (Zazz Board API) for responses to my questions
   2. If BLOCKED task has response → clear BLOCKED, resume work
   3. Poll task API for tasks with status TO_DO and satisfied dependencies
   4. If task available and no file lock conflicts → pick up task
   5. Acquire file locks for files I need to edit
   6. Execute task, commit, release locks
-  7. Update agent-state.json heartbeat
+  7. Update heartbeat via Zazz Board API (pub/sub)
 ```
 
 ### QA Polling
 
 ```
 LOOP every 20 seconds:
-  1. Check agent-state.json: are all workers idle?
+  1. Check pub/sub (Zazz Board API): are all workers idle?
   2. Poll task API: are all tasks COMPLETED?
   3. If yes → start QA phase:
      a. Run tests
      b. Analyze code
      c. Create rework tasks or escalate to Coordinator
   4. If all QA checks pass → create PR
-  5. Update agent-state.json heartbeat
+  5. Update heartbeat via Zazz Board API (pub/sub)
 ```
 
 ---
 
 ## 7. Concurrency Control & File Conflict Avoidance
 
-### File Lock Mechanism
+### Shared Worktree
+
+Each deliverable has one git worktree and branch. All agents (Coordinator, Workers, QA) work in the same worktree. File locks are **task-level** (tied to the task and its rework chain, not the worker); locks are held until QA signs off. The Coordinator minimizes file overlap and uses DEPENDS_ON when tasks must share files. When a worker is blocked by a file locked by another task (in QA or rework), the task shows **blocked** status—displayed on both the **task card** (Task Board) and **task node** (Task Graph) with a yellow outline. Workers are released when ready for QA; the task is not complete until QA signs off. Rework task content is authored by QA so any worker can fix without prior context.
+
+### File Lock Mechanism (Task-Level)
+
+Locks are tied to the **task** (and its rework chain), not the worker. When a worker signals "ready for QA," locks transfer to the task and are held until QA signs off. Rework tasks inherit the same locks as the original task. **Blocked display**: When a worker is blocked by a file locked by another task (in QA or rework), show blocked clearly on both task card and task node (yellow outline).
 
 **Lock Acquisition (before editing file):**
 
@@ -402,14 +321,17 @@ def acquire_lock(file_path, agent_id, task_id, timeout_minutes=10):
     return True, "Lock acquired"
 ```
 
-**Lock Release (after commit):**
+**Lock Release (when QA signs off):**
+
+Locks are released when QA signs off on the task (or its final rework), not when the worker commits. The worker transfers lock ownership to the task when signaling ready for QA.
 
 ```python
-def release_lock(file_path, agent_id):
+def release_locks_for_task(task_id):
+    """Called when QA signs off on task. Releases all locks held by that task."""
     locks = read_json('.zazz/agent-locks.json')
     locks['locked_files'] = [
         lock for lock in locks['locked_files'] 
-        if not (lock['path'] == file_path and lock['locked_by'] == agent_id)
+        if lock['task_id'] != task_id
     ]
     write_json('.zazz/agent-locks.json', locks)
 ```
@@ -446,9 +368,9 @@ def release_lock(file_path, agent_id):
 
 **1. Coordinator Initializes:**
 ```
-1. Human or API triggers: "Start deliverable DEL-001"
+1. Deliverable Owner or API triggers: "Start deliverable DEL-001"
 2. Coordinator reads deliverable, SPEC, and PLAN from API
-3. Coordinator creates `.zazz/agent-state.json` with deliverable context
+3. Coordinator publishes deliverable context via Zazz Board API (pub/sub)
 4. Coordinator fetches OpenAPI spec from {API_BASE_URL}/docs/json
 5. Coordinator writes spec to `.zazz/api-spec.json`
 6. Coordinator creates task graph via API (POST tasks with relations)
@@ -458,7 +380,7 @@ def release_lock(file_path, agent_id):
 
 **2. Workers Initialize:**
 ```
-1. Read `.zazz/agent-state.json` to learn deliverable, branch, task graph
+1. Subscribe to pub/sub (Zazz Board API) for deliverable, branch, task graph
 2. Fetch local AGENTS.md and tech specs
 3. Initialize empty `.zazz/agent-locks.json` if not exists
 4. Begin polling for tasks
@@ -468,7 +390,7 @@ def release_lock(file_path, agent_id):
 ```
 1. Read deliverable acceptance criteria from API
 2. Prepare test environment (install deps, setup DB, etc.)
-3. Set status to "waiting" in agent-state.json
+3. Set status to "waiting" via Zazz Board API (pub/sub)
 4. Wait for Coordinator signal (all tasks COMPLETED)
 ```
 
@@ -478,9 +400,9 @@ def release_lock(file_path, agent_id):
 ```
 1. Mark deliverable status:
    - IN_REVIEW if QA passed and PR created
-   - BLOCKED if escalation to human required
+   - BLOCKED if escalation to Deliverable Owner required
    - FAILED if critical error occurred
-2. Update agent-state.json with final status
+2. Publish final status via Zazz Board API (pub/sub)
 3. Archive logs to `.zazz/archive/DEL-001/`
 4. Signal all agents to reset (set status to IDLE)
 5. Coordinator resets own context
@@ -491,16 +413,17 @@ def release_lock(file_path, agent_id):
 1. Clear local context/memory (task details, code snippets, etc.)
 2. Release all file locks for this agent
 3. Remove temporary files (.zazz/tmp/)
-4. Update agent-state.json status to IDLE
+4. Update status to IDLE via Zazz Board API (pub/sub)
 5. Ready for next deliverable
 ```
 
-**3. Human Reviews:**
+**3. Deliverable Owner (Final Acceptance & PR Review):**
 ```
-1. Review PR if created
-2. Merge or request changes
-3. Decide on next deliverable
-4. Signal new Coordinator to start from Step 1
+1. Perform final acceptance that deliverable meets expectations
+2. Review PR if created
+3. Merge or request changes
+4. Decide on next deliverable
+5. Signal Coordinator to start from Step 1
 ```
 
 ---
@@ -510,16 +433,16 @@ def release_lock(file_path, agent_id):
 ### Heartbeat / Deadlock Detection
 
 **Heartbeat Rules:**
-- Each agent updates `last_ping` in `agent-state.json` every **10 seconds**
+- Each agent updates `last_ping` via Zazz Board API (pub/sub) every **10 seconds**
 - If agent's `last_ping` is older than threshold → assume crashed
 
 **Timeouts:**
-- **Coordinator timeout**: 60 seconds (Workers escalate to human if Coordinator unresponsive)
+- **Coordinator timeout**: 60 seconds (Workers escalate to Deliverable Owner if Coordinator unresponsive)
 - **Worker timeout**: 120 seconds (Coordinator reassigns task)
-- **QA timeout**: 120 seconds (Coordinator escalates to human)
+- **QA timeout**: 120 seconds (Coordinator escalates to Deliverable Owner)
 
 **Deadlock Detection:**
-- Task marked `BLOCKED` for > 5 minutes without Coordinator response → escalate to human
+- Task marked `BLOCKED` for > 5 minutes without Coordinator response → escalate to Deliverable Owner
 - Circular dependency detected in task graph → Coordinator re-plans (should not happen; indicates planning error)
 - File lock held for > 2x expected task duration → Coordinator investigates and may force release
 
@@ -527,14 +450,14 @@ def release_lock(file_path, agent_id):
 
 **All inter-agent communications logged to:**
 - Zazz Board API task comments (primary, persistent)
-- `.zazz/agent-messages.json` (secondary, temporary)
+- Zazz Board API pub/sub (agent state, heartbeat, agent-to-agent messages)
 - `.zazz/audit.log` (timestamped events, append-only)
 
 **Audit log includes:**
 - Task creation/update/completion events
 - Agent status changes (idle → executing → blocked → completed)
 - File locks acquired/released
-- Escalations and human decisions
+- Escalations and Deliverable Owner decisions
 - Test results and QA findings
 - Git commits with task IDs
 
@@ -546,11 +469,11 @@ def release_lock(file_path, agent_id):
 
 **If Coordinator crashes:**
 ```
-1. Workers detect missing heartbeat (last_ping > 60 sec ago)
+1. Workers detect missing heartbeat (last_ping > 60 sec ago via pub/sub)
 2. Workers mark their current tasks as BLOCKED with reason "Coordinator unavailable"
 3. Workers log escalation to `.zazz/audit.log`
-4. Human or failover Coordinator instance restarts
-5. New Coordinator reads agent-state.json to resume deliverable
+4. Deliverable Owner or failover Coordinator instance restarts
+5. New Coordinator reads deliverable context from API (pub/sub) to resume
 6. Coordinator reviews BLOCKED tasks and reassigns or answers
 ```
 
@@ -579,7 +502,7 @@ def release_lock(file_path, agent_id):
 1. Workers commit to branch; git attempts auto-merge
 2. If conflict detected → Worker marks task as BLOCKED, notifies Coordinator
 3. Coordinator assigns conflict resolution to QA or specialized worker
-4. If unresolvable → escalate to human with conflict details
+4. If unresolvable → escalate to Deliverable Owner with conflict details
 ```
 
 **Task state conflicts (race conditions):**
@@ -587,7 +510,7 @@ def release_lock(file_path, agent_id):
 1. If two agents update same task status simultaneously → API returns 409 Conflict
 2. Loser agent retries after reading latest task state
 3. Coordinator resolves by checking timestamps; uses most recent valid state
-4. If ambiguity → Coordinator escalates to human
+4. If ambiguity → Coordinator escalates to Deliverable Owner
 ```
 
 **Lock conflicts:**
@@ -606,34 +529,35 @@ def release_lock(file_path, agent_id):
 
 ### Task Design
 1. **Task prompts should be self-contained** – Workers should not need to ask Coordinator basic questions
-2. **Include explicit acceptance criteria** – Each criterion should be testable
-3. **Provide code examples** – Show expected patterns, not just descriptions
-4. **Limit task scope** – One task = one file or one coherent feature slice
-5. **Declare file dependencies upfront** – List files to be edited in task prompt
+2. **Include explicit acceptance criteria** – Each criterion should be testable (TDD: if it can't be tested, it isn't well-specified)
+3. **Include test requirements** – Specify what tests to create and run per task; no task complete until tests pass
+4. **Provide code examples** – Show expected patterns, not just descriptions
+5. **Limit task scope** – One task = one file or one coherent feature slice
+6. **Declare file dependencies upfront** – List files to be edited in task prompt
 
 ### Communication
-6. **Coordinator should poll frequently** – Every 10-30 seconds to catch blockers early
-7. **Workers should ask questions immediately** – Don't guess; clarify unclear prompts
-8. **Log all decisions** – Update task comments via API for audit trail
-9. **Escalate ambiguity, don't guess** – If unclear, ask Coordinator; if Coordinator unclear, escalate to human
+7. **Coordinator should poll frequently** – Every 10-30 seconds to catch blockers early
+8. **Workers should ask questions immediately** – Don't guess; clarify unclear prompts
+9. **Log all decisions** – Update task comments via API for audit trail
+10. **Escalate ambiguity, don't guess** – If unclear, ask Coordinator; if Coordinator unclear, escalate to Deliverable Owner
 
 ### Concurrency
-10. **Lock timeouts should be generous** – If task takes ~5 min, set expiry to 10 min
-11. **Commit frequently** – Workers commit after each task to minimize loss on crash
-12. **Avoid over-parallelization** – Don't spawn 10 workers if only 3 independent tasks exist
-13. **Monitor file contention** – If >2 tasks need same file, create dependencies
+11. **Lock timeouts should be generous** – If task takes ~5 min, set expiry to 10 min
+12. **Commit frequently** – Workers commit after each task to minimize loss on crash
+13. **Avoid over-parallelization** – Don't spawn 10 workers if only 3 independent tasks exist
+14. **Monitor file contention** – If >2 tasks need same file, create dependencies
 
-### Quality Assurance
-14. **QA should run tests in isolation** – Use test timeouts to prevent hanging
-15. **QA analyzes code, not just tests** – Check performance, security, best practices
-16. **Create detailed rework tasks** – Include reproduction steps, expected vs. actual
-17. **Escalate complex issues early** – Don't create 5 interdependent rework tasks; ask Coordinator to re-plan
+### Quality Assurance (TDD)
+15. **QA should run tests in isolation** – Use test timeouts to prevent hanging
+16. **QA verifies via test evidence** – Base conclusions on test results, not assumptions
+17. **Create detailed rework tasks** – Include failing test that demonstrates the issue; fix verified when test passes
+18. **Escalate complex issues early** – Don't create 5 interdependent rework tasks; ask Coordinator to re-plan
 
 ### Reliability
-18. **Agents should never auto-retry decisions** – Always escalate ambiguity
-19. **Heartbeats are non-negotiable** – Update every 10 sec or risk being marked crashed
-20. **Clean up on shutdown** – Release locks, archive logs, reset state
-21. **Design for idempotency** – Tasks and tests should be safely re-runnable
+19. **Agents should never auto-retry decisions** – Always escalate ambiguity
+20. **Heartbeats are non-negotiable** – Update every 10 sec or risk being marked crashed
+21. **Clean up on shutdown** – Release locks, archive logs, reset state
+22. **Design for idempotency** – Tasks and tests should be safely re-runnable
 
 ---
 
@@ -676,12 +600,11 @@ export FILE_LOCK_TIMEOUT_MIN=10
 - [ ] Write system prompts for Coordinator, Worker, QA roles
 - [ ] Implement polling loops (10-30 sec intervals)
 - [ ] Implement file lock mechanism (`.zazz/agent-locks.json`)
-- [ ] Implement message queue (`.zazz/agent-messages.json`)
-- [ ] Implement heartbeat monitoring (`.zazz/agent-state.json`)
+- [ ] Implement pub/sub via Zazz Board API (agent state, heartbeat, agent-to-agent messages)
 - [ ] Implement audit logging (`.zazz/audit.log`)
 - [ ] Create Zazz Board API client (fetch spec, CRUD tasks, post comments)
 - [ ] Handle agent crash recovery (timeout detection, task reassignment)
-- [ ] Add escalation paths (worker→coordinator, QA→coordinator, coordinator→human)
+- [ ] Add escalation paths (worker→coordinator, QA→coordinator, coordinator→Deliverable Owner)
 - [ ] Test with single deliverable, single worker
 - [ ] Test with multiple workers (parallelization)
 - [ ] Test with file lock conflicts (concurrent edits)
@@ -701,7 +624,7 @@ export FILE_LOCK_TIMEOUT_MIN=10
 5. **WebSocket communication** – Replace polling with real-time push notifications
 6. **Distributed deployment** – Multiple laptops/servers coordinating via API (not local files)
 7. **Agent performance metrics** – Track task completion time, question frequency, rework rate
-8. **Human-in-loop UI** – Dashboard showing agent status, task graph, escalations
+8. **Deliverable Owner-in-loop UI** – Dashboard showing agent status, task graph, escalations
 
 ---
 
@@ -711,7 +634,7 @@ export FILE_LOCK_TIMEOUT_MIN=10
 
 ```mermaid
 graph TD
-    START[Human: Select Deliverable] --> COORDINATOR_INIT[Coordinator: Initialize & Create Task Graph]
+    START[Deliverable Owner: Select Deliverable] --> COORDINATOR_INIT[Coordinator: Initialize & Create Task Graph]
     COORDINATOR_INIT --> WORKERS[Workers: Poll for Tasks]
     WORKERS --> EXEC{Execute Task}
     EXEC -->|Question| ASK[Worker: Ask Coordinator]
@@ -739,19 +662,20 @@ sequenceDiagram
     participant W1 as Worker 1
     participant W2 as Worker 2
     participant Q as QA
-    participant State as .zazz/agent-state.js    loop Every 10 seconds
-        C->>State: Update last_ping
-        W1->>State: Update last_ping
-        W2->>State: Update last_ping
-        Q->>State: Update last_ping
+    participant API as Zazz Board API (pub/sub)
+    loop Every 10 seconds
+        C->>API: Update last_ping
+        W1->>API: Update last_ping
+        W2->>API: Update last_ping
+        Q->>API: Update last_ping
     end
 
     Note over W2: Worker 2 crashes
 
-    C->>State: Check heartbeats
+    C->>API: Check heartbeats
     C->>C: Detect W2 timeout (120s)
-    C->>State: Mark W2 as CRASHED
-    C->>State: Release W2 file locks
+    C->>API: Mark W2 as CRASHED
+    C->>API: Release W2 file locks
     C->>C: Reassign W2's task to W1
 ```
 
