@@ -1,6 +1,6 @@
 # The Zazz Framework
 
-An opinionated, spec-driven framework for organizing software development with AI agents. It provides terminology, workflow, tools, and document management for coordinating deliverables from specification through implementation and review.
+An opinionated, spec-driven framework for delivering software from spec to ship with AI agents. It provides terminology, workflow, tools, and document management for coordinating deliverables from specification through implementation and review.
 
 ---
 
@@ -8,7 +8,7 @@ An opinionated, spec-driven framework for organizing software development with A
 
 **Zazz** is both a framework for multi-agent software development and a task/deliverable management application (Zazz Board). The framework provides shared **terminology**, **workflow**, **tools**, and **document management** that enable AI agents to work autonomously and collaboratively on software deliverables.
 
-A project or software product is an **succession of deliverables**. Greenfield projects typically start with a handful of deliverables in order to generate an MVP; as the product grows in size and complexity, subsequent deliverables become new features, enhancements to existing features, or refactors. This progression shapes the mix of deliverable types over the product lifecycle.
+In Zazz, a *project* is a software product or application built as a succession of deliverables. Greenfield projects typically start with a handful of deliverables in order to generate an MVP; as the product grows in size and complexity, subsequent deliverables become new features, enhancements to existing features, bug-fixes, or refactors. This progression shapes the mix of deliverable types over the product lifecycle.
 
 The core underpinning is a **kanban-like process** driven from specification documents and implementation plans, with **test-driven development (TDD)** embedded throughout. Work flows through defined stages—from specification through planning, implementation, verification, and review—with clear handoffs, explicit acceptance criteria, and test requirements at each step.
 
@@ -18,7 +18,9 @@ The core underpinning is a **kanban-like process** driven from specification doc
 
 ### Spec-Driven Development
 
-The Zazz framework prioritizes **clear specification** and **detailed planning** as the foundation for autonomous development. Requirements are captured before implementation begins; acceptance criteria are explicit and testable. This creates a source of truth that agents and humans can reference throughout the lifecycle. The overarching expectation is that the SPEC and PLAN, once approved, should not require changes during development. The framework nevertheless provides a **change mechanism** for flexibility when needed—discovery, Owner feedback, or iterative refinement (e.g., UI) may warrant updates. When changes occur: the Coordinator keeps the PLAN aligned with reality and documents updates in Change Notes; SPEC changes require Owner sign-off and must be recorded in the SPEC's Change Notes section. The Coordinator supports maintaining this audit trail. When deviations accumulate beyond a reasonable threshold, the Deliverable Owner may choose to abandon the current worktree and create a new deliverable with a refined spec, treating the first iteration as a prototype or learning experience rather than continuing to iterate in place.
+Zazz is built around **intent engineering**: specifications define the desired outcome or intent, not prescriptive rules for how to build. Agents determine the *how* within the guardrails defined in project standards; the spec defines the *what*. TDD verifies that the intent is satisfied—if the tests pass, the outcome is achieved.
+
+The framework prioritizes **clear specification** and **detailed planning** as the foundation for autonomous development. Requirements are captured before implementation begins; acceptance criteria are explicit and testable. This creates a source of truth that agents and humans can reference throughout the lifecycle. The overarching expectation is that the SPEC and PLAN, once approved, should not require changes during development. The framework nevertheless provides a **change mechanism** for flexibility when needed—discovery, Owner feedback, or iterative refinement (e.g., UI) may warrant updates. When changes occur: the Coordinator keeps the PLAN aligned with reality and documents updates in Change Notes; SPEC changes require Owner sign-off and must be recorded in the SPEC's Change Notes section. The Coordinator supports maintaining this audit trail. When deviations accumulate beyond a reasonable threshold, the Deliverable Owner may choose to abandon the current worktree and create a new deliverable with a refined spec, treating the first iteration as a prototype or learning experience rather than continuing to iterate in place.
 
 **Testing is not an afterthought.** Test requirements (unit, API, E2E, performance, security) are woven throughout the workflow from specification to task completion.
 
@@ -45,7 +47,7 @@ The Zazz framework prioritizes **clear specification** and **detailed planning**
 | **Rework**         | Rework tasks include the failing test that demonstrates the issue. Fix is verified when that test passes.                                                                            |
 
 
-**Test types:** Unit (function/method), API (integration), E2E (user flows), performance (thresholds), security (scanning). The SPEC and PLAN specify which apply; STANDARDS.md defines tooling and patterns.
+**Test types:** Unit (function/method), API (integration), E2E (user flows), performance (thresholds), security (scanning). The SPEC and PLAN specify which apply; project standards define tooling and patterns.
 
 **Where TDD lives: SPEC vs PLAN**
 
@@ -67,24 +69,24 @@ The Zazz framework prioritizes **clear specification** and **detailed planning**
 Zazz makes deliberate choices about how work is structured:
 
 - **Document ownership**—Each document has a designated owner. When the change mechanism is invoked, revisions are tracked; the Coordinator supports the audit trail.
-  - **STANDARDS.md** — Project Owner
+  - **Project standards** (.zazz/standards/) — Project Owner
   - **Deliverable Specification** — Deliverable Owner (with spec-builder-agent assistance); revisions require Owner sign-off and must be noted in the document's Change Notes section
   - **Implementation Plan** — Planner creates the initial draft; Coordinator updates during execution; changes tracked in Change Notes
 - **Single writer per file**—enforced via task-level file locks to prevent concurrent edits
-- **Explicit dependencies**—tasks declare DEPENDS_ON and COORDINATES_WITH; no circular dependencies
-- **Independent agent contexts**—each agent has its own system prompt and memory; no shared context window
-- **Worker context is per-task**—a worker agent's context is scoped to a single task. For each new task, the worker's context is cleared. Tasks can be sized as large or small as is reasonable for the LLM in use
+- **Explicit dependencies**—tasks declare DEPENDS_ON and COORDINATES_WITH; no circular dependencies.
+- **Independent agent contexts**—each agent has its own system prompt and memory; no shared context window.
+- **Worker context is per-task**—a worker agent's context is scoped to a single task. For each new task, the worker's context is cleared. Tasks can be sized as large or small as is reasonable for the LLM in use.
 - **QA context is fresh per evaluation**—each time the QA agent evaluates a task (or the final deliverable), it starts with fresh context. Inputs are SPEC, PLAN, task card, and code. No accumulation across evaluations; standard context window is sufficient.
-- **Escalate ambiguity**—agents never auto-retry unclear decisions; they ask or escalate to the Deliverable Owner
+- **Escalate ambiguity**—agents never auto-retry unclear decisions; they ask or escalate to the Deliverable Owner.
 - **No Blocked column**—Blocked is a *state*, not a column. A deliverable or task can be in a blocked state while remaining in its current column (e.g., In Progress). Never create a Blocked column on the board.
 
 These constraints reduce coordination overhead and make agent behavior predictable.
 
 ### Human vs Agent Separation
 
-Zazz clearly separates human and agent responsibilities. The **Deliverable Owner** is the human actor (product owner, stakeholder, or user) who focuses on **deliverables**. A project is a succession of deliverables—greenfield work typically begins with a handful of deliverables in order to generate an MVP; as the product matures, deliverables shift toward new features, enhancements, and refactors. All work is grouped under deliverables. The **Deliverable Board** displays deliverables as the primary unit of work for humans.
+Zazz clearly separates human and agent responsibilities. The **Deliverable Owner** is the human actor (product owner, stakeholder, or user) who focuses on **deliverables**. All work is grouped under deliverables; the **Deliverable Board** displays them as the primary unit of work for humans.
 
-The Deliverable Owner owns the *what*: they define requirements, approve the SPEC and PLAN, perform final acceptance that the deliverable meets expectations, and conduct PR review and merge. For AC that require human judgment (e.g., UI components, visual design, interaction feel), the Owner provides **in-loop sign-off**—QA coordinates with the Owner to verify these AC before marking tasks or the deliverable complete. The *how* is defined in the STANDARDS.md, SPEC, and PLAN; agents execute it—planning (Planner), implementing (Workers), verifying (QA), and coordinating (Coordinator). This separation ensures humans make product and scope decisions while agents execute within approved boundaries.
+The Deliverable Owner owns the *what*: they define requirements, approve the SPEC and PLAN, perform final acceptance that the deliverable meets expectations, and conduct PR review and merge. For AC that require human judgment (e.g., UI components, visual design, interaction feel), the Owner provides **in-loop sign-off**—QA coordinates with the Owner to verify these AC before marking tasks or the deliverable complete. The *how* is defined in the project standards (.zazz/standards/), SPEC, and PLAN; agents execute it—planning (Planner), implementing (Workers), verifying (QA), and coordinating (Coordinator). This separation ensures humans make product and scope decisions while agents execute within approved boundaries.
 
 **Two separate kanban boards:** The Deliverable Board is for the Deliverable Owner and human users; the Task Board is for agents. Do not confuse the two—each has its own workflow, columns, and audience.
 
@@ -93,41 +95,104 @@ The Deliverable Owner owns the *what*: they define requirements, approve the SPE
 ## Core Terminology
 
 
-| Term                                 | Definition                                                                                                                                                                                                                                                                                                                                                                                |
-| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **STANDARDS.md**                     | Project-level document defining the technical and functional context for all deliverables. Covers tech stack, language(s), database type, overall architecture, cloud provider, deployment model, testing tooling, and other project-wide specifications. Defined at the project level; only the Project Owner may revise it. Read-only reference for agents; SPEC and PLAN reference it. |
-| **Deliverable Specification (SPEC)** | Source-of-truth document defining requirements, acceptance criteria, and test requirements. Created as `{deliverable-name}-SPEC.md`. Intended to be stable at approval; when revisions are warranted, they require Owner sign-off and must be recorded in the document's Change Notes section.                                                                                            |
-| **Implementation Plan (PLAN)**       | Execution decomposition derived from the SPEC. Phases, steps, tasks, dependencies, file assignments, and test requirements. Created as `{deliverable-name}-PLAN.md` by the Planner. Intended to be complete at approval; when updates are warranted during development, the Coordinator keeps the PLAN aligned with reality and documents changes in Change Notes.                        |
-| **Project Owner**                    | The human actor who owns the project and its technical standards. Only the Project Owner may revise STANDARDS.md. May be the same person as the Deliverable Owner in smaller projects.                                                                                                                                                                                                    |
-| **Deliverable Owner**                | The human actor (product owner, stakeholder, or user) who owns deliverables. Defines requirements, approves SPEC and PLAN, performs final acceptance, and conducts PR review and merge. All work flows through the Deliverable Owner's lens.                                                                                                                                              |
-| **Project**                          | Top-level container for a software product. A project is a succession of deliverables. Holds `deliverable_status_workflow` (Deliverable Board columns) and `status_workflow` (Task Board columns).                                                                                                                                                                                        |
-| **Deliverable**                      | A unit of work on the Deliverable Board: a feature, bug fix, enhancement, refactor, chore, or documentation. ID format: `{PROJECT_CODE}-{int}`. Each has an approved SPEC and PLAN. Greenfield projects typically start with a handful of deliverables in order to generate an MVP; as the product grows, deliverables become new features, enhancements, or refactors.                   |
-| **Task**                             | A piece of work performed by an agent. Belongs to exactly one deliverable. Each task has two representations: a **task node** (on the Task Graph) and a **task card** (on the Task Board). They are the same task—one node corresponds to one card.                                                                                                                                       |
-| **Task Node**                        | A node on the Task Graph representing a task. Each task node corresponds to exactly one task card on the Task Board.                                                                                                                                                                                                                                                                      |
-| **Task Card**                        | A card on the Task Board representing a task. Contains the prompt (description, objectives, acceptance criteria, guidance) and references to STANDARDS.md, SPEC, and PLAN. Each task card corresponds to exactly one task node on the Task Graph.                                                                                                                                         |
-| **Task Graph**                       | A visualization of tasks being worked on by agents. Nodes represent tasks; edges represent dependencies. The Coordinator creates tasks via the Zazz Board API per the PLAN (created by the Planner) and hands them out to workers. The graph can branch, merge, and include coordination-style dependencies (e.g., two tasks must complete before a dependent can start).                 |
+| Term                                 | Definition                                                                                                                                                                                                                                                                                                                                                                |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Project standards**                | Atomic, project-level standards in `.zazz/standards/`. Indexed by `index.yaml`. Covers architecture, testing, tooling, languages, database, coding styles, patterns, security, observability, and other project-wide conventions. Read-only reference for agents; SPEC and PLAN reference standards.                                                                      |
+| **project.md**                       | Project overview in `.zazz/project.md`. High-level description of the application or product being built. Provides context for agents and humans.                                                                                                                                                                                                                         |
+| **Deliverable Specification (SPEC)** | Source-of-truth document defining requirements, acceptance criteria, and test requirements. Stored as `.zazz/deliverables/{deliverable-name}-SPEC.md`. Intended to be stable at approval; revisions require Owner sign-off and must be recorded in Change Notes.                                                                                                          |
+| **Implementation Plan (PLAN)**       | Execution decomposition derived from the SPEC. Phases, steps, tasks, dependencies, file assignments, and test requirements. Stored as `.zazz/deliverables/{deliverable-name}-PLAN.md`. Intended to be complete at approval; the Coordinator updates during execution and documents changes in Change Notes.                                                               |
+| **Project Owner**                    | The human actor who owns the project and its technical standards. May be the same person as the Deliverable Owner in smaller projects.                                                                                                                                                                                                                                    |
+| **Deliverable Owner**                | The human actor (product owner, stakeholder, or user) who owns deliverables. Defines requirements, approves SPEC and PLAN, performs final acceptance, and conducts PR review and merge. All work flows through the Deliverable Owner's lens.                                                                                                                              |
+| **Project**                          | Top-level container for a software product. A project is a succession of deliverables. Holds `deliverable_status_workflow` (Deliverable Board columns) and `status_workflow` (Task Board columns).                                                                                                                                                                        |
+| **Deliverable**                      | A unit of work on the Deliverable Board: a feature, bug fix, enhancement, refactor, chore, or documentation. ID format: `{PROJECT_CODE}-{int}`. Each has an approved SPEC and PLAN. Greenfield projects typically start with a handful of deliverables in order to generate an MVP; as the product grows, deliverables become new features, enhancements, or refactors.   |
+| **Task**                             | A piece of work performed by an agent. Belongs to exactly one deliverable. Each task has two representations: a **task node** (on the Task Graph) and a **task card** (on the Task Board). They are the same task—one node corresponds to one card.                                                                                                                       |
+| **Task Node**                        | A node on the Task Graph representing a task. Each task node corresponds to exactly one task card on the Task Board.                                                                                                                                                                                                                                                      |
+| **Task Card**                        | A card on the Task Board representing a task. Contains the prompt (description, objectives, acceptance criteria, guidance) and references to project standards, SPEC, and PLAN. Each task card corresponds to exactly one task node on the Task Graph.                                                                                                                    |
+| **Task Graph**                       | A visualization of tasks being worked on by agents. Nodes represent tasks; edges represent dependencies. The Coordinator creates tasks via the Zazz Board API per the PLAN (created by the Planner) and hands them out to workers. The graph can branch, merge, and include coordination-style dependencies (e.g., two tasks must complete before a dependent can start). |
 
 
-### Document Ownership and References
+### Document Ownership
 
-- **STANDARDS.md**: Project-level document; only the Project Owner may revise it. Read-only reference for agents. Defines project-wide technical and functional context (see [Project Standards](#project-standards-standardsmd) below).
-- **SPEC**: Only the Deliverable Owner may revise the SPEC, potentially with spec-builder-agent assistance. When revisions are warranted during development, they require Owner sign-off and must be noted in the SPEC's Change Notes section. The Coordinator supports maintaining this audit trail.
-- **PLAN**: The Planner creates the initial PLAN; only the Coordinator may update or revise the PLAN during execution. The PLAN is intended to be complete at approval; when updates are warranted during development, the Coordinator keeps it aligned with reality, verifies changes with the Deliverable Owner, and documents them in Change Notes. Tasks are checked off as they are completed.
-- **Task prompt**: References the STANDARDS.md, SPEC, and PLAN. For the MVP, all documents reside in the repo and are accessible to all agents.
 
-### Project Standards (STANDARDS.md)
+| Document                             | Owner             | Who may revise                                                                           |
+| ------------------------------------ | ----------------- | ---------------------------------------------------------------------------------------- |
+| Project standards (.zazz/standards/) | Project Owner     | Project Owner only                                                                       |
+| project.md                           | Project Owner     | Project Owner only                                                                       |
+| SPEC                                 | Deliverable Owner | Deliverable Owner (with spec-builder-agent); revisions require sign-off and Change Notes |
+| PLAN                                 | Planner creates   | Coordinator during execution; documents updates in Change Notes                          |
 
-STANDARDS.md is a project-level document that establishes the technical and functional context within which all deliverables are built. Only the Project Owner may revise it. It defines:
 
-- **Tech stack** — Frameworks, libraries, and runtime versions
-- **Language(s)** — Primary and secondary languages for the project
-- **Database** — Database type, ORM or query patterns, schema conventions
-- **Architecture** — Overall system architecture, layering, module boundaries, design patterns
-- **Cloud and deployment** — Target cloud provider, deployment model, CI/CD expectations, environment strategy
-- **Testing** — Testing frameworks, patterns, and tooling (unit, API, E2E, performance, security)
-- **Other project-wide specifications** — Coding conventions, security requirements, observability (logging, metrics, tracing), API design standards
+Task prompts reference project standards, SPEC, and PLAN. All documents reside in `.zazz/` and are accessible to agents.
 
-Agents consult STANDARDS.md to ensure deliverables align with project constraints. The SPEC and PLAN reference STANDARDS.md for tooling and patterns; task cards inherit this context.
+### Repository Structure (.zazz)
+
+The `.zazz` folder is installed in the root of repositories using the Zazz framework (similar to `.agents`). It organizes project standards, specs, plans, and runtime state:
+
+```
+.zazz/
+├── project.md              # Project overview
+├── standards/              # Atomic project standards
+│   ├── index.yaml          # Index of standard files (order, purpose)
+│   ├── architecture.md     # Example: layering, design patterns
+│   ├── testing.md         # Example: test frameworks, tooling
+│   ├── languages.md       # Example: runtimes, versions
+│   ├── coding-styles.md   # Example: conventions, patterns
+│   └── ...                # Other atomic standard files
+├── deliverables/           # SPEC and PLAN files
+│   ├── index.yaml          # Index of deliverables (id, spec, plan, status)
+│   ├── {name}-SPEC.md
+│   └── {name}-PLAN.md
+├── agent-locks.json        # Task-level file locks (runtime)
+├── audit.log               # Timestamped event log (runtime)
+└── api-spec.json           # Cached OpenAPI spec (runtime)
+```
+
+### Project Standards (.zazz/standards/)
+
+Project standards are **atomic**—split into multiple files instead of one monolithic document. Each file covers a specific domain. The `index.yaml` file lists all standard files and their purpose:
+
+```yaml
+# .zazz/standards/index.yaml
+standards:
+  - file: architecture.md
+    purpose: System architecture, layering, design patterns
+  - file: testing.md
+    purpose: Test frameworks, patterns, tooling
+  - file: languages.md
+    purpose: Primary and secondary languages, runtimes, versions
+  - file: coding-styles.md
+    purpose: Coding conventions, style guides, patterns
+  - file: database.md
+    purpose: Database type, ORM, schema conventions
+  # ... other project-wide standards
+```
+
+Standard files may include: architecture, testing, tooling, languages, database, cloud/deployment, coding styles, patterns, coding conventions, security, observability, API design. Only the Project Owner may revise them. Agents consult the standards directory (via the index) to ensure deliverables align with project constraints. The SPEC and PLAN reference standards; task cards inherit this context.
+
+### Deliverables (.zazz/deliverables/)
+
+The `index.yaml` file lists all deliverables and maps each to its SPEC and PLAN files:
+
+```yaml
+# .zazz/deliverables/index.yaml
+deliverables:
+  - id: ZAZZ-1
+    name: user-auth
+    spec: user-auth-SPEC.md
+    plan: user-auth-PLAN.md
+    # status optional; Zazz Board is source of truth for workflow state
+  - id: ZAZZ-2
+    name: api-rate-limiting
+    spec: api-rate-limiting-SPEC.md
+    plan: api-rate-limiting-PLAN.md
+  # ...
+```
+
+Agents and tools use the index to discover deliverables and resolve file paths. The Zazz Board remains the source of truth for deliverable status (Planning, Ready, In Progress, etc.).
+
+### project.md
+
+`.zazz/project.md` provides a high-level overview of the application or product being built. It answers: What is this project? What problem does it solve? Who are the users? This context helps agents and humans understand the scope and purpose of deliverables. Only the Project Owner may revise it.
 
 ### Task Prompt Template
 
@@ -135,8 +200,8 @@ Each task card must include:
 
 - **Description** — What the task accomplishes
 - **Objectives** — Clear goals for the worker
-- **Guidance** — Any additional instructions beyond what exists in STANDARDS.md and the PLAN
-- **Test plan** — Test requirements with references to STANDARDS.md (what tests to create, what tests to run) 
+- **Guidance** — Any additional instructions beyond what exists in project standards and the PLAN
+- **Test plan** — Test requirements with references to project standards (what tests to create, what tests to run) 
 - **Acceptance criteria** — Testable conditions for completion. Some AC (e.g., UI layout, visual design) may require Deliverable Owner sign-off; mark these explicitly so QA coordinates with the Owner.
 
 ---
@@ -152,7 +217,7 @@ The framework operates at two distinct levels:
 | **Task-level**        | Agents            | Execute tasks, coordinate dependencies, surface questions and escalations. |
 
 
-The Deliverable Owner owns the *what* and *when*; agents execute the *how* (defined in the STANDARDS.md, SPEC, and PLAN) within approved boundaries.
+The Deliverable Owner owns the *what* and *when*; agents execute the *how* (defined in project standards, SPEC, and PLAN) within approved boundaries.
 
 ---
 
@@ -281,7 +346,7 @@ Stage 4: PR & Review  ←  Stage 3: QA & Verification  ←────┘
 - Capture functional requirements, edge cases, constraints
 - Define acceptance criteria (clear, testable)
 - Identify test requirements (unit, API, E2E, performance, security)
-- Output: `{deliverable-name}-SPEC.md`
+- Output: `.zazz/deliverables/{deliverable-name}-SPEC.md`
 
 ### Stage 1: Planning
 
@@ -291,7 +356,7 @@ Stage 4: PR & Review  ←  Stage 3: QA & Verification  ←────┘
 - Define per-task acceptance criteria and test requirements
 - Assign files to tasks using file names and conventions; identify sequences where tasks can run in parallel without impacting the same files
 - Plan to **minimize file conflicts**—when work is combined in the shared worktree, conflicts are rare
-- Output: `{deliverable-name}-PLAN.md`
+- Output: `.zazz/deliverables/{deliverable-name}-PLAN.md`
 - **Trigger:** Invoked when the Owner requests a plan (e.g., after SPEC approval). Owner reviews and approves the PLAN; deliverable moves to Ready.
 
 **Coordinator agent** (takes over once execution starts)
@@ -305,7 +370,7 @@ Stage 4: PR & Review  ←  Stage 3: QA & Verification  ←────┘
 **Worker agents**
 
 - Watch the Task Board for tasks in `READY` status (or promoted from `TO_DO` to `READY` when dependencies are met)
-- Read the task card: prompt, reference documentation (STANDARDS.md, SPEC, PLAN)
+- Read the task card: prompt, reference documentation (project standards, SPEC, PLAN)
 - Perform the task: acquire file locks → implement → run tests → **commit** (commit stamp in work tree) → signal "ready for QA"
 - Locks transfer to the task (files stay locked); worker is released immediately and may pick up the next task (context is cleared)
 - May ask the Deliverable Owner clarifying questions via terminal; may work with the Owner to adjust requirements or the plan
@@ -376,7 +441,7 @@ The Zazz Board application provides **two kanban boards** and a **Task Graph**:
 - Tasks scoped to deliverables (`Project → Deliverable → Tasks`)
 - **Task cards** — each card corresponds to a task node on the Task Graph
 - Task status columns driven by the plan: `READY`, `IN_PROGRESS`, `QA`, `COMPLETED`; `TO_DO` optional before READY
-- Task cards include prompt (description, objectives, AC, guidance) and references to STANDARDS.md, SPEC, and PLAN
+- Task cards include prompt (description, objectives, AC, guidance) and references to project standards, SPEC, and PLAN
 - Blocked is an `is_blocked` flag—never a column
 - Task card notes for adjustments, clarifications, and audit trail
 - API for agent orchestration (Swagger/OpenAPI); tasks under `/projects/:code/deliverables/:id/tasks`
@@ -408,6 +473,8 @@ All agents use the **zazz-board-api** rule skill to communicate and manage deliv
 
 ### Local State (`.zazz/`)
 
+See [Repository Structure (.zazz)](#repository-structure-zazz) for the full directory layout. Runtime files:
+
 
 | File               | Purpose                                                                            |
 | ------------------ | ---------------------------------------------------------------------------------- |
@@ -422,7 +489,7 @@ All agents use the **zazz-board-api** rule skill to communicate and manage deliv
 
 - **Shared worktree**: All agents work in the same git worktree/branch for the deliverable.
 - **Task-level file locks**: Locks are tied to the **task** (and its rework chain), not the worker. Worker acquires locks, implements, commits, then signals "ready for QA"—files stay locked. Locks transfer to the task; QA releases them when marking the task complete. Rework tasks (e.g., 2.3.1) inherit the same locks as the original task (2.3). This prevents thrashing—no other task may edit those files while the original task is in QA or rework.
-- **Planner decomposition**: The Planner minimizes file overlap across parallel tasks in the PLAN; when tasks must share files, uses DEPENDS_ON so the dependent task starts only after the prerequisite is QA-approved and has released its locks. The Coordinator executes the PLAN.
+- **Planner decomposition**: The Planner designs the PLAN to minimize file overlap across parallel tasks—tasks that touch different files can run concurrently. The Planner uses DEPENDS_ON when (1) tasks must share files—the dependent task cannot start until the prerequisite is QA-approved and has released its locks—or (2) a task requires another's output before it can begin (e.g., the UI task depends on the backend API task). The Coordinator executes the PLAN.
 - **Blocked display**: When a worker is blocked by a file locked by another task (in QA or rework), show blocked status clearly on both the **task card** (Task Board) and the **task node** (Task Graph)—the task node uses a yellow outline when blocked.
 - **Lock timeout**: Expired locks can be reclaimed (e.g., after agent crash or task abandonment).
 
@@ -448,7 +515,7 @@ All agents use the **zazz-board-api** rule skill to communicate and manage deliv
 
 | Role             | Skill              | Responsibility                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | ---------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Planner**      | planner-agent      | One-shot decomposition of SPEC into PLAN. Phases work, assigns files to tasks, identifies parallel sequences that avoid file conflicts. Output: `{deliverable-name}-PLAN.md`. Invoked when Owner requests a plan; does not participate in execution.                                                                                                                                                                                                                                                                                  |
+| **Planner**      | planner-agent      | One-shot decomposition of SPEC into PLAN. Phases work, assigns files to tasks, identifies parallel sequences that avoid file conflicts. Output: `.zazz/deliverables/{deliverable-name}-PLAN.md`. Invoked when Owner requests a plan; does not participate in execution.                                                                                                                                                                                                                                                               |
 | **Coordinator**  | coordinator-agent  | Takes over once execution starts. Creates tasks from PLAN via API, hands out tasks to workers, manages task graph, responds to blockers, creates rework tasks from QA content. **Only the Coordinator may update the PLAN** during execution; when the change mechanism is invoked, adjusts tasks and documents updates in Change Notes. Supports the audit of SPEC changes. When Slack is supported, the Coordinator is the only agent with a Slack account; Worker and QA communications to the Owner flow through the Coordinator. |
 | **Worker**       | worker-agent       | Implement tasks with TDD (code, tests, commits), respect locks and dependencies. Context is cleared between tasks.                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | **QA**           | qa-agent           | Find issues and validate acceptance criteria per task. Fresh context for each evaluation (task or final review). When AC or TDD criteria not met, creates rework content and messages Coordinator. Once all tasks complete: final full review of deliverable as a whole, create PR, add PR link to deliverable card, move deliverable to in-review, notify Owner.                                                                                                                                                                     |
@@ -486,18 +553,18 @@ See **FRAMEWORK-SETUP.md** for integration examples.
 
 ## Key Principles (Summary)
 
-1. **Sequential phases** — Each stage depends on the previous (Planner → Coordinator → Workers → QA → PR)
+1. **Sequential workflow stages** — Each stage depends on the previous: SPEC Creation → Planning → Implementation → QA & Rework → PR & Review. The Planner runs once; the Coordinator orchestrates from plan approval through execution; Workers and QA run within their stages.
 2. **Parallel within phase** — Workers execute tasks in parallel, respecting locks and dependencies
 3. **Explicit dependencies** — No circular dependencies; all relations declared upfront
 4. **Single writer per file** — Task-level file locks prevent concurrent edits; locks held until QA signs off
 5. **Independent contexts** — Each agent has separate context; worker context is cleared between tasks; QA context is fresh per evaluation
-6. **Document ownership** — STANDARDS.md: Project Owner. SPEC: Deliverable Owner (with spec-builder). PLAN: Planner creates initial; Coordinator updates during execution. Complete at approval; change mechanism when warranted. Coordinator supports the audit trail. When deviations accumulate significantly, Owner may archive worktree and create new deliverable (pivot option).
-7. **Explicit communication** — Questions and decisions logged via task card notes or API
-8. **No auto-retry** — Ambiguous situations escalated to Deliverable Owner
+6. **Document ownership** — Project standards (.zazz/standards/): Project Owner. project.md: Project Owner. SPEC: Deliverable Owner (with spec-builder). PLAN: Planner creates initial; Coordinator updates during execution. Complete at approval; change mechanism when warranted. Coordinator supports the audit trail. When deviations accumulate significantly, Owner may archive worktree and create new deliverable (pivot option).
+7. **Explicit communication** — Questions and decisions logged
+8. **No auto-retry** — Ambiguous situations escalated to Deliverable Owner unless there are explicit standards in place.
 9. **No Blocked column** — Blocked is a state; items stay in their column when blocked
 10. **Two separate boards** — Deliverable Board (humans) and Task Board (agents); different flows, different columns
 11. **Task node = Task card** — Each task node on the Task Graph corresponds to exactly one task card on the Task Board; they are two views of the same task
-12. **Single Slack account** — When Slack is supported, only the Coordinator has a Slack account; Worker and QA communicate to the Owner through the Coordinator
+12. **Centralized Slack account** — When Slack is supported, only the Coordinator agents have acess to a Slack account; Worker and QA communicate to the Owner through the Coordinator
 13. **Shared worktree** — All agents work in the same git worktree/branch per deliverable; Planner decomposes with file assignments to minimize conflicts; Coordinator executes the PLAN
 14. **Blocked = yellow** — When a worker is blocked by a file locked by another task (in QA or rework), show blocked status on both the task card and task node (yellow outline)
 15. **Project as succession** — A project or software product is a succession of deliverables. Greenfield projects start with a handful of deliverables in order to generate an MVP; as the product grows, deliverables shift to new features, enhancements, and refactors.
@@ -507,14 +574,15 @@ See **FRAMEWORK-SETUP.md** for integration examples.
 ## Related Documentation
 
 
-| Document                  | Purpose                                                            |
-| ------------------------- | ------------------------------------------------------------------ |
-| **README.md**             | Skill collection overview, quick start                             |
-| **WORKFLOW-OVERVIEW.md**  | Detailed stage-by-stage workflow                                   |
-| **AGENT-ARCHITECTURE.md** | Technical architecture, communication, concurrency, error handling |
-| **FRAMEWORK-SETUP.md**    | Integration with Warp, Claude, LangGraph, CrewAI, etc.             |
-| **.agents/skills/**       | Individual skill definitions for each agent                        |
-| **TEMPLATES/**            | Task prompt template, PR template, agent state file schemas        |
+| Document                  | Purpose                                                                                |
+| ------------------------- | -------------------------------------------------------------------------------------- |
+| **README.md**             | Skill collection overview, quick start                                                 |
+| **WORKFLOW-OVERVIEW.md**  | Detailed stage-by-stage workflow                                                       |
+| **AGENT-ARCHITECTURE.md** | Technical architecture, communication, concurrency, error handling                     |
+| **FRAMEWORK-SETUP.md**    | Integration with Warp, Claude, LangGraph, CrewAI, etc.                                 |
+| **.agents/skills/**       | Individual skill definitions for each agent                                            |
+| **.zazz/**                | Project structure in repos using the framework (project.md, standards/, deliverables/) |
+| **TEMPLATES/**            | Task prompt template, PR template, agent state file schemas                            |
 
 
 ---

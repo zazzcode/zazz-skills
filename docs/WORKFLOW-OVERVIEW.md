@@ -31,12 +31,12 @@ During MVP execution, Deliverable Owner-to-agent coordination is terminal-first;
    - End-to-end test scenarios
    - Performance/load test thresholds (if applicable)
    - Security test requirements (if applicable)
-5. References project STANDARDS.md (tech stack, DB, frameworks)
+5. References project standards (.zazz/standards/) and project.md (tech stack, DB, frameworks)
 6. Documents constraints, dependencies, assumptions
-7. Creates {deliverable-name}-SPEC.md stored in project repo/shared drive
+7. Creates .zazz/deliverables/{deliverable-name}-SPEC.md
 
 **Outputs:**
-- {deliverable-name}-SPEC.md - The source of truth
+- .zazz/deliverables/{deliverable-name}-SPEC.md - The source of truth
 - Clear, testable acceptance criteria
 - Explicit test requirements
 - Ready for approval before Phase 1
@@ -50,12 +50,12 @@ During MVP execution, Deliverable Owner-to-agent coordination is terminal-first;
 **Goal**: Decompose the approved SPEC into a detailed Implementation Plan; once approved, Coordinator creates tasks and begins execution.
 
 **Planner Agent Actions** (one-shot, does not participate in execution):
-1. Receives approved {deliverable-name}-SPEC.md
+1. Receives approved .zazz/deliverables/{deliverable-name}-SPEC.md
 2. Decomposes SPEC into manageable chunks, phased and sequenced
 3. Assigns files to tasks using file names and conventions
 4. Identifies parallel sequences where tasks can run without impacting the same files
-5. Creates {deliverable-name}-PLAN.md with phases, steps, per-task AC, test requirements, file assignments, and dependencies (DEPENDS_ON, COORDINATES_WITH)
-6. **Output**: {deliverable-name}-PLAN.md. Owner reviews and approves; deliverable moves to Ready.
+5. Creates .zazz/deliverables/{deliverable-name}-PLAN.md with phases, steps, per-task AC, test requirements, file assignments, and dependencies (DEPENDS_ON, COORDINATES_WITH)
+6. **Output**: .zazz/deliverables/{deliverable-name}-PLAN.md. Owner reviews and approves; deliverable moves to Ready.
 
 **Coordinator Agent Actions** (takes over once plan approved):
 1. Subscribes to plan approval events; when deliverable moves to Ready, picks it up
@@ -64,7 +64,7 @@ During MVP execution, Deliverable Owner-to-agent coordination is terminal-first;
 4. Monitors progress; adjusts PLAN when change mechanism invoked; documents in Change Notes
 
 **Outputs:**
-- {deliverable-name}-PLAN.md (from Planner)
+- .zazz/deliverables/{deliverable-name}-PLAN.md (from Planner)
 - Initial task graph via Zazz Board API (Coordinator creates tasks from PLAN)
 - Workers ready to poll for tasks; QA ready for Phase 2
 
@@ -91,7 +91,7 @@ Tasks are ordered by dependencies so that:
 2. When task found:
    - Acquires file locks for the task via `.zazz/agent-locks.json`
    - Updates task status to `IN_PROGRESS`
-   - Reads task prompt (Goal, Instructions, Test Requirements, AC, STANDARDS.md)
+   - Reads task prompt (Goal, Instructions, Test Requirements, AC, project standards)
 3. Executes per task type:
    - **Code task**: Writes code, creates unit tests, runs tests until passing
    - **Test creation task**: Creates API/E2E test suites with test cases

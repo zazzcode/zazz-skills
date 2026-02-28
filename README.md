@@ -1,6 +1,6 @@
 # Zazz Skills
 
-Agent skills that implement the Zazz framework—an opinionated, spec-driven approach to organizing software development with AI agents. These skills provide the terminology, workflow, and document management for coordinating deliverables from specification through implementation and review, using the Zazz Board API.
+Agent skills that implement the Zazz framework—an opinionated, spec-driven approach to delivering software from spec to ship with AI agents. These skills provide the terminology, workflow, and document management for coordinating deliverables from specification through implementation and review, using the Zazz Board API.
 
 **Zazz** is both a framework for multi-agent software development and a task/deliverable management application (Zazz Board). The framework enables AI agents to work autonomously and collaboratively on software deliverables. **Test-driven development (TDD)** is embedded throughout—every deliverable and task has well-defined test requirements and acceptance criteria before work begins.
 
@@ -17,13 +17,13 @@ Every agent MUST use this rule:
 Each agent loads one of these role-specific skills:
 
 
-| Skill                  | Description                                                                                                                                                                                                                                                     |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **planner-agent**      | One-shot decomposition of the Deliverable Specification into an Implementation Plan. Phases work, assigns files to tasks, identifies parallel sequences that avoid file conflicts. Does not participate in execution.                                           |
-| **coordinator-agent**  | Orchestrates execution once the plan is approved. Creates tasks from the PLAN via API, hands out tasks to workers, manages the task graph, responds to blockers, creates rework tasks from QA content. Adjusts the PLAN when the change mechanism is invoked.   |
-| **worker-agent**       | Executes tasks with test-driven development (TDD). Creates and runs tests, commits changes. Context is cleared between tasks.                                                                                                                                   |
-| **qa-agent**           | Finds issues and validates acceptance criteria via test-driven verification. When AC or TDD criteria are not met, messages the Coordinator to create rework tasks. Creates PR with full evidence once all criteria are satisfied. Fresh context per evaluation. |
-| **spec-builder-agent** | Guides the Deliverable Owner through an interactive process to create a comprehensive Deliverable Specification. Assists the Owner in revising the SPEC.                                                                                                        |
+| Skill                  | Description                                                                                                                                                                                                                                                                                                                                                    |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **spec-builder-agent** | Guides the Deliverable Owner through an interactive process to create a comprehensive Deliverable Specification. Establishes testable AC and test requirements at the SPEC level. Assists the Owner in revising the SPEC.                                                                                                                                      |
+| **planner-agent**      | One-shot decomposition of the Deliverable Specification into an Implementation Plan. Phases work, assigns files to tasks, maps test requirements to each task, identifies parallel sequences that avoid file conflicts. Does not participate in execution. When available, leverages vendor-native planning features (e.g., Warp Plan, Claude Code plan mode). |
+| **coordinator-agent**  | Orchestrates execution once the plan is approved. Creates tasks from the PLAN via API, hands out tasks to workers, manages the task graph, responds to blockers, creates rework tasks from QA content. Adjusts the PLAN when the change mechanism is invoked.                                                                                                  |
+| **worker-agent**       | Executes tasks with TDD—creates and runs tests per task, commits changes. Context is cleared between tasks.                                                                                                                                                                                                                                                    |
+| **qa-agent**           | Verifies acceptance criteria via tests and evidence. Finds issues; when AC or tests are not met, messages the Coordinator to create rework tasks. Creates PR with full evidence once all criteria are satisfied. Fresh context per evaluation.                                                                                                                 |
 
 
 Each agent has **independent context** and communicates through terminal interaction (MVP), with synchronization to Zazz Board notes/comments and Redis pub/sub via the API.
@@ -43,17 +43,28 @@ All documentation lives in the **docs/** directory:
 
 **Skills:** `.agents/skills/` — Individual skill definitions (planner, coordinator, worker, qa, spec-builder, zazz-board-api)
 
+**Project structure:** `.zazz/` — Installed in repos using the framework. Contains `project.md`, `standards/` (atomic files + index.yaml), `deliverables/` (SPEC and PLAN files + index.yaml), plus runtime state (agent-locks.json, audit.log).
+
 ## Core Concepts
 
-### Document Ownership
+### Document Ownership and Storage
 
-- **STANDARDS.md** — Project Owner
-- **Deliverable Specification (SPEC)** — Deliverable Owner (with spec-builder-agent assistance)
-- **Implementation Plan (PLAN)** — Planner creates the initial draft; Coordinator updates during execution
+Documents live in the `.zazz/` folder (installed in project repos using the framework):
+
+
+| Document                             | Location                                         | Owner                                                 |
+| ------------------------------------ | ------------------------------------------------ | ----------------------------------------------------- |
+| **project.md**                       | `.zazz/project.md`                               | Project Owner                                         |
+| **Project standards**                | `.zazz/standards/` (atomic files + `index.yaml`) | Project Owner                                         |
+| **Deliverable Specification (SPEC)** | `.zazz/deliverables/{name}-SPEC.md`              | Deliverable Owner (with spec-builder-agent)           |
+| **Implementation Plan (PLAN)**       | `.zazz/deliverables/{name}-PLAN.md`              | Planner creates; Coordinator updates during execution |
+
+
+Runtime files (agent-locks.json, audit.log, api-spec.json) also live in `.zazz/`.
 
 ### Project as Succession
 
-A project or software product is a succession of deliverables. Greenfield projects typically start with a handful of deliverables in order to generate an MVP; as the product grows, deliverables shift to new features, enhancements, and refactors.
+A project or software product is a succession of deliverables. Greenfield projects typically start with a handful of deliverables in order to generate an MVP; as the product grows, deliverables shift to new features, enhancements, bug fixes, and refactors.
 
 ### Workflow Stages
 

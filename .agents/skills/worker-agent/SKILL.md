@@ -41,7 +41,7 @@ Every 15 seconds:
   3. If task found:
      - Acquire locks for all files you'll modify
      - Update task status to "IN_PROGRESS"
-     - Read task prompt (Goal, Instructions, AC, Test Requirements, STANDARDS.md)
+     - Read task prompt (Goal, Instructions, AC, Test Requirements, project standards)
 ```
 
 **Task Execution Workflow**:
@@ -52,7 +52,7 @@ Every 15 seconds:
 3. Write code to implement requirements
 4. Run tests until all pass
 5. Ensure no console errors or warnings
-6. Check code against STANDARDS.md conventions
+6. Check code against .zazz/standards/ conventions
 
 ### Test Creation Task
 1. Read test requirements from task prompt
@@ -144,7 +144,7 @@ Every 15 seconds:
 
 1. **Test First**: Consider writing tests before code
 2. **Read AC Carefully**: Acceptance criteria defines what success looks like
-3. **STANDARDS.md**: Follow patterns and conventions from STANDARDS.md
+3. **Project standards**: Follow patterns and conventions from .zazz/standards/
 4. **Ask Early**: Don't guess; ask Coordinator if unsure
 5. **Atomic Commits**: One task = one commit (unless task specifies multiple commits)
 6. **Clear Commit Messages**: Include task ID and clear description

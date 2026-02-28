@@ -39,7 +39,7 @@ During MVP:
 
 **Trigger**: Subscribe to Zazz Board API pub/sub for plan approval events. When a deliverable's plan is approved, it moves to Ready and a plan-approved event is published.
 
-**Input**: Approved {deliverable-name}-PLAN.md (created by the Planner)
+**Input**: Approved .zazz/deliverables/{deliverable-name}-PLAN.md (created by the Planner)
 
 **Process**:
 1. Read the PLAN to understand phases, steps, and task definitions

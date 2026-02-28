@@ -26,7 +26,7 @@ You must:
 
 ## Output
 
-**Output**: `{deliverable-name}-PLAN.md` stored in the project repo
+**Output**: `.zazz/deliverables/{deliverable-name}-PLAN.md`
 
 The PLAN document must include:
 - Phases and steps
@@ -40,13 +40,15 @@ The PLAN document must include:
 
 **When invoked**: The Owner requests a plan (e.g., after SPEC approval, during the Planning phase). You run once, produce the PLAN, and exit. The Owner reviews and approves; the deliverable moves to Ready. The Coordinator then takes over to create tasks and begin execution.
 
+**Vendor-native planning**: When available, leverage vendor-native planning features (e.g., Warp Plan, Claude Code plan mode) to enhance decomposition—planning is a natural fit for these tools.
+
 ---
 
 ## Decomposition Rules
 
 1. **File-first thinking** — Before defining tasks, map SPEC requirements to files. Group tasks by file ownership to maximize parallelization.
 2. **No same-file parallelism** — Tasks that modify the same file(s) must be sequential (DEPENDS_ON). Tasks that touch disjoint file sets can run in parallel.
-3. **Convention awareness** — Use STANDARDS.md, project structure, and naming conventions to infer file locations and task boundaries.
+3. **Convention awareness** — Use .zazz/standards/, .zazz/project.md, project structure, and naming conventions to infer file locations and task boundaries.
 4. **Test tasks** — Plan test creation tasks (unit, API, E2E) per SPEC. These may precede or accompany feature tasks.
 5. **Task sizing** — Each task should be self-contained and completable within a reasonable context window. Avoid monolithic tasks.
 
@@ -60,7 +62,7 @@ The PLAN document must include:
 - [ ] Map files to tasks using project structure
 - [ ] Identify parallel sequences (disjoint file sets)
 - [ ] Define DEPENDS_ON and COORDINATES_WITH
-- [ ] Produce PLAN.md with all task definitions
+- [ ] Produce .zazz/deliverables/{deliverable-name}-PLAN.md with all task definitions
 
 ---
 

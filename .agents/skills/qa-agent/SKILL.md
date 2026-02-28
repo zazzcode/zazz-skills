@@ -43,7 +43,7 @@ During MVP:
 **Process**:
 
 ### Step 1: Review SPEC & Understand Requirements
-1. Read {deliverable-name}-SPEC.md completely
+1. Read .zazz/deliverables/{deliverable-name}-SPEC.md completely
 2. Understand all acceptance criteria
 3. Identify which AC require Deliverable Owner sign-off (e.g., UI layout, visual design)—you will need to coordinate with the Owner for these
 4. Understand all test requirements

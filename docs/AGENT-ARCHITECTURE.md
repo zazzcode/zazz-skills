@@ -40,7 +40,7 @@ The Zazz Board provides two separate kanban boards: the **Deliverable Board** (f
 - Runs as a **separate LLM instance** (not sub-agents sharing context)
 - Communicates via **explicit message passing**
 - Operates on the **shared worktree/branch** for that deliverable (single laptop or server)
-- Works from **shared SPEC and PLAN documents** stored in the worktree
+- Works from **shared SPEC and PLAN documents** in .zazz/deliverables/
 
 ---
 
@@ -72,11 +72,11 @@ Each agent invocation must be **independent** with distinct system prompts and m
 - Assigns files to tasks using file names and conventions
 - Identifies parallel sequences where tasks can run without impacting the same files
 - Maps SPEC AC and test requirements to each task
-- Outputs PLAN.md; does not participate in execution
+- Outputs .zazz/deliverables/{deliverable-name}-PLAN.md; does not participate in execution
 
 **Memory/Context:**
-- Approved {deliverable-name}-SPEC.md
-- STANDARDS.md (for file conventions, project structure)
+- Approved .zazz/deliverables/{deliverable-name}-SPEC.md
+- .zazz/standards/ and .zazz/project.md (for file conventions, project structure)
 - Project file structure
 
 **Responsibilities:**
@@ -84,7 +84,7 @@ Each agent invocation must be **independent** with distinct system prompts and m
 - Decompose into phases and steps
 - Assign files to tasks; identify parallel sequences
 - Define DEPENDS_ON and COORDINATES_WITH
-- Produce {deliverable-name}-PLAN.md
+- Produce .zazz/deliverables/{deliverable-name}-PLAN.md
 - **Trigger:** Invoked when Owner requests a plan (e.g., after SPEC approval)
 
 ### Coordinator Agent (Execution Orchestrator)
@@ -99,7 +99,7 @@ Each agent invocation must be **independent** with distinct system prompts and m
 
 **Memory/Context:**
 - Current deliverable ID, project code
-- Approved {deliverable-name}-PLAN.md (from Planner)
+- Approved .zazz/deliverables/{deliverable-name}-PLAN.md (from Planner)
 - Task graph (nodes, edges, status, test requirements)
 - Communication log with workers and QA
 - Pending escalations and decisions
@@ -127,7 +127,7 @@ Each agent invocation must be **independent** with distinct system prompts and m
 **Memory/Context:**
 - Current task (goal, instructions, AC, test requirements)
 - Sequence of tasks that do not have parallelizable nodes; allows more efficient single-agent implementation on a set of related tasks
-- STANDARDS.md (tech stack, frameworks, patterns)
+- .zazz/standards/ and .zazz/project.md (tech stack, frameworks, patterns)
 - Deliverable SPEC (for context on what's being built)
 - Recent code changes and commit history
 
@@ -155,8 +155,8 @@ Each agent invocation must be **independent** with distinct system prompts and m
 
 **Memory/Context:**
 - **Fresh context per evaluation**—each task evaluation and final deliverable review start with cleared context; no accumulation across evaluations
-- Deliverable {deliverable-name}-SPEC.md with all AC
-- Implementation {deliverable-name}-PLAN.md
+- Deliverable .zazz/deliverables/{deliverable-name}-SPEC.md with all AC
+- Implementation .zazz/deliverables/{deliverable-name}-PLAN.md
 - All test results (unit, API, E2E, performance, security)
 - Code analysis findings and evidence
 - Rework tasks created and their status
