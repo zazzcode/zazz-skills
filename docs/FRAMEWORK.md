@@ -20,7 +20,7 @@ The core underpinning is a **kanban-like process** driven from specification doc
 
 Zazz is built around **intent engineering**: specifications define the desired outcome or intent, not prescriptive rules for how to build. Agents determine the *how* within the guardrails defined in project standards; the spec defines the *what*. TDD verifies that the intent is satisfied—if the tests pass, the outcome is achieved.
 
-The framework prioritizes **clear specification** and **detailed planning** as the foundation for autonomous development. Requirements are captured before implementation begins; acceptance criteria are explicit and testable. This creates a source of truth that agents and humans can reference throughout the lifecycle. The overarching expectation is that the SPEC and PLAN, once approved, should not require changes during development. The framework nevertheless provides a **change mechanism** for flexibility when needed—discovery, Owner feedback, or iterative refinement (e.g., UI) may warrant updates. When changes occur: the Coordinator keeps the PLAN aligned with reality and documents updates in Change Notes; SPEC changes require Owner sign-off and must be recorded in the SPEC's Change Notes section. The Coordinator supports maintaining this audit trail. When deviations accumulate beyond a reasonable threshold, the Deliverable Owner may choose to abandon the current worktree and create a new deliverable with a refined spec, treating the first iteration as a prototype or learning experience rather than continuing to iterate in place.
+The framework prioritizes **clear specification** and **detailed planning** as the foundation for autonomous development. Requirements are captured before implementation begins; acceptance criteria are explicit and testable. This creates a source of truth that agents and humans can reference throughout the lifecycle. The overarching expectation is that the SPEC and PLAN, once approved, should not require changes during development. The framework nevertheless provides a **change mechanism** for flexibility when needed—discovery, Owner feedback, or iterative refinement (e.g., UI) may warrant updates. When changes occur: the Coordinator updates the PLAN and SPEC (on Owner's behalf for SPEC; Owner approves before commit) and commits each change with a descriptive message. Git history is the change log. When deviations accumulate beyond a reasonable threshold, the Deliverable Owner may choose to abandon the current worktree and create a new deliverable with a refined spec, treating the first iteration as a prototype or learning experience rather than continuing to iterate in place.
 
 **Testing is not an afterthought.** Test requirements (unit, API, E2E, performance, security) are woven throughout the workflow from specification to task completion.
 
@@ -62,16 +62,16 @@ The framework prioritizes **clear specification** and **detailed planning** as t
 
 **TDD in both is required.** The framework expects TDD in both the SPEC and the PLAN. The SPEC establishes the testability contract (no requirement without AC, no AC without a way to test it). The PLAN makes it executable (each task knows exactly what tests to create and run). Without SPEC-level TDD, the PLAN has nothing to cascade. Without PLAN-level TDD, workers don't know what to build.
 
-**Owner sign-off for UI and subjective AC:** Some acceptance criteria, especially for user interface components (layout, visual design, interaction feel, accessibility), cannot be fully verified by automated tests. These AC require **Deliverable Owner interaction and sign-off**. Mark such AC in the SPEC (e.g., "Owner sign-off required") so the PLAN and task cards reflect that verification is human-led. QA coordinates with the Owner to obtain sign-off before marking the task or deliverable complete. When Owner feedback during UI iteration warrants changes to scope or tasks, the Coordinator adjusts the PLAN and documents the change in Change Notes.
+**Owner sign-off for UI and subjective AC:** Some acceptance criteria, especially for user interface components (layout, visual design, interaction feel, accessibility), cannot be fully verified by automated tests. These AC require **Deliverable Owner interaction and sign-off**. Mark such AC in the SPEC (e.g., "Owner sign-off required") so the PLAN and task cards reflect that verification is human-led. QA coordinates with the Owner to obtain sign-off before marking the task or deliverable complete. When Owner feedback during UI iteration warrants changes to scope or tasks, the Coordinator adjusts the PLAN (and SPEC if needed, with Owner approval) and commits the change.
 
 ### Opinionated by Design
 
 Zazz makes deliberate choices about how work is structured:
 
-- **Document ownership**—Each document has a designated owner. When the change mechanism is invoked, revisions are tracked; the Coordinator supports the audit trail.
+- **Document ownership**—Each document has a designated owner. Changes are tracked via git commits; the Coordinator is the single editor for both PLAN and SPEC during execution.
   - **Project standards** (.zazz/standards/) — Project Owner
-  - **Deliverable Specification** — Deliverable Owner (with spec-builder-agent assistance); revisions require Owner sign-off and must be noted in the document's Change Notes section
-  - **Implementation Plan** — Planner creates the initial draft; Coordinator updates during execution; changes tracked in Change Notes
+  - **Deliverable Specification** — Deliverable Owner owns; Coordinator edits on Owner's behalf; Owner approves each change before commit
+  - **Implementation Plan** — Planner creates the initial draft; Coordinator is the only actor that updates it during execution
 - **Single writer per file**—enforced via task-level file locks to prevent concurrent edits
 - **Explicit dependencies**—tasks declare DEPENDS_ON and COORDINATES_WITH; no circular dependencies.
 - **Independent agent contexts**—each agent has its own system prompt and memory; no shared context window.
@@ -99,8 +99,8 @@ The Deliverable Owner owns the *what*: they define requirements, approve the SPE
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Project standards**                | Atomic, project-level standards in `.zazz/standards/`. Indexed by `index.yaml`. Covers architecture, testing, tooling, languages, database, coding styles, patterns, security, observability, and other project-wide conventions. Read-only reference for agents; SPEC and PLAN reference standards.                                                                      |
 | **project.md**                       | Project overview in `.zazz/project.md`. High-level description of the application or product being built. Provides context for agents and humans.                                                                                                                                                                                                                         |
-| **Deliverable Specification (SPEC)** | Source-of-truth document defining requirements, acceptance criteria, and test requirements. Stored as `.zazz/deliverables/{deliverable-name}-SPEC.md`. Intended to be stable at approval; revisions require Owner sign-off and must be recorded in Change Notes.                                                                                                          |
-| **Implementation Plan (PLAN)**       | Execution decomposition derived from the SPEC. Phases, steps, tasks, dependencies, file assignments, and test requirements. Stored as `.zazz/deliverables/{deliverable-name}-PLAN.md`. Intended to be complete at approval; the Coordinator updates during execution and documents changes in Change Notes.                                                               |
+| **Deliverable Specification (SPEC)** | Source-of-truth document defining requirements, acceptance criteria, and test requirements. Stored as `.zazz/deliverables/{deliverable-name}-SPEC.md`. Intended to be stable at approval; the Coordinator may edit on behalf of the Owner when scope changes; Owner approves each change before commit. Changes tracked via git.                                                                 |
+| **Implementation Plan (PLAN)**       | Execution decomposition derived from the SPEC. Phases, steps, tasks, dependencies, file assignments, and test requirements. Stored as `.zazz/deliverables/{deliverable-name}-PLAN.md`. Intended to be complete at approval; the Coordinator is the only actor that updates it during execution. Each change is committed with a descriptive message; git history is the change log.          |
 | **Project Owner**                    | The human actor who owns the project and its technical standards. May be the same person as the Deliverable Owner in smaller projects.                                                                                                                                                                                                                                    |
 | **Deliverable Owner**                | The human actor (product owner, stakeholder, or user) who owns deliverables. Defines requirements, approves SPEC and PLAN, performs final acceptance, and conducts PR review and merge. All work flows through the Deliverable Owner's lens.                                                                                                                              |
 | **Project**                          | Top-level container for a software product. A project is a succession of deliverables. Holds `deliverable_status_workflow` (Deliverable Board columns) and `status_workflow` (Task Board columns).                                                                                                                                                                        |
@@ -118,11 +118,18 @@ The Deliverable Owner owns the *what*: they define requirements, approve the SPE
 | ------------------------------------ | ----------------- | ---------------------------------------------------------------------------------------- |
 | Project standards (.zazz/standards/) | Project Owner     | Project Owner only                                                                       |
 | project.md                           | Project Owner     | Project Owner only                                                                       |
-| SPEC                                 | Deliverable Owner | Deliverable Owner (with spec-builder-agent); revisions require sign-off and Change Notes |
-| PLAN                                 | Planner creates   | Coordinator during execution; documents updates in Change Notes                          |
+| SPEC                                 | Deliverable Owner | Coordinator on Owner's behalf; Owner approves each change                               |
+| PLAN                                 | Planner creates   | Coordinator only (single editor per deliverable)                                        |
 
 
 Task prompts reference project standards, SPEC, and PLAN. All documents reside in `.zazz/` and are accessible to agents.
+
+### Change Management (Git)
+
+PLAN and SPEC changes are managed via **git commits**. Each edit is committed with a descriptive message; git history serves as the change log.
+
+- **PLAN**: The **Coordinator is the only actor** that edits the PLAN. With one Coordinator per deliverable, there is a single source of edits—no merge conflicts. When the change mechanism is invoked (discovery, rework, scope adjustment), the Coordinator updates the PLAN and commits, e.g. `PLAN: Insert task 2.3, renumber phase 2` or `PLAN: Add rework task 2.3.1`.
+- **SPEC**: The Coordinator may edit the SPEC **on behalf of the Deliverable Owner** when scope or requirements change during execution. The Owner cannot keep up with the pace of changes; the Coordinator proposes edits and the Owner **approves** each change. The Coordinator commits after approval, e.g. `SPEC: Clarify AC3 per Owner approval`. The Owner retains authority—no SPEC change is committed without approval.
 
 ### Repository Structure (.zazz)
 
@@ -314,7 +321,7 @@ Status is indicated by outline color on both the **task node** (Task Graph) and 
 
 ### Coordinator Creates and Hands Out Tasks
 
-Once the plan is approved and execution starts, the Coordinator creates tasks via the Zazz Board API per the PLAN (produced by the Planner). Tasks appear on the Task Graph and Task Board. The typical starting status for a new task is `READY` (or `TO_DO` if the project uses that column). The Coordinator hands out individual tasks to workers and adds follow-on tasks progressively as prerequisites complete. When the change mechanism is invoked (Owner feedback, discovery), the Coordinator adjusts tasks and documents updates in Change Notes.
+Once the plan is approved and execution starts, the Coordinator creates tasks via the Zazz Board API per the PLAN (produced by the Planner). Tasks appear on the Task Graph and Task Board. The typical starting status for a new task is `READY` (or `TO_DO` if the project uses that column). The Coordinator hands out individual tasks to workers and adds follow-on tasks progressively as prerequisites complete. When the change mechanism is invoked (Owner feedback, discovery), the Coordinator adjusts tasks, updates the PLAN (and SPEC if needed, with Owner approval), and commits each change.
 
 ### Graph Structure
 
@@ -363,7 +370,7 @@ Stage 4: PR & Review  ←  Stage 3: QA & Verification  ←────┘
 
 - Subscribes to plan approval events; when a deliverable moves to Ready, creates initial tasks via Zazz Board API per the PLAN
 - Hands out individual tasks to workers; adds follow-on tasks progressively as prerequisites complete
-- Adjusts the PLAN as required when the change mechanism is invoked; documents updates in Change Notes
+- Adjusts the PLAN as required when the change mechanism is invoked; commits each change with a descriptive message
 
 ### Stage 2: Implementation
 
@@ -374,7 +381,7 @@ Stage 4: PR & Review  ←  Stage 3: QA & Verification  ←────┘
 - Perform the task: acquire file locks → implement → run tests → **commit** (commit stamp in work tree) → signal "ready for QA"
 - Locks transfer to the task (files stay locked); worker is released immediately and may pick up the next task (context is cleared)
 - May ask the Deliverable Owner clarifying questions via terminal; may work with the Owner to adjust requirements or the plan
-- Any adjustments to requirements or plan must be noted in the task card notes; the Coordinator updates the PLAN to reflect reality. Requirements changes that affect the SPEC require Owner sign-off and must be recorded in the SPEC's Change Notes; the Coordinator supports the audit trail.
+- Any adjustments to requirements or plan must be noted in the task card notes; the Coordinator updates the PLAN to reflect reality. Requirements changes that affect the SPEC are made by the Coordinator on the Owner's behalf; the Owner approves each change before the Coordinator commits.
 - Coordinator monitors for blockers, responds to questions, and keeps the PLAN document current
 
 **Note:** A task is not complete until QA signs off. Worker release is independent of task completion—workers are released when ready for QA to maximize throughput.
@@ -406,8 +413,8 @@ The QA agent is specifically designed to **find issues** and **validate acceptan
 
 - Creates rework tasks when QA provides the task content; updates the PLAN and task graph. Rework tasks are unassigned—any available worker may pick them up.
 - Works with QA during the final deliverable review to add rework tasks as needed
-- Keeps the PLAN current when updates are warranted; documents changes in Change Notes
-- Supports the audit of SPEC changes—ensures revisions are documented in the SPEC's Change Notes section
+- Keeps the PLAN current when updates are warranted; commits each change with a descriptive message
+- May update the SPEC on Owner's behalf when scope or requirements change; Owner approves each SPEC change before commit
 
 ### Stage 4: PR & Review
 
@@ -516,7 +523,7 @@ See [Repository Structure (.zazz)](#repository-structure-zazz) for the full dire
 | Role             | Skill              | Responsibility                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | ---------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Planner**      | planner-agent      | One-shot decomposition of SPEC into PLAN. Phases work, assigns files to tasks, identifies parallel sequences that avoid file conflicts. Output: `.zazz/deliverables/{deliverable-name}-PLAN.md`. Invoked when Owner requests a plan; does not participate in execution.                                                                                                                                                                                                                                                               |
-| **Coordinator**  | coordinator-agent  | Takes over once execution starts. Creates tasks from PLAN via API, hands out tasks to workers, manages task graph, responds to blockers, creates rework tasks from QA content. **Only the Coordinator may update the PLAN** during execution; when the change mechanism is invoked, adjusts tasks and documents updates in Change Notes. Supports the audit of SPEC changes. When Slack is supported, the Coordinator is the only agent with a Slack account; Worker and QA communications to the Owner flow through the Coordinator. |
+| **Coordinator**  | coordinator-agent  | Takes over once execution starts. Creates tasks from PLAN via API, hands out tasks to workers, manages task graph, responds to blockers, creates rework tasks from QA content. **Only the Coordinator edits the PLAN** during execution; commits each change with a descriptive message (git history is the change log). May edit the SPEC on behalf of the Deliverable Owner when scope or requirements change; Owner approves each SPEC change before the Coordinator commits. When Slack is supported, the Coordinator is the only agent with a Slack account; Worker and QA communications to the Owner flow through the Coordinator. |
 | **Worker**       | worker-agent       | Implement tasks with TDD (code, tests, commits), respect locks and dependencies. Context is cleared between tasks.                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | **QA**           | qa-agent           | Find issues and validate acceptance criteria per task. Fresh context for each evaluation (task or final review). When AC or TDD criteria not met, creates rework content and messages Coordinator. Once all tasks complete: final full review of deliverable as a whole, create PR, add PR link to deliverable card, move deliverable to in-review, notify Owner.                                                                                                                                                                     |
 | **Spec Builder** | spec-builder-agent | Guide Deliverable Owner through interactive questioning to create comprehensive SPECs. Assists the Owner in revising the SPEC.                                                                                                                                                                                                                                                                                                                                                                                                        |
@@ -558,7 +565,7 @@ See **FRAMEWORK-SETUP.md** for integration examples.
 3. **Explicit dependencies** — No circular dependencies; all relations declared upfront
 4. **Single writer per file** — Task-level file locks prevent concurrent edits; locks held until QA signs off
 5. **Independent contexts** — Each agent has separate context; worker context is cleared between tasks; QA context is fresh per evaluation
-6. **Document ownership** — Project standards (.zazz/standards/): Project Owner. project.md: Project Owner. SPEC: Deliverable Owner (with spec-builder). PLAN: Planner creates initial; Coordinator updates during execution. Complete at approval; change mechanism when warranted. Coordinator supports the audit trail. When deviations accumulate significantly, Owner may archive worktree and create new deliverable (pivot option).
+6. **Document ownership** — Project standards (.zazz/standards/): Project Owner. project.md: Project Owner. SPEC: Deliverable Owner owns; Coordinator edits on Owner's behalf with approval. PLAN: Planner creates initial; Coordinator is the only editor during execution. Changes tracked via git commits. When deviations accumulate significantly, Owner may archive worktree and create new deliverable (pivot option).
 7. **Explicit communication** — Questions and decisions logged
 8. **No auto-retry** — Ambiguous situations escalated to Deliverable Owner unless there are explicit standards in place.
 9. **No Blocked column** — Blocked is a state; items stay in their column when blocked

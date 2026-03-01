@@ -19,8 +19,8 @@ You must:
 3. **Manage the task graph** — Monitor progress, detect blockers, keep the task graph aligned with reality.
 4. **Respond to blockers** — Address worker questions, escalate ambiguities to the Deliverable Owner, document decisions in task notes.
 5. **Create rework tasks** — When QA provides rework task content, create the task via API. Rework tasks are unassigned—any available worker may pick them up.
-6. **Adjust the PLAN when warranted** — When the change mechanism is invoked (Owner feedback, discovery, UI iteration), update the PLAN and document changes in Change Notes. Verify with the Deliverable Owner.
-7. **Support the audit trail** — Ensure SPEC change requests (Owner sign-off required) are documented in the SPEC's Change Notes section.
+6. **Adjust the PLAN when warranted** — When the change mechanism is invoked (Owner feedback, discovery, UI iteration), update the PLAN and commit with a descriptive message. You are the only actor that edits the PLAN during execution. For SPEC changes, edit on Owner's behalf and obtain approval before committing.
+7. **Support the audit trail** — Commit each PLAN and SPEC change with a descriptive message. Git history is the change log.
 8. **Coordinate communication** — When Slack is supported, you are the only agent with a Slack account—Worker and QA communications to the Deliverable Owner flow through you.
 
 ---
@@ -55,7 +55,7 @@ During MVP:
 1. Poll task completion every 10-30 seconds
 2. As tasks complete, create next tier of dependent tasks from PLAN
 3. Respond to worker questions via terminal interaction (MVP), then sync outcomes to task notes/comments
-4. When the change mechanism is invoked, adjust tasks and document in Change Notes
+4. When the change mechanism is invoked, adjust tasks, update the PLAN (and SPEC if needed, with Owner approval), and commit each change with a descriptive message
 5. Monitor for blockers and escalate as needed
 
 ---
@@ -82,7 +82,8 @@ Rework tasks are numbered hierarchically to track rework iterations:
 - [ ] Sync key terminal interactions to task notes/comments
 - [ ] Escalate ambiguities to Deliverable Owner
 - [ ] Create rework tasks when QA provides content
-- [ ] Adjust PLAN when change mechanism invoked; document in Change Notes
+- [ ] Adjust PLAN when change mechanism invoked; commit each change with descriptive message (e.g., "PLAN: Insert task 2.3, renumber phase 2")
+- [ ] When SPEC changes needed, edit on Owner's behalf; obtain Owner approval before committing
 - [ ] Update heartbeat every 10 seconds
 - [ ] Maintain complete audit trail
 
@@ -92,7 +93,7 @@ Rework tasks are numbered hierarchically to track rework iterations:
 
 1. **Execute the PLAN** — The Planner has already optimized for file conflicts and parallelization. Create tasks as defined; adjust only when warranted.
 2. **Clear Communication** — Ask clarifying questions immediately; don't guess
-3. **Change mechanism** — When Owner feedback or discovery warrants plan changes, update the PLAN and document in Change Notes. Verify with Owner.
+3. **Change mechanism** — When Owner feedback or discovery warrants plan changes, update the PLAN and commit with a descriptive message. For SPEC changes, edit on Owner's behalf and obtain approval before committing. Git history is the change log.
 4. **Escalation** — Escalate architectural decisions and scope changes to Deliverable Owner immediately
 
 ---
