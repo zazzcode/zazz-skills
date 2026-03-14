@@ -220,6 +220,11 @@ Defines how work is organized to move toward the SPEC-defined state.
 
 Zazz is intentionally designed to manage context as a first-class concern.
 
+Framework principle:
+- Prefer runtime-native agent capabilities (planning, decomposition, orchestration, memory/context handling, and tool execution primitives) when available.
+- Do not re-implement capabilities that foundation models and agent harnesses already provide reliably and at higher quality.
+- Use the framework to define contracts, roles, and workflow boundaries around those capabilities, not to duplicate them.
+
 Core context principles:
 - Load the **least necessary context** for the current task, role, and decision.
 - Avoid broad, undifferentiated context dumps that increase noise and ambiguity.
@@ -367,6 +372,7 @@ These checkpoints are quality controls, not convergence controls.
 19. Framework philosophy is implementation-agnostic.
 20. Board services are optional accelerators, not mandatory prerequisites.
 21. `zazz-skills` is the skills repository for the Zazz Framework.
+22. The framework prioritizes leveraging runtime-native model/harness capabilities and avoids duplicating capabilities those systems already implement well.
 
 ---
 

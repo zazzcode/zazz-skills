@@ -16,6 +16,7 @@ Core document model:
 - **Plan (`-PLAN`)** — optional explicit decomposition for execution
 
 The framework supports process-only usage and tool-assisted usage (e.g., Zazz Board API/UI).
+It also intentionally leverages runtime-native agent capabilities (for example planning, task decomposition, orchestration, and context handling) instead of re-implementing those capabilities in the framework when the underlying model/harness already does them better.
 
 ## Adoption profiles (flexible by design)
 Zazz is intentionally **opinionated** about structure and workflow, but **flexible** about how much of the model you adopt at once.
@@ -41,7 +42,7 @@ You can start small and expand to deeper framework layers over time.
 ### Core flow skills
 - `proposal-builder-agent` — facilitator + scribe for proposal discussions (why, options, tradeoffs, constraints, recommendation), including transcript-first workflows and Zoom-live facilitation pattern when integrations exist
 - `spec-builder-agent` — interactive deliverable SPEC authoring
-- `planner-agent` — decomposition from approved SPEC to execution-ready PLAN
+- `planner-agent` — decomposition from approved SPEC to execution-ready PLAN (optional when your runtime provides reliable built-in planning and task decomposition)
 - `worker-agent` — implementation execution with dependency/board synchronization and testing discipline
 - `qa-agent` — base QA contract: full verification loop, standards conformance checks, SPEC gap stewardship, rework generation, PR evidence/manual test plan requirements
 
@@ -72,7 +73,7 @@ Supporting references:
 ## Typical workflow
 1. Use `proposal-builder-agent` when discovery/option analysis is needed.
 2. On proposal sign-off, transition to `spec-builder-agent`.
-3. Use `planner-agent` to produce/update execution plan.
+3. Produce/update execution plan using either `planner-agent` or runtime-native planning (if your agent platform already provides robust built-in planning and task decomposition).
 4. Human owner/facilitator acts as coordinator for handoffs and rework orchestration.
 5. Execute with `worker-agent`.
 6. Validate with `qa-agent` or a QA specialization (`qa-frontend-agent` / `qa-backend-agent`).
