@@ -1,6 +1,6 @@
 # Zazz Skills
 Agent skills and companion documentation for the Zazz Framework.
-This repository packages reusable agent behaviors (`spec-builder`, `planner`, `worker`, `qa`, `coordinator`, API rules) and framework-oriented docs used across projects.
+This repository packages reusable agent behaviors (`proposal-builder`, `spec-builder`, `planner`, `worker`, `qa`, `coordinator`, API rules) and framework-oriented docs used across projects.
 
 ## Source of truth
 Framework and skill concepts are authored/matured in the `zazz-board` repository first.
@@ -11,6 +11,7 @@ This repository is kept aligned by syncing from the board repo when concepts or 
 - `docs/` — framework and workflow reference documents
 
 ## Skills inventory
+- `proposal-builder-agent` — facilitated proposal drafting for features/deliverables with alternatives, justification, and tradeoff analysis
 - `spec-builder-agent` — interactive specification authoring for deliverables
 - `planner-agent` — plan decomposition from SPEC to executable work breakdown
 - `worker-agent` — implementation execution with testing expectations
@@ -40,7 +41,7 @@ Supporting docs:
 1. Clone this repository.
 2. Load needed skills from `.agents/skills/` in your agent runtime.
 3. Read [`docs/ZAZZ-framework.md`](docs/ZAZZ-framework.md) before running multi-agent workflows.
-4. Use `spec-builder-agent` to create/iterate deliverable specs, then `planner-agent`/`worker-agent`/`qa-agent` according to your process.
+4. Use `proposal-builder-agent` for proposal exploration when needed, then `spec-builder-agent` to create/iterate deliverable specs, followed by `planner-agent`/`worker-agent`/`qa-agent`.
 
 ## Syncing from zazz-board
 When board-side concepts change, sync the canonical folders:
