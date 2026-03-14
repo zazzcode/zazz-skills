@@ -17,6 +17,22 @@ Core document model:
 
 The framework supports process-only usage and tool-assisted usage (e.g., Zazz Board API/UI).
 
+## Adoption profiles (flexible by design)
+Zazz is intentionally **opinionated** about structure and workflow, but **flexible** about how much of the model you adopt at once.
+
+Common adoption profiles:
+1. **Deliverable-down adoption** (minimum practical slice)
+   - Focus on `Deliverable → Task` execution with SPEC/PLAN and agent workflows.
+   - Useful for teams that want immediate execution rigor without rolling out full feature/milestone governance yet.
+2. **Feature + deliverable adoption**
+   - Add long-lived feature requirements (`-FRD`) and feature-linked deliverables.
+   - Useful for tracking capability evolution across multiple deliverables.
+3. **Full model adoption**
+   - Adopt Feature + Milestone + Deliverable + Task across planning and execution.
+   - Useful for organizations coordinating larger cross-feature or cross-repo delivery.
+
+You can start small and expand to deeper framework layers over time.
+
 ## What this repository contains
 - `.agents/skills/` — role skills, specialization skills, and API/utility skills
 - `docs/` — framework philosophy and supporting reference docs
@@ -63,7 +79,8 @@ Supporting references:
 5. Validate with `qa-agent` or a QA specialization (`qa-frontend-agent` / `qa-backend-agent`).
 
 ## Development note (optional sync path)
-Some teams dog-food skill changes in `zazz-board` and then sync updates into this repo. That workflow is optional; direct PRs to this repo are fully valid.
+These skills are actively dog-fooded and improved while building `zazz-board` and other software projects.
+Some teams apply a board-first workflow (`zazz-board` → sync to this repo), while others contribute directly here. Both workflows are valid.
 
 Reference repository:
 - `zazz-board` GitHub: https://github.com/zazzcode/zazz-board

@@ -303,6 +303,28 @@ Board API integration is optional framework infrastructure, not a prerequisite f
 
 ---
 
+## Layered Framework Adoption (Partial Adoption Is Valid)
+
+Zazz is opinionated about document/workflow shape, but it does **not** require all framework layers to be adopted at once.
+
+Organizations can adopt in layers:
+
+1. **Execution-layer adoption (Deliverable → Task)**
+   - Use deliverables, tasks, SPEC/PLAN, and owner/agent execution loops.
+   - Skip feature/milestone governance initially if not needed.
+
+2. **Capability-layer adoption (Feature + Deliverable)**
+   - Add long-lived feature requirements (`-FRD`) and feature-linked deliverables.
+   - Track capability evolution across multiple increments.
+
+3. **Portfolio-layer adoption (Feature + Milestone + Deliverable + Task)**
+   - Add milestone grouping and date-driven coordination across deliverables/features.
+   - Use full hierarchy for broader organizational planning/reporting.
+
+Adoption can progress incrementally from lower layers to full model adoption without breaking core framework compatibility.
+
+---
+
 ## Post-Convergence Human Acceptance
 
 Human involvement is intentionally positioned after convergence, not inside it.
