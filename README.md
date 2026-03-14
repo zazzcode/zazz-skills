@@ -13,12 +13,13 @@ Zazz organizes delivery around:
 Milestones remain part of the framework's coordination model, but they are feature-associated rather than standalone repository artifacts. They are not represented by a required repository document or `milestones/` directory, and in service-assisted usage milestone state typically lives in Zazz Board.
 
 Core document model:
-- **Feature Requirements Document (`-FRD`)** — long-lived feature requirements and user journeys
-- **Proposal (`-PROP`)** — exploratory option/tradeoff artifact (feature, deliverable, or joint scope)
+- **Proposals directory (`proposals/`)** — canonical home for exploratory and pre-commitment proposal artifacts, including ideas not yet attached to a feature or deliverable
+- **Feature requirements document** — long-lived feature requirements and user journeys stored under `features/` without a required `-FRD` suffix
+- **Proposal** — exploratory option/tradeoff artifact stored under `proposals/` that may later attach to a feature, a deliverable, or both
 - **Deliverable Specification (`-SPEC`)** — execution contract for a specific deliverable
 - **Plan (`-PLAN`)** — optional explicit decomposition for execution
 
-The framework supports process-only usage and tool-assisted usage (e.g., Zazz Board API/UI).
+The framework supports process-only usage, skills-assisted usage, and tool-assisted usage (for example Zazz Board API/UI).
 It also intentionally leverages runtime-native agent capabilities (for example planning, task decomposition, orchestration, and context handling) instead of re-implementing those capabilities in the framework when the underlying model/harness already does them better.
 It is also compatible with multiple repository branch strategies, including staged integration flows and direct-to-main merge models.
 
@@ -30,7 +31,7 @@ Common adoption profiles:
    - Focus on `Deliverable → Task` execution with SPEC/PLAN and agent workflows.
    - Useful for teams that want immediate execution rigor without rolling out full feature/milestone governance yet.
 2. **Feature + deliverable adoption**
-   - Add long-lived feature requirements (`-FRD`) and feature-linked deliverables.
+   - Add long-lived feature requirements documents and feature-linked deliverables.
    - Useful for tracking capability evolution across multiple deliverables.
 3. **Full model adoption**
    - Adopt Feature + Milestone + Deliverable + Task across planning and execution.

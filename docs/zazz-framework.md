@@ -5,9 +5,9 @@ Zazz is a feature- and milestone-oriented, spec-driven framework for delivering 
 
 Core concepts and capabilities:
 - **Desired-state convergence**: work iterates until implementation aligns with the specification.
-- **Feature requirements + deliverable spec contract**: each feature has a long-lived Feature Requirements Document, and each deliverable has its own Deliverable SPEC.
+- **Feature requirements + deliverable spec contract**: each feature has a long-lived feature requirements document, and each deliverable has its own Deliverable SPEC.
 - **User-journey-first feature definition**: features are defined by user journeys and requirements, including human users, agents, and other systems.
-- **Structured document flow**: optional Proposal (`-PROP`) → required Deliverable Specification (`-SPEC`) → optional explicit Plan (`-PLAN`) → build/validate loop.
+- **Structured document flow**: optional Proposal → required Deliverable Specification (`-SPEC`) → optional explicit Plan (`-PLAN`) → build/validate loop.
 - **Opinionated documentation contract**: required document types plus opinionated naming and directory structure, with flexible root location.
 - **Feature lifecycle model**: a product is a collection of long-lived features that evolve through multiple deliverables over time.
 - **Milestone-centered delivery**: feature-associated milestones group related deliverables into date-driven capability objectives.
@@ -55,12 +55,12 @@ Zazz is intentionally iterative:
 6. Rework is generated and resolved.
 7. A fresh QA context revalidates against the updated Deliverable SPEC.
 8. Repeat until implementation converges and the final deliverable fully reflects the finalized Deliverable SPEC.
-9. On deliverable closure, freeze the Deliverable SPEC and reconcile accepted behavior into the Feature Requirements Document (`-FRD`).
+9. On deliverable closure, freeze the Deliverable SPEC and reconcile accepted behavior into the feature requirements document.
 
 Specification stewardship is shared across the lifecycle:
 - spec-builder creates the initial Deliverable SPEC baseline
 - QA refines and hardens the Deliverable SPEC through controlled updates under framework rules
-- feature owners/stewards reconcile accepted outcomes into linked Feature Requirements Documents (`-FRD`) when the deliverable changes feature requirements
+- feature owners/stewards reconcile accepted outcomes into linked feature requirements documents when the deliverable changes feature requirements
 - SPEC change history should remain explicit and traceable
 
 ---
@@ -93,23 +93,26 @@ Zazz is flexible about **where those documents are stored** in a repository.
 
 Required document contract:
 - **Standards set** (required): the adopting project's shared conventions that govern implementation and validation.
-- **Feature Requirements Document (`-FRD`)** (required per feature): long-lived, mutable user-journey and requirement contract for the feature over time.
+- **Feature requirements document** (required per feature): long-lived, mutable user-journey and requirement contract for the feature over time.
 - **Deliverable Specification (`-SPEC`)** (required per deliverable): execution contract for one deliverable.
 - **Plan (`-PLAN`)** (optional explicit artifact): execution decomposition toward the specification. In some runtimes, planning may be internal to the agent platform instead of persisted as a standalone `-PLAN` document.
-- **Proposal (`-PROP`)** (optional, strongly recommended): ideation/debate mechanism before commitment. A proposal may be associated with a feature, a deliverable, or both, depending on scope.
+- **Proposal** (optional, strongly recommended): ideation/debate mechanism before commitment. Proposals may exist before any feature or deliverable exists, and may later attach to a feature, a deliverable, or both.
 
 Opinionated naming contract:
-- Framework document names are opinionated around four artifact types: `-FRD`, `-PROP`, `-SPEC`, and `-PLAN`.
-- `-FRD` is required for features and captures user journeys + requirements (what/why, not how).
+- Framework document names are opinionated around two suffixed artifact types: `-SPEC` and `-PLAN`.
+- Feature requirements documents live under `features/` and do not require a `-FRD` suffix.
 - `-SPEC` is reserved for deliverables.
-- `-PROP` is optional and used when pre-decision analysis is needed.
+- Proposal documents live under `proposals/` and do not require a `-PROP` suffix.
 - `-PLAN` may be explicit (document) or implicit (agent-internal/runtime-native), depending on platform capability and team policy.
 
 Proposal scope and placement guidance:
-- **Feature-scoped proposal**: discusses user journeys/requirements evolution and lives with the feature context (for example `features/task-graph/task-graph-PROP.md`).
-- **Deliverable-scoped proposal**: discusses implementation options/tradeoffs for a concrete deliverable and lives with the deliverable context (for example `deliverables/ZAZZ-142-auth-session-hardening/ZAZZ-142-auth-session-hardening-PROP.md` in service-assisted adoption, or `deliverables/auth-session-hardening/auth-session-hardening-PROP.md` in process-only adoption).
-- **Joint proposal**: may be linked to both a feature and a deliverable when it covers both requirements and implementation tradeoffs.
+- The canonical home for proposal artifacts is `proposals/`.
+- **Exploratory proposal**: captures an idea that may not yet map to any approved feature or deliverable (for example `proposals/agent-session-hardening/agent-session-hardening.md`).
+- **Feature-linked proposal**: remains under `proposals/`, but explicitly links the feature it informs.
+- **Deliverable-linked proposal**: remains under `proposals/`, but explicitly links the deliverable it informs.
+- **Joint proposal**: may link to both a feature and a deliverable when it covers both requirements and implementation tradeoffs.
 - A proposal is exploratory and non-authoritative; authoritative contracts are FRDs for features and SPECs for deliverables.
+- Approved proposals may spawn features, deliverables, successor proposals, or no further action at all; they do not require premature creation of feature or deliverable directories just to be stored.
 
 Recommended supporting artifacts:
 - cross-deliverable acceptance/reference notes when a team chooses to persist them outside runtime tooling
@@ -124,11 +127,12 @@ Location flexibility model:
 
 Baseline structure under the configured root:
 - `standards/` for project/application standards used by the adopting repository (single canonical standards location)
+- `proposals/` for exploratory and pre-commitment proposal artifacts, including ideas not yet attached to a feature or deliverable
 - `features/` for long-lived feature requirements and user-journey artifacts
-- `deliverables/` for deliverable execution artifacts (`-SPEC`, optional `-PROP`, optional `-PLAN`)
+- `deliverables/` for deliverable execution artifacts (`-SPEC`, optional `-PLAN`)
 
 Required directory contract:
-- Each repository adopting the framework should expose `standards/`, `features/`, and `deliverables/` under its configured docs root.
+- Each repository adopting the framework should expose `standards/`, `proposals/`, `features/`, and `deliverables/` under its configured docs root.
 - The docs root itself is flexible (`.zazz/`, `docs/`, or repository-defined), but these subdirectories are part of the opinionated framework shape.
 - Milestones remain part of the framework model, but they do not require a repository directory or dedicated documentation artifact.
 
@@ -152,7 +156,7 @@ Feature directory and naming contract:
   - human-readable **feature name** (for example `Task Graph`)
   - stable **feature key** (slashless `kebab-case`, for example `task-graph`) used for paths and references
 - The feature directory name should be the feature key.
-- Feature requirements should be long-lived and maintained in-place (for example `task-graph-FRD.md`).
+- Feature requirements should be long-lived and maintained in-place (for example `task-graph.md`).
 
 Deliverable directory and naming contract:
 - Deliverables should use a stable, slashless **deliverable identifier** that is unique within the project scope.
@@ -162,7 +166,7 @@ Deliverable directory and naming contract:
   - use `{deliverable-identifier}-{worktree-slug}` when the identifier is short or code-like and an added human-readable slug improves clarity (for example `ZAZZ-142-auth-session-hardening`)
   - use `{deliverable-identifier}` directly when it is already sufficiently human-readable (for example `auth-session-hardening`)
 - When a deliverable has multiple persisted artifacts, it should have its own directory under `deliverables/` named with the deliverable base name (for example `deliverables/ZAZZ-142-auth-session-hardening/` or `deliverables/auth-session-hardening/`).
-- Deliverable execution artifacts inside that directory should use the full deliverable base name: required `{deliverable-base-name}-SPEC.md`, optional `{deliverable-base-name}-PROP.md`, optional `{deliverable-base-name}-PLAN.md`.
+- Deliverable execution artifacts inside that directory should use the full deliverable base name: required `{deliverable-base-name}-SPEC.md`, optional `{deliverable-base-name}-PLAN.md`.
 - When a team is only persisting a single deliverable artifact such as the SPEC, the framework may use a flat file directly under `deliverables/` without an extra directory (for example `deliverables/ZAZZ-142-auth-session-hardening-SPEC.md` or `deliverables/auth-session-hardening-SPEC.md`).
 - The worktree slug, when used, should be human-readable, slashless, and aligned with the branch/worktree name used for that deliverable when practical.
 - When a team intentionally explores multiple alternative implementations for the same objective, each variant should use its own distinct deliverable base name, typically by adding a variant suffix or semantic variant slug (for example `ZAZZ-142-auth-session-hardening-v1`, `ZAZZ-143-auth-session-hardening-v2`, or `auth-session-hardening-option-a`).
@@ -183,7 +187,7 @@ A project may span one or more repositories.
 ### Feature
 A long-lived capability object within the product/application.
 Features span time and can receive many deliverables (initial version, enhancements, bug fixes, and rework).
-Each feature has one long-lived Feature Requirements Document (`-FRD`) that evolves over time.
+Each feature has one long-lived feature requirements document that evolves over time.
 Feature scope is driven by user journeys and requirements (human users, agents, or external systems).
 Features may have dependency relationships with other features.
 
@@ -246,11 +250,11 @@ Milestone completion is judged at the milestone level:
 
 Zazz uses the following conceptual flow:
 
-`PROP -> SPEC -> PLAN -> build/validate loop`
+`Proposal -> SPEC -> PLAN -> build/validate loop`
 
-This flow runs per deliverable while preserving continuity with the long-lived Feature Requirements Document (`-FRD`).
+This flow runs per deliverable while preserving continuity with the long-lived feature requirements document.
 
-### Proposal (`-PROP`, optional)
+### Proposal (optional)
 Used to clarify options, rationale, tradeoffs, and constraints before committing to a Deliverable SPEC.
 Strongly recommended for new capabilities and major refactors.
 Proposal discussions may include both user-journey requirements and technical implementation options.
@@ -261,7 +265,7 @@ Defines the desired state and acceptance contract.
 This is the central convergence target.
 
 Requirements and specification maintenance convention:
-- **Feature Requirements Document (`-FRD`)** (long-lived, mutable): canonical user-journey and requirement contract for the feature over time.
+- **Feature requirements document** (long-lived, mutable): canonical user-journey and requirement contract for the feature over time.
 - **Deliverable SPEC** (short-lived execution contract): scoped contract for one deliverable.
 - Deliverable SPEC is refined during active execution/QA and then frozen when the deliverable closes.
 - Enhancements, bug fixes, refactors, and rework that are treated as distinct deliverables should use new Deliverable SPECs.
@@ -326,13 +330,14 @@ Locking philosophy:
 
 ## Service Adoption Philosophy
 
-Zazz supports two valid adoption paths:
-The framework can be adopted either alongside the Zazz Board application/tools or independently as a process-only operating model.
+Zazz supports three valid adoption paths:
+The framework can be adopted independently as a process-only operating model, with companion skills, or alongside the Zazz Board application/tools.
 
-1. **Process-only adoption**: apply the framework philosophy and document flow without any board service.
-2. **Service-assisted adoption**: add Zazz Board API/UI for orchestration, visibility, and locking support.
+1. **Process-only adoption**: apply the framework philosophy and document flow without companion skills or board services.
+2. **Skills-assisted adoption**: use `zazz-skills` to operationalize framework workflows without requiring Zazz Board.
+3. **Service-assisted adoption**: add Zazz Board API/UI for relationship management, orchestration, visibility, and locking support.
 
-Board API integration is optional framework infrastructure, not a prerequisite for framework adoption.
+Skills and Board integration are optional framework infrastructure, not prerequisites for framework adoption.
 
 ---
 
@@ -347,7 +352,7 @@ Organizations can adopt in layers:
    - Skip feature/milestone governance initially if not needed.
 
 2. **Capability-layer adoption (Feature + Deliverable)**
-   - Add long-lived feature requirements (`-FRD`) and feature-linked deliverables.
+   - Add long-lived feature requirements documents and feature-linked deliverables.
    - Track capability evolution across multiple increments.
 
 3. **Portfolio-layer adoption (Feature + Milestone + Deliverable + Task)**
@@ -418,14 +423,14 @@ After UAT and/or PR review, the human owner should choose one of these outcomes 
 3. Human acceptance is deliberately scoped to post-convergence UAT and PR review checkpoints that occur before merge and deliverable closure.
 4. Human review may accept, request bounded rework within the same deliverable, select among deliberate variants, or trigger a successor/synthesis deliverable before merge.
 5. Context engineering is required: least-necessary context, role-scoped and step-scoped decomposition, and preference for runtime-native capabilities.
-6. The framework uses a two-document model: long-lived Feature Requirements (`-FRD`) + per-deliverable Deliverable SPEC (`-SPEC`).
+6. The framework uses a two-document model: long-lived feature requirements documents + per-deliverable Deliverable SPEC (`-SPEC`).
 7. Features define user journeys and requirements (what/why); deliverables define and implement scoped specification contracts (what/how) for execution.
 8. User journeys are the core boundary signal for features and may represent human users, agents, or other systems.
 9. Milestones are first-class, feature-associated, date-driven groupings of deliverables, but they do not require a repository artifact or docs-root subdirectory.
 10. Deliverable dependencies (serial/parallel) shape milestone progression.
 11. Projects and feature milestones may span repositories, but each deliverable remains single-repo and single-worktree.
 12. The framework is opinionated about required document types and subdirectory shape, but flexible about document root location.
-13. `features/`, `deliverables/`, and `standards/` are required framework directories under the configured docs root.
+13. `standards/`, `proposals/`, `features/`, and `deliverables/` are required framework directories under the configured docs root.
 14. Project/application standards are expected in one canonical location under the configured docs root, with a `standards/index.yaml` for efficient discoverability.
 15. Proposals are optional ideation artifacts and may attach to features, deliverables, or both; they are not authoritative contracts.
 16. Branch/worktree naming is opinionated: worktree equals branch name, and branch names are slashless.
@@ -433,6 +438,29 @@ After UAT and/or PR review, the human owner should choose one of these outcomes 
 18. Framework philosophy is implementation-agnostic.
 19. Board services are optional accelerators, not mandatory prerequisites.
 20. `zazz-skills` is the skills repository for the Zazz Framework.
+
+---
+
+## Framework, Skills, and Board
+
+The Zazz Framework is intentionally broader than any single repository or tool.
+
+- The framework defines the philosophy, document model, and operating rules.
+- `zazz-skills` packages reusable agent workflows so teams can adopt the framework with more consistency even when they are not using Zazz Board.
+- Zazz Board is the richer service layer for teams that want stronger relationship management and operational coordination on top of the framework.
+
+Board-oriented benefits include:
+- managing the canonical relationships among proposals, features, deliverables, and milestones without overloading filesystem structure
+- helping teams understand how proposals evolve into features, deliverables, successor work, or no action at all
+- making proposal-to-feature, proposal-to-deliverable, and milestone-to-deliverable relationships easier to create, inspect, and maintain over time
+- giving teams a live operational view of deliverable and task progress while agents are executing work
+- providing a human-facing interface for knowing when deliverables are ready for UAT, PR review, rework decisions, or closure
+- surfacing workflow state through views such as Kanban boards and task graphs, with feature- and milestone-level project views as the board evolves
+- providing orchestration, status visibility, and locking support across concurrent work
+- supporting human review decisions such as variant selection, successor deliverables, and rework tracking in a more explicit interface
+
+The framework must remain usable without these tools, but the ecosystem is intentionally designed so adopting skills and Zazz Board can reduce coordination friction and make the framework easier to operate at scale.
+In practice, Zazz Board's clearest value-add is that it combines cross-artifact relationship management with live operational visibility, giving teams a professional system of record and a working control surface for execution and review while preserving the framework's process-only adoption path for teams that do not need that layer yet.
 
 ---
 
