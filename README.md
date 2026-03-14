@@ -66,7 +66,7 @@ You can start small and expand to deeper framework layers over time.
 
 ## Documentation index
 Start here:
-- [`docs/zazz-framework.md`](docs/zazz-framework.md) — framework philosophy, entities, document contracts, and operating principles
+- [`docs/zazz-framework.md`](docs/zazz-framework.md) — framework philosophy, entities, document contracts, operating principles, and an explicit directory-tree example
 
 Supporting references:
 - [`docs/sample-worker-multi-agent-prompt-CODEX.md`](docs/sample-worker-multi-agent-prompt-CODEX.md)

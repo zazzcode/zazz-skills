@@ -125,7 +125,7 @@ Location flexibility model:
 - Agents should resolve framework documents from a configured root path, for example `ZAZZ_DOCS_ROOT`.
 - Example: one project may store framework docs under `.zazz/` while another stores them under `docs/`; both remain framework-compliant.
 
-Baseline structure under the configured root:
+Top-level structure under the configured root:
 - `standards/` for project/application standards used by the adopting repository (single canonical standards location)
 - `proposals/` for exploratory and pre-commitment proposal artifacts, including ideas not yet attached to a feature or deliverable
 - `features/` for long-lived feature requirements and user-journey artifacts
@@ -133,8 +133,46 @@ Baseline structure under the configured root:
 
 Required directory contract:
 - Each repository adopting the framework should expose `standards/`, `proposals/`, `features/`, and `deliverables/` under its configured docs root.
-- The docs root itself is flexible (`.zazz/`, `docs/`, or repository-defined), but these subdirectories are part of the opinionated framework shape.
+- The docs root itself is flexible (`.zazz/`, `docs/`, or repository-defined), but these subdirectories are the opinionated framework shape.
 - Milestones remain part of the framework model, but they do not require a repository directory or dedicated documentation artifact.
+
+Example directory layout:
+
+```text
+.zazz/
+  standards/
+    index.yaml
+    testing.md
+    coding-style.md
+    architecture.md
+  proposals/
+    agent-session-hardening/
+      agent-session-hardening.md
+    delegated-review-flow/
+      delegated-review-flow.md
+  features/
+    task-graph/
+      task-graph.md
+    agent-auth/
+      agent-auth.md
+  deliverables/
+    auth-session-hardening-SPEC.md
+    ZAZZ-142-auth-session-hardening/
+      ZAZZ-142-auth-session-hardening-SPEC.md
+      ZAZZ-142-auth-session-hardening-PLAN.md
+    auth-session-hardening-option-a/
+      auth-session-hardening-option-a-SPEC.md
+      auth-session-hardening-option-a-PLAN.md
+```
+
+How to read this layout:
+- `standards/` contains shared project/application standards plus `index.yaml`.
+- `proposals/` contains exploratory proposal directories, whether or not they are yet linked to a feature or deliverable.
+- `features/` contains one directory per feature, with the feature requirements document named after the feature key.
+- `deliverables/` may contain either:
+  - a single flat `*-SPEC.md` file when only the SPEC is persisted
+  - a deliverable directory when multiple execution artifacts such as `-SPEC` and `-PLAN` are persisted together
+- Teams may choose `.zazz/`, `docs/`, or another configured docs root, but the internal structure should follow the same shape.
 
 Single-standards-location rule:
 - For project clarity, standards are assumed to live in one canonical standards location under the configured docs root.
