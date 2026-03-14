@@ -54,20 +54,16 @@ You can start small and expand to deeper framework layers over time.
 - `zazz-board-api` — required board/API interaction skill and CLI adapter guidance
 - `coordinator-agent` — placeholder orchestration artifact (not implemented in current iteration)
 
+## Board API operating notes
+- Skills should stay API-spec-driven: fetch the running board OpenAPI document at `{API_BASE_URL}/docs/json` and infer operations from descriptions rather than hardcoding route assumptions.
+- Task prompts should be self-contained so workers can execute without re-reading full project documents (goal, instructions, relevant technical context, acceptance criteria, required tests).
+- When multiple tasks touch the same files, favor explicit dependency sequencing to reduce merge/edit conflicts between concurrent workers.
+
 ## Documentation index
 Start here:
 - [`docs/ZAZZ-framework.md`](docs/ZAZZ-framework.md) — framework philosophy, entities, document contracts, and operating principles
 
 Supporting references:
-- [`docs/zazz-skills.md`](docs/zazz-skills.md)
-- [`docs/deliverables_feature_SPEC.md`](docs/deliverables_feature_SPEC.md)
-- [`docs/deliverables-mvp-PLAN.md`](docs/deliverables-mvp-PLAN.md)
-- [`docs/features/project-governance/project-governance-PROP.md`](docs/features/project-governance/project-governance-PROP.md)
-- [`docs/CLIENT-API-REFACTORING.md`](docs/CLIENT-API-REFACTORING.md)
-- [`docs/dynamic-task-graph-Implementation-Plan.md`](docs/dynamic-task-graph-Implementation-Plan.md)
-- [`docs/swagger-for-agent-enhancement.md`](docs/swagger-for-agent-enhancement.md)
-- [`docs/zazzctl-command-spec.md`](docs/zazzctl-command-spec.md)
-- [`docs/ZAZZ-6-manual-test-plan.md`](docs/ZAZZ-6-manual-test-plan.md)
 - [`docs/sample-worker-multi-agent-prompt-CODEX.md`](docs/sample-worker-multi-agent-prompt-CODEX.md)
 
 ## Typical workflow
