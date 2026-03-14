@@ -10,7 +10,7 @@ Core concepts and capabilities:
 - **Structured document flow**: optional Proposal (`-PROP`) → required Deliverable Specification (`-SPEC`) → optional explicit Plan (`-PLAN`) → build/validate loop.
 - **Opinionated documentation contract**: required document types plus opinionated naming and directory structure, with flexible root location.
 - **Feature lifecycle model**: a product is a collection of long-lived features that evolve through multiple deliverables over time.
-- **Milestone-centered delivery**: milestones group related deliverables into date-driven capability objectives.
+- **Milestone-centered delivery**: feature-associated milestones group related deliverables into date-driven capability objectives.
 - **Repository/worktree boundary**: each deliverable is executed in exactly one repository (including a monorepo) and one dedicated worktree.
 - **Role and context decomposition**: role-scoped and step-scoped context reduces noise and improves agent focus.
 - **Iterative spec stewardship**: spec-builder initializes Deliverable SPEC baselines; QA validates, surfaces gaps, and drives rule-governed refinements.
@@ -33,13 +33,66 @@ Those implementation details belong in skills, standards, API docs, and reposito
 
 ---
 
+## Core Philosophy
+
+- Zazz is designed to converge deliverables toward a declared desired state.
+- Feature requirements define long-duration user journeys and capability intent; Deliverable SPEC defines execution scope for one increment.
+- Tests define the executable verification contract.
+- Proposal, planning, execution, QA, and rework are convergence mechanisms.
+- Products are treated as collections of evolving features; deliverables are bounded increments that implement, improve, or repair those features.
+- The final deliverable must fully reflect its finalized Deliverable SPEC.
+
+---
+
+## Convergence Loop Philosophy (Spec Stewardship)
+
+Zazz is intentionally iterative:
+1. A baseline Deliverable SPEC is established (typically via spec-builder), aligned to current Feature Requirements context.
+2. Work progresses toward the Deliverable SPEC.
+3. QA validates the implementation against the Deliverable SPEC and verification evidence.
+4. QA identifies gaps, inconsistencies, edge cases, missing tests, and ambiguity.
+5. QA drives rule-governed Deliverable SPEC refinement and explicit rework definition when needed.
+6. Rework is generated and resolved.
+7. A fresh QA context revalidates against the updated Deliverable SPEC.
+8. Repeat until implementation converges and the final deliverable fully reflects the finalized Deliverable SPEC.
+9. On deliverable closure, freeze the Deliverable SPEC and reconcile accepted behavior into the Feature Requirements Document (`-FRD`).
+
+Specification stewardship is shared across the lifecycle:
+- spec-builder creates the initial Deliverable SPEC baseline
+- QA refines and hardens the Deliverable SPEC through controlled updates under framework rules
+- feature owners/stewards reconcile accepted outcomes into linked Feature Requirements Documents (`-FRD`) when the deliverable changes feature requirements
+- SPEC change history should remain explicit and traceable
+
+---
+
+## Context Engineering Philosophy
+
+Zazz is intentionally designed to manage context as a first-class concern.
+
+Framework principle:
+- Prefer runtime-native agent capabilities (planning, decomposition, orchestration, memory/context handling, and tool execution primitives) when available.
+- Do not re-implement capabilities that foundation models and agent harnesses already provide reliably and at higher quality.
+- Use the framework to define contracts, roles, and workflow boundaries around those capabilities, not to duplicate them.
+
+Core context principles:
+- Load the **least necessary context** for the current task, role, and decision.
+- Avoid broad, undifferentiated context dumps that increase noise and ambiguity.
+- Decompose work into explicit roles and steps so each agent operates with focused context windows.
+- Use runtime-native capabilities (for example subagents/teams/planning primitives) to isolate context by workstream whenever possible.
+- Prefer iterative context refresh over monolithic one-shot prompts for complex deliverables.
+
+Outcome:
+- Better reasoning quality, lower context drift, and more predictable convergence to the SPEC-defined target state.
+
+---
+
 ## Documentation Architecture Philosophy
 
 Zazz is opinionated about **what documents must exist** and **how they relate**.
 Zazz is flexible about **where those documents are stored** in a repository.
 
 Required document contract:
-- **Standards set** (required): shared conventions that govern implementation and validation.
+- **Standards set** (required): the adopting project's shared conventions that govern implementation and validation.
 - **Feature Requirements Document (`-FRD`)** (required per feature): long-lived, mutable user-journey and requirement contract for the feature over time.
 - **Deliverable Specification (`-SPEC`)** (required per deliverable): execution contract for one deliverable.
 - **Plan (`-PLAN`)** (optional explicit artifact): execution decomposition toward the specification. In some runtimes, planning may be internal to the agent platform instead of persisted as a standalone `-PLAN` document.
@@ -54,13 +107,13 @@ Opinionated naming contract:
 
 Proposal scope and placement guidance:
 - **Feature-scoped proposal**: discusses user journeys/requirements evolution and lives with the feature context (for example `features/task-graph/task-graph-PROP.md`).
-- **Deliverable-scoped proposal**: discusses implementation options/tradeoffs for a concrete deliverable and lives with the deliverable context (for example `deliverables/DLV-142/DLV-142-PROP.md`).
+- **Deliverable-scoped proposal**: discusses implementation options/tradeoffs for a concrete deliverable and lives with the deliverable context (for example `deliverables/ZAZZ-142-auth-session-hardening/ZAZZ-142-auth-session-hardening-PROP.md`).
 - **Joint proposal**: may be linked to both a feature and a deliverable when it covers both requirements and implementation tradeoffs.
 - A proposal is exploratory and non-authoritative; authoritative contracts are FRDs for features and SPECs for deliverables.
 
 Recommended supporting artifacts:
-- milestone-level acceptance/reference notes for grouped deliverables
-- deliverable-level user/release documentation as needed by the milestone
+- cross-deliverable acceptance/reference notes when a team chooses to persist them outside runtime tooling
+- deliverable-level user/release documentation as needed for a release or milestone objective
 - feature-level capability notes when helpful for long-running feature history
 
 Location flexibility model:
@@ -70,18 +123,27 @@ Location flexibility model:
 - Example: one project may store framework docs under `.zazz/` while another stores them under `docs/`; both remain framework-compliant.
 
 Baseline structure under the configured root:
-- `standards/` for framework standards (single canonical standards location)
+- `standards/` for project/application standards used by the adopting repository (single canonical standards location)
 - `features/` for long-lived feature requirements and user-journey artifacts
 - `deliverables/` for deliverable execution artifacts (`-SPEC`, optional `-PROP`, optional `-PLAN`)
-- optional `milestones/` for milestone-level artifacts
 
 Required directory contract:
 - Each repository adopting the framework should expose `standards/`, `features/`, and `deliverables/` under its configured docs root.
 - The docs root itself is flexible (`.zazz/`, `docs/`, or repository-defined), but these subdirectories are part of the opinionated framework shape.
+- Milestones remain part of the framework model, but they do not require a repository directory or dedicated documentation artifact.
 
 Single-standards-location rule:
-- For framework clarity, standards are assumed to live in one canonical standards location under the configured docs root.
+- For project clarity, standards are assumed to live in one canonical standards location under the configured docs root.
 - The framework does not require per-subdirectory or per-section standards partitioning.
+
+Standards index contract:
+- The canonical `standards/` directory should include an `index.yaml` file so agents can quickly determine which standards are relevant before opening individual standards documents.
+- Each `index.yaml` entry should identify the standard document and include at minimum:
+  - the file name or relative path
+  - a short summary of what the standard covers
+  - applicability guidance describing when the standard applies
+- Teams may add richer metadata (for example tags, domains, layers, or technology scopes), but the minimum goal is efficient discoverability for humans and agents.
+- Agents should consult `standards/index.yaml` first, then open only the standards documents that appear relevant to the current deliverable, task, or review step.
 
 Feature directory and naming contract:
 - Each new feature must have its own directory under `features/`.
@@ -93,32 +155,22 @@ Feature directory and naming contract:
 - Feature requirements should be long-lived and maintained in-place (for example `task-graph-FRD.md`).
 
 Deliverable directory and naming contract:
-- Each deliverable must have its own directory under `deliverables/` (for example `deliverables/DLV-142/`).
-- Deliverable execution artifacts live in that directory: required `DLV-142-SPEC.md`, optional `DLV-142-PROP.md`, optional `DLV-142-PLAN.md`.
-- Deliverable IDs should be stable and unique within the project scope.
+- Deliverables should use a stable **deliverable code** composed of `{project-code}-{incrementing-integer}` (for example `ZAZZ-142`).
+- When a deliverable has multiple persisted artifacts, it should have its own directory under `deliverables/` named `{deliverable-code}-{worktree-slug}` (for example `deliverables/ZAZZ-142-auth-session-hardening/`).
+- Deliverable execution artifacts inside that directory should use the full `{deliverable-code}-{worktree-slug}` base name rather than the code alone: required `ZAZZ-142-auth-session-hardening-SPEC.md`, optional `ZAZZ-142-auth-session-hardening-PROP.md`, optional `ZAZZ-142-auth-session-hardening-PLAN.md`.
+- When a team is only persisting a single deliverable artifact such as the SPEC, the framework may use a flat file directly under `deliverables/` without an extra directory (for example `deliverables/ZAZZ-142-auth-session-hardening-SPEC.md`).
+- The worktree slug should be human-readable, slashless, and aligned with the branch/worktree name used for that deliverable when practical.
+- Deliverable codes should be stable and unique within the project scope.
 - Deliverables are linked to features by references/metadata, not by physical nesting under `features/`.
-
----
-
-## Core Philosophy
-
-- Zazz is designed to converge deliverables toward a declared desired state.
-- Feature requirements define long-duration user journeys and capability intent; Deliverable SPEC defines execution scope for one increment.
-- Tests define the executable verification contract.
-- Proposal, planning, execution, QA, and rework are convergence mechanisms.
-- Products are treated as collections of evolving features; deliverables are bounded increments that implement, improve, or repair those features.
-- Convergence is agent-driven and rule-driven.
-- The final deliverable must fully reflect its finalized Deliverable SPEC.
-- Context engineering is a core design goal: provide agents only the context needed for the current decision/work step.
-- Role decomposition and step decomposition exist partly to bound context scope and reduce unnecessary prompt/context load.
 
 ---
 
 ## Core Entities
 
 Zazz organizes work using:
-- execution hierarchy: `Project -> Deliverable -> Task`
-- cross-cutting coordination objects: `Feature` and `Milestone`
+- minimum execution hierarchy: `Project -> Deliverable -> Task`
+- expandable framework model: `Project -> Feature -> Milestone -> Deliverable -> Task`
+- `Feature` and `Milestone` extend the minimum execution hierarchy when a team adopts capability-level or portfolio-level coordination.
 
 ### Project
 The long-lived product/application context.
@@ -131,10 +183,12 @@ Feature scope is driven by user journeys and requirements (human users, agents, 
 Features may have dependency relationships with other features.
 
 ### Milestone
-A first-class, date-driven grouping of deliverables, conceptually similar to a Scrum initiative (or grouped epics).
+A first-class, feature-associated, date-driven grouping of deliverables, conceptually similar to a feature milestone or grouped epic objective.
 
-A milestone exists to represent a larger capability or release objective that usually spans multiple deliverables.
-A milestone may group deliverables from multiple features and from different repositories within the same project.
+A milestone exists as an aspect of a feature and represents a delivery-timeline objective for a group of deliverables within that feature.
+A milestone does not exist independently of a feature.
+A milestone may group deliverables from different repositories within the same project when the associated feature spans repositories.
+A milestone is a framework coordination concept, not a required repository artifact. In service-assisted adoption, milestone state typically lives in Zazz Board rather than a dedicated `milestones/` directory under the docs root.
 
 A milestone has:
 - an explicit completion/release date
@@ -144,7 +198,7 @@ A milestone has:
 ### Deliverable
 A bounded unit of value completed by an agent group, with its own Deliverable SPEC, optional explicit PLAN, and acceptance criteria.
 A deliverable is typically one incremental change to a feature (for example initial implementation, enhancement, bug fix, refactor, or QA-driven rework).
-A deliverable may satisfy requirements from one or more features and may contribute to one or more milestone objectives.
+A deliverable may satisfy requirements from one or more features and may contribute to milestone objectives for its linked feature context.
 A deliverable is strictly scoped to one repository (including a monorepo) and one dedicated git worktree.
 Its implementation and framework documents are versioned in that same repository.
 Once closed, a Deliverable SPEC is treated as frozen/immutable (except explicit amendment records).
@@ -165,13 +219,13 @@ The smallest execution unit inside a deliverable.
 - Features are cross-cutting objects that span multiple deliverables and can span multiple milestones over time.
 - Deliverables are bounded execution units within a feature lifecycle.
 - A feature is implemented and evolved through multiple deliverables over time.
-- Milestones are grouping and coordination constructs, not just labels.
-- Milestones may contain deliverables from one or many features.
-- Milestones represent capability progression/maturation targets for features by a date; deliverables are the implementation increments used to reach those targets.
+- Milestones are feature-associated grouping and coordination constructs, not just labels.
+- A milestone exists only in relation to a feature; it is a delivery-timeline aspect of that feature.
+- Milestones group the deliverables used to reach a dated capability target for that feature.
 - A milestone is not required to represent a fully completed feature; it may represent an intermediate grouping of deliverables toward broader feature completion.
 - Deliverables may be sequenced in series (dependency-gated) or run in parallel (independent).
 - Most milestone structures are mixed dependency graphs.
-- Milestones may include deliverables from multiple repositories.
+- Milestones may include deliverables from multiple repositories when the associated feature spans repositories.
 - No single deliverable is split across repositories or across multiple worktrees.
 - Deliverables and features are many-to-many at requirements level: one deliverable can satisfy multiple feature requirements, and one feature requirement can require multiple deliverables over time.
 - Deliverables are not required to be feature-linked in all cases (for example chores); however, requirement-changing deliverables should link to relevant features.
@@ -216,48 +270,6 @@ Defines how work is organized to move toward the SPEC-defined state.
 
 ---
 
-## Context Engineering Philosophy
-
-Zazz is intentionally designed to manage context as a first-class concern.
-
-Framework principle:
-- Prefer runtime-native agent capabilities (planning, decomposition, orchestration, memory/context handling, and tool execution primitives) when available.
-- Do not re-implement capabilities that foundation models and agent harnesses already provide reliably and at higher quality.
-- Use the framework to define contracts, roles, and workflow boundaries around those capabilities, not to duplicate them.
-
-Core context principles:
-- Load the **least necessary context** for the current task, role, and decision.
-- Avoid broad, undifferentiated context dumps that increase noise and ambiguity.
-- Decompose work into explicit roles and steps so each agent operates with focused context windows.
-- Use runtime-native capabilities (for example subagents/teams/planning primitives) to isolate context by workstream whenever possible.
-- Prefer iterative context refresh over monolithic one-shot prompts for complex deliverables.
-
-Outcome:
-- Better reasoning quality, lower context drift, and more predictable convergence to the SPEC-defined target state.
-
----
-
-## Convergence Loop Philosophy (Spec Stewardship)
-
-Zazz is intentionally iterative:
-1. A baseline Deliverable SPEC is established (typically via spec-builder), aligned to current Feature Requirements context.
-2. Work progresses toward the Deliverable SPEC.
-3. QA validates the implementation against the Deliverable SPEC and verification evidence.
-4. QA identifies gaps, inconsistencies, edge cases, missing tests, and ambiguity.
-5. QA drives rule-governed Deliverable SPEC refinement and explicit rework definition when needed.
-6. Rework is generated and resolved.
-7. A fresh QA context revalidates against the updated Deliverable SPEC.
-8. Repeat until implementation converges and the final deliverable fully reflects the finalized Deliverable SPEC.
-9. On deliverable closure, freeze the Deliverable SPEC and reconcile accepted behavior into the Feature Requirements Document (`-FRD`).
-
-Specification stewardship is shared across the lifecycle:
-- spec-builder creates the initial Deliverable SPEC baseline
-- QA refines and hardens the Deliverable SPEC through controlled updates under framework rules
-- feature owners/stewards reconcile accepted outcomes into linked Feature Requirements Documents (`-FRD`) when the deliverable changes feature requirements
-- SPEC change history should remain explicit and traceable
-
----
-
 ## Agent Role Philosophy
 
 Zazz commonly uses these roles:
@@ -292,7 +304,7 @@ Default collaboration model:
 Branch and worktree naming contract:
 - Worktree directory name must match the branch name used for that deliverable.
 - Branch names must be slashless (no `/`) so branch and worktree names map cleanly to a single directory path.
-- Branch/worktree naming should align with feature identifiers in `features/` and deliverable identifiers in `deliverables/` when practical (for example `feature-id-deliverable-id`).
+- Branch/worktree naming should align with feature identifiers in `features/` and deliverable directory slugs in `deliverables/` when practical (for example `ZAZZ-142-auth-session-hardening`).
 
 Locking philosophy:
 - prefer runtime-native concurrency/ownership guarantees when they are stronger
@@ -327,7 +339,7 @@ Organizations can adopt in layers:
    - Track capability evolution across multiple increments.
 
 3. **Portfolio-layer adoption (Feature + Milestone + Deliverable + Task)**
-   - Add milestone grouping and date-driven coordination across deliverables/features.
+   - Add feature-associated milestone grouping and date-driven coordination across deliverables within feature roadmaps.
    - Use full hierarchy for broader organizational planning/reporting.
 
 Adoption can progress incrementally from lower layers to full model adoption without breaking core framework compatibility.
@@ -352,27 +364,23 @@ These checkpoints are quality controls, not convergence controls.
 ## Key Principles
 
 1. Desired-state convergence is the core operating model.
-2. The framework uses a two-document model: long-lived Feature Requirements (`-FRD`) + per-deliverable Deliverable SPEC (`-SPEC`).
-3. Milestones are first-class, date-driven groupings of deliverables.
-4. Deliverable dependencies (serial/parallel) shape milestone progression.
-5. Projects and milestones may span repositories; each deliverable remains single-repo and single-worktree.
-6. QA is an independent convergence pressure function: it finds gaps/inconsistencies, flags missing tests, and drives rule-governed refinement and rework.
-7. SPEC stewardship is iterative across spec-builder and QA.
-8. The final deliverable must fully reflect its finalized Deliverable SPEC.
-9. Every feature has one long-lived Feature Requirements Document (`-FRD`); every deliverable has one required Deliverable SPEC (`-SPEC`).
-10. Convergence is agent-driven; human acceptance is deliberately scoped to post-convergence UAT and PR merge checkpoints.
-11. Context engineering is required: least-necessary context, role-scoped context, and step-scoped context.
-12. The framework is opinionated about required document types and subdirectory shape, but flexible about document root location.
-13. `features/`, `deliverables/`, and `standards/` are required framework directories under the configured docs root.
-14. Features define user journeys and requirements (what/why); deliverables define and implement scoped specification contracts (what/how) for execution.
-15. Proposals are optional ideation artifacts and may attach to features, deliverables, or both; they are not authoritative contracts.
-16. User journeys are the core boundary signal for features and may represent human users, agents, or other systems.
-17. Branch/worktree naming is opinionated: worktree equals branch name, and branch names are slashless.
-18. Standards are expected in one canonical location under the configured docs root.
-19. Framework philosophy is implementation-agnostic.
-20. Board services are optional accelerators, not mandatory prerequisites.
-21. `zazz-skills` is the skills repository for the Zazz Framework.
-22. The framework prioritizes leveraging runtime-native model/harness capabilities and avoids duplicating capabilities those systems already implement well.
+2. QA applies independent convergence pressure through verification, gap identification, refinement, and rework.
+3. Human acceptance is deliberately scoped to post-convergence UAT and PR merge checkpoints.
+4. Context engineering is required: least-necessary context, role-scoped and step-scoped decomposition, and preference for runtime-native capabilities.
+5. The framework uses a two-document model: long-lived Feature Requirements (`-FRD`) + per-deliverable Deliverable SPEC (`-SPEC`).
+6. Features define user journeys and requirements (what/why); deliverables define and implement scoped specification contracts (what/how) for execution.
+7. User journeys are the core boundary signal for features and may represent human users, agents, or other systems.
+8. Milestones are first-class, feature-associated, date-driven groupings of deliverables, but they do not require a repository artifact or docs-root subdirectory.
+9. Deliverable dependencies (serial/parallel) shape milestone progression.
+10. Projects and feature milestones may span repositories, but each deliverable remains single-repo and single-worktree.
+11. The framework is opinionated about required document types and subdirectory shape, but flexible about document root location.
+12. `features/`, `deliverables/`, and `standards/` are required framework directories under the configured docs root.
+13. Project/application standards are expected in one canonical location under the configured docs root, with a `standards/index.yaml` for efficient discoverability.
+14. Proposals are optional ideation artifacts and may attach to features, deliverables, or both; they are not authoritative contracts.
+15. Branch/worktree naming is opinionated: worktree equals branch name, and branch names are slashless.
+16. Framework philosophy is implementation-agnostic.
+17. Board services are optional accelerators, not mandatory prerequisites.
+18. `zazz-skills` is the skills repository for the Zazz Framework.
 
 ---
 

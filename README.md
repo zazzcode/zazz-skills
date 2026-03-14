@@ -7,7 +7,10 @@ This repo is a standalone skill and documentation package. Contributions can be 
 
 ## Framework snapshot (current model)
 Zazz organizes delivery around:
-- **Project → Feature → Milestone → Deliverable → Task**
+- minimum execution hierarchy: **Project → Deliverable → Task**
+- expanded framework model: **Project → Feature → Milestone → Deliverable → Task**
+
+Milestones remain part of the framework's coordination model, but they are feature-associated rather than standalone repository artifacts. They are not represented by a required repository document or `milestones/` directory, and in service-assisted usage milestone state typically lives in Zazz Board.
 
 Core document model:
 - **Feature Requirements Document (`-FRD`)** — long-lived feature requirements and user journeys
@@ -30,7 +33,7 @@ Common adoption profiles:
    - Useful for tracking capability evolution across multiple deliverables.
 3. **Full model adoption**
    - Adopt Feature + Milestone + Deliverable + Task across planning and execution.
-   - Useful for organizations coordinating larger cross-feature or cross-repo delivery.
+   - Useful for organizations coordinating larger feature roadmaps or cross-repo delivery.
 
 You can start small and expand to deeper framework layers over time.
 
@@ -61,7 +64,7 @@ You can start small and expand to deeper framework layers over time.
 
 ## Documentation index
 Start here:
-- [`docs/ZAZZ-framework.md`](docs/ZAZZ-framework.md) — framework philosophy, entities, document contracts, and operating principles
+- [`docs/zazz-framework.md`](docs/zazz-framework.md) — framework philosophy, entities, document contracts, and operating principles
 
 Supporting references:
 - [`docs/sample-worker-multi-agent-prompt-CODEX.md`](docs/sample-worker-multi-agent-prompt-CODEX.md)
