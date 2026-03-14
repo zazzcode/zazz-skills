@@ -212,7 +212,7 @@ Elicit an explicit **Definition of Done** for the deliverable as a whole. This g
 - "All AC satisfied? All tests passing? PR merged? Documentation updated?"
 - "Any manual verification steps? Sign-offs?"
 
-Document this as a checklist. The Planner and Coordinator use it to know when to stop.
+Document this as a checklist. The Planner and human coordinator (Owner acting as coordinator) use it to know when to stop.
 
 ### 5. Explicit Tests (TDD)
 

@@ -8,14 +8,14 @@ description: Creates or updates an execution-ready implementation PLAN from an a
 If the active agent/model provides built-in planning optimizations (plan mode, TODO/dependency tooling, structured decomposition), you MUST use them first. Then produce the PLAN in this skill’s required structure.
 
 ## Role
-Produce an execution-ready PLAN from an approved SPEC for Coordinator/Worker/QA execution in a shared worktree.
+Produce an execution-ready PLAN from an approved SPEC for Human Coordinator/Worker/QA execution in a shared worktree.
 You are planner-only in this step: DO NOT implement code.
 
 ## Framework Context
 - Zazz is spec-driven and test-driven.
 - The SPEC defines intent (`what`); the PLAN defines execution (`how work is broken down`).
 - The SPEC is read-only during planning.
-- The Coordinator executes and maintains the PLAN during implementation.
+- The human coordinator (Owner acting as coordinator) executes and maintains the PLAN during implementation.
 
 ## Companion Skill Requirement
 - For API work, you MUST load and follow `.agents/skills/zazz-board-api/SKILL.md`.
@@ -128,7 +128,7 @@ Step-level planning rule:
 When the plan is instantiated as Zazz tasks:
 - Each non-`none` `DEPENDS_ON` must map to explicit `TASK_RELATIONS` edges (`relation_type = DEPENDS_ON`).
 - Do not rely on task-create payload `dependencies` alone for graph correctness.
-- Include an edge-validation gate command when requested by Owner/Coordinator (typically a `psql` query against `TASK_RELATIONS`).
+- Include an edge-validation gate command when requested by Owner/human coordinator (typically a `psql` query against `TASK_RELATIONS`).
 
 ## Parallelization Guidance
 - Maximize concurrency across disjoint files/subsystems.
