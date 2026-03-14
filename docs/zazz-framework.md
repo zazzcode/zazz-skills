@@ -15,7 +15,7 @@ Core concepts and capabilities:
 - **Role and context decomposition**: role-scoped and step-scoped context reduces noise and improves agent focus.
 - **Iterative spec stewardship**: spec-builder initializes Deliverable SPEC baselines; QA validates, surfaces gaps, and drives rule-governed refinements.
 - **Flexible runtime model**: supports single-agent, multi-agent, and subagent orchestration depending on runtime capability.
-- **Automation-first quality model**: maximize agent-driven convergence, then apply human quality gates at UAT and PR merge.
+- **Automation-first quality model**: maximize agent-driven convergence, then apply human quality gates at UAT and PR review before merge.
 - **Optional service integration**: Zazz Board services are optional accelerators, not prerequisites for adopting the framework.
 
 ## Document Scope
@@ -165,6 +165,7 @@ Deliverable directory and naming contract:
 - Deliverable execution artifacts inside that directory should use the full deliverable base name: required `{deliverable-base-name}-SPEC.md`, optional `{deliverable-base-name}-PROP.md`, optional `{deliverable-base-name}-PLAN.md`.
 - When a team is only persisting a single deliverable artifact such as the SPEC, the framework may use a flat file directly under `deliverables/` without an extra directory (for example `deliverables/ZAZZ-142-auth-session-hardening-SPEC.md` or `deliverables/auth-session-hardening-SPEC.md`).
 - The worktree slug, when used, should be human-readable, slashless, and aligned with the branch/worktree name used for that deliverable when practical.
+- When a team intentionally explores multiple alternative implementations for the same objective, each variant should use its own distinct deliverable base name, typically by adding a variant suffix or semantic variant slug (for example `ZAZZ-142-auth-session-hardening-v1`, `ZAZZ-143-auth-session-hardening-v2`, or `auth-session-hardening-option-a`).
 - Deliverables are linked to features by references/metadata, not by physical nesting under `features/`.
 
 ---
@@ -310,6 +311,13 @@ Branch and worktree naming contract:
 - Branch names must be slashless (no `/`) so branch and worktree names map cleanly to a single directory path.
 - Branch/worktree naming should align with feature identifiers in `features/` and deliverable base names in `deliverables/` when practical (for example `ZAZZ-142-auth-session-hardening` or `auth-session-hardening`).
 
+Branch strategy flexibility:
+- The framework must remain compatible with different repository branching strategies.
+- Many teams will branch active deliverable worktrees from an integration branch such as `stage` and merge through a staged promotion path (for example `stage` -> `main` or `stage` -> `prod`).
+- Other teams may merge deliverable branches directly to `main`.
+- The framework does not require a specific base branch or promotion model; that choice belongs to the adopting repository/team.
+- The key framework requirement is traceable, isolated deliverable work in a dedicated worktree/branch with an explicit human decision before merge.
+
 Locking philosophy:
 - prefer runtime-native concurrency/ownership guarantees when they are stronger
 - use service-level locking (for example Board API locking) when needed for shared-state safety and observability
@@ -355,13 +363,51 @@ Adoption can progress incrementally from lower layers to full model adoption wit
 Human involvement is intentionally positioned after convergence, not inside it.
 Balance model:
 - Maximal automation during convergence: agents and framework rules drive refinement, validation, and rework.
-- Deliberate human quality checkpoints after convergence: user acceptance testing (UAT) and PR merge approval.
+- Deliberate human quality checkpoints after convergence, but before merge/closure: user acceptance testing (UAT) and PR review/approval while the deliverable worktree is still active.
 
 Post-convergence checkpoints:
-1. **UAT checkpoint**: human validation that delivered behavior meets user/business expectations.
-2. **PR merge checkpoint**: human review/approval gate for code integration and release readiness.
+1. **UAT checkpoint**: human validation that delivered behavior meets user/business expectations while the deliverable remains in its active worktree state.
+2. **PR review checkpoint**: human review/approval gate for code integration and release readiness before merge.
 
 These checkpoints are quality controls, not convergence controls.
+They occur before PR merge and before deliverable closure/finalization.
+If either checkpoint produces follow-up work, that outcome becomes a new explicit decision that starts another bounded convergence pass while the current worktree is still open or before a successor deliverable is merged.
+
+### Human Evaluation Outcomes
+
+After UAT and/or PR review, the human owner should choose one of these outcomes explicitly:
+
+1. **Accept and close**
+   - The current deliverable is sufficient.
+   - Approve the deliverable for merge/closure.
+   - After merge/closure, freeze its finalized SPEC.
+
+2. **Accept with bounded rework in the same deliverable**
+   - The desired state is still the same, but limited tweaks are required.
+   - Keep the current worktree/deliverable active.
+   - Update the existing SPEC only as needed to clarify or tighten accepted intent.
+   - Create rework tasks under the same deliverable and continue the Worker -> QA -> UAT/PR loop until the checkpoint is satisfied.
+
+3. **Create a successor deliverable**
+   - The human feedback changes the desired state materially enough that the work is no longer just bounded rework.
+   - Create a new deliverable with its own SPEC (and PLAN if needed), and treat that as a new convergence target.
+   - Resolve the prior deliverable as superseded, exploratory-only, partial, or otherwise concluded according to team policy rather than merging it as the final path.
+
+4. **Select among deliberate variants**
+   - When multiple deliverables were intentionally run as alternative implementations, each variant remains its own deliverable, worktree, and SPEC during evaluation.
+   - Human review selects one variant to carry forward.
+   - Non-selected variants should be closed explicitly as not selected, rejected, or exploratory-only rather than silently abandoned.
+
+5. **Create a synthesis deliverable**
+   - If the best forward path combines ideas from multiple reviewed variants, do not treat that as an untracked tweak to one winner.
+   - Create a new successor deliverable/worktree whose SPEC defines the synthesized desired state, then continue normal Worker -> QA -> UAT/PR convergence on that deliverable.
+
+### Rework and Variant Management Guidance
+
+- Rework tasks are preferred when feedback stays inside the current deliverable's intended outcome.
+- A new deliverable/SPEC is preferred when the human decision changes scope materially, chooses a new direction, or combines multiple variants into a new target state.
+- Variant exploration should be intentional and explicit: each candidate should have its own deliverable identity, worktree, and reviewable evidence.
+- The framework should preserve traceability for human decisions: selected variant, rejected variants, successor deliverables, and synthesis outcomes should all be recorded explicitly rather than implied by branch history alone.
 
 ---
 
@@ -369,22 +415,24 @@ These checkpoints are quality controls, not convergence controls.
 
 1. Desired-state convergence is the core operating model.
 2. QA applies independent convergence pressure through verification, gap identification, refinement, and rework.
-3. Human acceptance is deliberately scoped to post-convergence UAT and PR merge checkpoints.
-4. Context engineering is required: least-necessary context, role-scoped and step-scoped decomposition, and preference for runtime-native capabilities.
-5. The framework uses a two-document model: long-lived Feature Requirements (`-FRD`) + per-deliverable Deliverable SPEC (`-SPEC`).
-6. Features define user journeys and requirements (what/why); deliverables define and implement scoped specification contracts (what/how) for execution.
-7. User journeys are the core boundary signal for features and may represent human users, agents, or other systems.
-8. Milestones are first-class, feature-associated, date-driven groupings of deliverables, but they do not require a repository artifact or docs-root subdirectory.
-9. Deliverable dependencies (serial/parallel) shape milestone progression.
-10. Projects and feature milestones may span repositories, but each deliverable remains single-repo and single-worktree.
-11. The framework is opinionated about required document types and subdirectory shape, but flexible about document root location.
-12. `features/`, `deliverables/`, and `standards/` are required framework directories under the configured docs root.
-13. Project/application standards are expected in one canonical location under the configured docs root, with a `standards/index.yaml` for efficient discoverability.
-14. Proposals are optional ideation artifacts and may attach to features, deliverables, or both; they are not authoritative contracts.
-15. Branch/worktree naming is opinionated: worktree equals branch name, and branch names are slashless.
-16. Framework philosophy is implementation-agnostic.
-17. Board services are optional accelerators, not mandatory prerequisites.
-18. `zazz-skills` is the skills repository for the Zazz Framework.
+3. Human acceptance is deliberately scoped to post-convergence UAT and PR review checkpoints that occur before merge and deliverable closure.
+4. Human review may accept, request bounded rework within the same deliverable, select among deliberate variants, or trigger a successor/synthesis deliverable before merge.
+5. Context engineering is required: least-necessary context, role-scoped and step-scoped decomposition, and preference for runtime-native capabilities.
+6. The framework uses a two-document model: long-lived Feature Requirements (`-FRD`) + per-deliverable Deliverable SPEC (`-SPEC`).
+7. Features define user journeys and requirements (what/why); deliverables define and implement scoped specification contracts (what/how) for execution.
+8. User journeys are the core boundary signal for features and may represent human users, agents, or other systems.
+9. Milestones are first-class, feature-associated, date-driven groupings of deliverables, but they do not require a repository artifact or docs-root subdirectory.
+10. Deliverable dependencies (serial/parallel) shape milestone progression.
+11. Projects and feature milestones may span repositories, but each deliverable remains single-repo and single-worktree.
+12. The framework is opinionated about required document types and subdirectory shape, but flexible about document root location.
+13. `features/`, `deliverables/`, and `standards/` are required framework directories under the configured docs root.
+14. Project/application standards are expected in one canonical location under the configured docs root, with a `standards/index.yaml` for efficient discoverability.
+15. Proposals are optional ideation artifacts and may attach to features, deliverables, or both; they are not authoritative contracts.
+16. Branch/worktree naming is opinionated: worktree equals branch name, and branch names are slashless.
+17. The framework is compatible with multiple repository branching strategies, including staged integration branches and direct-to-main merge models.
+18. Framework philosophy is implementation-agnostic.
+19. Board services are optional accelerators, not mandatory prerequisites.
+20. `zazz-skills` is the skills repository for the Zazz Framework.
 
 ---
 

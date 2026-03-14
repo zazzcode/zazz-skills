@@ -20,6 +20,7 @@ Core document model:
 
 The framework supports process-only usage and tool-assisted usage (e.g., Zazz Board API/UI).
 It also intentionally leverages runtime-native agent capabilities (for example planning, task decomposition, orchestration, and context handling) instead of re-implementing those capabilities in the framework when the underlying model/harness already does them better.
+It is also compatible with multiple repository branch strategies, including staged integration flows and direct-to-main merge models.
 
 ## Adoption profiles (flexible by design)
 Zazz is intentionally **opinionated** about structure and workflow, but **flexible** about how much of the model you adopt at once.
@@ -76,6 +77,7 @@ Supporting references:
 4. Human owner/facilitator acts as coordinator for handoffs and rework orchestration.
 5. Execute with `worker-agent`.
 6. Validate with `qa-agent` or a QA specialization (`qa-frontend-agent` / `qa-backend-agent`).
+7. Run human UAT and PR review before merge; either approve for merge/closure, request bounded rework in the same deliverable, or create/select a successor or variant path.
 
 ## Development note (optional sync path)
 These skills are actively dog-fooded and improved while building `zazz-board` and other software projects.
