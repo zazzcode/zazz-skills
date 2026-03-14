@@ -107,11 +107,11 @@ Opinionated naming contract:
 
 Proposal scope and placement guidance:
 - The canonical home for proposal artifacts is `proposals/`.
-- **Exploratory proposal**: captures an idea that may not yet map to any approved feature or deliverable (for example `proposals/agent-session-hardening/agent-session-hardening.md`).
+- **Exploratory proposal**: captures an idea that may not yet map to any approved feature or deliverable (for example `proposals/agent-session-hardening.md`).
 - **Feature-linked proposal**: remains under `proposals/`, but explicitly links the feature it informs.
 - **Deliverable-linked proposal**: remains under `proposals/`, but explicitly links the deliverable it informs.
 - **Joint proposal**: may link to both a feature and a deliverable when it covers both requirements and implementation tradeoffs.
-- A proposal is exploratory and non-authoritative; authoritative contracts are FRDs for features and SPECs for deliverables.
+- A proposal is exploratory and non-authoritative; authoritative contracts are feature requirements documents for features and SPECs for deliverables.
 - Approved proposals may spawn features, deliverables, successor proposals, or no further action at all; they do not require premature creation of feature or deliverable directories just to be stored.
 
 Recommended supporting artifacts:
@@ -146,15 +146,11 @@ Example directory layout:
     coding-style.md
     architecture.md
   proposals/
-    agent-session-hardening/
-      agent-session-hardening.md
-    delegated-review-flow/
-      delegated-review-flow.md
+    agent-session-hardening.md
+    delegated-review-flow.md
   features/
-    task-graph/
-      task-graph.md
-    agent-auth/
-      agent-auth.md
+    task-graph.md
+    agent-auth.md
   deliverables/
     auth-session-hardening-SPEC.md
     ZAZZ-142-auth-session-hardening/
@@ -167,8 +163,8 @@ Example directory layout:
 
 How to read this layout:
 - `standards/` contains shared project/application standards plus `index.yaml`.
-- `proposals/` contains exploratory proposal directories, whether or not they are yet linked to a feature or deliverable.
-- `features/` contains one directory per feature, with the feature requirements document named after the feature key.
+- `proposals/` contains proposal files by default; use a proposal subdirectory only when a proposal has multiple supporting artifacts that need grouping.
+- `features/` contains feature requirement files by default; use a feature subdirectory only when a feature accumulates supporting artifacts that need grouping.
 - `deliverables/` may contain either:
   - a single flat `*-SPEC.md` file when only the SPEC is persisted
   - a deliverable directory when multiple execution artifacts such as `-SPEC` and `-PLAN` are persisted together
@@ -188,13 +184,14 @@ Standards index contract:
 - Agents should consult `standards/index.yaml` first, then open only the standards documents that appear relevant to the current deliverable, task, or review step.
 
 Feature directory and naming contract:
-- Each new feature must have its own directory under `features/`.
-- That directory is the canonical location for managing the feature over time (initial delivery, QA-driven rework, enhancements, and bug fixes).
+- Each new feature should have a canonical file under `features/` named after the feature key.
+- By default, features are represented as flat files rather than directories.
+- If a feature later accumulates multiple supporting artifacts, teams may introduce a feature directory using the same feature key and keep the primary feature requirements document inside it.
 - Feature identity should include:
   - human-readable **feature name** (for example `Task Graph`)
   - stable **feature key** (slashless `kebab-case`, for example `task-graph`) used for paths and references
-- The feature directory name should be the feature key.
-- Feature requirements should be long-lived and maintained in-place (for example `task-graph.md`).
+- The feature file name or directory name should be the feature key.
+- Feature requirements should be long-lived and maintained in-place (for example `features/task-graph.md`, or `features/task-graph/task-graph.md` when a feature directory is needed).
 
 Deliverable directory and naming contract:
 - Deliverables should use a stable, slashless **deliverable identifier** that is unique within the project scope.
