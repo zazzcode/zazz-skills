@@ -197,7 +197,7 @@ Repeat until all AC met and all tests passing:
 
 ```bash
 export ZAZZ_API_BASE_URL="http://localhost:3000"
-export ZAZZ_API_TOKEN="your-api-token"
+export ZAZZ_API_TOKEN="${ZAZZ_API_TOKEN:-550e8400-e29b-41d4-a716-446655440000}"
 export AGENT_ID="qa"
 export ZAZZ_WORKSPACE="/path/to/project"
 export ZAZZ_STATE_DIR="${ZAZZ_WORKSPACE}/.zazz"

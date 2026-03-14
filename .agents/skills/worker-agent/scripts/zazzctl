@@ -1,0 +1,19 @@
+#!/usr/bin/env node
+const { spawn } = require('node:child_process');
+const path = require('node:path');
+
+const cliPath = path.resolve(__dirname, '../../zazz-board-api/scripts/zazzctl.mjs');
+const args = ['--profile', 'worker', ...process.argv.slice(2)];
+
+const child = spawn(process.execPath, [cliPath, ...args], {
+  stdio: 'inherit',
+});
+
+child.on('exit', (code) => {
+  process.exit(code ?? 1);
+});
+
+child.on('error', (error) => {
+  process.stderr.write(`zazzctl worker wrapper failed: ${error.message}\n`);
+  process.exit(1);
+});

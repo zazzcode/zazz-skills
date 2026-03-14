@@ -1,356 +1,209 @@
 ---
 name: "Zazz Board API"
 type: "rule"
-description: "Required API skill for all agents to communicate and manage deliverables"
+description: "Required API skill for agents to create and manage deliverables/tasks using live OpenAPI. OpenAPI is source of truth; resolve routes by capability instead of brittle hardcoded full path lists."
 required_for: ["planner", "coordinator", "worker", "qa", "spec-builder"]
 ---
 
-# Zazz Board API (Required Rule Skill)
-
-**Purpose**: Defines how all agents communicate via the Zazz Board API for creating/managing deliverables and tasks
-
-**Required By**: All agents (Coordinator, Worker, QA, Spec-Builder) MUST use this API
-
----
-
-## Overview
-
-The Zazz Board API provides REST endpoints for managing deliverables and tasks. All agents use this API for:
-- Creating and updating deliverables
-- Creating and updating tasks
-- Posting task comments and questions
-- Updating task status
-- Managing task relations (dependencies)
-- **Agent pub/sub (MVP):** Redis pub/sub backend exposed via API endpoints—heartbeat, agent status, agent-to-agent messaging
-
----
-
-## Quick Reference
-
-**API Documentation (Swagger/OpenAPI)**: `{ZAZZ_API_BASE_URL}/docs`
-
-Open this URL in a browser to explore the full API interactively while developing.
+# Zazz Board API (Agent Routes)
+## Purpose
+Agents use this API to create/manage deliverables and tasks, update statuses, append notes, and inspect task graph/readiness. Projects and users are pre-configured; agents do not create them.
 
 ---
 
 ## Authentication
-
-All API requests require:
-- **Header**: `Authorization: Bearer {ZAZZ_API_TOKEN}`
-- **Base URL**: `{ZAZZ_API_BASE_URL}` (e.g., `http://localhost:3000`)
-
----
-
-## Deliverable Endpoints
-
-### GET /projects/{project_code}/deliverables/{deliverable_id}
-Fetch deliverable details.
-
-**Parameters**:
-- `project_code` (string): Project identifier (e.g., "APP")
-- `deliverable_id` (string): Deliverable ID (e.g., "DEL-001")
-
-**Response**:
-```json
-{
-  "id": "DEL-001",
-  "project_code": "APP",
-  "name": "User Authentication",
-  "status": "PLANNING",
-  "spec_url": "project-repo/user-auth-SPEC.md",
-  "plan_url": "project-repo/user-auth-PLAN.md",
-  "created_at": "2026-02-23T00:00:00Z",
-  "updated_at": "2026-02-23T10:30:00Z"
-}
-```
-
-### PATCH /projects/{project_code}/deliverables/{deliverable_id}
-Update deliverable status or metadata.
-
-**Request Body**:
-```json
-{
-  "status": "IN_PROGRESS|IN_REVIEW|COMPLETED|BLOCKED",
-  "plan_url": "updated-url-if-needed"
-}
-```
+All API requests (except `/openapi.json`, `/health`, `/`, `/db-test`, `/token-info`) require:
+- Header: `TB_TOKEN: <uuid>` or `Authorization: Bearer <uuid>`
+- Token resolution: `ZAZZ_API_TOKEN` when set, otherwise fallback `550e8400-e29b-41d4-a716-446655440000`
 
 ---
 
-## Task Endpoints
-
-### POST /projects/{project_code}/deliverables/{deliverable_id}/tasks
-Create a new task.
-
-**Request Body**:
-```json
-{
-  "title": "Add JWT validation to auth handler",
-  "goal": "Implement JWT token validation for all protected endpoints",
-  "instructions": "See implementation plan section 2.3...",
-  "acceptance_criteria": [
-    "JWT token is validated on every protected endpoint",
-    "Invalid tokens return 401 Unauthorized",
-    "Expired tokens return 401 Unauthorized"
-  ],
-  "test_requirements": {
-    "unit_tests": ["JWT validation logic"],
-    "api_tests": ["Valid token acceptance", "Invalid token rejection", "Expired token rejection"],
-    "e2e_tests": []
-  },
-  "files_to_modify": ["src/middleware/auth.ts", "tests/middleware/auth.test.ts"],
-  "depends_on": ["TASK-10"],
-  "coordinates_with": [],
-  "estimated_complexity": "medium"
-}
-```
-
-**Response**:
-```json
-{
-  "id": "TASK-42",
-  "title": "Add JWT validation to auth handler",
-  "status": "TO_DO",
-  "created_at": "2026-02-23T10:30:00Z"
-}
-```
-
-### GET /projects/{project_code}/deliverables/{deliverable_id}/tasks
-List all tasks for a deliverable.
-
-**Query Parameters**:
-- `status` (optional): Filter by status (TO_DO, IN_PROGRESS, COMPLETED, BLOCKED)
-- `assigned_to` (optional): Filter by agent
-
-**Response**:
-```json
-[
-  {
-    "id": "TASK-1",
-    "title": "Setup authentication routes",
-    "status": "COMPLETED",
-    "assigned_to": "worker_1"
-  },
-  {
-    "id": "TASK-42",
-    "title": "Add JWT validation to auth handler",
-    "status": "TO_DO",
-    "depends_on": ["TASK-10"]
-  }
-]
-```
-
-### GET /projects/{project_code}/deliverables/{deliverable_id}/tasks/{task_id}
-Fetch task details.
-
-**Response**:
-```json
-{
-  "id": "TASK-42",
-  "title": "Add JWT validation to auth handler",
-  "goal": "Implement JWT token validation...",
-  "instructions": "See implementation plan section 2.3...",
-  "status": "IN_PROGRESS",
-  "assigned_to": "worker_1",
-  "created_at": "2026-02-23T10:30:00Z",
-  "started_at": "2026-02-23T11:00:00Z",
-  "depends_on": ["TASK-10"],
-  "coordinates_with": [],
-  "comments": [...]
-}
-```
-
-### PATCH /projects/{project_code}/deliverables/{deliverable_id}/tasks/{task_id}
-Update task status or assignment.
-
-**Request Body**:
-```json
-{
-  "status": "IN_PROGRESS|COMPLETED|BLOCKED",
-  "assigned_to": "worker_1"
-}
-```
+## Environment variables
+- `ZAZZ_API_BASE_URL` (fallback: `http://localhost:3030`)
+- `ZAZZ_API_TOKEN` (required token source; fallback if unset: `550e8400-e29b-41d4-a716-446655440000`)
+- `ZAZZ_PROJECT_CODE` (fallback: `ZAZZ`)
+- `ZAZZCTL_PROFILE` (optional default profile: `generic`, `worker`, `planner`, `spec_builder`)
 
 ---
 
-## Task Comments
+## Canonical CLI Adapter (Required)
+Use the canonical Node CLI for board communication:
+- Script: `.agents/skills/zazz-board-api/scripts/zazzctl.mjs`
+- Runtime prereq: Node.js 22+ (project baseline)
 
-### POST /projects/{project_code}/deliverables/{deliverable_id}/tasks/{task_id}/comments
-Post a comment or question on a task.
+CLI-first policy:
+- Use `zazzctl` as the default communication path.
+- Do not handcraft ad-hoc `curl` for normal execution.
+- `curl` is allowed only for OpenAPI fetch/debugging when the CLI is missing a capability.
 
-**Request Body**:
-```json
-{
-  "author": "worker_1",
-  "type": "question|answer|note",
-  "content": "Should JWT validation happen in middleware or in route handler?"
-}
-```
-
-**Response**:
-```json
-{
-  "id": "comment-001",
-  "task_id": "TASK-42",
-  "author": "worker_1",
-  "type": "question",
-  "content": "Should JWT validation happen in middleware or in route handler?",
-  "created_at": "2026-02-23T11:15:00Z"
-}
-```
-
-### GET /projects/{project_code}/deliverables/{deliverable_id}/tasks/{task_id}/comments
-Fetch all comments for a task.
-
-**Response**:
-```json
-[
-  {
-    "id": "comment-001",
-    "author": "worker_1",
-    "type": "question",
-    "content": "Should JWT validation happen in middleware or in route handler?",
-    "created_at": "2026-02-23T11:15:00Z"
-  },
-  {
-    "id": "comment-002",
-    "author": "coordinator",
-    "type": "answer",
-    "reply_to": "comment-001",
-    "content": "Use middleware per tech spec section 3.2. See example in src/middleware/auth-old.ts",
-    "created_at": "2026-02-23T11:20:00Z"
-  }
-]
-```
+Role profile usage:
+- Worker: `zazzctl --profile worker ...`
+- Planner: `zazzctl --profile planner ...`
+- Spec Builder: `zazzctl --profile spec_builder ...`
+- Generic (fallback): `zazzctl ...` or `zazzctl --profile generic ...`
 
 ---
 
-## Agent Pub/Sub (MVP)
+## Source of truth: OpenAPI
+Always fetch the live spec from:
+`{ZAZZ_API_BASE_URL}/openapi.json`
 
-Redis pub/sub backend, exposed via Zazz Board API endpoints. Agents **pull/subscribe** via the API to receive events. Use cases:
-
-- **Plan approval**: When a deliverable's plan is approved, an event is published. The Coordinator subscribes and picks up plan approval messages to create the initial task graph.
-- **Heartbeat**: Publish `last_ping` every ~10 seconds; others detect crashes via timeout
-- **Agent status**: Publish IDLE, EXECUTING, BLOCKED, WAITING
-- **Agent-to-agent messaging**: Questions, escalations, responses (alternative to polling task comments)
-
-Exact endpoint paths TBD; see Swagger at `{ZAZZ_API_BASE_URL}/docs` when implemented.
-
----
-
-## Task Relations
-
-### POST /projects/{project_code}/deliverables/{deliverable_id}/tasks/{task_id}/relations
-Create a dependency or coordination relation to another task.
-
-**Request Body**:
-```json
-{
-  "type": "DEPENDS_ON|COORDINATES_WITH|REWORK_FOR",
-  "related_task_id": "TASK-10"
-}
-```
-
-### GET /projects/{project_code}/deliverables/{deliverable_id}/tasks/{task_id}/relations
-Fetch all relations for a task.
+Rules:
+- Parse `paths` + operation metadata (`tags`, `summary`, `description`, params, requestBody, responses).
+- Do not trust stale hardcoded route lists when OpenAPI differs.
+- Do not invent routes; derive from live spec.
+- If using a local command adapter (e.g. worker `zazzctl`), keep behavior aligned with OpenAPI-derived routes and schemas.
 
 ---
 
-## Error Handling
+## Capability-first routing model (hybrid)
+Use capability names as the stable contract, then resolve concrete routes from OpenAPI.
 
-All endpoints return standard HTTP status codes:
-
-- **200**: Success
-- **201**: Created
-- **400**: Bad Request (invalid parameters)
-- **401**: Unauthorized (missing/invalid token)
-- **404**: Not Found (resource doesn't exist)
-- **409**: Conflict (race condition, e.g., task status changed)
-- **500**: Internal Server Error
-
-Error response:
-```json
-{
-  "error": "Task not found",
-  "status": 404,
-  "timestamp": "2026-02-23T11:20:00Z"
-}
-```
+Core capabilities:
+- Create/list/get/update/approve/status-change deliverable
+- Create/list/get/update/delete/status-change task (deliverable-scoped)
+- Append notes to task
+- Get deliverable graph
+- Create task relations (`DEPENDS_ON`, `COORDINATES_WITH`)
+- Check task readiness
+- Acquire/heartbeat/release/list deliverable file locks
+- Get deliverable status workflow
+- Image operations (list/upload/delete/fetch/metadata) using project-scoped routes
+- Spec-builder board sync: create deliverable, set deliverable status, set `specFilepath`
 
 ---
 
-## Rate Limiting
+## Deterministic route resolution rules
+For each capability:
+1. Filter operations by tags relevant to agent workflows: `deliverables`, `projects`, `task-graph`, `file-locks`, `images`.
+2. Match method + intent keywords in `summary`/`description`.
+3. Prefer project/deliverable-scoped routes over global/legacy routes.
+4. If multiple matches remain, choose the most specific path (more scoped params).
+5. Read request/response schemas from OpenAPI before constructing requests.
+6. If no match is found, stop and report missing capability + method + candidates.
 
-- **Requests per minute**: 60 (per agent)
-- **Burst**: Up to 10 concurrent requests
-- **Backoff**: Exponential backoff if rate limited (429 status)
-
----
-
-## Example: Coordinator Creating Task
-
-```bash
-curl -X POST http://localhost:3000/projects/APP/deliverables/DEL-001/tasks \
-  -H "Authorization: Bearer ${ZAZZ_API_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "Add JWT validation",
-    "goal": "Implement JWT token validation",
-    "instructions": "1. Create JWT validation middleware...",
-    "acceptance_criteria": ["Valid tokens accepted", "Invalid tokens rejected"],
-    "test_requirements": {
-      "unit_tests": ["JWT validation logic"],
-      "api_tests": ["Token validation"]
-    },
-    "files_to_modify": ["src/middleware/auth.ts"],
-    "depends_on": ["TASK-10"],
-    "estimated_complexity": "medium"
-  }'
-```
+Image/graph routing policy:
+- Use deliverable graph route (`/projects/{code}/deliverables/{delivId}/graph`).
+- Do not use project-wide graph route (`/projects/{code}/graph`) if absent in OpenAPI.
+- Use only project-scoped image routes; do not fallback to legacy global/task-only image routes.
 
 ---
 
-## Example: Worker Posting Question
+## Minimal critical assertions (guardrails)
+These capabilities must resolve for normal agent workflows:
+- Create deliverable
+- Update deliverable
+- Change deliverable status
+- Approve deliverable
+- Create task in deliverable
+- Change task status in deliverable
+- Acquire file locks
+- Heartbeat file locks
+- Release file locks
+- Get deliverable graph
+- Check task readiness
 
-```bash
-curl -X POST http://localhost:3000/projects/APP/deliverables/DEL-001/tasks/TASK-42/comments \
-  -H "Authorization: Bearer ${ZAZZ_API_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "author": "worker_1",
-    "type": "question",
-    "content": "Should validation happen in middleware or route handler?"
-  }'
-```
-
----
-
-## Best Practices
-
-1. **Retry on Failure**: Implement exponential backoff for transient errors
-2. **Validate Input**: Check task dependencies are valid before creating
-3. **Use Meaningful Messages**: Clear commit messages and comments for audit trail
-4. **Batch Operations**: Group related API calls to minimize requests
-5. **Cache When Possible**: Cache deliverable SPEC and PLAN locally
-6. **Log Everything**: Log all API calls for debugging and audit
+If a critical capability cannot be resolved, stop and surface the mismatch.
 
 ---
 
-## Environment Variables Required
-
-```bash
-export ZAZZ_API_BASE_URL="http://localhost:3000"
-export ZAZZ_API_TOKEN="your-api-token"
-export PROJECT_CODE="APP"
-export DELIVERABLE_ID="DEL-001"
-```
+## Request construction rules
+- Never infer body fields from memory; derive from OpenAPI schema.
+- Never invent required user inputs; ask the human for missing data.
+- Use numeric IDs where path schema expects numeric IDs (`id`, `delivId`, `taskId`).
+- Treat `deliverableId` (e.g., `ZAZZ-4`) as display-only unless schema says otherwise.
 
 ---
 
-## Reference
+## Mandatory execution contract
+For coordinator/worker/qa agent runs, these behaviors are required:
+- Use live API for all task/deliverable lifecycle updates.
+- Do not leave created tasks in ambiguous state.
+- Keep task graph relations explicit and verifiable.
 
-See examples for:
-- How Coordinator creates initial task graph
-- How Worker posts questions
-- How QA creates rework tasks
-- How to handle API errors and retries
+Task lifecycle (required):
+1. Create task in deliverable (`POST /projects/{code}/deliverables/{delivId}/tasks`) with:
+   - `title`
+   - `phase`
+   - `phaseStep`
+   - `prompt`
+2. If task begins execution, set status to `IN_PROGRESS` (`PATCH .../tasks/{taskId}/status`) once execution preconditions are met.
+3. On implementation completion, move status according to live workflow (some projects include `QA`, others transition directly to `COMPLETED`).
+4. Use task update route (not status route) for task-level blockers: `isBlocked` and `blockedReason`.
+
+Deliverable lifecycle (required):
+- Resolve project deliverable workflow from API/OpenAPI-capable endpoints.
+- Update deliverable status explicitly with status endpoints; do not assume implicit transitions.
+- Approve deliverable explicitly with approve endpoint when workflow requires it.
+- Planner start gate: when planning starts, set deliverable status to `PLANNING`.
+- Spec-builder gate: after deliverable creation, set default status to `BACKLOG` and persist `specFilepath`.
+
+Dependency lifecycle (required):
+- Treat `DEPENDS_ON` in PLAN as required `TASK_RELATIONS` rows.
+- Do not assume task create `dependencies` field is sufficient for graph lines.
+- After task creation, create each dependency edge explicitly via relation endpoint.
+- Create dependency edges immediately after the dependent task exists, even if upstream work is not complete yet.
+- Live graph lines are required board truth for instantiated tasks; do not defer relation writes as a later cleanup step.
+- Unresolved dependencies should not be represented as blocked status unless a separate blocker exists.
+- Solo tasks are valid and visible without dependencies.
+
+File lock lifecycle (required for worker execution):
+- Acquire required file locks before task claim: `POST /projects/{code}/deliverables/{delivId}/locks/acquire`.
+- On `409 FILE_LOCK_CONFLICT`, set task `isBlocked=true` and `blockedReason='FILE_LOCK'`, poll every 3 seconds, and retry.
+- While work is active, refresh lease with `POST /projects/{code}/deliverables/{delivId}/locks/heartbeat`.
+- On completion/handoff, release with `POST /projects/{code}/deliverables/{delivId}/locks/release`.
+
+Harness-aware exception:
+- If a worker harness guarantees strict disjoint file ownership, isolated subagent workspaces, and parent-controlled merge/serialization for overlaps, lock calls may be skipped for those internal subagents.
+- If any external worker/process can concurrently edit the same deliverable/files, lock calls remain mandatory.
+
+Verification lifecycle (required):
+- After creating/updating tasks, re-fetch deliverable task list and confirm task `id`, `phaseStep`, `status`, and blocker fields when used.
+- Re-fetch deliverable graph and confirm task presence and relation edges.
+- For every instantiated task with non-`none` planned `DEPENDS_ON`, verify matching graph edges are present before declaring board sync complete.
+- If mismatch appears, report exact endpoint + payload + response.
+
+---
+
+## Practical workflow
+1. Fetch OpenAPI spec.
+2. Resolve routes for required capabilities using deterministic rules.
+3. Validate required path/query/body schema for each operation.
+4. Execute request with `TB_TOKEN` or `Authorization: Bearer`, using the resolved token (`ZAZZ_API_TOKEN` first, fallback test token).
+5. Validate post-conditions (task list + graph + statuses).
+6. On errors, report capability + path + status + API error payload.
+
+---
+
+## Capability-specific guidance
+- Create deliverable:
+  - Required inputs: `projectCode`, `name`, `type`
+  - Return both numeric `id` and display `deliverableId`
+- Create task:
+  - Required inputs: `code`, `delivId`, `title`
+  - Required operational fields for planning execution: `phase`, `phaseStep`, `prompt`
+  - Respect deliverable approval prerequisites
+  - For each planned dependency, create explicit relation (`DEPENDS_ON`) immediately after task creation
+- Update task status:
+  - Resolve valid transitions from live workflow; common path is `READY` -> `IN_PROGRESS` -> (`QA` optional) -> `COMPLETED`
+  - Include `agentName` when moving to `IN_PROGRESS` to claim work
+- File locks:
+  - Resolve lock routes from OpenAPI (`acquire`, `heartbeat`, `release`, `list`)
+  - Treat heartbeat as required during active work to avoid stale lock reclamation
+- Blockers:
+  - Blocking is task metadata (`isBlocked`, `blockedReason`), not a workflow status column
+- Update deliverable status:
+  - Use deliverable status endpoint, validate allowed values from workflow
+- Append note:
+  - Include `note` and optional `agentName`
+- Images:
+  - Use project-scoped routes only
+  - Validate upload payload schema + content type from OpenAPI
+
+---
+
+## Error handling
+Expected statuses: `200`, `201`, `400`, `401`, `403`, `404`, `409`, `500`.
+- Include API `error` payload when present.
+- Do not retry with guessed alternate routes; re-resolve from OpenAPI first.
+- If status update response conflicts with subsequent list/graph reads, report eventual-consistency mismatch and re-check once before escalating.
