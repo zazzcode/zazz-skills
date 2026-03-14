@@ -51,8 +51,7 @@ You can start small and expand to deeper framework layers over time.
 
 ### Infrastructure and utilities
 - `zazz-board-api` — required board/API interaction skill and CLI adapter guidance
-- `database-baseline-refresh` — specialized baseline refresh workflow
-- `coordinator-agent` — available orchestration skill artifact (current projects may run with human-as-coordinator operationally)
+- `coordinator-agent` — placeholder orchestration artifact (not implemented in current iteration)
 
 ## Documentation index
 Start here:
@@ -64,7 +63,6 @@ Supporting references:
 - [`docs/deliverables-mvp-PLAN.md`](docs/deliverables-mvp-PLAN.md)
 - [`docs/features/project-governance/project-governance-PROP.md`](docs/features/project-governance/project-governance-PROP.md)
 - [`docs/CLIENT-API-REFACTORING.md`](docs/CLIENT-API-REFACTORING.md)
-- [`docs/database-baseline-refresh.md`](docs/database-baseline-refresh.md)
 - [`docs/dynamic-task-graph-Implementation-Plan.md`](docs/dynamic-task-graph-Implementation-Plan.md)
 - [`docs/swagger-for-agent-enhancement.md`](docs/swagger-for-agent-enhancement.md)
 - [`docs/zazzctl-command-spec.md`](docs/zazzctl-command-spec.md)
@@ -75,8 +73,9 @@ Supporting references:
 1. Use `proposal-builder-agent` when discovery/option analysis is needed.
 2. On proposal sign-off, transition to `spec-builder-agent`.
 3. Use `planner-agent` to produce/update execution plan.
-4. Execute with `worker-agent`.
-5. Validate with `qa-agent` or a QA specialization (`qa-frontend-agent` / `qa-backend-agent`).
+4. Human owner/facilitator acts as coordinator for handoffs and rework orchestration.
+5. Execute with `worker-agent`.
+6. Validate with `qa-agent` or a QA specialization (`qa-frontend-agent` / `qa-backend-agent`).
 
 ## Development note (optional sync path)
 These skills are actively dog-fooded and improved while building `zazz-board` and other software projects.

@@ -260,7 +260,11 @@ Zazz commonly uses these roles:
 - `planner-agent`
 - `worker-agent`
 - `qa-agent`
-- optional coordination role (`coordinator-agent`)
+- optional coordination role (`coordinator-agent`, currently a placeholder in this iteration)
+
+Current operating model note:
+- In the current framework iteration, the human owner/facilitator acts as coordinator for handoffs, rework orchestration, and phase progression.
+- Teams may introduce a fully implemented coordinator-agent later without changing core framework contracts.
 
 The active agent runtime (for example Claude, Codex, Warp, Gemini CLI) may provide built-in planning, orchestration, or subagent/team capabilities.
 The framework is role-oriented and convergence-oriented, not tied to a single runtime.
