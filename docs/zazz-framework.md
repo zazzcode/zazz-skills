@@ -107,7 +107,7 @@ Opinionated naming contract:
 
 Proposal scope and placement guidance:
 - **Feature-scoped proposal**: discusses user journeys/requirements evolution and lives with the feature context (for example `features/task-graph/task-graph-PROP.md`).
-- **Deliverable-scoped proposal**: discusses implementation options/tradeoffs for a concrete deliverable and lives with the deliverable context (for example `deliverables/ZAZZ-142-auth-session-hardening/ZAZZ-142-auth-session-hardening-PROP.md`).
+- **Deliverable-scoped proposal**: discusses implementation options/tradeoffs for a concrete deliverable and lives with the deliverable context (for example `deliverables/ZAZZ-142-auth-session-hardening/ZAZZ-142-auth-session-hardening-PROP.md` in service-assisted adoption, or `deliverables/auth-session-hardening/auth-session-hardening-PROP.md` in process-only adoption).
 - **Joint proposal**: may be linked to both a feature and a deliverable when it covers both requirements and implementation tradeoffs.
 - A proposal is exploratory and non-authoritative; authoritative contracts are FRDs for features and SPECs for deliverables.
 
@@ -155,12 +155,16 @@ Feature directory and naming contract:
 - Feature requirements should be long-lived and maintained in-place (for example `task-graph-FRD.md`).
 
 Deliverable directory and naming contract:
-- Deliverables should use a stable **deliverable code** composed of `{project-code}-{incrementing-integer}` (for example `ZAZZ-142`).
-- When a deliverable has multiple persisted artifacts, it should have its own directory under `deliverables/` named `{deliverable-code}-{worktree-slug}` (for example `deliverables/ZAZZ-142-auth-session-hardening/`).
-- Deliverable execution artifacts inside that directory should use the full `{deliverable-code}-{worktree-slug}` base name rather than the code alone: required `ZAZZ-142-auth-session-hardening-SPEC.md`, optional `ZAZZ-142-auth-session-hardening-PROP.md`, optional `ZAZZ-142-auth-session-hardening-PLAN.md`.
-- When a team is only persisting a single deliverable artifact such as the SPEC, the framework may use a flat file directly under `deliverables/` without an extra directory (for example `deliverables/ZAZZ-142-auth-session-hardening-SPEC.md`).
-- The worktree slug should be human-readable, slashless, and aligned with the branch/worktree name used for that deliverable when practical.
-- Deliverable codes should be stable and unique within the project scope.
+- Deliverables should use a stable, slashless **deliverable identifier** that is unique within the project scope.
+- In service-assisted adoption, the deliverable identifier may be a board-managed code such as `{project-code}-{incrementing-integer}` (for example `ZAZZ-142`).
+- In process-only adoption, the deliverable identifier may be a team-defined `kebab-case` key when no board-managed code exists (for example `auth-session-hardening`).
+- Teams should choose a stable **deliverable base name** for persisted artifacts:
+  - use `{deliverable-identifier}-{worktree-slug}` when the identifier is short or code-like and an added human-readable slug improves clarity (for example `ZAZZ-142-auth-session-hardening`)
+  - use `{deliverable-identifier}` directly when it is already sufficiently human-readable (for example `auth-session-hardening`)
+- When a deliverable has multiple persisted artifacts, it should have its own directory under `deliverables/` named with the deliverable base name (for example `deliverables/ZAZZ-142-auth-session-hardening/` or `deliverables/auth-session-hardening/`).
+- Deliverable execution artifacts inside that directory should use the full deliverable base name: required `{deliverable-base-name}-SPEC.md`, optional `{deliverable-base-name}-PROP.md`, optional `{deliverable-base-name}-PLAN.md`.
+- When a team is only persisting a single deliverable artifact such as the SPEC, the framework may use a flat file directly under `deliverables/` without an extra directory (for example `deliverables/ZAZZ-142-auth-session-hardening-SPEC.md` or `deliverables/auth-session-hardening-SPEC.md`).
+- The worktree slug, when used, should be human-readable, slashless, and aligned with the branch/worktree name used for that deliverable when practical.
 - Deliverables are linked to features by references/metadata, not by physical nesting under `features/`.
 
 ---
@@ -304,7 +308,7 @@ Default collaboration model:
 Branch and worktree naming contract:
 - Worktree directory name must match the branch name used for that deliverable.
 - Branch names must be slashless (no `/`) so branch and worktree names map cleanly to a single directory path.
-- Branch/worktree naming should align with feature identifiers in `features/` and deliverable directory slugs in `deliverables/` when practical (for example `ZAZZ-142-auth-session-hardening`).
+- Branch/worktree naming should align with feature identifiers in `features/` and deliverable base names in `deliverables/` when practical (for example `ZAZZ-142-auth-session-hardening` or `auth-session-hardening`).
 
 Locking philosophy:
 - prefer runtime-native concurrency/ownership guarantees when they are stronger
