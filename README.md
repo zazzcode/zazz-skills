@@ -3,11 +3,7 @@ Reusable agent skills and companion docs for the Zazz Framework.
 
 This repository packages practical, composable skills for proposal, specification, planning, implementation, and QA workflows.
 
-## Source of truth and relationship to zazz-board
-Framework and skill concepts are authored/matured first in the Zazz Board repository, then synced here:
-- `zazz-board` GitHub: https://github.com/zazzcode/zazz-board
-
-This repo is the portable skill/documentation package for teams using the framework across projects and runtimes.
+This repo is a standalone skill and documentation package. Contributions can be proposed directly in this repository.
 
 ## Framework snapshot (current model)
 Zazz organizes delivery around:
@@ -66,8 +62,13 @@ Supporting references:
 4. Execute with `worker-agent`.
 5. Validate with `qa-agent` or a QA specialization (`qa-frontend-agent` / `qa-backend-agent`).
 
-## Syncing from zazz-board
-When board-side concepts change, sync canonical folders:
+## Development note (optional sync path)
+Some teams dog-food skill changes in `zazz-board` and then sync updates into this repo. That workflow is optional; direct PRs to this repo are fully valid.
+
+Reference repository:
+- `zazz-board` GitHub: https://github.com/zazzcode/zazz-board
+
+Example sync commands:
 
 ```bash
 rsync -avc --delete /path/to/zazz-board/docs/ /path/to/zazz-skills/docs/
