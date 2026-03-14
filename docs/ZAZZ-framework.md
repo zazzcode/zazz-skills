@@ -1,5 +1,5 @@
 # The Zazz Framework
-Zazz is a spec-driven framework with an explicit convergence model: agents iteratively refine the specification and implementation until gaps are resolved and the deliverable satisfies its finalized Deliverable SPEC.
+Zazz is a feature- and milestone-oriented, spec-driven framework for delivering software with humans and AI agents, where long-lived feature requirements are implemented through deliverables and validated through iterative QA convergence.
 
 ## Framework Introduction (At a Glance)
 
