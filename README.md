@@ -1,98 +1,138 @@
 # Zazz Skills
-Reusable agent skills and companion docs for the Zazz Framework.
 
-This repository packages practical, composable skills for proposal, specification, planning, implementation, and QA workflows.
+**Agent skills for the Zazz Framework** — composable, role-scoped capabilities that let AI agents participate in spec-driven delivery from proposal through implementation and QA.
 
-This repo is a standalone skill and documentation package. Contributions can be proposed directly in this repository.
+This repository is the canonical skill package for teams building with Zazz. Install these skills into your agent runtime (Cursor, Codex, or compatible harnesses) so agents can propose, specify, plan, execute, and validate deliverables within the framework.
 
-## Framework snapshot (current model)
+**Full framework overview:** See [**`zazz-framework.md`**](zazz-framework.md) at the repo root for the complete framework philosophy, entities, document contracts, and operating principles.
+
+---
+
+## What You Get
+
+Zazz Skills turn agents into first-class participants in your delivery workflow. Instead of ad-hoc prompts and handoffs, agents operate with:
+
+- **Clear role boundaries** — proposal facilitator, spec author, planner, worker, QA
+- **Framework-aware context** — specs, plans, tasks, and board state as first-class inputs
+- **Composable specialization** — base QA plus frontend/backend specializations; optional board API integration
+- **Standards alignment** — skills reference `.zazz/standards/` and enforce TDD, accessibility, and conformance checks
+
+---
+
+## End-to-End Workflow
+
+1. **Proposal** — `proposal-builder-agent` facilitates discovery, options, tradeoffs, and recommendations.
+2. **Spec** — `spec-builder-agent` guides the Deliverable Owner through interactive SPEC authoring.
+3. **Plan** — `planner-agent` decomposes approved SPECs into execution-ready plans (or use runtime-native planning).
+4. **Execute** — `worker-agent` implements with TDD, dependency sequencing, and board sync.
+5. **Validate** — `qa-agent` (or `qa-frontend-agent` / `qa-backend-agent`) runs the full verification loop.
+6. **Gate** — Human UAT and PR review before merge.
+
+---
+
+## Skills Inventory
+
+### Core Flow Skills
+
+| Skill | Purpose |
+|-------|---------|
+| **proposal-builder-agent** | Facilitates proposal discussions: why, options, tradeoffs, constraints, recommendation. Supports transcript-first and live facilitation patterns. |
+| **spec-builder-agent** | Interactive deliverable SPEC authoring. Guides the Owner through requirements, acceptance criteria, and testability. |
+| **planner-agent** | Decomposes approved SPECs into execution-ready plans with dependency-safe decomposition and AC traceability. |
+| **worker-agent** | Implementation execution with TDD, dependency/board sync, and testing discipline. |
+| **qa-agent** | Full verification loop, standards conformance, SPEC gap stewardship, rework generation, PR evidence. |
+
+### QA Specializations
+
+| Skill | Focus |
+|-------|-------|
+| **qa-frontend-agent** | UI, accessibility, interaction patterns. Built on base `qa-agent`. |
+| **qa-backend-agent** | API, data, auth, performance. Built on base `qa-agent`. |
+
+### Infrastructure
+
+| Skill | Purpose |
+|-------|---------|
+| **zazz-board-api** | Required for board/API interaction. OpenAPI-driven; fetch `{API_BASE_URL}/docs/json` as source of truth. |
+| **coordinator-agent** | Placeholder for orchestration (not implemented in current iteration). |
+
+---
+
+## Getting Started
+
+**New to Zazz?**
+
+- Start with [`zazz-framework.md`](zazz-framework.md) — philosophy, entities, document contracts, operating principles.
+
+**Installing skills**
+
+- Copy `.agents/skills/` into your agent runtime’s skill directory (e.g. `$CODEX_HOME/skills/` or `.cursor/skills/`).
+- Load skills by name when configuring agents.
+
+**Using the board**
+
+- Skills stay API-spec-driven: infer operations from the live OpenAPI document.
+- Task prompts should be self-contained so workers can execute without re-reading full project docs.
+- When multiple tasks touch the same files, use explicit dependency sequencing.
+
+---
+
+## Framework Snapshot
+
+For the full framework overview and intent, see [**`zazz-framework.md`**](zazz-framework.md). Summary:
+
 Zazz organizes delivery around:
-- minimum execution hierarchy: **Project → Deliverable → Task**
-- expanded framework model: **Project → Feature → Milestone → Deliverable → Task**
 
-Milestones remain part of the framework's coordination model, but they are feature-associated rather than standalone repository artifacts. They are not represented by a required repository document or `milestones/` directory, and in service-assisted usage milestone state typically lives in Zazz Board.
+- **Minimum hierarchy:** Project → Deliverable → Task
+- **Expanded model:** Project → Feature → Milestone → Deliverable → Task
 
-Core document model:
-- **Proposals directory (`proposals/`)** — canonical home for exploratory and pre-commitment proposal artifacts, stored as flat proposal files by default
-- **Feature requirements document** — long-lived feature requirements and user journeys stored under `features/` as flat files by default, without a required `-FRD` suffix
-- **Proposal** — exploratory option/tradeoff artifact stored under `proposals/` that may later attach to a feature, a deliverable, or both
-- **Deliverable Specification (`-SPEC`)** — execution contract for a specific deliverable
-- **Plan (`-PLAN`)** — optional explicit decomposition for execution
+**Core document model:**
 
-The framework supports process-only usage, skills-assisted usage, and tool-assisted usage (for example Zazz Board API/UI).
-It also intentionally leverages runtime-native agent capabilities (for example planning, task decomposition, orchestration, and context handling) instead of re-implementing those capabilities in the framework when the underlying model/harness already does them better.
-It is also compatible with multiple repository branch strategies, including staged integration flows and direct-to-main merge models.
+- `proposals/` — exploratory and pre-commitment proposal artifacts
+- `features/` — long-lived feature requirements and user journeys
+- **Deliverable Specification (`-SPEC`)** — execution contract for a deliverable
+- **Plan (`-PLAN`)** — optional explicit decomposition
 
-## Adoption profiles (flexible by design)
-Zazz is intentionally **opinionated** about structure and workflow, but **flexible** about how much of the model you adopt at once.
+The framework supports process-only usage, skills-assisted usage, and tool-assisted usage (e.g. Zazz Board). It leverages runtime-native agent capabilities (planning, decomposition, orchestration) instead of re-implementing them.
 
-Common adoption profiles:
-1. **Deliverable-down adoption** (minimum practical slice)
-   - Focus on `Deliverable → Task` execution with SPEC/PLAN and agent workflows.
-   - Useful for teams that want immediate execution rigor without rolling out full feature/milestone governance yet.
-2. **Feature + deliverable adoption**
-   - Add long-lived feature requirements documents and feature-linked deliverables.
-   - Useful for tracking capability evolution across multiple deliverables.
-3. **Full model adoption**
-   - Adopt Feature + Milestone + Deliverable + Task across planning and execution.
-   - Useful for organizations coordinating larger feature roadmaps or cross-repo delivery.
+---
 
-You can start small and expand to deeper framework layers over time.
+## Adoption Profiles
 
-## What this repository contains
-- `.agents/skills/` — role skills, specialization skills, and API/utility skills
-- `docs/` — framework philosophy and supporting reference docs
+Zazz is **opinionated** about structure and **flexible** about how much you adopt:
 
-## Skills inventory
-### Core flow skills
-- `proposal-builder-agent` — facilitator + scribe for proposal discussions (why, options, tradeoffs, constraints, recommendation), including transcript-first workflows and Zoom-live facilitation pattern when integrations exist
-- `spec-builder-agent` — interactive deliverable SPEC authoring
-- `planner-agent` — decomposition from approved SPEC to execution-ready PLAN (optional when your runtime provides reliable built-in planning and task decomposition)
-- `worker-agent` — implementation execution with dependency/board synchronization and testing discipline
-- `qa-agent` — base QA contract: full verification loop, standards conformance checks, SPEC gap stewardship, rework generation, PR evidence/manual test plan requirements
+| Profile | Scope | Best for |
+|---------|-------|----------|
+| **Deliverable-down** | Deliverable → Task with SPEC/PLAN | Teams wanting immediate execution rigor |
+| **Feature + deliverable** | Feature requirements + feature-linked deliverables | Tracking capability evolution |
+| **Full model** | Feature + Milestone + Deliverable + Task | Larger roadmaps, cross-repo coordination |
 
-### QA specializations
-- `qa-frontend-agent` — frontend/UI accessibility/interaction-focused QA specialization built on base `qa-agent`
-- `qa-backend-agent` — API/data/auth/performance-focused QA specialization built on base `qa-agent`
+Start small and expand over time.
 
-### Infrastructure and utilities
-- `zazz-board-api` — required board/API interaction skill and CLI adapter guidance
-- `coordinator-agent` — placeholder orchestration artifact (not implemented in current iteration)
+---
 
-## Board API operating notes
-- Skills should stay API-spec-driven: fetch the running board OpenAPI document at `{API_BASE_URL}/docs/json` and infer operations from descriptions rather than hardcoding route assumptions.
-- Task prompts should be self-contained so workers can execute without re-reading full project documents (goal, instructions, relevant technical context, acceptance criteria, required tests).
-- When multiple tasks touch the same files, favor explicit dependency sequencing to reduce merge/edit conflicts between concurrent workers.
+## Repository Layout
 
-## Documentation index
-Start here:
-- [`docs/zazz-framework.md`](docs/zazz-framework.md) — framework philosophy, entities, document contracts, operating principles, and an explicit directory-tree example
+```
+.agents/skills/   — role skills, specializations, API/utility skills
+zazz-framework.md — full framework philosophy, entities, document contracts
+```
 
-Supporting references:
-- [`docs/sample-worker-multi-agent-prompt-CODEX.md`](docs/sample-worker-multi-agent-prompt-CODEX.md)
+---
 
-## Typical workflow
-1. Use `proposal-builder-agent` when discovery/option analysis is needed.
-2. On proposal sign-off, transition to `spec-builder-agent`.
-3. Produce/update execution plan using either `planner-agent` or runtime-native planning (if your agent platform already provides robust built-in planning and task decomposition).
-4. Human owner/facilitator acts as coordinator for handoffs and rework orchestration.
-5. Execute with `worker-agent`.
-6. Validate with `qa-agent` or a QA specialization (`qa-frontend-agent` / `qa-backend-agent`).
-7. Run human UAT and PR review before merge; either approve for merge/closure, request bounded rework in the same deliverable, or create/select a successor or variant path.
+## Optional Sync Path
 
-## Development note (optional sync path)
-These skills are actively dog-fooded and improved while building `zazz-board` and other software projects.
-Some teams apply a board-first workflow (`zazz-board` → sync to this repo), while others contribute directly here. Both workflows are valid.
+Skills are dog-fooded while building `zazz-board` and other projects. Some teams sync from `zazz-board`; others contribute directly here. Both are valid.
 
-Reference repository:
-- `zazz-board` GitHub: https://github.com/zazzcode/zazz-board
-
-Example sync commands:
+**Reference:** [zazz-board](https://github.com/zazzcode/zazz-board)
 
 ```bash
-rsync -avc --delete /path/to/zazz-board/docs/ /path/to/zazz-skills/docs/
+rsync -avc /path/to/zazz-board/docs/zazz-framework.md /path/to/zazz-skills/zazz-framework.md
 rsync -avc --delete /path/to/zazz-board/.agents/skills/ /path/to/zazz-skills/.agents/skills/
 ```
 
+---
+
 ## License
-See [`LICENSE`](LICENSE).
+
+See [LICENSE](LICENSE).

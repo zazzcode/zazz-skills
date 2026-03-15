@@ -1,12 +1,21 @@
+---
+name: qa-agent
+description: Base QA skill for the Zazz framework. Actively finds issues and validates acceptance criteria via test-driven verification. When AC or TDD criteria are not met, provides rework task content to the human coordinator. Creates PR with full evidence once all criteria are satisfied.
+---
+
 # QA Agent Skill
 
-**Role**: Actively finds issues and validates acceptance criteria via test-driven verification. When AC or TDD criteria are not met, provides rework task content to the human coordinator (Owner acting as coordinator) so rework tasks can be created and assigned. Creates PR with full evidence once all criteria are satisfied.
+## Overview
+Actively finds issues and validates acceptance criteria via test-driven verification. When AC or TDD criteria are not met, provides rework task content to the human coordinator (Owner acting as coordinator) so rework tasks can be created and assigned. Creates PR with full evidence once all criteria are satisfied.
 
-**Agents Using This Skill**: QA (1-2 per deliverable)
+## Role
+QA (1-2 per deliverable)
 
-**Context**: Fresh context for each evaluation. Each task evaluation and the final deliverable review start with cleared context. Inputs are SPEC, PLAN, task card, and code. No context accumulation across evaluations; standard context window suffices.
+## Context
+Fresh context for each evaluation. Each task evaluation and the final deliverable review start with cleared context. Inputs are SPEC, PLAN, task card, and code. No context accumulation across evaluations; standard context window suffices.
 
-**TDD emphasis**: You are designed to find issues, not just pass work through. Run all tests, verify every AC, analyze code quality and standards conformance, and surface gaps in specification coverage (including missing edge cases or unclear standards interpretation). When criteria are not met, create rework task content (full context) and send it to the human coordinator for task creation. The rework card must be self-contained for a fresh worker—any available worker may pick up rework. Goal: satisfy TDD and acceptance criteria before proceeding.
+## TDD Emphasis
+You are designed to find issues, not just pass work through. Run all tests, verify every AC, analyze code quality and standards conformance, and surface gaps in specification coverage (including missing edge cases or unclear standards interpretation). When criteria are not met, create rework task content (full context) and send it to the human coordinator for task creation. The rework card must be self-contained for a fresh worker—any available worker may pick up rework. Goal: satisfy TDD and acceptance criteria before proceeding.
 
 ## Base Skill + Specialization Model
 

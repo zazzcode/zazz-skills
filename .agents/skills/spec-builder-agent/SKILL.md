@@ -576,7 +576,7 @@ export ZAZZ_SPEC_BUILDER_DEV_MODE=1   # or "true" — focus on skill iteration, 
 ## Reference
 
 - **User guide** (for Deliverable Owner): `.agents/skills/spec-builder-agent/README.md` — How to work with the spec builder; key phrases, workflow, development mode
-- **Zazz Framework**: [docs/ZAZZ-framework.md](../../docs/ZAZZ-framework.md)
+- **Zazz Framework**: [zazz-framework.md](../../../zazz-framework.md)
 - **Project standards**: `.zazz/standards/` (index.yaml + listed files)
 - **Example SPEC**: `.zazz/deliverables/deliverables-feature-SPEC.md`
 - **Planner skill**: `.agents/skills/planner-agent/SKILL.md` (consumes SPEC, uses break patterns)
