@@ -1,35 +1,38 @@
 # Zazz Skills
 
-**Skills for the Zazz Framework** — composable, role-scoped capabilities that let AI agents participate in spec-driven delivery from proposal through implementation and QA.
+**Skills for the Zazz Framework**: composable capabilities that help humans and AI agents define the right software, build it correctly, and verify it before merge.
 
-This repository is the canonical skill package for teams building with Zazz. Install these skills into your agent runtime (Cursor, Codex, or compatible harnesses) so agents can propose, specify, plan, execute, and validate deliverables within the framework.
+This repository is the canonical source of truth for the Zazz framework itself: its intent, its documentation, and its skill definitions. It exists to define the framework, document the opinionated process, and provide the skill contracts that consuming repos should adopt. The reference implementation is [zazz-board](https://github.com/zazzcode/zazz-board), but changes to the framework and skills should land here first.
 
-**Full framework overview:** See [**`zazz-framework.md`**](zazz-framework.md) at the repo root for the complete framework philosophy, entities, document contracts, and operating principles.
+**Full framework overview:** See [**`zazz-framework.md`**](zazz-framework.md) for the complete framework philosophy, document model, authority model, and operating rules.
 
 ---
 
-## What You Get
+## Why Zazz
 
-Zazz Skills turn agents into first-class participants in your delivery workflow. Instead of ad-hoc prompts and handoffs, agents operate with:
+Zazz is opinionated because the goal is not just to automate software work. The goal is to help teams:
 
-- **Clear role boundaries** — proposal facilitator, FRD author, spec author, planner, worker, QA
-- **Launch-and-leave execution** — once the approved context exists, planning, implementation, verification, and PR packaging can proceed with minimal human oversight
-- **Framework-aware context** — specs, plans, tasks, and board state as first-class inputs
-- **Composable specialization** — base QA plus frontend/backend specializations; optional board API integration
-- **Standards alignment** — skills reference the repo's declared docs root for `standards/` and enforce TDD, accessibility, and conformance checks
+- **Define the right software** through durable proposals, FRDs, milestones, and SPECs
+- **Build it correctly** through explicit acceptance criteria, TDD, standards, and QA evidence
+- **Build efficiently** through launch-and-leave execution once the governing context is approved
+- **Keep it maintainable and expandable** by separating long-lived product knowledge from short-lived execution artifacts
+
+The skills are a means to that end. They provide structured workflows for document creation, execution, verification, and PR preparation inside the framework.
 
 ---
 
 ## End-to-End Workflow
 
-1. **Proposal** — `proposal-builder` facilitates discovery, options, tradeoffs, and recommendations; draft PRs are the preferred sharing surface while proposals are still in progress.
-2. **Feature Definition** — `frd-builder` creates or evolves long-lived Feature Requirement Documents (`-FRD`) and milestone breakdowns, typically reviewed through the same PR workflow as durable code and docs.
-3. **Spec** — `spec-builder` guides the Deliverable Owner through interactive SPEC authoring.
-4. **Plan** — `planner` decomposes approved SPECs into execution-ready plans (or use runtime-native planning).
-5. **Execute** — `worker` implements with TDD, dependency sequencing, and board sync.
-6. **Validate** — `qa` (or `qa-frontend` / `qa-backend`) runs the full verification loop.
-7. **Package Review** — `pr-builder` can turn the diff, SPEC, and QA evidence into reviewer-ready PR text.
-8. **Gate** — Human UAT and PR review before merge.
+1. **Proposal**: `proposal-builder` helps evaluate why to proceed, what options exist, and which direction is worth taking. Proposal docs live in `<DOCS_ROOT>/proposals/` and are typically shared first through draft PRs.
+2. **Feature Definition**: `frd-builder` works with a Product Owner or Project Owner to create or update a long-lived Feature Requirement Document in `<DOCS_ROOT>/features/`. The FRD captures why the feature exists, what is live now, what the system must do at a high level, and how the feature evolves across milestones.
+3. **Deliverable Specification**: `spec-builder` helps a Deliverable Owner write the bounded execution contract for one deliverable, including acceptance criteria and testability expectations.
+4. **Planning**: `planner` turns an approved SPEC into an execution-ready PLAN with sequencing, traceability, and verification steps.
+5. **Execution**: `worker` implements the PLAN using TDD and keeps execution state synchronized with the board when applicable.
+6. **Verification**: `qa`, `qa-frontend`, or `qa-backend` validates the result against acceptance criteria, standards, and evidence requirements.
+7. **PR Packaging**: `pr-builder` prepares reviewer-ready PR titles and bodies from the diff, governing docs, and verification evidence.
+8. **Owner Gates**: Owners approve durable docs, accept deliverable outcomes, review PRs, and merge. Agents may prepare and verify PRs, but they do not merge them.
+
+The framework is intentionally feature-first. Durable product understanding comes before execution slicing.
 
 ---
 
@@ -43,7 +46,7 @@ Zazz Skills turn agents into first-class participants in your delivery workflow.
 | **frd-builder** | Creates and evolves Feature Requirement Documents (`-FRD`) for long-lived capabilities, current-state summaries, and milestone decomposition. |
 | **spec-builder** | Interactive deliverable SPEC authoring. Guides the Owner through requirements, acceptance criteria, and testability. |
 
-These skills are expected to work through conversation and iterative drafting with humans.
+These skills are expected to work through dialogue, iterative drafting, and owner review. Their outputs are durable documents that shape what gets built and why.
 
 ### Autonomous Execution Skills
 
@@ -53,7 +56,7 @@ These skills are expected to work through conversation and iterative drafting wi
 | **worker** | Implementation execution with TDD, dependency/board sync, and testing discipline. |
 | **qa** | Full verification loop, standards conformance, SPEC gap stewardship, rework generation, PR evidence. |
 
-These are the framework's "launch-and-leave" skills: once they have approved inputs, they should drive toward a verified output with minimal human intervention until a real decision or approval gate is reached.
+These are the framework's launch-and-leave skills. Once they have approved inputs, they should drive toward a verified result with minimal human intervention until a real decision, approval, or merge gate is reached.
 
 ### QA Specializations
 
@@ -73,7 +76,7 @@ These are the framework's "launch-and-leave" skills: once they have approved inp
 | Skill | Purpose |
 |-------|---------|
 | **zazz-board-api** | Required for board/API interaction. CLI-first via `zazzctl`, with OpenAPI as the protocol-validation and fallback surface in the reference implementation. |
-| **coordinator** | Placeholder for orchestration (not implemented in current iteration). |
+| **coordinator** | Coordinates execution of an approved PLAN by materializing tasks, maintaining task graph state, and routing blockers or rework during execution. |
 
 ---
 
@@ -83,6 +86,7 @@ These are the framework's "launch-and-leave" skills: once they have approved inp
 
 - Start with [`zazz-framework.md`](zazz-framework.md) — philosophy, entities, document contracts, operating principles.
 - Then read [`worktree-setup.md`](worktree-setup.md) — required bare-repo + sibling-worktree operating model for execution.
+- Review [`templates/AGENTS.md`](templates/AGENTS.md) — example lean `AGENTS.md` contract for repos adopting the framework.
 
 **Installing skills**
 
@@ -110,17 +114,28 @@ Zazz organizes delivery around:
 **Core document model:**
 
 - `<DOCS_ROOT>/proposals/` — exploratory and pre-commitment proposal artifacts
-- `<DOCS_ROOT>/features/` — long-lived Feature Requirement Documents (`-FRD`), user/system flows, and milestone history
-- **Deliverable Specification (`-SPEC`)** — execution contract for a deliverable
-- **Plan (`-PLAN`)** — optional explicit decomposition
+- `<DOCS_ROOT>/features/` — long-lived Feature Requirement Documents (`-FRD`) that explain feature value, current behavior, system intent, and milestone evolution
+- `<DOCS_ROOT>/standards/` — engineering guidance for how software must be built so it remains maintainable and expandable
+- `<DOCS_ROOT>/deliverables/` — per-deliverable SPECs and optional PLANs, usually local to a worktree
 
-The framework supports process-only usage, skills-assisted usage, and tool-assisted usage (e.g. Zazz Board). It leverages runtime-native agent capabilities (planning, decomposition, orchestration) instead of re-implementing them.
+**Authority model:**
+
+- Product Owner defines feature value and milestone outcomes
+- Project Owner defines repo or implementation-facing direction where needed
+- Deliverable Owner approves deliverable scope, acceptance criteria, PR review, and merge
+- Agents can execute autonomously inside approved contracts, but merge authority always remains with an authorized human reviewer
+
+**Git-native collaboration:**
+
+- durable docs are reviewed through branches, worktrees, draft PRs, and final PR review
+- worktrees are required for active execution
+- if a worktree goes down the wrong path, it can be abandoned and the governing docs revisited
 
 ---
 
 ## Adoption Profiles
 
-Zazz is **opinionated** about structure and **flexible** about how much you adopt:
+Zazz is opinionated about structure and flexible about adoption depth:
 
 | Profile | Scope | Best for |
 |---------|-------|----------|
@@ -136,6 +151,7 @@ Start small and expand over time.
 
 ```
 .agents/skills/   — role skills, specializations, API/utility skills
+templates/        — example files for repos adopting the framework
 zazz-framework.md — full framework philosophy, entities, document contracts
 worktree-setup.md — operational guide for the required worktree model
 ```
@@ -144,7 +160,7 @@ worktree-setup.md — operational guide for the required worktree model
 
 ## Propagation
 
-This repo is the source of truth for the framework doc and skill definitions. Other repos using Zazz, including `zazz-board`, should copy or sync from here rather than treating downstream copies as authoritative.
+This repo is the source of truth for the framework's intent, framework documentation, and skill definitions. Other repos using Zazz, including `zazz-board`, should copy or sync from here rather than treating downstream copies as authoritative.
 
 **Reference:** [zazz-board](https://github.com/zazzcode/zazz-board)
 
