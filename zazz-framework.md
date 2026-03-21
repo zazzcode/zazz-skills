@@ -57,6 +57,28 @@ This repository is the canonical source of truth for the framework document and 
 
 **Reading order:** Understand Features/FRDs first, then Deliverables/SPECs. The feature is the durable product concept; the deliverable is the bounded execution increment.
 
+## Humans, Agents, and Skills
+
+The framework distinguishes three different things that are easy to blur together if the wording is loose:
+
+- **Human actors**: Product Owner, Project Owner, Deliverable Owner, stakeholders, and reviewers
+- **Agent actors**: the runtime AI agents that execute work or facilitate dialogue
+- **Skills**: the capability packages loaded into an agent's context, such as `frd-builder`, `spec-builder`, `worker`, or `qa`
+
+The important model is:
+
+- a human interacts with an agent
+- the agent may be running one or more skills
+- the skill shapes how that agent behaves and what artifact it is trying to produce
+
+So, for example:
+
+- the **Deliverable Owner** is the human actor
+- the **agent** is the runtime actor in the dialogue
+- `spec-builder` is the **skill** guiding that agent's behavior during SPEC authoring
+
+This document sometimes uses skill names as shorthand for the agents operating with those skills. When precision matters, interpret phrases like "`spec-builder` drafts the SPEC" as "an agent running the `spec-builder` skill drafts the SPEC through dialogue with the relevant human."
+
 ---
 
 ## Core Principles
@@ -204,7 +226,7 @@ Proposal docs are durable and are expected to be tracked in Git. The required co
 2. open a **draft PR** to share it while the proposal is still being discussed
 3. refine the proposal through comments, commits, and stakeholder feedback
 4. finalize and merge the PR once the proposal is approved
-5. use the approved proposal as input to `frd-builder`, `spec-builder`, or both
+5. use the approved proposal as input to the next authoring session, typically with an agent running `frd-builder`, `spec-builder`, or both
 
 Proposal docs do not replace FRDs or SPECs. They help a team decide what should move forward and on what basis.
 
@@ -362,7 +384,7 @@ This is the recommended flow when a team is defining or revising a long-lived fe
 
 ```mermaid
 flowchart TD
-    A([Product owner or stakeholder]) --> B[FRD Builder: elicit problem, value, current state, system intent]
+    A([Product owner or stakeholder]) --> B[Agent running frd-builder: elicit problem, value, current state, system intent]
     B --> C[Draft or update FRD]
     C --> D[Review with development team]
     D --> E{Clear enough?}
@@ -421,6 +443,8 @@ Not every skill should behave the same way in human collaboration.
 "Launch-and-leave" is a good informal description for the autonomous execution class, and it is a real framework value proposition. The expectation is not zero human interaction. The expectation is minimal interruption once the skill has the approved context it needs.
 
 Interactive skills should optimize for dialogue quality and artifact clarity. Autonomous skills should optimize for execution quality, truthful state, TDD discipline, and the ability to iterate toward a verified final solution before escalating.
+
+In this section and elsewhere, the skill names are shorthand for agents operating with those skills in context.
 
 ---
 
@@ -669,27 +693,27 @@ Document flow:
 | **Feature definition** | `-FRD` | Long-lived capability doc: why, what is live, system-level intent, milestone roadmap, future direction, and feature-level success criteria |
 | **Specification** | `-SPEC` | Required execution contract for one deliverable, including explicit acceptance criteria and verification expectations |
 | **Plan** | `-PLAN` | Optional execution decomposition for implementation |
-| **Build / validate** | code, tests, QA evidence | Worker implements with TDD where applicable; QA verifies against acceptance criteria and evidence until convergence |
+| **Build / validate** | code, tests, QA evidence | An agent running `worker` implements with TDD where applicable; an agent running `qa` verifies against acceptance criteria and evidence until convergence |
 | **Review package** | PR title/body, manual test plan | Reviewer-facing packaging of what changed and how to validate it |
 
 Execution relationship:
 
 ```mermaid
 flowchart LR
-    P["Proposal\n(optional)"] --> FB["FRD Builder"]
-    P --> SB["Spec Builder"]
+    P["Proposal\n(optional)"] --> FB["Agent running\nfrd-builder"]
+    P --> SB["Agent running\nspec-builder"]
     FB --> F["Feature FRD\n(optional for bugs/chores)"]
     F --> M["Milestones live inside the FRD"]
     M --> SM["Owner/team select one milestone to advance"]
     SM --> SB
     P --> FB
     SB --> SPEC["Deliverable SPEC"]
-    SPEC --> PL["Planner"]
+    SPEC --> PL["Agent running\nplanner"]
     PL --> PLAN["PLAN\n(optional)"]
-    SPEC --> W["Worker"]
+    SPEC --> W["Agent running\nworker"]
     PLAN --> W
-    W --> QA["QA"]
-    QA --> PR["PR Builder\n(optional)"]
+    W --> QA["Agent running\nqa"]
+    QA --> PR["Agent running\npr-builder\n(optional)"]
     PR --> G["Owner UAT + PR review"]
     G --> U["Merge + update FRD / standards"]
 ```
@@ -719,7 +743,7 @@ Project -> Feature -> Milestone -> Deliverable -> Task
 | **Feature** | Long-lived capability with one FRD that evolves over time |
 | **Milestone** | Named increment of a feature or release target; may span multiple deliverables |
 | **Deliverable** | Bounded unit of execution with one SPEC and optional PLAN |
-| **Task** | Smallest execution unit; Planner decomposes, Worker implements, Owner coordinates |
+| **Task** | Smallest execution unit; an agent running `planner` decomposes, an agent running `worker` implements, and the relevant owner coordinates |
 
 **Adoption path:** Start with Deliverable -> Task if needed. Add Feature and Milestone when the product needs durable capability tracking and stakeholder-visible roadmap/history.
 
