@@ -1,12 +1,12 @@
-# Proposal Builder Agent — User Guide
+# Proposal Builder Skill — User Guide
 
-How to use the Proposal Builder agent to create a high-quality Proposal (`-PROP`) for a feature, a deliverable, or both.
+How to use the Proposal Builder skill to create a high-quality Proposal (`-PROP`) for a feature, a deliverable, or both.
 
 ---
 
 ## What It Does
 
-The Proposal Builder agent is a **facilitator + scribe**.
+The Proposal Builder skill acts as a **facilitator + scribe**.
 It helps stakeholders discuss:
 - why a change should be done (business and technical justification)
 - expected value and outcomes
@@ -30,8 +30,8 @@ Use this skill when:
 
 ## Input Modes
 
-1. **Live dialogue** — one or more humans discuss with the agent.
-2. **Transcript mode** — paste meeting transcript text and ask the agent to draft/update the proposal.
+1. **Live dialogue** — one or more humans discuss with the skill in an agent session.
+2. **Transcript mode** — paste meeting transcript text and ask the skill to draft/update the proposal.
 3. **Transcript + Q&A mode** — start from transcript extraction, then run a focused follow-up question/answer session to close gaps.
 4. **Zoom live facilitation (experimental)** — when integration exists, the agent listens to live discussion and asks clarifying questions in Zoom chat.
 
@@ -42,13 +42,13 @@ Use this skill when:
 Use this when you’ve already had a proposal discussion call:
 
 1. Paste transcript text from the call.
-2. Ask the agent to extract:
+2. Ask it to extract:
    - problem statement
    - key arguments
    - options considered
    - tradeoffs raised
    - risks, assumptions, and open questions
-3. Have the agent generate a first proposal draft from that extraction.
+3. Have it generate a first proposal draft from that extraction.
 4. Run a short Q&A pass to resolve ambiguities and fill missing details.
 5. Regenerate/refine the proposal.
 
@@ -67,7 +67,7 @@ Future direction (not required for current workflow):
 Current practical approach is transcript ingestion + interactive follow-up.
 
 ### Zoom Chat Facilitation Pattern
-When live integration exists, the proposal agent should:
+When live integration exists, the proposal workflow should:
 - ask one focused question at a time in chat
 - tag question intent (scope/value/alternative/risk/decision)
 - summarize unresolved items every few questions
@@ -77,7 +77,7 @@ When live integration exists, the proposal agent should:
 
 ## Key Phrases You Can Use
 
-- “Use proposal-builder-agent”
+- “Use proposal-builder”
 - “We want to propose a new feature”
 - “Draft a proposal for this deliverable”
 - “Generate proposal”
@@ -107,6 +107,6 @@ Naming follows framework conventions:
 
 - Proposal is exploratory and non-authoritative.
 - FRD/SPEC remain authoritative contracts.
-- The agent should reference project standards while comparing approaches.
+- The skill should reference project standards while comparing approaches.
 - Proposal discussion can include technical implementation direction; final implementation contract still belongs in SPEC/PLAN.
-- After proposal sign-off, transition to specification phase (typically via `spec-builder-agent`) using the proposal handoff summary.
+- After proposal sign-off, transition to specification phase (typically via `spec-builder`) using the proposal handoff summary.

@@ -1,15 +1,15 @@
 ---
-name: qa-backend-agent
-description: Backend specialization of the base qa-agent. Use when a deliverable has API, service, schema, data-integrity, auth/authz, or backend performance/security scope. Adds API contract validation, auth/authz checks, and backend code quality analysis.
+name: qa-backend
+description: Backend specialization of the base qa skill. Use when a deliverable has API, service, schema, data-integrity, auth/authz, or backend performance/security scope. Adds API contract validation, auth/authz checks, and backend code quality analysis.
 ---
 
-# QA Backend Agent Skill
+# Backend QA Skill
 
 ## Overview
-Backend specialization of the base `qa-agent` skill. Use this when a deliverable has API, service, schema, data-integrity, auth/authz, or backend performance/security scope.
+Backend specialization of the base `qa` skill. Use this when a deliverable has API, service, schema, data-integrity, auth/authz, or backend performance/security scope.
 
 ## Required Base Behavior
-You MUST follow `.agents/skills/qa-agent/SKILL.md` as the governing base contract.
+You MUST follow `.agents/skills/qa/SKILL.md` as the governing base contract.
 This specialization adds backend checks; it does not replace the base QA loop.
 
 ## Specialization Focus Areas

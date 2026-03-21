@@ -3,13 +3,25 @@
 Canonical location:
 - `.agents/skills/zazz-board-api/scripts/zazzctl.mjs`
 
+Role in the framework:
+- `zazzctl` is the primary agent/operator interface for Zazz Board operations
+- this repository defines the expected agent-facing command contract
+- [zazz-board](https://github.com/zazzcode/zazz-board) is the reference implementation that should keep the CLI and API in sync
+
 Runtime:
 - Node.js 22+
 
 Quick start:
 ```bash
 node .agents/skills/zazz-board-api/scripts/zazzctl.mjs help
+node .agents/skills/zazz-board-api/scripts/zazzctl.mjs help deliverable
+node .agents/skills/zazz-board-api/scripts/zazzctl.mjs help exec begin
 ```
+
+Source-of-truth model:
+- use CLI help and commands first for normal agent work
+- use OpenAPI in `zazz-board` as the protocol-validation and fallback surface
+- if a capability is missing from the CLI, improve the CLI/skill contract rather than teaching agents to permanently bypass it
 
 Environment:
 ```bash
@@ -34,7 +46,7 @@ node .agents/skills/zazz-board-api/scripts/zazzctl.mjs --profile worker exec beg
 node .agents/skills/zazz-board-api/scripts/zazzctl.mjs --profile planner deliverable status \
   --deliverable-id 4 --status PLANNING
 node .agents/skills/zazz-board-api/scripts/zazzctl.mjs --profile planner deliverable update \
-  --deliverable-id 4 --json '{"planFilepath":".zazz/deliverables/ZAZZ-6-multiple-agent-tokens-feature-PLAN.md"}'
+  --deliverable-id 4 --json '{"planFilepath":"<DOCS_ROOT>/deliverables/ZAZZ-6-multiple-agent-tokens-feature-PLAN.md"}'
 
 # Spec builder creates deliverable, sets BACKLOG, then saves SPEC filepath
 node .agents/skills/zazz-board-api/scripts/zazzctl.mjs --profile spec_builder deliverable create \
@@ -42,5 +54,5 @@ node .agents/skills/zazz-board-api/scripts/zazzctl.mjs --profile spec_builder de
 node .agents/skills/zazz-board-api/scripts/zazzctl.mjs --profile spec_builder deliverable status \
   --deliverable-id 4 --status BACKLOG
 node .agents/skills/zazz-board-api/scripts/zazzctl.mjs --profile spec_builder deliverable update \
-  --deliverable-id 4 --json '{"specFilepath":".zazz/deliverables/ZAZZ-6-multiple-agent-tokens-feature-SPEC.md"}'
+  --deliverable-id 4 --json '{"specFilepath":"<DOCS_ROOT>/deliverables/ZAZZ-6-multiple-agent-tokens-feature-SPEC.md"}'
 ```

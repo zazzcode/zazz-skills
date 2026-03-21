@@ -1,15 +1,15 @@
 ---
-name: qa-frontend-agent
-description: Frontend specialization of the base qa-agent. Use when a deliverable has UI/UX, client-state, browser-interaction, accessibility, or frontend integration scope. Adds UI journey validation, accessibility checks, and frontend code quality analysis.
+name: qa-frontend
+description: Frontend specialization of the base qa skill. Use when a deliverable has UI/UX, client-state, browser-interaction, accessibility, or frontend integration scope. Adds UI journey validation, accessibility checks, and frontend code quality analysis.
 ---
 
-# QA Frontend Agent Skill
+# Frontend QA Skill
 
 ## Overview
-Frontend specialization of the base `qa-agent` skill. Use this when a deliverable has meaningful UI/UX, client-state, browser-interaction, accessibility, or frontend integration scope.
+Frontend specialization of the base `qa` skill. Use this when a deliverable has meaningful UI/UX, client-state, browser-interaction, accessibility, or frontend integration scope.
 
 ## Required Base Behavior
-You MUST follow `.agents/skills/qa-agent/SKILL.md` as the governing base contract.
+You MUST follow `.agents/skills/qa/SKILL.md` as the governing base contract.
 This specialization adds frontend checks; it does not replace the base QA loop.
 
 ## Specialization Focus Areas

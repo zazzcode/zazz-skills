@@ -1,7 +1,7 @@
 ---
 name: "Zazz Board API"
 type: "rule"
-description: "Required API skill for agents to create and manage deliverables/tasks using live OpenAPI. OpenAPI is source of truth; resolve routes by capability instead of brittle hardcoded full path lists."
+description: "Required CLI-first skill for agents to create and manage deliverables/tasks through zazzctl. OpenAPI remains the protocol validation and fallback surface in the zazz-board reference implementation."
 required_for: ["planner", "coordinator", "worker", "qa", "spec-builder"]
 ---
 
@@ -33,6 +33,7 @@ Use the canonical Node CLI for board communication:
 
 CLI-first policy:
 - Use `zazzctl` as the default communication path.
+- Use `zazzctl help`, `zazzctl help <resource>`, or `zazzctl help <resource> <action>` to inspect the supported command surface before guessing flags.
 - Do not handcraft ad-hoc `curl` for normal execution.
 - `curl` is allowed only for OpenAPI fetch/debugging when the CLI is missing a capability.
 
@@ -42,22 +43,46 @@ Role profile usage:
 - Spec Builder: `zazzctl --profile spec_builder ...`
 - Generic (fallback): `zazzctl ...` or `zazzctl --profile generic ...`
 
+## Source-of-Truth Model
+
+This skill uses a split source-of-truth model so each layer has one clear responsibility:
+
+- **`zazzctl` is the primary agent interface.** Agents should prefer the CLI and its built-in help as the first surface for normal board operations.
+- **OpenAPI is the protocol validation and fallback surface.** The board implementation should keep the CLI aligned with the live API schema and routes.
+- **This repo defines the agent-facing contract.** The `zazz-board-api` skill and CLI usage model here describe how agents are expected to operate.
+- **[zazz-board](https://github.com/zazzcode/zazz-board) is the reference implementation.** That repo implements the API and CLI behavior that this skill expects.
+
+Practical rule:
+
+- if the CLI supports the needed capability, use the CLI
+- if the CLI help is insufficient or the capability is missing, inspect OpenAPI and then improve the CLI/skill contract rather than teaching every agent to route around it
+- do not maintain duplicate behavioral documentation in multiple places when the CLI can express the agent contract directly
+
 ---
 
-## Source of truth: OpenAPI
+## OpenAPI Fallback Model
+
 Always fetch the live spec from:
 `{ZAZZ_API_BASE_URL}/openapi.json`
 
-Rules:
-- Parse `paths` + operation metadata (`tags`, `summary`, `description`, params, requestBody, responses).
-- Do not trust stale hardcoded route lists when OpenAPI differs.
-- Do not invent routes; derive from live spec.
-- If using a local command adapter (e.g. worker `zazzctl`), keep behavior aligned with OpenAPI-derived routes and schemas.
+Use OpenAPI when:
+
+- adding a new CLI capability
+- debugging a CLI/API mismatch
+- validating that the reference implementation still matches the expected contract
+- the CLI does not yet expose the needed operation
+
+When falling back to OpenAPI:
+
+- parse `paths` + operation metadata (`tags`, `summary`, `description`, params, requestBody, responses`)
+- do not trust stale hardcoded route lists when OpenAPI differs
+- do not invent routes; derive from live spec
+- once the needed behavior is understood, prefer improving the CLI/help surface so future agents can stay CLI-first
 
 ---
 
-## Capability-first routing model (hybrid)
-Use capability names as the stable contract, then resolve concrete routes from OpenAPI.
+## Capability-first routing model (fallback when CLI does not cover the capability)
+Use capability names as the stable contract, then resolve concrete routes from OpenAPI only when the CLI does not already cover the operation.
 
 Core capabilities:
 - Create/list/get/update/approve/status-change deliverable
@@ -166,12 +191,12 @@ Verification lifecycle (required):
 ---
 
 ## Practical workflow
-1. Fetch OpenAPI spec.
-2. Resolve routes for required capabilities using deterministic rules.
-3. Validate required path/query/body schema for each operation.
-4. Execute request with `TB_TOKEN` or `Authorization: Bearer`, using the resolved token (`ZAZZ_API_TOKEN` first, fallback test token).
+1. Inspect CLI help first (`zazzctl help`, `zazzctl help <resource>`, `zazzctl help <resource> <action>`).
+2. Use the CLI for supported capabilities.
+3. Fetch OpenAPI only when the CLI lacks a capability or appears out of sync.
+4. If falling back to OpenAPI, resolve routes and schemas using the deterministic rules above.
 5. Validate post-conditions (task list + graph + statuses).
-6. On errors, report capability + path + status + API error payload.
+6. On errors, report capability + CLI command or API path + status + error payload.
 
 ---
 

@@ -1,10 +1,31 @@
-# Coordinator Agent Skill
+---
+name: coordinator
+description: Coordinates execution of an approved PLAN by materializing tasks, managing the live task graph, routing blockers and rework, and maintaining PLAN or approved SPEC changes during execution.
+---
 
-**Role**: Orchestrates execution once the plan is approved. Creates tasks from the PLAN via API, hands out tasks to workers, manages the task graph, responds to blockers, creates rework tasks from QA content. Adjusts the PLAN as required when the change mechanism is invoked.
+# Coordinator Skill
+
+## Mission
+
+Turn an approved PLAN into an actively managed execution flow.
+
+Primary outputs:
+
+- a truthful live task graph in Zazz Board
+- rework tasks created from QA-authored rework content
+- updated PLAN content, and approved SPEC updates when the change mechanism is invoked
+
+This skill coordinates execution. It does not implement feature code itself.
+
+## Role
+
+Orchestrates execution once the plan is approved. Creates tasks from the PLAN via API, hands out tasks to workers, manages the task graph, responds to blockers, creates rework tasks from QA content, and adjusts the PLAN when the change mechanism is invoked.
 
 **Agents Using This Skill**: Coordinator (one per deliverable during execution)
 
 **TDD emphasis**: Every task must have explicit test requirements—what tests to create, what tests to run. No task is complete without passing tests. Rework tasks include the failing test that demonstrates the issue.
+
+**Docs root convention**: Use the repo docs root declared in `AGENTS.md` as the base for framework docs. Example paths in this skill may use `<DOCS_ROOT>/...` as shorthand.
 
 ---
 
@@ -39,7 +60,7 @@ During MVP:
 
 **Trigger**: Subscribe to Zazz Board API pub/sub for plan approval events. When a deliverable's plan is approved, it moves to Ready and a plan-approved event is published.
 
-**Input**: Approved .zazz/deliverables/{deliverable-name}-PLAN.md (created by the Planner)
+**Input**: Approved `<DOCS_ROOT>/deliverables/{deliverable-name}-PLAN.md` (created by the Planner)
 
 **Process**:
 1. Read the PLAN to understand phases, steps, and task definitions
@@ -112,6 +133,6 @@ export ZAZZ_STATE_DIR="${ZAZZ_WORKSPACE}/.zazz"
 
 ## Example Workflow
 
-See `.agents/skills/coordinator-agent/examples/` for:
+See `.agents/skills/coordinator/examples/` for:
 - example-plan.md - Sample PLAN document (output of Planner)
 - example-task-graph.json - Sample task dependency graph

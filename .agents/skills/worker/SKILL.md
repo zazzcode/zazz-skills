@@ -1,4 +1,9 @@
-# Worker Agent Skill
+---
+name: worker
+description: Executes an approved deliverable PLAN by implementing code, following TDD, and keeping task, relation, status, and lock state synchronized with Zazz Board.
+---
+
+# Worker Skill
 
 ## Mission
 Execute an approved deliverable PLAN from start to finish, including:
@@ -8,6 +13,14 @@ Execute an approved deliverable PLAN from start to finish, including:
 - status lifecycle management
 
 This role is implementation-first and orchestration-capable.
+
+## What This Skill Produces
+
+Primary outputs:
+
+- implemented code that satisfies the approved SPEC and PLAN
+- passing task-level verification evidence from the required TDD loop
+- truthful board state for tasks, relations, blockers, statuses, and locks
 
 ## Role Scope
 - Worker agent is the primary role with full board API interaction.
@@ -35,7 +48,7 @@ Canonical command adapter path:
 - setup guide: `.agents/skills/zazz-board-api/scripts/README.md`
 
 Worker wrapper:
-- `.agents/skills/worker-agent/scripts/zazzctl` (calls canonical CLI with `--profile worker`)
+- `.agents/skills/worker/scripts/zazzctl` (calls canonical CLI with `--profile worker`)
 - optional repo wrapper: `scripts/zazzctl`
 
 Rule:

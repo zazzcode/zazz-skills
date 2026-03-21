@@ -6,7 +6,7 @@ This directory contains a worker profile wrapper:
 Canonical implementation lives in:
 - `.agents/skills/zazz-board-api/scripts/zazzctl.mjs`
 
-Use this wrapper for worker agents across projects and worktrees.
+Use this wrapper for worker sessions across projects and worktrees.
 
 ## Requirements
 - Node.js 22+
@@ -29,7 +29,7 @@ export ZAZZCTL_PRETTY=1
 Use the checked-in script directly:
 
 ```bash
-./.agents/skills/worker-agent/scripts/zazzctl help
+./.agents/skills/worker/scripts/zazzctl help
 ```
 
 ### Convenience wrapper in repo root
