@@ -369,7 +369,7 @@ flowchart TD
     E -->|No| B
     E -->|Yes| F[Define or revise near-term milestones in the FRD]
     F --> G[Product owner and development team select one milestone to advance now]
-    G --> H[Use spec-builder with the Deliverable Owner to identify one or more deliverables for that milestone and create their SPECs]
+    G --> H[Deliverable Owner uses the spec-builder skill to define one or more deliverables for that milestone and create their SPECs]
 
     classDef human fill:#1976d2,stroke:#0d47a1,color:#fff
     classDef agent fill:#00897b,stroke:#00695c,color:#fff
@@ -382,7 +382,7 @@ flowchart TD
 
 The key idea is that the FRD is not just written once. It is refined through owner/stakeholder input and development-team review, then updated as milestones ship.
 
-Another key idea is that milestones are defined within the FRD, not produced as a separate one-time decomposition artifact. The FRD owns the milestone roadmap. When a team is ready to execute, the product owner and development team select one milestone to advance, then use `spec-builder` with the Deliverable Owner to break that milestone into one or more deliverables and create the corresponding SPECs.
+Another key idea is that milestones are defined within the FRD, not produced as a separate one-time decomposition artifact. The FRD owns the milestone roadmap. When a team is ready to execute, the product owner and development team select one milestone to advance. The Deliverable Owner then uses the `spec-builder` skill to break that milestone into one or more deliverables and create the corresponding SPECs.
 
 ---
 
@@ -701,7 +701,7 @@ Notes:
 - Milestones are defined and maintained inside the FRD.
 - Teams do not need to define every future milestone up front; the FRD may start with only the next few meaningful milestones.
 - Execution advances one selected milestone at a time.
-- `spec-builder` is the interactive step used with a Deliverable Owner to decompose that selected milestone into one or more deliverables and create their SPECs.
+- The Deliverable Owner uses the `spec-builder` skill to decompose that selected milestone into one or more deliverables and create their SPECs.
 - The FRD is typically created or updated before milestone-specific SPECs are written.
 
 ---
