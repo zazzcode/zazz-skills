@@ -265,11 +265,21 @@ FRDs must evolve with the software. After each milestone lands:
 
 The goal is that the FRD always describes the current application as shaped by the most recent completed milestones.
 
+Milestones are also living planning elements inside the FRD. Teams do not need to define the entire milestone roadmap up front. In many cases, an FRD may begin with only one near-term milestone and one or two forward-looking milestones. Additional milestones may be added later as:
+
+- new feature needs are discovered
+- follow-on capabilities become clearer
+- shipped milestones change what the next most valuable increment should be
+- technical or product learning changes the roadmap
+
+The important rule is that the milestone model lives in the FRD and is revised there as the feature evolves.
+
 ### Milestones and deliverables
 
 - A **feature** can span many milestones.
 - A **milestone** is a meaningful increment of that feature and may contain multiple deliverables.
 - A **deliverable** is one bounded execution slice that advances a milestone or handles a standalone need.
+- Teams may define only the next one, two, or three milestones at a time. The framework does not require a complete long-range milestone map before execution begins.
 - Not every deliverable requires an FRD. Bugs, chores, maintenance, migration work, and other non-feature increments may go straight to SPEC.
 
 Relationship model:
@@ -294,7 +304,7 @@ flowchart LR
 An FRD should include:
 
 - feature title and short summary
-- current milestone and next milestone
+- current or active milestone plus the next likely milestones when known
 - introduction / why this feature exists
 - current state of shipped behavior
 - feature-level success criteria and milestone outcome criteria
@@ -357,9 +367,9 @@ flowchart TD
     C --> D[Review with development team]
     D --> E{Clear enough?}
     E -->|No| B
-    E -->|Yes| F[Decompose into milestones]
-    F --> G[Select milestone for execution]
-    G --> H[Spec Builder creates deliverable SPECs]
+    E -->|Yes| F[Define or revise near-term milestones in the FRD]
+    F --> G[Select one milestone to advance now]
+    G --> H[Spec Builder creates one or more deliverable SPECs]
 
     classDef human fill:#1976d2,stroke:#0d47a1,color:#fff
     classDef agent fill:#00897b,stroke:#00695c,color:#fff
@@ -370,6 +380,8 @@ flowchart TD
 ```
 
 The key idea is that the FRD is not just written once. It is refined through owner/stakeholder input and development-team review, then updated as milestones ship.
+
+Another key idea is that milestones are defined within the FRD, not produced as a separate one-time decomposition artifact. The FRD owns the milestone roadmap. Execution then selects one milestone at a time and advances it through one or more deliverables.
 
 ---
 
@@ -663,10 +675,13 @@ Execution relationship:
 
 ```mermaid
 flowchart LR
-    P["Proposal\n(optional)"] --> SB["Spec Builder"]
-    FB["FRD Builder"] --> F["Feature FRD\n(optional for bugs/chores)"]
+    P["Proposal\n(optional)"] --> FB["FRD Builder"]
+    P --> SB["Spec Builder"]
+    FB --> F["Feature FRD\n(optional for bugs/chores)"]
+    F --> M["Milestones live inside the FRD"]
+    M --> SM["Select one milestone to advance"]
+    SM --> SB
     P --> FB
-    F --> SB
     SB --> SPEC["Deliverable SPEC"]
     SPEC --> PL["Planner"]
     PL --> PLAN["PLAN\n(optional)"]
@@ -682,7 +697,9 @@ Notes:
 
 - A deliverable may be created without an FRD when the work is a bug, chore, migration, or other non-feature slice.
 - A feature may drive many deliverables over time.
-- Milestones are represented in the FRD and advanced through one or more deliverables.
+- Milestones are defined and maintained inside the FRD.
+- Teams do not need to define every future milestone up front; the FRD may start with only the next few meaningful milestones.
+- Execution selects one milestone at a time and advances it through one or more deliverables.
 - The FRD is typically created or updated before milestone-specific SPECs are written.
 
 ---
