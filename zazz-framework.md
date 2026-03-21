@@ -368,20 +368,21 @@ flowchart TD
     D --> E{Clear enough?}
     E -->|No| B
     E -->|Yes| F[Define or revise near-term milestones in the FRD]
-    F --> G[Select one milestone to advance now]
-    G --> H[Spec Builder creates one or more deliverable SPECs]
+    F --> G[Product owner and development team select one milestone to advance now]
+    G --> H[Use spec-builder with the Deliverable Owner to identify one or more deliverables for that milestone and create their SPECs]
 
     classDef human fill:#1976d2,stroke:#0d47a1,color:#fff
     classDef agent fill:#00897b,stroke:#00695c,color:#fff
     classDef decision fill:#546e7a,stroke:#37474f,color:#fff
     class A,D human
-    class B,C,F,G,H agent
+    class B,C,F agent
+    class G,H human
     class E decision
 ```
 
 The key idea is that the FRD is not just written once. It is refined through owner/stakeholder input and development-team review, then updated as milestones ship.
 
-Another key idea is that milestones are defined within the FRD, not produced as a separate one-time decomposition artifact. The FRD owns the milestone roadmap. Execution then selects one milestone at a time and advances it through one or more deliverables.
+Another key idea is that milestones are defined within the FRD, not produced as a separate one-time decomposition artifact. The FRD owns the milestone roadmap. When a team is ready to execute, the product owner and development team select one milestone to advance, then use `spec-builder` with the Deliverable Owner to break that milestone into one or more deliverables and create the corresponding SPECs.
 
 ---
 
@@ -679,7 +680,7 @@ flowchart LR
     P --> SB["Spec Builder"]
     FB --> F["Feature FRD\n(optional for bugs/chores)"]
     F --> M["Milestones live inside the FRD"]
-    M --> SM["Select one milestone to advance"]
+    M --> SM["Owner/team select one milestone to advance"]
     SM --> SB
     P --> FB
     SB --> SPEC["Deliverable SPEC"]
@@ -699,7 +700,8 @@ Notes:
 - A feature may drive many deliverables over time.
 - Milestones are defined and maintained inside the FRD.
 - Teams do not need to define every future milestone up front; the FRD may start with only the next few meaningful milestones.
-- Execution selects one milestone at a time and advances it through one or more deliverables.
+- Execution advances one selected milestone at a time.
+- `spec-builder` is the interactive step used with a Deliverable Owner to decompose that selected milestone into one or more deliverables and create their SPECs.
 - The FRD is typically created or updated before milestone-specific SPECs are written.
 
 ---
