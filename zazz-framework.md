@@ -607,8 +607,15 @@ Required operating model:
 - one active deliverable per worktree
 - one branch per worktree
 - worktree name matches the branch or deliverable slug where practical
+- use flat branch names without `/` so the branch name can map cleanly to a sibling worktree directory
 
 This keeps execution isolated and makes it easy to keep local deliverable docs alongside the code they govern.
+
+Branch names such as `feature/rbac` are valid Git refs, but they imply nested path segments when reused as worktree directory names. Because Zazz standardizes on sibling worktrees under one container directory, prefer flat names such as:
+
+- `feature-rbac`
+- `docs-reorg-mw1`
+- `deliverable-zazz-142-role-management-ui`
 
 It also provides a clean rollback boundary for human review. If a deliverable implementation goes down the wrong path, fails review, or reveals that the contract itself needs revision, the worktree can be abandoned and the team can return to the governing docs:
 

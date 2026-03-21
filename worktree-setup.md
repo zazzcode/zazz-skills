@@ -26,6 +26,7 @@ Required conventions:
 - each active worktree is a sibling directory under the container
 - one active deliverable or document effort maps to one worktree
 - one branch maps to one worktree
+- use flat branch names without `/` so the branch name can map directly to a sibling worktree directory
 - merges happen through PRs, not by locally merging feature branches into the integration worktree
 
 ## Integration Worktree
@@ -56,6 +57,57 @@ Benefits:
 - lower risk of cross-deliverable contamination
 - simpler branch-to-worktree mental model
 - easy abandonment when a line of work proves incorrect
+
+## Branch Naming Rules
+
+Because the framework expects sibling worktree directories, branch names should also be worktree-safe directory names.
+
+Required guidance:
+
+- use flat branch names with hyphens, not `/`
+- prefer names that describe the feature, deliverable, or document effort
+- keep the branch name and worktree directory the same whenever practical
+
+Preferred examples:
+
+- `feature-rbac`
+- `deliverable-zazz-142-role-management-ui`
+- `proposal-role-management-options`
+- `docs-reorg-mw1`
+
+Avoid:
+
+- `feature/rbac`
+- `docs/reorg-mw1`
+- `deliverable/ZAZZ-142-role-management-ui`
+
+Git allows `/` in branch names, but that creates awkward nested directory paths if the same string is used for a sibling worktree directory. Zazz avoids that mismatch by standardizing on flat branch names.
+
+## Common Commands
+
+Typical setup from the repo container:
+
+```bash
+git --git-dir=.bare worktree add ../feature-rbac -b feature-rbac origin/main
+git --git-dir=.bare worktree add ../docs-reorg-mw1 -b docs-reorg-mw1 origin/main
+git --git-dir=.bare worktree list
+```
+
+Typical flow inside the integration worktree:
+
+```bash
+git pull origin main
+git worktree add ../feature-rbac -b feature-rbac
+git worktree add ../proposal-role-management-options -b proposal-role-management-options
+git worktree list
+```
+
+Operational guidance:
+
+- create the branch and worktree together
+- keep the worktree directory name identical to the branch name when possible
+- branch from the integration branch unless a different base is intentionally required
+- open a PR instead of locally merging back into the integration worktree
 
 ## Recovery Model
 
