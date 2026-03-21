@@ -6,6 +6,48 @@ The framework is intentionally **feature-first** in its conceptual model: define
 
 The framework is also intentionally **git-native**. It relies heavily on built-in Git and GitHub functionality for both repository work and document lifecycle management: worktrees are a core execution requirement, durable docs live in the repository, draft PRs are the preferred way to share in-progress proposals/feature documents/standards, and final PR review is the approval path that promotes those docs into shared project truth.
 
+## Table of Contents
+
+- [Value Proposition](#value-proposition)
+- [At a Glance](#at-a-glance)
+- [Humans, Agents, and Skills](#humans-agents-and-skills)
+- [Core Principles](#core-principles)
+- [Git-Native Collaboration](#git-native-collaboration)
+- [Document Root](#document-root)
+- [Opinionated Docs Layout](#opinionated-docs-layout)
+- [Proposals](#proposals)
+- [Features and Feature Documents](#features-and-feature-documents)
+  - [Why feature documents matter](#why-feature-documents-matter)
+  - [Product-owner success criteria in feature documents](#product-owner-success-criteria-in-feature-documents)
+  - [Feature Documents Are Living Documents](#feature-documents-are-living-documents)
+  - [Milestones and deliverables](#milestones-and-deliverables)
+  - [Recommended Feature Requirements Document contents](#recommended-feature-requirements-document-contents)
+  - [Example `features/index.yaml`](#example-featuresindexyaml)
+  - [Feature Doc Builder Skill](#feature-doc-builder-skill)
+  - [Feature Definition Flow](#feature-definition-flow)
+- [Ownership Roles](#ownership-roles)
+- [Skill Operating Modes](#skill-operating-modes)
+- [Agent Authority and Owner Gates](#agent-authority-and-owner-gates)
+  - [Where agents may operate autonomously](#where-agents-may-operate-autonomously)
+  - [Where owner-controlled gates remain mandatory](#where-owner-controlled-gates-remain-mandatory)
+  - [Practical rule](#practical-rule)
+- [Standards and `AGENTS.md`](#standards-and-agentsmd)
+  - [`AGENTS.md` Strategy](#agentsmd-strategy)
+  - [What a repo `AGENTS.md` must contain](#what-a-repo-agentsmd-must-contain)
+  - [Example `standards/index.yaml`](#example-standardsindexyaml)
+- [Deliverables and Worktrees](#deliverables-and-worktrees)
+  - [Acceptance Criteria and TDD](#acceptance-criteria-and-tdd)
+  - [Default framework position: keep deliverables local](#default-framework-position-keep-deliverables-local)
+  - [One worktree per deliverable](#one-worktree-per-deliverable)
+  - [Durable knowledge must be promoted](#durable-knowledge-must-be-promoted)
+- [Execution Model](#execution-model)
+- [Core Entities](#core-entities)
+- [Human Checkpoints](#human-checkpoints)
+- [Adoption](#adoption)
+- [Source of Truth and Reference Implementation](#source-of-truth-and-reference-implementation)
+- [Zazz Board](#zazz-board)
+- [Collaboration](#collaboration)
+
 ## Value Proposition
 
 Zazz is opinionated because the framework is designed to help teams **build the right software, build it correctly, build it efficiently, and keep it maintainable and expandable over time**.
