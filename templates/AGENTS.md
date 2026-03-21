@@ -33,7 +33,7 @@ The following are required for repos using the Zazz framework:
 - the repo's framework docs root
 - the path to `<DOCS_ROOT>/standards/index.yaml`
 - instructions to read the standards index first and load only relevant standards
-- the path to `<DOCS_ROOT>/features/index.yaml` when the repo uses FRDs/features
+- the path to `<DOCS_ROOT>/features/index.yaml` when the repo uses feature documents
 - the repo's policy for `<DOCS_ROOT>/deliverables/`
 - worktree / branch workflow expectations
 
@@ -117,9 +117,9 @@ Use feature docs when the task touches product behavior, user-facing capability,
 Rules:
 
 1. Read `<DOCS_ROOT>/features/index.yaml` when product context may matter.
-2. Load only the relevant FRD(s), not the entire features directory.
-3. Treat FRDs as long-lived capability docs, not execution specs.
-4. When a deliverable changes shipped behavior, update the relevant FRD so it reflects the current system.
+2. Load only the relevant feature document(s), not the entire features directory.
+3. Treat feature documents as long-lived capability docs, not execution specs.
+4. When a deliverable changes shipped behavior, update the relevant feature document so it reflects the current system.
 
 If the repo does not yet use feature docs, either remove this section or replace it with a note that the repo is currently deliverable-only.
 

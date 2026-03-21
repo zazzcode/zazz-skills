@@ -1,15 +1,15 @@
 ---
-name: frd-builder
-description: Guides a product owner or project owner through creating or evolving a Feature Requirement Document (FRD) for a long-lived capability. Use for FRD authoring, milestone decomposition, transcript-to-FRD drafting, and feature-level handoff into deliverable specs.
+name: feature-doc-builder
+description: Guides a product owner or project owner through creating or evolving a Feature Requirements Document for a long-lived capability. Use for feature-document authoring, milestone decomposition, transcript-to-feature-document drafting, and feature-level handoff into deliverable specs.
 ---
 
-# FRD Builder Skill
+# Feature Doc Builder Skill
 
 ## Mission
 
-Create or evolve a Feature Requirement Document (`-FRD`) that explains a long-lived application capability at the product and system level.
+Create or evolve a Feature Requirements Document that explains a long-lived application capability at the product and system level.
 
-The FRD should help answer:
+The feature document should help answer:
 
 - why this feature exists
 - what value it creates
@@ -29,7 +29,7 @@ Work primarily with:
 - project owner
 - stakeholders with domain context
 
-Secondary audiences for the resulting FRD:
+Secondary audiences for the resulting feature document:
 
 - developers onboarding to the project
 - the development team reviewing feature intent and milestone breakdown
@@ -43,11 +43,11 @@ Use the repo docs root declared in `AGENTS.md` as the base for framework docs. E
 
 Primary artifact:
 
-- `<DOCS_ROOT>/features/{feature-key}-FRD.md`
+- `<DOCS_ROOT>/features/{feature-key}.md`
 
 Supporting discovery artifact:
 
-- update `<DOCS_ROOT>/features/index.yaml` when the FRD is created or materially revised
+- update `<DOCS_ROOT>/features/index.yaml` when the feature document is created or materially revised
 
 ## Boundaries
 
@@ -58,7 +58,7 @@ Supporting discovery artifact:
 - capture system-level behavior and important user/system flows
 - decompose feature evolution into milestones
 - identify what is live, planned, proposed, or deferred
-- ingest transcripts or meeting notes and turn them into an FRD draft
+- ingest transcripts or meeting notes and turn them into a feature document draft
 - produce handoff guidance for later deliverable specs
 
 ### This skill does not
@@ -71,7 +71,7 @@ Supporting discovery artifact:
 Artifact boundaries:
 
 - `proposal-builder` helps decide whether or how to proceed
-- `frd-builder` defines the long-lived feature and milestone roadmap
+- `feature-doc-builder` defines the long-lived feature and milestone roadmap
 - `spec-builder` defines one deliverable's execution contract
 
 ## Interaction Modes
@@ -87,59 +87,59 @@ If the user provides a transcript or meeting notes:
 1. summarize the core problem, goals, and decisions
 2. infer the feature's intent and current/planned states
 3. identify open questions and missing milestone detail
-4. generate or refresh the FRD draft
+4. generate or refresh the feature document draft
 
-### Mode C: Existing FRD revision
+### Mode C: Existing feature-document revision
 
-When the user already has an FRD:
+When the user already has a Feature Requirements Document:
 
-1. read the current FRD
+1. read the current feature document
 2. identify what changed after the latest milestone or discussion
 3. update current-state sections, milestone statuses, and flows
 4. preserve long-lived feature intent while refreshing stale sections
 
 ### Mode D: Development mode
 
-If the owner says "development mode" or equivalent, the focus is on improving this skill itself. In development mode, you may edit `.agents/skills/frd-builder/SKILL.md`. Outside development mode, this file is read-only.
+If the owner says "development mode" or equivalent, the focus is on improving this skill itself. In development mode, you may edit `.agents/skills/feature-doc-builder/SKILL.md`. Outside development mode, this file is read-only.
 
 ## Human-Facing Usage Guidance
 
 This is an interactive, back-and-forth skill.
 
-The owner does not need to provide a complete FRD up front. A strong starting prompt plus iterative dialogue is enough. The agent should:
+The owner does not need to provide a complete feature document up front. A strong starting prompt plus iterative dialogue is enough. The agent should:
 
 - ask clarifying questions about the feature's value and current state
 - help distinguish current behavior from planned future behavior
 - help define or revise the next few meaningful milestones
-- draft the FRD early enough that the owner can react to a concrete document
+- draft the feature document early enough that the owner can react to a concrete document
 
 This skill should feel like a structured product-definition conversation, not an implementation planning session.
 
 ### Example starter prompts
 
-#### Example 1: New FRD
+#### Example 1: New feature document
 
 ```text
-Use frd-builder.
-I want to create an FRD for role-based access control in our application.
+Use feature-doc-builder.
+I want to create a Feature Requirements Document for role-based access control in our application.
 This feature needs to explain why RBAC matters, what the system does today, what needs to be added, and how we should break it into milestones.
-Please guide me through this in a back-and-forth dialogue and draft the FRD as we refine it.
+Please guide me through this in a back-and-forth dialogue and draft the feature document as we refine it.
 ```
 
-#### Example 2: Update an existing FRD after a milestone
+#### Example 2: Update an existing feature document after a milestone
 
 ```text
-Use frd-builder.
-We already have an FRD for our billing feature, and milestone 1 has shipped.
-Please help me update the FRD so it reflects the current live behavior, marks milestone 1 complete, and refines the next milestones based on what we learned.
+Use feature-doc-builder.
+We already have a Feature Requirements Document for our billing feature, and milestone 1 has shipped.
+Please help me update the feature document so it reflects the current live behavior, marks milestone 1 complete, and refines the next milestones based on what we learned.
 ```
 
-#### Example 3: Transcript-first FRD drafting
+#### Example 3: Transcript-first feature-document drafting
 
 ```text
-Use frd-builder.
+Use feature-doc-builder.
 I am pasting notes from a product and engineering meeting about a new approvals workflow.
-Please infer the feature intent, current state, likely milestones, and open questions, then draft an FRD and ask follow-up questions where the discussion was ambiguous.
+Please infer the feature intent, current state, likely milestones, and open questions, then draft a Feature Requirements Document and ask follow-up questions where the discussion was ambiguous.
 ```
 
 ### Prompt structure that works well
@@ -149,14 +149,14 @@ The best starting prompts usually include:
 - the feature name
 - why the feature matters
 - what is known about the current state
-- whether this is a new FRD or an update
+- whether this is a new feature document or an update
 - a request for iterative dialogue and drafting
 
 ## Dialogue Principles
 
 - Start with the problem and business/domain value before discussing solution shape.
 - Keep the discussion at the feature level, not the deliverable-task level.
-- Ask about current state explicitly. An FRD must describe what the application does today, not just the future vision.
+- Ask about current state explicitly. A Feature Requirements Document must describe what the application does today, not just the future vision.
 - Distinguish what is live, planned, proposed, and deferred.
 - Treat milestones as meaningful increments of user or system value.
 - Push back when the conversation collapses into low-level implementation detail that belongs in standards or deliverable specs.
@@ -164,7 +164,7 @@ The best starting prompts usually include:
 
 ## Required Inputs
 
-Before drafting a serious FRD, elicit or infer:
+Before drafting a serious Feature Requirements Document, elicit or infer:
 
 1. feature name and feature key
 2. problem statement
@@ -183,13 +183,13 @@ Process:
 
 1. Read `<DOCS_ROOT>/features/index.yaml` if it exists to avoid duplicating or overlapping an existing feature doc.
 2. Read `<DOCS_ROOT>/standards/index.yaml` only as needed for system-level constraints that materially shape the feature.
-3. Reference standards where they affect feature boundaries or milestone decomposition, but do not restate detailed implementation rules inside the FRD.
+3. Reference standards where they affect feature boundaries or milestone decomposition, but do not restate detailed implementation rules inside the feature document.
 
-The FRD should stay product/system-oriented. Detailed coding conventions remain in standards. Deliverable-level test and execution detail remains in SPECs and PLANs.
+The feature document should stay product/system-oriented. Detailed coding conventions remain in standards. Deliverable-level test and execution detail remains in SPECs and PLANs.
 
-## FRD Content Requirements
+## Feature Document Content Requirements
 
-Each FRD draft should usually include:
+Each feature document draft should usually include:
 
 1. Feature title and summary
 2. Current milestone and next milestone
@@ -207,23 +207,23 @@ Each FRD draft should usually include:
 
 ### What "current state" means
 
-The FRD must explain what the application actually does today as of the latest completed milestone. This is one of the most important distinctions between an FRD and a proposal.
+The feature document must explain what the application actually does today as of the latest completed milestone. This is one of the most important distinctions between a feature document and a proposal.
 
 ### What "milestone" means
 
-A milestone is a meaningful feature increment that advances the capability. A milestone may contain one or more deliverables. The FRD should make the milestone sequence intelligible to both stakeholders and the development team.
+A milestone is a meaningful feature increment that advances the capability. A milestone may contain one or more deliverables. The feature document should make the milestone sequence intelligible to both stakeholders and the development team.
 
 ### Feature-level success criteria vs deliverable acceptance criteria
 
-At the FRD level, success criteria should describe value and system outcomes, not implementation tests. They answer questions like:
+At the feature document level, success criteria should describe value and system outcomes, not implementation tests. They answer questions like:
 
 - what valuable capability exists after this milestone?
 - what should be true of the product when this feature is successful?
 - what outcome should later deliverables prove through acceptance criteria and TDD?
 
-Those FRD-level success criteria should inform later SPEC acceptance criteria, but should not replace deliverable-level testability requirements.
+Those feature-document-level success criteria should inform later SPEC acceptance criteria, but should not replace deliverable-level testability requirements.
 
-## Recommended FRD Sections
+## Recommended Feature Document Sections
 
 Use this section order unless the owner explicitly asks for a different structure:
 
@@ -259,7 +259,7 @@ Use this section order unless the owner explicitly asks for a different structur
 
 - What are the important nouns and concepts in this feature?
 - Which actors or systems participate?
-- What terminology should be stable in the FRD?
+- What terminology should be stable in the feature document?
 
 ### Flows
 
@@ -284,7 +284,7 @@ Use this section order unless the owner explicitly asks for a different structur
 
 Use framework naming guidance:
 
-- FRD: `<DOCS_ROOT>/features/{feature-key}-FRD.md`
+- Feature Requirements Document: `<DOCS_ROOT>/features/{feature-key}.md`
 - Features index: `<DOCS_ROOT>/features/index.yaml`
 
 Keep `features/` flat by default. If a project later has a real need for multiple durable artifacts per feature, it may introduce subdirectories, but that is not the default framework recommendation.
@@ -293,7 +293,7 @@ Keep `features/` flat by default. If a project later has a real need for multipl
 
 When the user says:
 
-- "generate the FRD"
+- "generate the feature document"
 - "draft the feature doc"
 - "write the feature requirements"
 - "create a feature document"
@@ -303,16 +303,16 @@ When the user says:
 When the user says:
 
 - "milestone 1 is complete"
-- "update the FRD"
+- "update the feature document"
 - "refresh the feature doc"
 
 ...update the current-state and milestone sections to reflect the new system reality.
 
-## FRD -> Deliverable Handoff
+## Feature Document -> Deliverable Handoff
 
-When the FRD is approved or a milestone is ready for execution, provide a handoff package for later spec work containing:
+When the feature document is approved or a milestone is ready for execution, provide a handoff package for later spec work containing:
 
-1. feature key and FRD path
+1. feature key and feature document path
 2. milestone being implemented
 3. current-state summary
 4. desired milestone outcome
@@ -324,7 +324,7 @@ This handoff informs deliverable SPEC creation but does not replace `spec-builde
 
 ## Quality Bar
 
-An FRD draft is high quality when:
+A Feature Requirements Document draft is high quality when:
 
 1. the feature's why is explicit and persuasive
 2. the current state is accurate and not hand-wavy
@@ -336,6 +336,6 @@ An FRD draft is high quality when:
 ## Example Use Cases
 
 - define a new long-lived capability before any deliverable specs exist
-- turn a stakeholder workshop transcript into a first FRD draft
-- update an FRD after milestone 1 ships
+- turn a stakeholder workshop transcript into a first feature document draft
+- update a feature document after milestone 1 ships
 - decompose a feature into milestone 1, 2, and 3 before creating individual deliverable specs

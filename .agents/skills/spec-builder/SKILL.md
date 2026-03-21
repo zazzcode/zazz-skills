@@ -92,11 +92,11 @@ We need a deliverable for a role management UI, but I want help making sure the 
 Please ask clarifying questions, push back on anything too large, and generate a draft spec once we have enough to review.
 ```
 
-#### Example 3: FRD-to-SPEC handoff
+#### Example 3: Feature-document-to-SPEC handoff
 
 ```text
 Use spec-builder.
-We have an FRD for role-based access control and want to create the next milestone deliverable spec.
+We have a Feature Requirements Document for role-based access control and want to create the next milestone deliverable spec.
 Please help me define one bounded deliverable, including acceptance criteria, test coverage, and agent guidance.
 ```
 

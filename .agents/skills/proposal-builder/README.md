@@ -157,7 +157,7 @@ Naming follows framework conventions:
 ## Notes
 
 - Proposal is exploratory and non-authoritative.
-- FRD/SPEC remain authoritative contracts.
+- Feature Requirements Documents and SPECs remain authoritative contracts.
 - The skill should reference project standards while comparing approaches.
 - Proposal discussion can include technical implementation direction; final implementation contract still belongs in SPEC/PLAN.
-- After proposal sign-off, transition to `frd-builder`, `spec-builder`, or both using the proposal handoff summary.
+- After proposal sign-off, transition to `feature-doc-builder`, `spec-builder`, or both using the proposal handoff summary.

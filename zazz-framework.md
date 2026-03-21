@@ -4,7 +4,7 @@ Zazz is an opinionated, spec-driven framework for delivering software with human
 
 The framework is intentionally **feature-first** in its conceptual model: define the long-lived capability and its milestone evolution before creating the bounded deliverables that implement it. Deliverables are execution slices of a feature, not the primary home of product intent.
 
-The framework is also intentionally **git-native**. It relies heavily on built-in Git and GitHub functionality for both repository work and document lifecycle management: worktrees are a core execution requirement, durable docs live in the repository, draft PRs are the preferred way to share in-progress proposals/FRDs/standards, and final PR review is the approval path that promotes those docs into shared project truth.
+The framework is also intentionally **git-native**. It relies heavily on built-in Git and GitHub functionality for both repository work and document lifecycle management: worktrees are a core execution requirement, durable docs live in the repository, draft PRs are the preferred way to share in-progress proposals/feature documents/standards, and final PR review is the approval path that promotes those docs into shared project truth.
 
 ## Value Proposition
 
@@ -12,7 +12,7 @@ Zazz is opinionated because the framework is designed to help teams **build the 
 
 In explicit terms, the framework provides:
 
-- **A durable structure for defining the right software to build.** Proposals, FRDs, milestones, and SPECs organize the product's purpose, current behavior, future direction, and execution intent so teams stay aligned on what the software is for and what it must do.
+- **A durable structure for defining the right software to build.** Proposals, feature documents, milestones, and SPECs organize the product's purpose, current behavior, future direction, and execution intent so teams stay aligned on what the software is for and what it must do.
 - **A delivery model for building that software correctly.** Explicit acceptance criteria, TDD, standards alignment, QA loops, and review gates exist so teams can verify that the implementation matches the intended functionality and is built using maintainable, expandable engineering patterns.
 - **A framework for building efficiently without losing quality.** Once the right context is approved, the execution skills can operate in a launch-and-leave mode that reduces supervision overhead while still escalating at real decision or approval boundaries.
 - **A system that preserves maintainability and future expansion.** Standards, disciplined execution contracts, and upstream documentation updates help ensure the software can be understood, maintained, and extended as capabilities grow.
@@ -40,10 +40,10 @@ This repository is the canonical source of truth for the framework document and 
 | **Docs root** | The repo's `AGENTS.md` declares the repo-relative directory that contains framework markdown documents |
 | **Tracked docs** | `standards/`, `features/`, and `proposals/` are tracked, shared, and continuously updated with the application |
 | **Transient docs** | `deliverables/` contains per-deliverable execution artifacts and is usually local/untracked by default |
-| **Specification model** | Feature Requirement Document (`-FRD`) for capability over time plus Deliverable SPEC (`-SPEC`) for one increment |
+| **Specification model** | Feature Requirements Document for capability over time plus Deliverable SPEC (`-SPEC`) for one increment |
 | **Verification model** | TDD and explicit acceptance criteria are core mechanisms for proving the software was built correctly and delivers the intended functionality |
-| **Execution flow** | Proposal (optional) -> FRD (optional but recommended for long-lived features) -> SPEC (required) -> PLAN (optional) -> build/validate loop -> PR/UAT gate |
-| **Skills** | `proposal-builder`, `frd-builder`, `spec-builder`, `planner`, `worker`, `qa`, optional `pr-builder` |
+| **Execution flow** | Proposal (optional) -> feature document (optional but recommended for long-lived features) -> SPEC (required) -> PLAN (optional) -> build/validate loop -> PR/UAT gate |
+| **Skills** | `proposal-builder`, `feature-doc-builder`, `spec-builder`, `planner`, `worker`, `qa`, optional `pr-builder` |
 | **Skill modes** | Some skills are interactive and human-in-the-loop; others are designed for mostly autonomous execution once inputs are approved |
 | **Autonomy value** | Approved context should let agents converge on a verified solution with minimal supervision, improving delivery efficiency without dropping quality |
 | **Organization value** | The framework gives teams an opinionated structure for defining what the product does, why it exists, and how it can evolve over time |
@@ -55,7 +55,7 @@ This repository is the canonical source of truth for the framework document and 
 
 **Document scope:** This file defines framework philosophy, document contracts, and operating model. API syntax, route details, and tool-specific commands belong in skills and project docs.
 
-**Reading order:** Understand Features/FRDs first, then Deliverables/SPECs. The feature is the durable product concept; the deliverable is the bounded execution increment.
+**Reading order:** Understand feature documents first, then Deliverables/SPECs. The feature is the durable product concept; the deliverable is the bounded execution increment.
 
 ## Humans, Agents, and Skills
 
@@ -63,7 +63,7 @@ The framework distinguishes three different things that are easy to blur togethe
 
 - **Human actors**: Product Owner, Project Owner, Deliverable Owner, stakeholders, and reviewers
 - **Agent actors**: the runtime AI agents that execute work or facilitate dialogue
-- **Skills**: the capability packages loaded into an agent's context, such as `frd-builder`, `spec-builder`, `worker`, or `qa`
+- **Skills**: the capability packages loaded into an agent's context, such as `feature-doc-builder`, `spec-builder`, `worker`, or `qa`
 
 The important model is:
 
@@ -88,12 +88,12 @@ This document sometimes uses skill names as shorthand for the agents operating w
 3. **Feature intent comes before execution slices.** Define the long-lived capability, its value, and its milestone evolution before breaking work into deliverables whenever the work is part of an enduring feature.
 4. **Execution contracts are per increment.** A deliverable SPEC and optional PLAN define one bounded slice of work. They are not the permanent home for product narrative.
 5. **Git primitives are part of the framework.** Use branches, worktrees, draft PRs, review comments, and final PR approval as standard collaboration mechanisms for both code and durable docs.
-6. **The framework is opinionated about both product definition and engineering structure.** Proposals, FRDs, milestones, and SPECs define what the software should do and why; standards define how it must be built so it remains maintainable and expandable over time.
+6. **The framework is opinionated about both product definition and engineering structure.** Proposals, feature documents, milestones, and SPECs define what the software should do and why; standards define how it must be built so it remains maintainable and expandable over time.
 7. **Launch-and-leave execution is a design goal.** Once the approved context exists, planning, implementation, verification, and PR packaging should require minimal supervision until a real decision or approval boundary is reached.
 8. **Agents load only the context they need.** `index.yaml` files exist to help agents decide what to read instead of loading every standard or feature document into context.
 9. **PR merge authority stays with an authorized human.** Agents may create draft PRs, update PR bodies, and provide verification evidence, but they must never approve or merge PRs on their own.
 10. **One worktree per active deliverable.** Execution should happen in isolated worktrees so implementation state, branch history, and transient deliverable files stay scoped to one increment.
-11. **Durable knowledge moves upstream.** When a deliverable changes the product, update the relevant FRD and standards so the long-lived docs reflect the shipped system.
+11. **Durable knowledge moves upstream.** When a deliverable changes the product, update the relevant feature document and standards so the long-lived docs reflect the shipped system.
 
 ---
 
@@ -105,24 +105,24 @@ Framework expectations:
 
 - use one worktree per active deliverable or document effort
 - keep durable docs in the repository so branches, commits, PR comments, and merge history become part of the document audit trail
-- use **draft PRs** to share in-progress proposals, FRD revisions, and standards updates that are still being shaped
+- use **draft PRs** to share in-progress proposals, feature document revisions, and standards updates that are still being shaped
 - use **final PR review** to approve and merge durable docs once they are ready to become shared project truth
 - treat PR approval and merge as human-controlled gates; agents may prepare and verify PRs but must not merge them
 - treat worktrees as both an isolation mechanism and a recovery mechanism; if an execution path proves wrong, the worktree can be abandoned without polluting the main line of work
-- treat Git history as the durable change log for proposals, FRDs, standards, and committed execution artifacts
+- treat Git history as the durable change log for proposals, feature documents, standards, and committed execution artifacts
 
 Required review pattern for durable docs:
 
 1. Create or revise the doc in a branch/worktree.
 2. Open a draft PR while the document is still being discussed.
 3. Iterate in the PR using comments, suggestions, and follow-up commits.
-4. Mark the PR ready for review once the proposal, FRD, or standards change is decision-ready.
+4. Mark the PR ready for review once the proposal, feature document, or standards change is decision-ready.
 5. Merge when approved so the repository reflects the new shared truth.
 
 Recovery pattern:
 
 - if a worktree's implementation path goes in the wrong direction or fails review, abandon that worktree rather than forcing it forward
-- revisit the governing proposal, FRD, SPEC, or PLAN as appropriate
+- revisit the governing proposal, feature document, SPEC, or PLAN as appropriate
 - open a new branch/worktree with the corrected approach once the contract is clarified
 
 ---
@@ -178,7 +178,7 @@ Recommended layout:
 │   └── architecture.md
 ├── features/
 │   ├── index.yaml
-│   └── role-based-access-control-FRD.md
+│   └── role-based-access-control.md
 ├── deliverables/
 │   ├── ZAZZ-142-role-management-ui-SPEC.md
 │   └── ZAZZ-142-role-management-ui-PLAN.md
@@ -191,7 +191,7 @@ Naming conventions:
 | Artifact | Convention | Example |
 | ------- | ---------- | ------- |
 | **Docs root** | repo-relative path declared in `AGENTS.md` | `.zazz`, `docs` |
-| **FRD** | `features/{feature-key}-FRD.md` | `role-based-access-control-FRD.md` |
+| **Feature document** | `features/{feature-key}.md` | `role-based-access-control.md` |
 | **Features index** | `features/index.yaml` | `features/index.yaml` |
 | **Standards index** | `standards/index.yaml` | `standards/index.yaml` |
 | **Deliverable SPEC** | `deliverables/{deliverable-code}-{slug}-SPEC.md` | `ZAZZ-142-role-management-ui-SPEC.md` |
@@ -226,17 +226,17 @@ Proposal docs are durable and are expected to be tracked in Git. The required co
 2. open a **draft PR** to share it while the proposal is still being discussed
 3. refine the proposal through comments, commits, and stakeholder feedback
 4. finalize and merge the PR once the proposal is approved
-5. use the approved proposal as input to the next authoring session, typically with an agent running `frd-builder`, `spec-builder`, or both
+5. use the approved proposal as input to the next authoring session, typically with an agent running `feature-doc-builder`, `spec-builder`, or both
 
-Proposal docs do not replace FRDs or SPECs. They help a team decide what should move forward and on what basis.
+Proposal docs do not replace feature documents or SPECs. They help a team decide what should move forward and on what basis.
 
 ---
 
-## Features and FRDs
+## Features and Feature Documents
 
-The Feature Requirement Document (`-FRD`) is a core framework concept.
+The Feature Requirements Document is a core framework concept.
 
-An FRD is a **long-lived, continuously maintained document** for one application capability. It explains:
+A Feature Requirements Document is a **long-lived, continuously maintained document** for one application capability. It explains:
 
 - why the capability exists
 - who it serves
@@ -253,12 +253,12 @@ The primary audiences are:
 - developers onboarding to the project
 - anyone using the repo as a current source of product and user-facing behavior
 
-An FRD is not an execution doc. It does not replace a deliverable SPEC. Instead:
+A Feature Requirements Document is not an execution doc. It does not replace a deliverable SPEC. Instead:
 
-- **FRD** = capability over time, the why, the current state, and the milestone roadmap/history
+- **Feature Requirements Document** = capability over time, the why, the current state, and the milestone roadmap/history
 - **Deliverable SPEC** = execution contract for one increment
 
-### Why FRDs matter
+### Why feature documents matter
 
 - They preserve product intent beyond any single deliverable.
 - They keep milestone history and current functionality in one place.
@@ -266,9 +266,9 @@ An FRD is not an execution doc. It does not replace a deliverable SPEC. Instead:
 - They help stakeholders see what is already live, what is next, and why work is being prioritized.
 - They can double as accurate source material for user documentation when kept current.
 
-### Product-owner success criteria in FRDs
+### Product-owner success criteria in feature documents
 
-The Product Owner should define the success signals for the feature and its milestones. At the FRD level, these are usually not low-level implementation acceptance criteria yet. They are feature-level statements of value and milestone outcomes such as:
+The Product Owner should define the success signals for the feature and its milestones. At the feature document level, these are usually not low-level implementation acceptance criteria yet. They are feature-level statements of value and milestone outcomes such as:
 
 - what user or business problem is solved
 - what new capability exists after a milestone ships
@@ -276,25 +276,25 @@ The Product Owner should define the success signals for the feature and its mile
 
 These feature-level success criteria inform later deliverable acceptance criteria. They should be concrete enough to guide decomposition, but they do not replace deliverable-level TDD and execution detail.
 
-### FRDs are living documents
+### Feature Documents Are Living Documents
 
-FRDs must evolve with the software. After each milestone lands:
+Feature documents must evolve with the software. After each milestone lands:
 
-- update the FRD's current-state sections so they describe what is actually live now
+- update the feature document's current-state sections so they describe what is actually live now
 - update milestone status to reflect what was completed
 - revise introductory and functional sections when the shipped behavior changes
 - keep future milestone sections forward-looking but clearly separated from current behavior
 
-The goal is that the FRD always describes the current application as shaped by the most recent completed milestones.
+The goal is that the feature document always describes the current application as shaped by the most recent completed milestones.
 
-Milestones are also living planning elements inside the FRD. Teams do not need to define the entire milestone roadmap up front. In many cases, an FRD may begin with only one near-term milestone and one or two forward-looking milestones. Additional milestones may be added later as:
+Milestones are also living planning elements inside the feature document. Teams do not need to define the entire milestone roadmap up front. In many cases, a feature document may begin with only one near-term milestone and one or two forward-looking milestones. Additional milestones may be added later as:
 
 - new feature needs are discovered
 - follow-on capabilities become clearer
 - shipped milestones change what the next most valuable increment should be
 - technical or product learning changes the roadmap
 
-The important rule is that the milestone model lives in the FRD and is revised there as the feature evolves.
+The important rule is that the milestone model lives in the feature document and is revised there as the feature evolves.
 
 ### Milestones and deliverables
 
@@ -302,13 +302,13 @@ The important rule is that the milestone model lives in the FRD and is revised t
 - A **milestone** is a meaningful increment of that feature and may contain multiple deliverables.
 - A **deliverable** is one bounded execution slice that advances a milestone or handles a standalone need.
 - Teams may define only the next one, two, or three milestones at a time. The framework does not require a complete long-range milestone map before execution begins.
-- Not every deliverable requires an FRD. Bugs, chores, maintenance, migration work, and other non-feature increments may go straight to SPEC.
+- Not every deliverable requires a feature document. Bugs, chores, maintenance, migration work, and other non-feature increments may go straight to SPEC.
 
 Relationship model:
 
 ```mermaid
 flowchart LR
-    F["Feature FRD\n(long-lived, tracked)"] --> M1["Milestone 1"]
+    F["Feature document\n(long-lived, tracked)"] --> M1["Milestone 1"]
     F --> M2["Milestone 2"]
     M1 --> D1["Deliverable A"]
     M1 --> D2["Deliverable B"]
@@ -316,14 +316,14 @@ flowchart LR
     D1 --> S1["Shipped behavior"]
     D2 --> S1
     D3 --> S2["Expanded behavior"]
-    S1 --> U["Update FRD current state,\nflows, and milestone status"]
+    S1 --> U["Update feature document current state,\nflows, and milestone status"]
     S2 --> U
     U --> F
 ```
 
-### Recommended FRD contents
+### Recommended Feature Requirements Document contents
 
-An FRD should include:
+A Feature Requirements Document should include:
 
 - feature title and short summary
 - current or active milestone plus the next likely milestones when known
@@ -340,12 +340,12 @@ The exact headings can vary by project, but those concepts should be present.
 
 ### Example `features/index.yaml`
 
-The features index exists for discovery. It lets agents and humans quickly identify which feature doc is relevant without loading every FRD.
+The features index exists for discovery. It lets agents and humans quickly identify which feature doc is relevant without loading every feature document.
 
 ```yaml
 features:
   - key: role-based-access-control
-    file: role-based-access-control-FRD.md
+    file: role-based-access-control.md
     domain: authentication, authorization, account management
     current_milestone: M1 complete
     current_state: >
@@ -355,13 +355,13 @@ features:
       for role management across backend and frontend.
 ```
 
-The specific text can vary, but the index should give enough information for an agent to decide whether the FRD belongs in context.
+The specific text can vary, but the index should give enough information for an agent to decide whether the feature document belongs in context.
 
-### FRD Builder Skill
+### Feature Doc Builder Skill
 
-The framework includes a dedicated skill for authoring and evolving FRDs:
+The framework includes a dedicated skill for authoring and evolving feature documents:
 
-- `frd-builder`
+- `feature-doc-builder`
 
 Its purpose is to work with a product owner, project owner, or stakeholders to define:
 
@@ -371,11 +371,11 @@ Its purpose is to work with a product owner, project owner, or stakeholders to d
 - what the system should do at a feature level
 - how the feature should evolve across milestones
 
-It may also ingest transcripts or meeting notes to create or refresh an FRD draft.
+It may also ingest transcripts or meeting notes to create or refresh a feature document draft.
 
-`frd-builder` is intentionally different from `spec-builder`:
+`feature-doc-builder` is intentionally different from `spec-builder`:
 
-- `frd-builder` is feature-level, long-lived, and milestone-oriented
+- `feature-doc-builder` is feature-level, long-lived, and milestone-oriented
 - `spec-builder` is deliverable-level, execution-oriented, and implementation-contract-focused
 
 ### Feature Definition Flow
@@ -384,12 +384,12 @@ This is the recommended flow when a team is defining or revising a long-lived fe
 
 ```mermaid
 flowchart TD
-    A([Product owner or stakeholder]) --> B[Agent running frd-builder: elicit problem, value, current state, system intent]
-    B --> C[Draft or update FRD]
+    A([Product owner or stakeholder]) --> B[Agent running feature-doc-builder: elicit problem, value, current state, system intent]
+    B --> C[Draft or update feature document]
     C --> D[Review with development team]
     D --> E{Clear enough?}
     E -->|No| B
-    E -->|Yes| F[Define or revise near-term milestones in the FRD]
+    E -->|Yes| F[Define or revise near-term milestones in the feature document]
     F --> G[Product owner and development team select one milestone to advance now]
     G --> H[Deliverable Owner works through an interactive dialogue with an agent running spec-builder to define one or more deliverables for that milestone and draft their SPECs]
 
@@ -402,9 +402,9 @@ flowchart TD
     class E decision
 ```
 
-The key idea is that the FRD is not just written once. It is refined through owner/stakeholder input and development-team review, then updated as milestones ship.
+The key idea is that the feature document is not just written once. It is refined through owner/stakeholder input and development-team review, then updated as milestones ship.
 
-Another key idea is that milestones are defined within the FRD, not produced as a separate one-time decomposition artifact. The FRD owns the milestone roadmap. When a team is ready to execute, the product owner and development team select one milestone to advance. The Deliverable Owner then works through an interactive dialogue with an agent running the `spec-builder` skill to break that milestone into one or more deliverables and draft the corresponding SPECs.
+Another key idea is that milestones are defined within the feature document, not produced as a separate one-time decomposition artifact. The feature document owns the milestone roadmap. When a team is ready to execute, the product owner and development team select one milestone to advance. The Deliverable Owner then works through an interactive dialogue with an agent running the `spec-builder` skill to break that milestone into one or more deliverables and draft the corresponding SPECs.
 
 ---
 
@@ -416,7 +416,7 @@ One person may hold multiple roles in a smaller team.
 
 | Role | Primary scope | Typical responsibilities |
 | ---- | ------------- | ------------------------ |
-| **Product Owner** | Application and feature value | Owns feature intent, business/domain value, FRDs, milestone direction, and feature-level success criteria |
+| **Product Owner** | Application and feature value | Owns feature intent, business/domain value, feature documents, milestone direction, and feature-level success criteria |
 | **Project Owner** | Engineering project and delivery system | Owns repo/process/framework conventions, implementation-facing priorities, and delivery structure |
 | **Deliverable Owner** | One bounded execution increment | Usually a software developer, tech lead, or other technical owner. Owns deliverable scope, deliverable acceptance criteria, implementation clarifications during execution, and final acceptance/rejection |
 
@@ -436,7 +436,7 @@ Not every skill should behave the same way in human collaboration.
 
 | Mode | Skills | Expected operating style |
 | ---- | ------ | ------------------------ |
-| **Interactive / human-in-the-loop** | `proposal-builder`, `frd-builder`, `spec-builder`, often `pr-builder` | These skills are expected to facilitate dialogue, ask follow-up questions, iterate drafts with humans, and help shape the artifact through conversation |
+| **Interactive / human-in-the-loop** | `proposal-builder`, `feature-doc-builder`, `spec-builder`, often `pr-builder` | These skills are expected to facilitate dialogue, ask follow-up questions, iterate drafts with humans, and help shape the artifact through conversation |
 | **Autonomous execution** | `planner`, `worker`, `qa`, `qa-frontend`, `qa-backend`, `coordinator` | These skills are expected to run mostly independently once approved inputs exist, escalating only when they hit a real decision gate, ambiguity, or approval boundary |
 | **Companion utility** | `zazz-board-api` | This skill is not a human-facing workflow on its own; it supports other skills with API capability and board truth synchronization |
 
@@ -456,7 +456,7 @@ The framework is designed to maximize safe agent autonomy without removing owner
 
 Agents are expected to work with minimal supervision when they are operating inside an already approved contract or clearly delegated task, including:
 
-- drafting and revising proposals, FRDs, and SPECs during interactive authoring sessions
+- drafting and revising proposals, feature documents, and SPECs during interactive authoring sessions
 - producing a PLAN from an approved SPEC
 - implementing code from an approved SPEC and PLAN
 - running tests, performing QA verification, and generating rework content
@@ -467,8 +467,8 @@ Agents are expected to work with minimal supervision when they are operating ins
 
 Owner approval or another authorized human decision remains mandatory at these boundaries:
 
-- approving a proposal as the basis for moving into FRD and/or SPEC work
-- approving FRD direction, milestone framing, and major feature-scope changes
+- approving a proposal as the basis for moving into feature-document and/or SPEC work
+- approving feature-document direction, milestone framing, and major feature-scope changes
 - approving the SPEC as the authoritative execution contract
 - approving the PLAN when the project/team expects an explicit planning gate
 - resolving ambiguities or scope changes that materially alter the approved contract
@@ -533,7 +533,7 @@ At minimum, a repo-level `AGENTS.md` must tell agents:
 - whether `<DOCS_ROOT>/deliverables/` is local/untracked or committed in that repo
 - the repo's worktree / branch policy
 
-The standards index is mandatory. The features index is also expected in repos that use FRDs/features.
+The standards index is mandatory. The features index is also expected in repos that use feature documents.
 
 Best-practice principle:
 
@@ -605,7 +605,7 @@ Acceptance criteria and TDD are core framework mechanisms for ensuring value del
 
 Framework expectations:
 
-- the Product Owner defines feature-level value and milestone outcomes in the FRD
+- the Product Owner defines feature-level value and milestone outcomes in the feature document
 - the Deliverable Owner defines explicit deliverable acceptance criteria in the SPEC
 - each deliverable acceptance criterion must be testable or clearly marked for owner sign-off
 - the implementation loop should use TDD wherever applicable
@@ -633,7 +633,7 @@ Examples of acceptable mechanisms:
 - `.git/info/exclude`
 - an equivalent worktree-local exclude file in a shared-bare/worktree setup
 
-The important idea is not the exact Git plumbing. The important idea is that deliverables are usually **local execution docs**, while FRDs and standards are **shared durable knowledge**.
+The important idea is not the exact Git plumbing. The important idea is that deliverables are usually **local execution docs**, while feature documents and standards are **shared durable knowledge**.
 
 Teams may still choose to commit deliverable docs when they want a canonical audit trail in Git. The framework allows that. The framework default simply biases toward keeping transient execution clutter out of the shared history.
 
@@ -664,7 +664,7 @@ Branch names such as `feature/rbac` are valid Git refs, but they imply nested pa
 It also provides a clean rollback boundary for human review. If a deliverable implementation goes down the wrong path, fails review, or reveals that the contract itself needs revision, the worktree can be abandoned and the team can return to the governing docs:
 
 - revisit the proposal if the approach or justification is wrong
-- revisit the FRD if the feature intent or milestone framing is wrong
+- revisit the feature document if the feature intent or milestone framing is wrong
 - revisit the SPEC and PLAN if the execution contract is wrong or incomplete
 
 This is one of the practical benefits of the framework's git-native design: incorrect execution paths can be discarded cleanly without confusing the durable project history or forcing a bad implementation to keep moving forward.
@@ -675,7 +675,7 @@ For detailed setup guidance, see [worktree-setup.md](worktree-setup.md).
 
 If a deliverable changes the product, the final knowledge should not stay trapped in a local SPEC or PLAN. Promote the durable outcome into:
 
-- the relevant FRD
+- the relevant feature document
 - any impacted standards
 - other long-lived project docs as needed
 
@@ -690,7 +690,7 @@ Document flow:
 | Stage | Artifact | Purpose |
 | ----- | -------- | ------- |
 | **Proposal** | `proposals/{name}.md` | Optional. Explore whether or how to proceed before feature definition or execution commitment; use a draft PR to collaborate while the proposal is still in progress |
-| **Feature definition** | `-FRD` | Long-lived capability doc: why, what is live, system-level intent, milestone roadmap, future direction, and feature-level success criteria |
+| **Feature definition** | `features/{feature-key}.md` | Long-lived capability doc: why, what is live, system-level intent, milestone roadmap, future direction, and feature-level success criteria |
 | **Specification** | `-SPEC` | Required execution contract for one deliverable, including explicit acceptance criteria and verification expectations |
 | **Plan** | `-PLAN` | Optional execution decomposition for implementation |
 | **Build / validate** | code, tests, QA evidence | An agent running `worker` implements with TDD where applicable; an agent running `qa` verifies against acceptance criteria and evidence until convergence |
@@ -700,10 +700,10 @@ Execution relationship:
 
 ```mermaid
 flowchart LR
-    P["Proposal\n(optional)"] --> FB["Agent running\nfrd-builder"]
+    P["Proposal\n(optional)"] --> FB["Agent running\nfeature-doc-builder"]
     P --> SB["Agent running\nspec-builder"]
-    FB --> F["Feature FRD\n(optional for bugs/chores)"]
-    F --> M["Milestones live inside the FRD"]
+    FB --> F["Feature document\n(optional for bugs/chores)"]
+    F --> M["Milestones live inside the feature document"]
     M --> SM["Owner/team select one milestone to advance"]
     SM --> SB
     P --> FB
@@ -715,18 +715,18 @@ flowchart LR
     W --> QA["Agent running\nqa"]
     QA --> PR["Agent running\npr-builder\n(optional)"]
     PR --> G["Owner UAT + PR review"]
-    G --> U["Merge + update FRD / standards"]
+    G --> U["Merge + update feature document / standards"]
 ```
 
 Notes:
 
-- A deliverable may be created without an FRD when the work is a bug, chore, migration, or other non-feature slice.
+- A deliverable may be created without a feature document when the work is a bug, chore, migration, or other non-feature slice.
 - A feature may drive many deliverables over time.
-- Milestones are defined and maintained inside the FRD.
-- Teams do not need to define every future milestone up front; the FRD may start with only the next few meaningful milestones.
+- Milestones are defined and maintained inside the feature document.
+- Teams do not need to define every future milestone up front; the feature document may start with only the next few meaningful milestones.
 - Execution advances one selected milestone at a time.
 - The Deliverable Owner works through an interactive dialogue with an agent running the `spec-builder` skill to decompose that selected milestone into one or more deliverables and draft their SPECs.
-- The FRD is typically created or updated before milestone-specific SPECs are written.
+- The feature document is typically created or updated before milestone-specific SPECs are written.
 
 ---
 
@@ -740,7 +740,7 @@ Project -> Feature -> Milestone -> Deliverable -> Task
 | Entity | Description |
 | ------ | ----------- |
 | **Project** | Long-lived product or application context; default assumption is one monorepo |
-| **Feature** | Long-lived capability with one FRD that evolves over time |
+| **Feature** | Long-lived capability with one feature document that evolves over time |
 | **Milestone** | Named increment of a feature or release target; may span multiple deliverables |
 | **Deliverable** | Bounded unit of execution with one SPEC and optional PLAN |
 | **Task** | Smallest execution unit; an agent running `planner` decomposes, an agent running `worker` implements, and the relevant owner coordinates |
@@ -779,7 +779,7 @@ You can adopt Zazz at three levels:
 | Level | What you use | When it fits |
 | ----- | ------------ | ------------ |
 | **Process-only** | Framework philosophy and document flow | Apply the process manually; no tools required |
-| **Skills-assisted** | Process + `zazz-skills` | Use skills to facilitate proposal, FRD, spec, plan, implementation, QA, and PR packaging |
+| **Skills-assisted** | Process + `zazz-skills` | Use skills to facilitate proposal, feature requirements, spec, plan, implementation, QA, and PR packaging |
 | **Service-assisted** | Process + skills + [zazz-board](https://github.com/zazzcode/zazz-board) | Add Board to organize relationships and execution state across features, milestones, deliverables, and tasks |
 
 By framework layer:
@@ -787,7 +787,7 @@ By framework layer:
 | Layer | Scope |
 | ----- | ----- |
 | **Execution** | Deliverable -> Task with SPEC/PLAN |
-| **Capability** | Add Feature FRDs and feature-linked deliverables |
+| **Capability** | Add feature documents and feature-linked deliverables |
 | **Portfolio** | Add Milestones for roadmap and release coordination |
 
 ---

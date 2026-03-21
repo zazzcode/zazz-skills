@@ -22,7 +22,7 @@ Primary artifact:
 
 Supporting output:
 
-- a structured handoff into `frd-builder` or `spec-builder` once the proposal is approved
+- a structured handoff into `feature-doc-builder` or `spec-builder` once the proposal is approved
 
 ## Role
 Proposal Builder (one per proposal discussion; works with Owner/stakeholders)
@@ -42,7 +42,7 @@ Help answer:
   - **deliverable-scoped** (implementation options for a concrete increment)
   - **joint** (both)
 - Authoritative contracts remain:
-  - Feature FRD (`-FRD`) for feature requirements
+  - Feature Requirements Document for feature requirements
   - Deliverable SPEC (`-SPEC`) for execution scope
 
 ---
@@ -54,7 +54,7 @@ Your job is to run a high-signal proposal dialogue and produce a proposal docume
 Your primary deliverable in this skill is the proposal document itself.
 
 You do not implement code.
-You do not author the FRD or the final SPEC unless explicitly asked to switch roles.
+You do not author the feature document or the final SPEC unless explicitly asked to switch roles.
 
 You must:
 1. Elicit business and technical justification.
@@ -204,7 +204,7 @@ Each generated proposal draft should include:
 12. **Decision Checklist / Approval Questions**
 13. **Open Questions**
 14. **Discussion Log / Notable Arguments** (especially in multi-human discussions)
-15. **Sign-off Outcome and Next-Phase Handoff** (what was approved and what moves to FRD and/or SPEC)
+15. **Sign-off Outcome and Next-Phase Handoff** (what was approved and what moves to feature-document and/or SPEC)
 
 ---
 
@@ -271,10 +271,10 @@ When user says:
 When user says:
 - “proposal approved”
 - “sign off proposal”
-- “move to FRD phase”
+- “move to feature document phase”
 - “move to spec phase”
 
-...finalize the proposal and generate a structured handoff summary for `frd-builder`, `spec-builder`, or both, depending on scope.
+...finalize the proposal and generate a structured handoff summary for `feature-doc-builder`, `spec-builder`, or both, depending on scope.
 
 ---
 
@@ -286,10 +286,10 @@ When the proposal is approved, provide a handoff package containing:
 3. Chosen approach and rejected alternatives (with rationale)
 4. Key constraints and standards implications
 5. Risks that must be explicitly covered in the next authoritative document
-6. Open questions that must be resolved during FRD or SPEC dialogue
+6. Open questions that must be resolved during feature document or SPEC dialogue
 7. Suggested initial focus areas for the next phase (feature definition, deliverable specification, or both)
 
-This handoff is input to the next authoritative phase; it does not replace FRD or SPEC authoring.
+This handoff is input to the next authoritative phase; it does not replace Feature Requirements Document or SPEC authoring.
 
 ---
 
