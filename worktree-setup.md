@@ -94,7 +94,7 @@ Typical mechanisms:
 
 ## Relationship to the Framework
 
-This document is the operational companion to [zazz-framework.md](/Users/michael/Dev/Zazz/zazz-skills/zazz-framework.md).
+This document is the operational companion to [zazz-framework.md](zazz-framework.md).
 
 The framework defines:
 

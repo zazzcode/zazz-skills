@@ -618,7 +618,7 @@ It also provides a clean rollback boundary for human review. If a deliverable im
 
 This is one of the practical benefits of the framework's git-native design: incorrect execution paths can be discarded cleanly without confusing the durable project history or forcing a bad implementation to keep moving forward.
 
-For detailed setup guidance, see [worktree-setup.md](/Users/michael/Dev/Zazz/zazz-skills/worktree-setup.md).
+For detailed setup guidance, see [worktree-setup.md](worktree-setup.md).
 
 ### Durable knowledge must be promoted
 
