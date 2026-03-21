@@ -6,6 +6,13 @@ This repository is the canonical source of truth for the Zazz framework itself: 
 
 **Full framework overview:** See [**`zazz-framework.md`**](zazz-framework.md) for the complete framework philosophy, document model, authority model, and operating rules.
 
+## Quick Links
+
+- [Framework documentation](zazz-framework.md)
+- [Worktree setup guide](worktree-setup.md)
+- [AGENTS.md example template](templates/AGENTS.md)
+- [Reference implementation: zazz-board](https://github.com/zazzcode/zazz-board)
+
 ---
 
 ## Why Zazz
