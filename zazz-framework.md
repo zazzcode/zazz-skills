@@ -607,11 +607,18 @@ Required operating model:
 - one active deliverable per worktree
 - one branch per worktree
 - worktree name matches the branch or deliverable slug where practical
-- use flat branch names without `/` so the branch name can map cleanly to a sibling worktree directory
+- do not use `/` in branch names
+- use flat branch names so the branch name can map cleanly to a sibling worktree directory
 
 This keeps execution isolated and makes it easy to keep local deliverable docs alongside the code they govern.
 
-Branch names such as `feature/rbac` are valid Git refs, but they imply nested path segments when reused as worktree directory names. Because Zazz standardizes on sibling worktrees under one container directory, prefer flat names such as:
+Explicit framework rule:
+
+- `feature/rbac` is not an acceptable Zazz branch name
+- `docs/reorg-mw1` is not an acceptable Zazz branch name
+- use `feature-rbac` or `docs-reorg-mw1` instead
+
+Branch names such as `feature/rbac` are valid Git refs, but they imply nested path segments when reused as worktree directory names. Because Zazz standardizes on sibling worktrees under one container directory, flat names are required:
 
 - `feature-rbac`
 - `docs-reorg-mw1`

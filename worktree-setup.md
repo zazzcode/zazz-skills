@@ -26,7 +26,8 @@ Required conventions:
 - each active worktree is a sibling directory under the container
 - one active deliverable or document effort maps to one worktree
 - one branch maps to one worktree
-- use flat branch names without `/` so the branch name can map directly to a sibling worktree directory
+- do not use `/` in branch names
+- use flat branch names so the branch name can map directly to a sibling worktree directory
 - merges happen through PRs, not by locally merging feature branches into the integration worktree
 
 ## Integration Worktree
@@ -64,9 +65,16 @@ Because the framework expects sibling worktree directories, branch names should 
 
 Required guidance:
 
-- use flat branch names with hyphens, not `/`
+- do not use `/` in branch names
+- use flat branch names with hyphens
 - prefer names that describe the feature, deliverable, or document effort
 - keep the branch name and worktree directory the same whenever practical
+
+Hard rule:
+
+- `feature/rbac` is wrong for Zazz worktrees
+- `docs/reorg-mw1` is wrong for Zazz worktrees
+- `feature-rbac` and `docs-reorg-mw1` are correct
 
 Preferred examples:
 
