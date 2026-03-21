@@ -102,6 +102,56 @@ When the user already has an FRD:
 
 If the owner says "development mode" or equivalent, the focus is on improving this skill itself. In development mode, you may edit `.agents/skills/frd-builder/SKILL.md`. Outside development mode, this file is read-only.
 
+## Human-Facing Usage Guidance
+
+This is an interactive, back-and-forth skill.
+
+The owner does not need to provide a complete FRD up front. A strong starting prompt plus iterative dialogue is enough. The agent should:
+
+- ask clarifying questions about the feature's value and current state
+- help distinguish current behavior from planned future behavior
+- help define or revise the next few meaningful milestones
+- draft the FRD early enough that the owner can react to a concrete document
+
+This skill should feel like a structured product-definition conversation, not an implementation planning session.
+
+### Example starter prompts
+
+#### Example 1: New FRD
+
+```text
+Use frd-builder.
+I want to create an FRD for role-based access control in our application.
+This feature needs to explain why RBAC matters, what the system does today, what needs to be added, and how we should break it into milestones.
+Please guide me through this in a back-and-forth dialogue and draft the FRD as we refine it.
+```
+
+#### Example 2: Update an existing FRD after a milestone
+
+```text
+Use frd-builder.
+We already have an FRD for our billing feature, and milestone 1 has shipped.
+Please help me update the FRD so it reflects the current live behavior, marks milestone 1 complete, and refines the next milestones based on what we learned.
+```
+
+#### Example 3: Transcript-first FRD drafting
+
+```text
+Use frd-builder.
+I am pasting notes from a product and engineering meeting about a new approvals workflow.
+Please infer the feature intent, current state, likely milestones, and open questions, then draft an FRD and ask follow-up questions where the discussion was ambiguous.
+```
+
+### Prompt structure that works well
+
+The best starting prompts usually include:
+
+- the feature name
+- why the feature matters
+- what is known about the current state
+- whether this is a new FRD or an update
+- a request for iterative dialogue and drafting
+
 ## Dialogue Principles
 
 - Start with the problem and business/domain value before discussing solution shape.

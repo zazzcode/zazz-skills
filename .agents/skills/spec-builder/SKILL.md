@@ -67,6 +67,39 @@ You do **not** implement. You ask, clarify, document, and iterate until the Owne
 - **Iterate.** Produce drafts; get feedback; refine. The SPEC improves through dialogue.
 - **Push back on scope creep.** When the Owner proposes adding functionality that is not directly required for the deliverable's core purpose—e.g., renaming unrelated schema columns, changing terminology elsewhere in the app, or adding features that could stand alone—respond: "This looks like it's out of scope for what this deliverable is intended to achieve. It should probably be in a different deliverable." Do not add it to the spec. If the Owner insists, you may add it, but first make the scope concern explicit.
 
+## Human-Facing Usage Guidance
+
+This is an interactive, back-and-forth skill.
+
+The Deliverable Owner does not need to provide a full SPEC in one message. A useful starting prompt is enough to begin. The agent should ask clarifying questions, push for testable acceptance criteria, narrow the scope if needed, and generate a draft SPEC early so it can be refined collaboratively.
+
+### Example starter prompts
+
+#### Example 1: New deliverable spec
+
+```text
+Use spec-builder.
+I need a deliverable spec for project-scoped agent tokens in the API.
+The deliverable should cover token creation, token revocation, and authorization checks.
+Please guide me through this in a back-and-forth dialogue and make the acceptance criteria and tests explicit.
+```
+
+#### Example 2: Tightening scope
+
+```text
+Use spec-builder.
+We need a deliverable for a role management UI, but I want help making sure the scope fits one bounded deliverable.
+Please ask clarifying questions, push back on anything too large, and generate a draft spec once we have enough to review.
+```
+
+#### Example 3: FRD-to-SPEC handoff
+
+```text
+Use spec-builder.
+We have an FRD for role-based access control and want to create the next milestone deliverable spec.
+Please help me define one bounded deliverable, including acceptance criteria, test coverage, and agent guidance.
+```
+
 ### Tone & Personality
 
 Make the dialogue feel like a **collaborative brainstorming session** with a friendly teammate, not a formal requirements elicitation.

@@ -103,6 +103,38 @@ If Zoom integration is not available:
 - fall back to transcript ingestion + interactive Q&A mode.
 Real-time meeting/Zoom listening can be treated as a future extension. In the current model, transcript ingestion is the supported path.
 
+## Human-Facing Usage Guidance
+
+This is an interactive, back-and-forth skill.
+
+The user does not need to provide a complete proposal in one message. A strong starting prompt is enough to begin. The agent should ask follow-up questions, compare alternatives, surface tradeoffs, and draft the proposal early so it can be refined collaboratively.
+
+### Example starter prompts
+
+#### Example 1: New feature proposal
+
+```text
+Use proposal-builder.
+I want to create a proposal for adding role-based access control to our product.
+Please help me work through the value, alternatives, tradeoffs, and recommendation in a back-and-forth dialogue, then draft the proposal.
+```
+
+#### Example 2: Deliverable-scoped proposal
+
+```text
+Use proposal-builder.
+I want a proposal for whether we should introduce a CLI-first workflow for Zazz Board management instead of relying only on direct API usage.
+Please help me compare options and produce a decision-ready proposal.
+```
+
+#### Example 3: Transcript-first proposal
+
+```text
+Use proposal-builder.
+I am pasting a meeting transcript about a proposed feature.
+Please extract the key decisions, alternatives, tradeoffs, and open questions, then draft the proposal and ask follow-up questions where needed.
+```
+
 ---
 
 ## Dialogue Principles

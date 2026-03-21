@@ -1,6 +1,6 @@
 # Proposal Builder Skill — User Guide
 
-How to use the Proposal Builder skill to create a high-quality Proposal (`-PROP`) for a feature, a deliverable, or both.
+How to use the Proposal Builder skill to create a high-quality proposal document for a feature, a deliverable, or both.
 
 ---
 
@@ -15,6 +15,19 @@ It helps stakeholders discuss:
 - risks, constraints, and open questions
 
 Then it drafts/iterates a proposal document.
+
+## How the Dialogue Works
+
+This is an interactive, back-and-forth skill.
+
+You do not need to provide every detail up front. A good starting prompt is usually enough to begin. The agent should then:
+
+- ask clarifying questions
+- surface tradeoffs and alternatives
+- draft a proposal early
+- refine the proposal with you over multiple turns
+
+Expect a collaborative working session, not a one-shot document generator.
 
 ---
 
@@ -83,6 +96,45 @@ When live integration exists, the proposal workflow should:
 - “Generate proposal”
 - “Here is transcript text — extract decisions and draft proposal”
 
+## Example Starter Prompts
+
+Use prompts like these:
+
+### Example 1: New feature proposal
+
+```text
+Use proposal-builder.
+I want to create a proposal for adding role-based access control to our application.
+The main goal is to support admin-managed roles and permissions across the API and UI.
+Please guide me through the proposal in a back-and-forth dialogue and help me compare implementation approaches before drafting the document.
+```
+
+### Example 2: Deliverable-focused proposal
+
+```text
+Use proposal-builder.
+I want a proposal for whether we should add a CLI workflow for managing Zazz Board deliverables instead of relying only on direct API usage.
+Please help me think through the value, alternatives, risks, and recommendation.
+```
+
+### Example 3: Transcript-first proposal
+
+```text
+Use proposal-builder.
+I am pasting a meeting transcript about a proposed feature.
+Please extract the problem statement, options, tradeoffs, risks, and open questions, then draft a proposal and ask follow-up questions where the transcript is ambiguous.
+```
+
+### Prompt structure that works well
+
+The best starting prompts usually include:
+
+- what the proposal is about
+- whether it is feature-scoped, deliverable-scoped, or both
+- why it matters
+- whether you want live dialogue, transcript ingestion, or both
+- a request for iterative drafting
+
 ---
 
 ## Output
@@ -98,8 +150,7 @@ A proposal document with:
 - sign-off outcome and handoff notes for the next phase
 
 Naming follows framework conventions:
-- Feature proposal: `features/{feature-key}/{feature-key}-PROP.md`
-- Deliverable proposal: `deliverables/{deliverable-id}/{deliverable-id}-PROP.md`
+- Proposal document: `proposals/{proposal-slug}.md`
 
 ---
 
@@ -109,4 +160,4 @@ Naming follows framework conventions:
 - FRD/SPEC remain authoritative contracts.
 - The skill should reference project standards while comparing approaches.
 - Proposal discussion can include technical implementation direction; final implementation contract still belongs in SPEC/PLAN.
-- After proposal sign-off, transition to specification phase (typically via `spec-builder`) using the proposal handoff summary.
+- After proposal sign-off, transition to `frd-builder`, `spec-builder`, or both using the proposal handoff summary.
