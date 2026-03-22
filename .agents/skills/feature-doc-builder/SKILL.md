@@ -1,6 +1,7 @@
 ---
 name: feature-doc-builder
 description: Guides a product owner or project owner through creating or evolving a Feature Requirements Document for a long-lived capability. Use for feature-document authoring, milestone decomposition, transcript-to-feature-document drafting, and feature-level handoff into deliverable specs.
+description: Guides a product owner or project owner through creating or evolving a feature document for a long-lived capability. Use for feature-document authoring, milestone decomposition, transcript-to-feature-document drafting, and feature-level handoff into deliverable specs.
 ---
 
 # Feature Doc Builder Skill
@@ -12,7 +13,7 @@ If that file exists, read it after this skill and treat it as friendly repo-spec
 
 ## Mission
 
-Create or evolve a Feature Requirements Document that explains a long-lived application capability at the product and system level.
+Create or evolve a feature document that explains a long-lived application capability at the product and system level.
 
 The feature document should help answer:
 
@@ -96,7 +97,7 @@ If the user provides a transcript or meeting notes:
 
 ### Mode C: Existing feature-document revision
 
-When the user already has a Feature Requirements Document:
+When the user already has a feature document:
 
 1. read the current feature document
 2. identify what changed after the latest milestone or discussion
@@ -126,7 +127,7 @@ This skill should feel like a structured product-definition conversation, not an
 
 ```text
 Use feature-doc-builder.
-I want to create a Feature Requirements Document for role-based access control in our application.
+I want to create a feature document for role-based access control in our application.
 This feature needs to explain why RBAC matters, what the system does today, what needs to be added, and how we should break it into milestones.
 Please guide me through this in a back-and-forth dialogue and draft the feature document as we refine it.
 ```
@@ -135,7 +136,7 @@ Please guide me through this in a back-and-forth dialogue and draft the feature 
 
 ```text
 Use feature-doc-builder.
-We already have a Feature Requirements Document for our billing feature, and milestone 1 has shipped.
+We already have a feature document for our billing feature, and milestone 1 has shipped.
 Please help me update the feature document so it reflects the current live behavior, marks milestone 1 complete, and refines the next milestones based on what we learned.
 ```
 
@@ -144,7 +145,7 @@ Please help me update the feature document so it reflects the current live behav
 ```text
 Use feature-doc-builder.
 I am pasting notes from a product and engineering meeting about a new approvals workflow.
-Please infer the feature intent, current state, likely milestones, and open questions, then draft a Feature Requirements Document and ask follow-up questions where the discussion was ambiguous.
+Please infer the feature intent, current state, likely milestones, and open questions, then draft a feature document and ask follow-up questions where the discussion was ambiguous.
 ```
 
 ### Prompt structure that works well
@@ -161,7 +162,7 @@ The best starting prompts usually include:
 
 - Start with the problem and business/domain value before discussing solution shape.
 - Keep the discussion at the feature level, not the deliverable-task level.
-- Ask about current state explicitly. A Feature Requirements Document must describe what the application does today, not just the future vision.
+- Ask about current state explicitly. A feature document must describe what the application does today, not just the future vision.
 - Distinguish what is live, planned, proposed, and deferred.
 - Treat milestones as meaningful increments of user or system value.
 - Push back when the conversation collapses into low-level implementation detail that belongs in standards or deliverable specs.
@@ -169,7 +170,7 @@ The best starting prompts usually include:
 
 ## Required Inputs
 
-Before drafting a serious Feature Requirements Document, elicit or infer:
+Before drafting a serious feature document, elicit or infer:
 
 1. feature name and feature key
 2. problem statement
@@ -289,7 +290,7 @@ Use this section order unless the owner explicitly asks for a different structur
 
 Use framework naming guidance:
 
-- Feature Requirements Document: `<DOCS_ROOT>/features/{feature-key}.md`
+- Feature document: `<DOCS_ROOT>/features/{feature-key}.md`
 - Features index: `<DOCS_ROOT>/features/index.yaml`
 
 Keep `features/` flat by default. If a project later has a real need for multiple durable artifacts per feature, it may introduce subdirectories, but that is not the default framework recommendation.
@@ -329,7 +330,7 @@ This handoff informs deliverable SPEC creation but does not replace `spec-builde
 
 ## Quality Bar
 
-A Feature Requirements Document draft is high quality when:
+A feature document draft is high quality when:
 
 1. the feature's why is explicit and persuasive
 2. the current state is accurate and not hand-wavy

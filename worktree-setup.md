@@ -125,7 +125,7 @@ If a session of work:
 
 - goes down the wrong path
 - fails owner review
-- reveals that the proposal, FRD, SPEC, or PLAN is wrong
+- reveals that the proposal, feature document, SPEC, or PLAN is wrong
 
 then the worktree can be abandoned and the team can return to the governing documents, revise the contract, and start a new worktree for the corrected approach.
 

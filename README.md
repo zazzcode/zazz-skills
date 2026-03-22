@@ -31,7 +31,7 @@ The skills are a means to that end. They provide structured workflows for docume
 ## End-to-End Workflow
 
 1. **Proposal**: `proposal-builder` helps evaluate why to proceed, what options exist, and which direction is worth taking. Proposal docs live in `<DOCS_ROOT>/proposals/` and are typically shared first through draft PRs.
-2. **Feature Definition**: `feature-doc-builder` works with a Product Owner or Project Owner to create or update a long-lived Feature Requirements Document in `<DOCS_ROOT>/features/`. The feature document captures why the feature exists, what is live now, what the system must do at a high level, and how the feature evolves across milestones.
+2. **Feature Definition**: `feature-doc-builder` works with a Product Owner or Project Owner to create or update a long-lived feature document in `<DOCS_ROOT>/features/`. The feature document captures why the feature exists, what is live now, what the system must do at a high level, and how the feature evolves across milestones.
 3. **Deliverable Specification**: `spec-builder` helps a Deliverable Owner write the bounded execution contract for one deliverable, including acceptance criteria and testability expectations.
 4. **Planning**: `planner` turns an approved SPEC into an execution-ready PLAN with sequencing, traceability, and verification steps.
 5. **Execution**: `worker` implements the PLAN using TDD and keeps execution state synchronized with the board when applicable.
@@ -50,7 +50,7 @@ The framework is intentionally feature-first. Durable product understanding come
 | Skill | Purpose |
 |-------|---------|
 | **proposal-builder** | Facilitates proposal discussions: why, options, tradeoffs, constraints, recommendation. Supports transcript-first and live facilitation patterns. |
-| **feature-doc-builder** | Creates and evolves Feature Requirements Documents for long-lived capabilities, current-state summaries, and milestone decomposition. |
+| **feature-doc-builder** | Creates and evolves feature documents for long-lived capabilities, current-state summaries, and milestone decomposition. |
 | **spec-builder** | Interactive deliverable SPEC authoring. Guides the Owner through requirements, acceptance criteria, and testability. |
 
 These skills are expected to work through dialogue, iterative drafting, and owner review. Their outputs are durable documents that shape what gets built and why.
@@ -121,7 +121,7 @@ Zazz organizes delivery around:
 **Core document model:**
 
 - `<DOCS_ROOT>/proposals/` — exploratory and pre-commitment proposal artifacts
-- `<DOCS_ROOT>/features/` — long-lived Feature Requirements Documents that explain feature value, current behavior, system intent, and milestone evolution
+- `<DOCS_ROOT>/features/` — long-lived feature documents that explain feature value, current behavior, system intent, and milestone evolution
 - `<DOCS_ROOT>/standards/` — engineering guidance for how software must be built so it remains maintainable and expandable
 - `<DOCS_ROOT>/deliverables/` — per-deliverable SPECs and optional PLANs, usually local to a worktree
 

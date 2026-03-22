@@ -21,7 +21,7 @@ The framework is also intentionally **git-native**. It relies heavily on built-i
   - [Product-owner success criteria in feature documents](#product-owner-success-criteria-in-feature-documents)
   - [Feature Documents Are Living Documents](#feature-documents-are-living-documents)
   - [Milestones and deliverables](#milestones-and-deliverables)
-  - [Recommended Feature Requirements Document contents](#recommended-feature-requirements-document-contents)
+  - [Recommended Feature Document Contents](#recommended-feature-document-contents)
   - [Example `features/index.yaml`](#example-featuresindexyaml)
   - [Feature Doc Builder Skill](#feature-doc-builder-skill)
   - [Feature Definition Flow](#feature-definition-flow)
@@ -83,7 +83,7 @@ This repository is the canonical source of truth for the framework document and 
 | **Docs root** | The repo's `AGENTS.md` declares the repo-relative directory that contains framework markdown documents |
 | **Tracked docs** | `standards/`, `features/`, and `proposals/` are tracked, shared, and continuously updated with the application |
 | **Transient docs** | `deliverables/` contains per-deliverable execution artifacts and is usually local/untracked by default |
-| **Specification model** | Feature Requirements Document for capability over time plus Deliverable SPEC (`-SPEC`) for one increment |
+| **Specification model** | Feature document for capability over time plus Deliverable SPEC (`-SPEC`) for one increment |
 | **Verification model** | TDD and explicit acceptance criteria are core mechanisms for proving the software was built correctly and delivers the intended functionality |
 | **Execution flow** | Proposal (optional) -> feature document (optional but recommended for long-lived features) -> SPEC (required) -> PLAN (optional) -> build/validate loop -> PR/UAT gate |
 | **Skills** | `proposal-builder`, `feature-doc-builder`, `spec-builder`, `planner`, `worker`, `qa`, optional `pr-builder` |
@@ -277,9 +277,9 @@ Proposal docs do not replace feature documents or SPECs. They help a team decide
 
 ## Features and Feature Documents
 
-The Feature Requirements Document is a core framework concept.
+The feature document is a core framework concept.
 
-A Feature Requirements Document is a **long-lived, continuously maintained document** for one application capability. It explains:
+A feature document is a **long-lived, continuously maintained document** for one application capability. It explains:
 
 - why the capability exists
 - who it serves
@@ -296,9 +296,9 @@ The primary audiences are:
 - developers onboarding to the project
 - anyone using the repo as a current source of product and user-facing behavior
 
-A Feature Requirements Document is not an execution doc. It does not replace a deliverable SPEC. Instead:
+A feature document is not an execution doc. It does not replace a deliverable SPEC. Instead:
 
-- **Feature Requirements Document** = capability over time, the why, the current state, and the milestone roadmap/history
+- **Feature document** = capability over time, the why, the current state, and the milestone roadmap/history
 - **Deliverable SPEC** = execution contract for one increment
 
 ### Why feature documents matter
@@ -364,9 +364,9 @@ flowchart LR
     U --> F
 ```
 
-### Recommended Feature Requirements Document contents
+### Recommended Feature Document Contents
 
-A Feature Requirements Document should include:
+A feature document should include:
 
 - feature title and short summary
 - current or active milestone plus the next likely milestones when known
