@@ -1,6 +1,5 @@
 ---
 name: feature-doc-builder
-description: Guides a product owner or project owner through creating or evolving a Feature Requirements Document for a long-lived capability. Use for feature-document authoring, milestone decomposition, transcript-to-feature-document drafting, and feature-level handoff into deliverable specs.
 description: Guides a product owner or project owner through creating or evolving a feature document for a long-lived capability. Use for feature-document authoring, milestone decomposition, transcript-to-feature-document drafting, and feature-level handoff into deliverable specs.
 ---
 
