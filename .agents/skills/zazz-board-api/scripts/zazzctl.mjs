@@ -4,11 +4,77 @@
  * Cross-platform board API adapter for all agent skills.
  */
 
+import fs from 'node:fs';
+import path from 'node:path';
+import process from 'node:process';
+import { fileURLToPath } from 'node:url';
+import { parseEnv } from 'node:util';
+
 const DEFAULT_BASE_URL = 'http://localhost:3030';
 const DEFAULT_TOKEN = '550e8400-e29b-41d4-a716-446655440000';
 const DEFAULT_PROJECT = 'ZAZZ';
 
-const env = process.env;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+function uniquePaths(paths) {
+  return [...new Set(paths.filter(Boolean))];
+}
+
+function findUp(filename, startDir) {
+  let current = path.resolve(startDir);
+  while (true) {
+    const candidate = path.join(current, filename);
+    if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) {
+      return candidate;
+    }
+    const parent = path.dirname(current);
+    if (parent === current) return null;
+    current = parent;
+  }
+}
+
+function resolveEnvFile() {
+  if (process.env.ZAZZCTL_NO_ENV === '1') {
+    return null;
+  }
+
+  const explicit = process.env.ZAZZCTL_ENV_FILE;
+  if (explicit) {
+    const resolved = path.resolve(process.cwd(), explicit);
+    if (!fs.existsSync(resolved)) {
+      throw new Error(`ZAZZCTL_ENV_FILE does not exist: ${resolved}`);
+    }
+    return resolved;
+  }
+
+  const candidates = uniquePaths([
+    findUp('.env', process.cwd()),
+    findUp('.env', __dirname),
+  ]);
+
+  return candidates[0] || null;
+}
+
+function loadMergedEnv() {
+  const envFile = resolveEnvFile();
+  const merged = { ...process.env };
+
+  if (!envFile) {
+    return { env: merged, envFile: null };
+  }
+
+  const parsed = parseEnv(fs.readFileSync(envFile, 'utf8'));
+  for (const [key, value] of Object.entries(parsed)) {
+    if (merged[key] === undefined) {
+      merged[key] = value;
+    }
+  }
+
+  return { env: merged, envFile };
+}
+
+const { env } = loadMergedEnv();
 const config = {
   baseUrl: env.ZAZZ_API_BASE_URL || DEFAULT_BASE_URL,
   token: env.ZAZZ_API_TOKEN || DEFAULT_TOKEN,
@@ -244,6 +310,8 @@ Environment:
   ZAZZ_API_BASE_URL (default: ${DEFAULT_BASE_URL})
   ZAZZ_API_TOKEN    (default fallback: seed token)
   ZAZZ_PROJECT_CODE (default: ${DEFAULT_PROJECT})
+  ZAZZCTL_ENV_FILE  (optional explicit env file path)
+  ZAZZCTL_NO_ENV    (set to 1 to disable env-file auto-loading)
   ZAZZCTL_PRETTY    (1 pretty JSON, 0 compact)
   ZAZZCTL_PROFILE   (generic|worker|planner|spec_builder)
 
@@ -252,6 +320,7 @@ Examples:
   zazzctl --profile worker exec begin --deliverable-id 8 --task-id 25 --agent-name worker-1 --file api/src/routes/fileLocks.js
   zazzctl --profile planner deliverable update --deliverable-id 4 --json '{"planFilepath":"<DOCS_ROOT>/deliverables/ZAZZ-6-PLAN.md"}'
   zazzctl --profile spec_builder deliverable create --name "Agent Tokens" --type FEATURE --spec-filepath "<DOCS_ROOT>/deliverables/ZAZZ-6-agent-tokens-SPEC.md"
+  ZAZZCTL_ENV_FILE=.env zazzctl deliverable list
 `;
   }
 

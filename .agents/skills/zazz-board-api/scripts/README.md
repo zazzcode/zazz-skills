@@ -11,6 +11,12 @@ Role in the framework:
 Runtime:
 - Node.js 22+
 
+Environment loading:
+- `zazzctl` automatically discovers and loads a repo `.env` when present.
+- Existing exported environment variables take precedence over values from the env file.
+- Set `ZAZZCTL_ENV_FILE=/path/to/.env` to force a specific env file.
+- Set `ZAZZCTL_NO_ENV=1` to disable env-file auto-loading.
+
 Quick start:
 ```bash
 node .agents/skills/zazz-board-api/scripts/zazzctl.mjs help
@@ -29,6 +35,8 @@ export ZAZZ_API_BASE_URL="http://localhost:3030"
 export ZAZZ_API_TOKEN="${ZAZZ_API_TOKEN:-550e8400-e29b-41d4-a716-446655440000}"
 export ZAZZ_PROJECT_CODE="ZAZZ"
 ```
+
+If the repo keeps these values in `.env`, `zazzctl` will pick them up automatically when run from that repo.
 
 Profiles:
 - `worker`: task/relation/lock/exec workflow; read-only deliverable ops

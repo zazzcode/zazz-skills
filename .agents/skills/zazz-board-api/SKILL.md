@@ -29,6 +29,8 @@ All API requests (except `/openapi.json`, `/health`, `/`, `/db-test`, `/token-in
 - `ZAZZ_API_TOKEN` (required token source; fallback if unset: `550e8400-e29b-41d4-a716-446655440000`)
 - `ZAZZ_PROJECT_CODE` (fallback: `ZAZZ`)
 - `ZAZZCTL_PROFILE` (optional default profile: `generic`, `worker`, `planner`, `spec_builder`)
+- `ZAZZCTL_ENV_FILE` (optional explicit env file path for CLI execution)
+- `ZAZZCTL_NO_ENV` (`1` disables env-file auto-loading)
 
 ---
 
@@ -39,6 +41,9 @@ Use the canonical Node CLI for board communication:
 
 CLI-first policy:
 - Use `zazzctl` as the default communication path.
+- The canonical CLI auto-loads a repo `.env` when present.
+- Exported environment variables win over values loaded from `.env`.
+- If a repo needs a non-default env file, set `ZAZZCTL_ENV_FILE` explicitly for that command.
 - Use `zazzctl help`, `zazzctl help <resource>`, or `zazzctl help <resource> <action>` to inspect the supported command surface before guessing flags.
 - Do not handcraft ad-hoc `curl` for normal execution.
 - `curl` is allowed only for OpenAPI fetch/debugging when the CLI is missing a capability.
