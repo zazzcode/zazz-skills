@@ -5,6 +5,11 @@ description: Coordinates execution of an approved PLAN by materializing tasks, m
 
 # Coordinator Skill
 
+## Repo Extension
+
+Before you start, check whether this repo provides extra local guidance at `.agents/skill-extensions/coordinator/EXTENSION.md`.
+If that file exists, read it after this skill and treat it as friendly repo-specific extension guidance for how `coordinator` should be applied in this application.
+
 ## Mission
 
 Turn an approved PLAN into an actively managed execution flow.

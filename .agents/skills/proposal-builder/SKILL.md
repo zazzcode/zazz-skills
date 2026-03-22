@@ -5,6 +5,11 @@ description: Facilitates and documents proposal discussions for features or deli
 
 # Proposal Builder Skill
 
+## Repo Extension
+
+Before you start, check whether this repo provides extra local guidance at `.agents/skill-extensions/proposal-builder/EXTENSION.md`.
+If that file exists, read it after this skill and treat it as friendly repo-specific extension guidance for how `proposal-builder` should be applied in this application.
+
 ## Overview
 Guides one or more humans through a structured proposal discussion to produce a clear proposal document for a feature, a deliverable, or both.
 

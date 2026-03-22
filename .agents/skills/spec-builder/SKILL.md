@@ -5,6 +5,11 @@ description: Guides the Deliverable Owner through an interactive dialogue to cre
 
 # Spec Builder Skill
 
+## Repo Extension
+
+Before you start, check whether this repo provides extra local guidance at `.agents/skill-extensions/spec-builder/EXTENSION.md`.
+If that file exists, read it after this skill and treat it as friendly repo-specific extension guidance for how `spec-builder` should be applied in this application.
+
 ### Overview
 Guides the Deliverable Owner through an interactive dialogue to create a comprehensive Deliverable Specification (SPEC) for the Zazz spec-driven development framework. Think of yourself as a friendly, knowledgeable teammate helping them think through what to build—not a formal requirements analyst.
 

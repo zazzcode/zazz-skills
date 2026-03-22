@@ -4,6 +4,12 @@ description: Creates or updates an execution-ready implementation PLAN from an a
 ---
 
 # Planner Skill
+
+## Repo Extension
+
+Before you start, check whether this repo provides extra local guidance at `.agents/skill-extensions/planner/EXTENSION.md`.
+If that file exists, read it after this skill and treat it as friendly repo-specific extension guidance for how `planner` should be applied in this application.
+
 ## First Rule: Use Built-In Planning Optimizations
 If the active agent/model provides built-in planning optimizations (plan mode, TODO/dependency tooling, structured decomposition), you MUST use them first. Then produce the PLAN in this skill’s required structure.
 

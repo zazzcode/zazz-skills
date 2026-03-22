@@ -5,6 +5,11 @@ description: Base QA skill for the Zazz framework. Produces verification evidenc
 
 # QA Skill
 
+## Repo Extension
+
+Before you start, check whether this repo provides extra local guidance at `.agents/skill-extensions/qa/EXTENSION.md`.
+If that file exists, read it after this skill and treat it as friendly repo-specific extension guidance for how `qa` should be applied in this application.
+
 ## Overview
 Actively finds issues and validates acceptance criteria via test-driven verification. When AC or TDD criteria are not met, provides rework task content to the human coordinator (Owner acting as coordinator) so rework tasks can be created and assigned. Creates PR with full evidence once all criteria are satisfied.
 

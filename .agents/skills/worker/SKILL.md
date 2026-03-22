@@ -5,6 +5,11 @@ description: Executes an approved deliverable PLAN by implementing code, followi
 
 # Worker Skill
 
+## Repo Extension
+
+Before you start, check whether this repo provides extra local guidance at `.agents/skill-extensions/worker/EXTENSION.md`.
+If that file exists, read it after this skill and treat it as friendly repo-specific extension guidance for how `worker` should be applied in this application.
+
 ## Mission
 Execute an approved deliverable PLAN from start to finish, including:
 - just-in-time task realization from plan steps

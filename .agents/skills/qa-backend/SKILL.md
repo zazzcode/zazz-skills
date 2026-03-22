@@ -5,6 +5,11 @@ description: Backend specialization of the base qa skill. Use when a deliverable
 
 # Backend QA Skill
 
+## Repo Extension
+
+Before you start, check whether this repo provides extra local guidance at `.agents/skill-extensions/qa-backend/EXTENSION.md`.
+If that file exists, read it after this skill and treat it as friendly repo-specific extension guidance for how `qa-backend` should be applied in this application.
+
 ## Overview
 Backend specialization of the base `qa` skill. Use this when a deliverable has API, service, schema, data-integrity, auth/authz, or backend performance/security scope.
 

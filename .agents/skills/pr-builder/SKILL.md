@@ -5,6 +5,11 @@ description: Builds reviewer-ready pull request titles and bodies from repositor
 
 # PR Builder Skill
 
+## Repo Extension
+
+Before you start, check whether this repo provides extra local guidance at `.agents/skill-extensions/pr-builder/EXTENSION.md`.
+If that file exists, read it after this skill and treat it as friendly repo-specific extension guidance for how `pr-builder` should be applied in this application.
+
 ## Mission
 
 Create a clear, reviewer-ready pull request title and body that accurately explains:

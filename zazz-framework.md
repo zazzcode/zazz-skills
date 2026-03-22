@@ -27,6 +27,7 @@ The framework is also intentionally **git-native**. It relies heavily on built-i
   - [Feature Definition Flow](#feature-definition-flow)
 - [Ownership Roles](#ownership-roles)
 - [Skill Operating Modes](#skill-operating-modes)
+- [Repo-Specific Skill Extensions](#repo-specific-skill-extensions)
 - [Agent Authority and Owner Gates](#agent-authority-and-owner-gates)
   - [Where agents may operate autonomously](#where-agents-may-operate-autonomously)
   - [Where owner-controlled gates remain mandatory](#where-owner-controlled-gates-remain-mandatory)
@@ -487,6 +488,54 @@ Not every skill should behave the same way in human collaboration.
 Interactive skills should optimize for dialogue quality and artifact clarity. Autonomous skills should optimize for execution quality, truthful state, TDD discipline, and the ability to iterate toward a verified final solution before escalating.
 
 In this section and elsewhere, the skill names are shorthand for agents operating with those skills in context.
+
+---
+
+## Repo-Specific Skill Extensions
+
+Framework skills are intended to stay reusable across many repositories, but real application repos often need a small amount of repo-specific guidance for how a skill should behave in that environment.
+
+The framework supports that through an optional companion directory:
+
+```text
+.agents/
+├── skills/
+│   └── <skill-name>/SKILL.md
+└── skill-extensions/
+    └── <skill-name>/EXTENSION.md
+```
+
+Use this mechanism when a repo needs to add application-specific or harness-specific guidance without forking the base framework skill.
+
+Typical examples:
+
+- preferred agent harness capabilities available in that repo
+- repo-specific commands, wrappers, or verification flows
+- local escalation rules or evidence expectations
+- project-specific cautions that refine how a shared framework skill should be applied
+
+Rules:
+
+- base skills under `.agents/skills/` remain the canonical framework-owned contract
+- repo-specific guidance lives in `.agents/skill-extensions/<skill-name>/EXTENSION.md`
+- the extension is additive guidance, not a silent replacement for the base skill
+- the extension should stay concise and point to repo-local references or scripts when it grows
+- repo-specific extensions must not quietly weaken framework safety or authority boundaries
+
+Recommended skill behavior:
+
+1. Read the base skill first.
+2. Check for `.agents/skill-extensions/<skill-name>/EXTENSION.md`.
+3. If it exists, read it immediately after the base skill.
+4. Treat it as friendly repo-specific guidance for how that skill should be applied in the current application.
+
+Why the framework prefers a companion extension directory:
+
+- it keeps the shared base skill easy to sync from the framework source of truth
+- it avoids cluttering `AGENTS.md` with large skill-by-skill exceptions
+- it lets each repo add local nuance without pretending those details belong in every downstream user of the framework
+
+This pattern is especially useful for execution skills such as `worker`, `qa`, and `coordinator`, where the available agent harness, board wrappers, or validation tools may vary by repository.
 
 ---
 

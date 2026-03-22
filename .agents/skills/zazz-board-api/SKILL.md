@@ -6,6 +6,12 @@ required_for: ["planner", "coordinator", "worker", "qa", "spec-builder"]
 ---
 
 # Zazz Board API (Agent Routes)
+
+## Repo Extension
+
+Before you start, check whether this repo provides extra local guidance at `.agents/skill-extensions/zazz-board-api/EXTENSION.md`.
+If that file exists, read it after this skill and treat it as friendly repo-specific extension guidance for how `zazz-board-api` should be applied in this application.
+
 ## Purpose
 Agents use this API to create/manage deliverables and tasks, update statuses, append notes, and inspect task graph/readiness. Projects and users are pre-configured; agents do not create them.
 

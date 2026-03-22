@@ -5,6 +5,11 @@ description: Guides a product owner or project owner through creating or evolvin
 
 # Feature Doc Builder Skill
 
+## Repo Extension
+
+Before you start, check whether this repo provides extra local guidance at `.agents/skill-extensions/feature-doc-builder/EXTENSION.md`.
+If that file exists, read it after this skill and treat it as friendly repo-specific extension guidance for how `feature-doc-builder` should be applied in this application.
+
 ## Mission
 
 Create or evolve a Feature Requirements Document that explains a long-lived application capability at the product and system level.

@@ -5,6 +5,11 @@ description: Frontend specialization of the base qa skill. Use when a deliverabl
 
 # Frontend QA Skill
 
+## Repo Extension
+
+Before you start, check whether this repo provides extra local guidance at `.agents/skill-extensions/qa-frontend/EXTENSION.md`.
+If that file exists, read it after this skill and treat it as friendly repo-specific extension guidance for how `qa-frontend` should be applied in this application.
+
 ## Overview
 Frontend specialization of the base `qa` skill. Use this when a deliverable has meaningful UI/UX, client-state, browser-interaction, accessibility, or frontend integration scope.
 
