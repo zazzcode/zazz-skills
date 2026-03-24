@@ -1,14 +1,23 @@
 ---
 name: qa-frontend
-description: Frontend specialization of the base qa skill. Use when a deliverable has UI/UX, client-state, browser-interaction, accessibility, or frontend integration scope. Adds UI journey validation, accessibility checks, and frontend code quality analysis.
+description: Run frontend-focused QA on top of the base qa skill for deliverables involving UI flows, client state, browser interactions, accessibility, or frontend integrations; adds user-journey validation, accessibility checks, viewport coverage, and frontend code-quality analysis.
 ---
 
 # Frontend QA Skill
 
-## Repo Extension
+## Required Repo Extension Check
 
-Before you start, check whether this repo provides extra local guidance at `.agents/skill-extensions/qa-frontend/EXTENSION.md`.
-If that file exists, read it after this skill and treat it as friendly repo-specific extension guidance for how `qa-frontend` should be applied in this application.
+Before doing anything else, check for `.agents/skill-extensions/qa-frontend/EXTENSION.md`.
+If it exists, read it immediately after this `SKILL.md` and apply it as repo-specific guidance that augments this skill.
+
+## Startup Sequence
+
+Before performing frontend QA:
+1. Check for the repo extension file above and read it if present.
+2. Read `.agents/skills/qa/SKILL.md` and treat it as the governing base contract.
+3. Read `AGENTS.md`, the standards index, and the frontend-relevant standards for this deliverable.
+4. Read the SPEC, PLAN, task context, and changed UI surfaces before judging behavior.
+5. Then execute the frontend-specific QA pass without weakening the base QA loop.
 
 ## Overview
 Frontend specialization of the base `qa` skill. Use this when a deliverable has meaningful UI/UX, client-state, browser-interaction, accessibility, or frontend integration scope.

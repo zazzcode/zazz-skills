@@ -17,7 +17,7 @@ Set these variables before use:
 
 ```bash
 export ZAZZ_API_BASE_URL="http://localhost:3030"
-export ZAZZ_API_TOKEN="${ZAZZ_API_TOKEN:-550e8400-e29b-41d4-a716-446655440000}"
+export ZAZZ_API_TOKEN="${ZAZZ_API_TOKEN:-660e8400-e29b-41d4-a716-446655440101}"
 export ZAZZ_PROJECT_CODE="ZAZZ"
 # Optional: pretty JSON output (1 default, 0 compact)
 export ZAZZCTL_PRETTY=1

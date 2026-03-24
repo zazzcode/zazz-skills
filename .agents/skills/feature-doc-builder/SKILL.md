@@ -1,14 +1,23 @@
 ---
 name: feature-doc-builder
-description: Guides a product owner or project owner through creating or evolving a feature document for a long-lived capability. Use for feature-document authoring, milestone decomposition, transcript-to-feature-document drafting, and feature-level handoff into deliverable specs.
+description: Help a user create, draft, refine, or update a long-lived feature document for a product capability; use when the user wants to define or improve feature purpose, current state, milestone roadmap, and feature-level direction before or alongside deliverable planning.
 ---
 
 # Feature Doc Builder Skill
 
-## Repo Extension
+## Required Repo Extension Check
 
-Before you start, check whether this repo provides extra local guidance at `.agents/skill-extensions/feature-doc-builder/EXTENSION.md`.
-If that file exists, read it after this skill and treat it as friendly repo-specific extension guidance for how `feature-doc-builder` should be applied in this application.
+Before doing anything else, check for `.agents/skill-extensions/feature-doc-builder/EXTENSION.md`.
+If it exists, read it immediately after this `SKILL.md` and apply it as repo-specific guidance that augments this skill.
+
+## Startup Sequence
+
+Before starting the dialogue:
+1. Check for the repo extension file above and read it if present.
+2. Read `AGENTS.md` to resolve the repo docs root and any repo-specific documentation conventions.
+3. Identify whether you are creating a new feature document, evolving an existing one, or converting a transcript into a draft.
+4. Find the standards index and any existing feature documents or milestone references that should shape the discussion.
+5. Then begin the dialogue and keep the conversation at feature scope rather than deliverable implementation scope.
 
 ## Mission
 

@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 import { parseEnv } from 'node:util';
 
 const DEFAULT_BASE_URL = 'http://localhost:3030';
-const DEFAULT_TOKEN = '550e8400-e29b-41d4-a716-446655440000';
+const DEFAULT_TOKEN = '660e8400-e29b-41d4-a716-446655440101';
 const DEFAULT_PROJECT = 'ZAZZ';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -318,8 +318,8 @@ Environment:
 Examples:
   zazzctl help task create
   zazzctl --profile worker exec begin --deliverable-id 8 --task-id 25 --agent-name worker-1 --file api/src/routes/fileLocks.js
-  zazzctl --profile planner deliverable update --deliverable-id 4 --json '{"planFilepath":"<DOCS_ROOT>/deliverables/ZAZZ-6-PLAN.md"}'
-  zazzctl --profile spec_builder deliverable create --name "Agent Tokens" --type FEATURE --spec-filepath "<DOCS_ROOT>/deliverables/ZAZZ-6-agent-tokens-SPEC.md"
+  zazzctl --profile planner deliverable update --deliverable-id 4 --json '{"planFilepath":"<DOCS_ROOT>/deliverables/ZAZZ-6/agent-tokens-PLAN.md"}'
+  zazzctl --profile spec_builder deliverable create --name "Agent Tokens" --type FEATURE --spec-filepath "<DOCS_ROOT>/deliverables/ZAZZ-6/agent-tokens-SPEC.md"
   ZAZZCTL_ENV_FILE=.env zazzctl deliverable list
 `;
   }

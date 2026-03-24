@@ -1,14 +1,23 @@
 ---
 name: qa-backend
-description: Backend specialization of the base qa skill. Use when a deliverable has API, service, schema, data-integrity, auth/authz, or backend performance/security scope. Adds API contract validation, auth/authz checks, and backend code quality analysis.
+description: Run backend-focused QA on top of the base qa skill for deliverables involving APIs, services, schema, persistence, auth/authz, or backend performance and security; adds API contract validation, data-integrity checks, and backend code-quality analysis.
 ---
 
 # Backend QA Skill
 
-## Repo Extension
+## Required Repo Extension Check
 
-Before you start, check whether this repo provides extra local guidance at `.agents/skill-extensions/qa-backend/EXTENSION.md`.
-If that file exists, read it after this skill and treat it as friendly repo-specific extension guidance for how `qa-backend` should be applied in this application.
+Before doing anything else, check for `.agents/skill-extensions/qa-backend/EXTENSION.md`.
+If it exists, read it immediately after this `SKILL.md` and apply it as repo-specific guidance that augments this skill.
+
+## Startup Sequence
+
+Before performing backend QA:
+1. Check for the repo extension file above and read it if present.
+2. Read `.agents/skills/qa/SKILL.md` and treat it as the governing base contract.
+3. Read `AGENTS.md`, the standards index, and the backend-relevant standards for this deliverable.
+4. Read the SPEC, PLAN, task context, and changed backend surfaces before judging behavior.
+5. Then execute the backend-specific QA pass without weakening the base QA loop.
 
 ## Overview
 Backend specialization of the base `qa` skill. Use this when a deliverable has API, service, schema, data-integrity, auth/authz, or backend performance/security scope.

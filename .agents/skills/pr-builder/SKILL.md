@@ -1,14 +1,23 @@
 ---
 name: pr-builder
-description: Builds reviewer-ready pull request titles and bodies from repository state, deliverable context, test evidence, and manual validation notes. Use when preparing or updating a PR for human review.
+description: Help a user create, draft, refine, or update a reviewer-ready pull request title and body from the current changes and verification evidence; use when the user wants to write or improve PR content for human review.
 ---
 
 # PR Builder Skill
 
-## Repo Extension
+## Required Repo Extension Check
 
-Before you start, check whether this repo provides extra local guidance at `.agents/skill-extensions/pr-builder/EXTENSION.md`.
-If that file exists, read it after this skill and treat it as friendly repo-specific extension guidance for how `pr-builder` should be applied in this application.
+Before doing anything else, check for `.agents/skill-extensions/pr-builder/EXTENSION.md`.
+If it exists, read it immediately after this `SKILL.md` and apply it as repo-specific guidance that augments this skill.
+
+## Startup Sequence
+
+Before drafting PR content:
+1. Check for the repo extension file above and read it if present.
+2. Read `AGENTS.md` and inspect any PR templates or repo-specific review conventions.
+3. Gather the diff, commits, deliverable context, and verification evidence available.
+4. Separate confirmed facts from assumptions or missing validation.
+5. Then draft reviewer-ready PR content that is accurate, concise, and evidence-backed.
 
 ## Mission
 

@@ -1,14 +1,35 @@
 ---
 name: worker
-description: Executes an approved deliverable PLAN by implementing code, following TDD, and keeping task, relation, status, and lock state synchronized with Zazz Board.
+description: Implement an approved deliverable PLAN with TDD and clear escalation discipline; use when the user wants an execution agent to carry out dependency-ready work, keep implementation scope aligned to the approved contract, and synchronize execution truth through the repo workflow or Zazz Board when available.
 ---
 
 # Worker Skill
 
-## Repo Extension
+## Required Repo Extension Check
 
-Before you start, check whether this repo provides extra local guidance at `.agents/skill-extensions/worker/EXTENSION.md`.
-If that file exists, read it after this skill and treat it as friendly repo-specific extension guidance for how `worker` should be applied in this application.
+Before doing anything else, check for `.agents/skill-extensions/worker/EXTENSION.md`.
+If it exists, read it immediately after this `SKILL.md` and apply it as repo-specific guidance that augments this skill.
+
+## Startup Sequence
+
+Before implementing work:
+1. Check for the repo extension file above and read it if present.
+2. Read `AGENTS.md` to resolve the repo docs root and any repo-specific implementation conventions.
+3. Detect the repo's adoption level for this work: `skills-assisted` by default, or `service-assisted` when Zazz Board/API integration is actually in use.
+4. Read the approved SPEC, PLAN, current task context, and dependency state before touching code.
+5. Load the board/API workflow only when the repo operates in service-assisted mode; otherwise keep execution truth in the repo, worktree, and terminal workflow the repo uses.
+6. Confirm this worktree is executing one active deliverable and that you are not mixing unrelated deliverable scope into it.
+7. Then execute the assigned work with TDD and keep implementation scope aligned to the PLAN.
+
+## Compatibility Levels
+
+This skill must work across the framework's adoption levels:
+
+- **Process-only**: humans may execute manually without this skill.
+- **Skills-assisted**: implement from SPEC/PLAN and repo reality without requiring Board/API task orchestration.
+- **Service-assisted**: implement from SPEC/PLAN while also keeping Zazz Board task, note, blocker, and lock state truthful.
+
+Default to **skills-assisted** unless the repo clearly uses Zazz Board for this deliverable.
 
 ## Mission
 Execute an approved deliverable PLAN from start to finish, including:
@@ -25,7 +46,7 @@ Primary outputs:
 
 - implemented code that satisfies the approved SPEC and PLAN
 - passing task-level verification evidence from the required TDD loop
-- truthful board state for tasks, relations, blockers, statuses, and locks
+- truthful execution state for tasks, dependencies, blockers, statuses, and locks in the workflow the repo actually uses
 
 ## Role Scope
 - Worker agent is the primary role with full board API interaction.
@@ -39,7 +60,7 @@ If the active agent/model supports built-in execution optimizations (multi-agent
 
 ## Mandatory Companion Skill
 
-For any API interaction, you MUST load and follow:
+For any API interaction in **service-assisted** mode, you MUST load and follow:
 - `.agents/skills/zazz-board-api/SKILL.md`
 
 Live OpenAPI is the route contract source of truth.
@@ -66,10 +87,12 @@ Rule:
 
 Before execution, you MUST have:
 1. Project code
-2. Deliverable code
-3. Deliverable ID (integer)
-4. Approved SPEC path
-5. Approved PLAN path
+2. Approved SPEC path
+3. Approved PLAN path
+
+Additional required identifiers depend on adoption level:
+- **Skills-assisted**: use the repo's local deliverable/task identifiers if present.
+- **Service-assisted**: deliverable code and deliverable ID are also required.
 
 If any required input is missing, stop and ask the Owner.
 
@@ -305,7 +328,7 @@ Execution is complete only when all are true:
 
 ```bash
 export ZAZZ_API_BASE_URL="http://localhost:3030"
-export ZAZZ_API_TOKEN="${ZAZZ_API_TOKEN:-550e8400-e29b-41d4-a716-446655440000}"
+export ZAZZ_API_TOKEN="${ZAZZ_API_TOKEN:-660e8400-e29b-41d4-a716-446655440101}"
 export AGENT_ID="worker"
 export ZAZZ_WORKSPACE="/path/to/project"
 export ZAZZ_STATE_DIR="${ZAZZ_WORKSPACE}/.zazz"

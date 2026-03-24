@@ -1,14 +1,36 @@
 ---
 name: planner
-description: Creates or updates an execution-ready implementation PLAN from an approved SPEC for any deliverable. Use when an Owner asks for a phased plan with dependency-safe decomposition, repository-verified scope, AC/test traceability, parallelization strategy, and explicit verification commands.
+description: Create or revise an execution-ready deliverable PLAN from an approved SPEC; use when the user wants phased decomposition, repository-verified current state, acceptance-criteria and test traceability, parallelization strategy, file ownership, and explicit verification commands before implementation begins.
 ---
 
 # Planner Skill
 
-## Repo Extension
+## Required Repo Extension Check
 
-Before you start, check whether this repo provides extra local guidance at `.agents/skill-extensions/planner/EXTENSION.md`.
-If that file exists, read it after this skill and treat it as friendly repo-specific extension guidance for how `planner` should be applied in this application.
+Before doing anything else, check for `.agents/skill-extensions/planner/EXTENSION.md`.
+If it exists, read it immediately after this `SKILL.md` and apply it as repo-specific guidance that augments this skill.
+
+## Startup Sequence
+
+Before writing the PLAN:
+1. Check for the repo extension file above and read it if present.
+2. Read `AGENTS.md` to resolve the repo docs root and any repo-specific planning conventions.
+3. Detect the repo's adoption level for this work: `skills-assisted` by default, or `service-assisted` when Zazz Board/API integration is actually in use.
+4. Ask early which deliverable storage mode applies for this work: `neither` (flat), `Zazz Board`, or `Jira`, unless the approved SPEC path already makes that clear.
+5. If the mode is `Zazz Board`, ask for the deliverable code. If the mode is `Jira`, ask for the issue key. If the mode is `neither`, continue without an external ID folder.
+6. Confirm you have the required identifiers and the approved SPEC path.
+7. Read the SPEC and the standards index, then load any companion skills required for this scope.
+8. Then produce an execution-ready PLAN without implementing code.
+
+## Compatibility Levels
+
+This skill must work across the framework's adoption levels:
+
+- **Process-only**: humans may plan manually without this skill.
+- **Skills-assisted**: write the PLAN from repo docs and current repository reality; no Board/API dependency.
+- **Service-assisted**: write the same PLAN while also integrating with Zazz Board conventions and identifiers where the repo uses them.
+
+Default to **skills-assisted** unless the repo clearly uses Zazz Board for this deliverable.
 
 ## First Rule: Use Built-In Planning Optimizations
 If the active agent/model provides built-in planning optimizations (plan mode, TODO/dependency tooling, structured decomposition), you MUST use them first. Then produce the PLAN in this skill’s required structure.
@@ -21,18 +43,22 @@ You are planner-only in this step: DO NOT implement code.
 - Zazz is spec-driven and test-driven.
 - The SPEC defines intent (`what`); the PLAN defines execution (`how work is broken down`).
 - The SPEC is read-only during planning.
+- One active deliverable should execute in one worktree.
+- `deliverables/` are usually local execution artifacts unless the repo explicitly tracks them in Git.
 - The human coordinator (Owner acting as coordinator) executes and maintains the PLAN during implementation.
 
 ## Companion Skill Requirement
-- For API work, you MUST load and follow `.agents/skills/zazz-board-api/SKILL.md`.
+- For API work in **service-assisted** repos, you MUST load and follow `.agents/skills/zazz-board-api/SKILL.md`.
 - Live OpenAPI is route truth when available. DO NOT rely on stale hardcoded route assumptions.
 
 ## Required Inputs
 Before writing a PLAN, you MUST have:
 - Project code (e.g. `ZAZZ`)
-- Deliverable code (e.g. `ZAZZ-5`)
-- Deliverable numeric ID (integer, e.g. `8`)
 - SPEC file path
+Additional required identifiers depend on adoption level:
+- **Skills-assisted**: whatever local identifier or slug the repo uses for the deliverable is sufficient.
+- **Service-assisted with Zazz Board**: Deliverable code (e.g. `ZAZZ-5`) and deliverable numeric ID (integer, e.g. `8`) are also required.
+- **Skills-assisted with Jira directory convention**: the Jira issue key is required if the approved SPEC path is not already known.
 If any input is missing, stop and ask the Owner.
 
 ## Docs Root Convention
@@ -42,7 +68,7 @@ Use the repo docs root declared in `AGENTS.md` as the base for framework docs. E
 
 Primary artifact:
 
-- `<DOCS_ROOT>/deliverables/{deliverableCode}-{slug}-PLAN.md`
+- `<DOCS_ROOT>/deliverables/<plan-path>` — must end with `-PLAN.md`, **same directory and basename** as the approved SPEC (swap `-SPEC.md` → `-PLAN.md` only). Project mode is **neither** (flat), **Zazz Board**, or **Jira**—see [zazz-framework.md](../../../zazz-framework.md) and **spec-builder** → **Deliverable files: storage, naming, and index**. **Jira** mirrors **Zazz** subdirectory layout; only the folder name differs.
 
 Supporting discovery artifact:
 
@@ -53,17 +79,26 @@ Primary work product:
 - an execution-ready decomposition of the approved SPEC, not implementation code
 
 ## PLAN Naming + Location (Generic Rule)
-- Store plans in `<DOCS_ROOT>/deliverables/`.
-- Derive PLAN name by replacing `-SPEC.md` with `-PLAN.md`.
-- Use hyphen-delimited filenames.
+- Store the PLAN in the **same directory** as the approved SPEC under `<DOCS_ROOT>/deliverables/`.
+- Derive the canonical PLAN path by replacing the SPEC’s `-SPEC.md` suffix with `-PLAN.md` — **never** change folder or slug basename (flat `…/{slug}-SPEC.md` → `…/{slug}-PLAN.md`, or `…/{external-id}/{slug}-SPEC.md` → `…/{external-id}/{slug}-PLAN.md`).
+- Use hyphen-delimited filenames and folder names (issue keys and board codes are valid folder names when using subdirs).
+- If the canonical SPEC path is not yet known, ask: "Are we using Zazz Board, Jira, or neither for this deliverable?" Then ask for the deliverable code or issue key when needed before fixing the PLAN path.
 - Update `<DOCS_ROOT>/deliverables/index.yaml` only when generating/updating the canonical PLAN:
   - if deliverable entry exists, add or update its `plan` field
   - if entry does not exist, add a new deliverable record with `id`, `name`, `spec`, and `plan`
 - If the Owner asks for an alternate draft (for example `-CODEX-PLAN.md`), create it without replacing canonical `-PLAN.md` unless explicitly asked.
 
-Example:
-- SPEC: `<DOCS_ROOT>/deliverables/ZAZZ-5-fix-routes-no-project-SPEC.md`
-- PLAN: `<DOCS_ROOT>/deliverables/ZAZZ-5-fix-routes-no-project-PLAN.md`
+Examples (same directory + basename stem as the SPEC):
+
+**Neither (flat):**
+- SPEC: `<DOCS_ROOT>/deliverables/fix-routes-no-project-SPEC.md`
+- PLAN: `<DOCS_ROOT>/deliverables/fix-routes-no-project-PLAN.md`
+
+**Zazz Board (subdirectory = deliverable code):**
+- SPEC: `<DOCS_ROOT>/deliverables/ZAZZ-5/fix-routes-no-project-SPEC.md`
+- PLAN: `<DOCS_ROOT>/deliverables/ZAZZ-5/fix-routes-no-project-PLAN.md`
+
+**Jira:** same shape as Zazz; folder = issue key (e.g. `PROJ-453/fix-routes-no-project-SPEC.md` → `…-PLAN.md`).
 
 ## Output Requirements (CODEX-Style Structure)
 Write one markdown PLAN file. Use this section order unless the Owner explicitly requests a different order:
@@ -114,7 +149,7 @@ Optional sections (for updating an existing active plan, not mandatory on first 
 6. Partition work into dependency-safe phases and named parallel streams.
 7. Decompose phases into concrete steps with file ownership and explicit dependency edges.
 8. Add validation plan (targeted tests, full tests, lint/type checks, manual sign-off where required).
-9. Write PLAN file to `<DOCS_ROOT>/deliverables/`.
+9. Write the PLAN file **in the same directory** as the approved SPEC (flat or `deliverables/{external-id}/` per zazz-framework / spec-builder).
 10. Update `<DOCS_ROOT>/deliverables/index.yaml` only when canonical plan target changes.
 
 ## Decomposition Rules
@@ -192,7 +227,7 @@ A PLAN is complete only if all conditions below are true:
 ## Environment Variables
 ```bash
 export ZAZZ_API_BASE_URL="http://localhost:3000"
-export ZAZZ_API_TOKEN="${ZAZZ_API_TOKEN:-550e8400-e29b-41d4-a716-446655440000}"
+export ZAZZ_API_TOKEN="${ZAZZ_API_TOKEN:-660e8400-e29b-41d4-a716-446655440101}"
 export AGENT_ID="planner"
 export ZAZZ_WORKSPACE="/path/to/project"
 export ZAZZ_STATE_DIR="${ZAZZ_WORKSPACE}/.zazz"

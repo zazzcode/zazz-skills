@@ -1,32 +1,47 @@
 ---
 name: "Zazz Board API"
 type: "rule"
-description: "Required CLI-first skill for agents to create and manage deliverables/tasks through zazzctl. OpenAPI remains the protocol validation and fallback surface in the zazz-board reference implementation."
+description: "CLI-first companion skill for service-assisted repos that use Zazz Board; use it to create and manage deliverables, tasks, relations, notes, statuses, and file locks through zazzctl, with live OpenAPI as the protocol validation and fallback surface."
 required_for: ["planner", "coordinator", "worker", "qa", "spec-builder"]
 ---
 
 # Zazz Board API (Agent Routes)
 
-## Repo Extension
+## Required Repo Extension Check
 
-Before you start, check whether this repo provides extra local guidance at `.agents/skill-extensions/zazz-board-api/EXTENSION.md`.
-If that file exists, read it after this skill and treat it as friendly repo-specific extension guidance for how `zazz-board-api` should be applied in this application.
+Before doing anything else, check for `.agents/skill-extensions/zazz-board-api/EXTENSION.md`.
+If it exists, read it immediately after this `SKILL.md` and apply it as repo-specific guidance that augments this skill.
+
+## Startup Sequence
+
+Before making board/API calls:
+1. Check for the repo extension file above and read it if present.
+2. Read `AGENTS.md` to resolve the repo docs root and any repo-specific board conventions.
+3. Confirm the environment variables, authentication source, and target project context.
+4. Prefer the CLI-first workflow this skill defines, and use OpenAPI as route truth or protocol fallback when needed.
+5. Then make only the board updates that are supported by the current role and task context.
 
 ## Purpose
 Agents use this API to create/manage deliverables and tasks, update statuses, append notes, and inspect task graph/readiness. Projects and users are pre-configured; agents do not create them.
+
+This skill is only for **service-assisted** adoption. It is optional in the framework and should not be required in `process-only` or ordinary `skills-assisted` repos that are just following the framework's document model and directory structure.
+
+### Deliverable SPEC paths on disk
+
+Projects are **flat**, **Zazz Board**, or **Jira** (mutually exclusive). **Flat:** `deliverables/{slug}-SPEC.md`. **Subdirectory:** `deliverables/{id}/{slug}-SPEC.md` with slug-only filenames inside—**Zazz** uses board **deliverable code** as `{id}` (this API syncs `dedFilePath` / `specFilepath`); **Jira** uses the **same layout** with an **issue key** as `{id}` and does **not** sync paths through this API. Paths you send must match files on disk. See [zazz-framework.md](../../../zazz-framework.md) and **spec-builder** → **Deliverable files: storage, naming, and index**.
 
 ---
 
 ## Authentication
 All API requests (except `/openapi.json`, `/health`, `/`, `/db-test`, `/token-info`) require:
 - Header: `TB_TOKEN: <uuid>` or `Authorization: Bearer <uuid>`
-- Token resolution: `ZAZZ_API_TOKEN` when set, otherwise fallback `550e8400-e29b-41d4-a716-446655440000`
+- Token resolution: `ZAZZ_API_TOKEN` when set, otherwise fallback `660e8400-e29b-41d4-a716-446655440101`
 
 ---
 
 ## Environment variables
 - `ZAZZ_API_BASE_URL` (fallback: `http://localhost:3030`)
-- `ZAZZ_API_TOKEN` (required token source; fallback if unset: `550e8400-e29b-41d4-a716-446655440000`)
+- `ZAZZ_API_TOKEN` (required token source; fallback if unset: `660e8400-e29b-41d4-a716-446655440101`)
 - `ZAZZ_PROJECT_CODE` (fallback: `ZAZZ`)
 - `ZAZZCTL_PROFILE` (optional default profile: `generic`, `worker`, `planner`, `spec_builder`)
 - `ZAZZCTL_ENV_FILE` (optional explicit env file path for CLI execution)

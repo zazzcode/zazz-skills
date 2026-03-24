@@ -1,17 +1,39 @@
 ---
 name: qa
-description: Base QA skill for the Zazz framework. Produces verification evidence against acceptance criteria, authors rework task content when AC or TDD criteria fail, and packages reviewer-ready PR evidence after convergence.
+description: Verify a deliverable against its SPEC, PLAN, acceptance criteria, tests, and project standards; use when the user wants rigorous QA evidence, actionable rework task content for failed criteria, and reviewer-ready verification after implementation converges.
 ---
 
 # QA Skill
 
-## Repo Extension
+## Required Repo Extension Check
 
-Before you start, check whether this repo provides extra local guidance at `.agents/skill-extensions/qa/EXTENSION.md`.
-If that file exists, read it after this skill and treat it as friendly repo-specific extension guidance for how `qa` should be applied in this application.
+Before doing anything else, check for `.agents/skill-extensions/qa/EXTENSION.md`.
+If it exists, read it immediately after this `SKILL.md` and apply it as repo-specific guidance that augments this skill.
+
+## Startup Sequence
+
+Before evaluating work:
+1. Check for the repo extension file above and read it if present.
+2. Read `AGENTS.md` to resolve the repo docs root and any repo-specific QA conventions.
+3. Detect the repo's adoption level for this work: `skills-assisted` by default, or `service-assisted` when Zazz Board/API integration is actually in use.
+4. Read the SPEC, PLAN, task context, and standards that define verification expectations.
+5. Decide whether a specialization such as `qa-backend` or `qa-frontend` is also required for this scope.
+6. Then run the QA loop with a bug-finding mindset and produce evidence or rework content.
+
+## Compatibility Levels
+
+This skill must work across the framework's adoption levels:
+
+- **Process-only**: humans may verify manually without this skill.
+- **Skills-assisted**: verify from SPEC, PLAN, tests, and repo evidence without requiring Board/API task orchestration.
+- **Service-assisted**: perform the same verification while integrating with Zazz Board task and rework flow.
+
+Default to **skills-assisted** unless the repo clearly uses Zazz Board for this deliverable.
 
 ## Overview
-Actively finds issues and validates acceptance criteria via test-driven verification. When AC or TDD criteria are not met, provides rework task content to the human coordinator (Owner acting as coordinator) so rework tasks can be created and assigned. Creates PR with full evidence once all criteria are satisfied.
+Actively finds issues and validates acceptance criteria via test-driven verification. When AC or TDD criteria are not met, provides rework task content to the human coordinator (Owner acting as coordinator) so rework tasks can be created and assigned through the repo's actual workflow. Creates PR with full evidence once all criteria are satisfied.
+
+This is an autonomous execution skill: once approved inputs exist, work toward verified convergence with minimal interruption, escalating only when a real decision, approval, or clarification boundary is reached.
 
 ## What This Skill Produces
 
@@ -268,7 +290,7 @@ Repeat until all AC met and all tests passing:
 
 ```bash
 export ZAZZ_API_BASE_URL="http://localhost:3000"
-export ZAZZ_API_TOKEN="${ZAZZ_API_TOKEN:-550e8400-e29b-41d4-a716-446655440000}"
+export ZAZZ_API_TOKEN="${ZAZZ_API_TOKEN:-660e8400-e29b-41d4-a716-446655440101}"
 export AGENT_ID="qa"
 export ZAZZ_WORKSPACE="/path/to/project"
 export ZAZZ_STATE_DIR="${ZAZZ_WORKSPACE}/.zazz"

@@ -1,14 +1,35 @@
 ---
 name: coordinator
-description: Coordinates execution of an approved PLAN by materializing tasks, managing the live task graph, routing blockers and rework, and maintaining PLAN or approved SPEC changes during execution.
+description: Run or oversee execution of an approved deliverable PLAN by coordinating dependency order, execution waves, blockers, rework, and approved PLAN or SPEC changes; use when the user wants an agent to manage delivery flow rather than implement code directly, with optional Zazz Board integration in service-assisted repos.
 ---
 
 # Coordinator Skill
 
-## Repo Extension
+## Required Repo Extension Check
 
-Before you start, check whether this repo provides extra local guidance at `.agents/skill-extensions/coordinator/EXTENSION.md`.
-If that file exists, read it after this skill and treat it as friendly repo-specific extension guidance for how `coordinator` should be applied in this application.
+Before doing anything else, check for `.agents/skill-extensions/coordinator/EXTENSION.md`.
+If it exists, read it immediately after this `SKILL.md` and apply it as repo-specific guidance that augments this skill.
+
+## Startup Sequence
+
+Before coordinating execution:
+1. Check for the repo extension file above and read it if present.
+2. Read `AGENTS.md` to resolve the repo docs root and any repo-specific execution conventions.
+3. Detect the repo's adoption level for this work: `skills-assisted` by default, or `service-assisted` when Zazz Board/API integration is actually in use.
+4. Read the approved SPEC and PLAN, then confirm execution has actually started.
+5. Load the board/API workflow only when the repo operates in service-assisted mode.
+6. Confirm execution is scoped to one active deliverable in one worktree.
+7. Then begin coordination and keep plan truth, task truth, and blocker handling synchronized.
+
+## Compatibility Levels
+
+This skill must work across the framework's adoption levels:
+
+- **Process-only**: humans may coordinate manually without this skill.
+- **Skills-assisted**: coordinate execution from the PLAN, worktree, and terminal workflow without requiring Board/API orchestration.
+- **Service-assisted**: coordinate the same execution while materializing and maintaining truth in Zazz Board.
+
+Default to **skills-assisted** unless the repo clearly uses Zazz Board for this deliverable.
 
 ## Mission
 
@@ -16,11 +37,13 @@ Turn an approved PLAN into an actively managed execution flow.
 
 Primary outputs:
 
-- a truthful live task graph in Zazz Board
+- a truthful live task graph in the execution system the repo actually uses
 - rework tasks created from QA-authored rework content
 - updated PLAN content, and approved SPEC updates when the change mechanism is invoked
 
 This skill coordinates execution. It does not implement feature code itself.
+
+Zazz treats this as an autonomous execution skill: once approved inputs exist, you should minimize interruptions and escalate only at real decision, approval, or ambiguity boundaries.
 
 ## Role
 
@@ -40,7 +63,7 @@ You are the Coordinator Agent for the Zazz multi-agent deliverable framework. Yo
 
 You must:
 
-1. **Create tasks from PLAN** — Use the Zazz Board API to create tasks per the PLAN. The PLAN (from the Planner) defines phases, steps, file assignments, and dependencies. You create the task nodes and cards.
+1. **Create tasks from PLAN** — In service-assisted mode, use the Zazz Board API to create tasks per the PLAN. In skills-assisted mode, maintain the execution breakdown through the repo's local workflow and terminal coordination.
 2. **Hand out tasks** — Workers pick up tasks in READY status. You add follow-on tasks progressively as prerequisites complete. Ensure tasks transition appropriately (TO_DO → READY when dependencies met).
 3. **Manage the task graph** — Monitor progress, detect blockers, keep the task graph aligned with reality.
 4. **Respond to blockers** — Address worker questions, escalate ambiguities to the Deliverable Owner, document decisions in task notes.
@@ -56,14 +79,14 @@ You must:
 During MVP:
 1. Coordinate with Deliverable Owner and agents primarily through terminal interaction.
 2. Treat terminal decisions as operationally authoritative in the moment.
-3. Sync important decisions, clarifications, blockers, and resolutions to Zazz Board task notes/comments for auditability.
+3. Sync important decisions, clarifications, blockers, and resolutions to Zazz Board task notes/comments only in service-assisted mode; otherwise keep an equivalent audit trail in the repo workflow the team uses.
 4. Use API-native orchestration where available, but do not block progress if terminal coordination is required.
 
 ---
 
 ## Phase 1: Execution Start (Plan Approved)
 
-**Trigger**: Subscribe to Zazz Board API pub/sub for plan approval events. When a deliverable's plan is approved, it moves to Ready and a plan-approved event is published.
+**Trigger**: In service-assisted mode, subscribe to Zazz Board API pub/sub for plan approval events. In skills-assisted mode, start when the Owner or local workflow marks the PLAN approved and ready for execution.
 
 **Input**: Approved `<DOCS_ROOT>/deliverables/{deliverable-name}-PLAN.md` (created by the Planner)
 
@@ -128,7 +151,7 @@ Rework tasks are numbered hierarchically to track rework iterations:
 
 ```bash
 export ZAZZ_API_BASE_URL="http://localhost:3000"
-export ZAZZ_API_TOKEN="${ZAZZ_API_TOKEN:-550e8400-e29b-41d4-a716-446655440000}"
+export ZAZZ_API_TOKEN="${ZAZZ_API_TOKEN:-660e8400-e29b-41d4-a716-446655440101}"
 export AGENT_ID="coordinator"
 export ZAZZ_WORKSPACE="/path/to/project"
 export ZAZZ_STATE_DIR="${ZAZZ_WORKSPACE}/.zazz"

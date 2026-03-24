@@ -1,14 +1,23 @@
 ---
 name: proposal-builder
-description: Facilitates and documents proposal discussions for features or deliverables, producing decision-ready proposal documents with business/technical justification, alternatives, and recommendations.
+description: Help one or more stakeholders create, draft, refine, or update a proposal for a feature, deliverable, or technical direction; use when the user wants to explore an idea, compare options, weigh tradeoffs, and improve a proposal before committing to a feature document or SPEC.
 ---
 
 # Proposal Builder Skill
 
-## Repo Extension
+## Required Repo Extension Check
 
-Before you start, check whether this repo provides extra local guidance at `.agents/skill-extensions/proposal-builder/EXTENSION.md`.
-If that file exists, read it after this skill and treat it as friendly repo-specific extension guidance for how `proposal-builder` should be applied in this application.
+Before doing anything else, check for `.agents/skill-extensions/proposal-builder/EXTENSION.md`.
+If it exists, read it immediately after this `SKILL.md` and apply it as repo-specific guidance that augments this skill.
+
+## Startup Sequence
+
+Before starting the dialogue:
+1. Check for the repo extension file above and read it if present.
+2. Read `AGENTS.md` to resolve the repo docs root and any repo-specific documentation conventions.
+3. Identify whether this is a live dialogue, multi-human facilitation, transcript ingestion, or another supported mode.
+4. Find the standards index for this repo and identify the standard files that could materially affect the proposal.
+5. Then begin the discussion and push for alternatives, tradeoffs, and a decision-ready recommendation.
 
 ## Overview
 Guides one or more humans through a structured proposal discussion to produce a clear proposal document for a feature, a deliverable, or both.

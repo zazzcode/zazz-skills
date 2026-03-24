@@ -223,11 +223,21 @@ Recommended layout:
 │   ├── index.yaml
 │   └── role-based-access-control.md
 ├── deliverables/
-│   ├── ZAZZ-142-role-management-ui-SPEC.md
-│   └── ZAZZ-142-role-management-ui-PLAN.md
+│   ├── role-management-ui-SPEC.md
+│   └── role-management-ui-PLAN.md
 └── proposals/
     └── role-management-options.md
 ```
+
+The tree above shows **`deliverables/` with the flat layout** (the option for projects that use **neither** Zazz Board nor Jira for this convention).
+
+A **project** adopts **one** of three modes—do not mix:
+
+1. **Neither** — flat only: `{slug}-SPEC.md` / `{slug}-PLAN.md` under `deliverables/`.
+2. **Zazz Board** — subdirectory layout: `deliverables/{deliverable-code}/{slug}-SPEC.md` (and `-PLAN.md`); sync paths via **zazz-board-api**; folder name = board deliverable code.
+3. **Jira** — **same subdirectory layout** as Zazz: `deliverables/{issue-key}/{slug}-SPEC.md` (and `-PLAN.md`); folder name = Jira issue key (e.g. `PROJ-453`).
+
+Zazz and Jira are **alternatives** (different `{id}` in the same pattern), not two folder schemes used together in one project.
 
 Naming conventions:
 
@@ -237,9 +247,27 @@ Naming conventions:
 | **Feature document** | `features/{feature-key}.md` | `role-based-access-control.md` |
 | **Features index** | `features/index.yaml` | `features/index.yaml` |
 | **Standards index** | `standards/index.yaml` | `standards/index.yaml` |
-| **Deliverable SPEC** | `deliverables/{deliverable-code}-{slug}-SPEC.md` | `ZAZZ-142-role-management-ui-SPEC.md` |
-| **Deliverable PLAN** | `deliverables/{deliverable-code}-{slug}-PLAN.md` | `ZAZZ-142-role-management-ui-PLAN.md` |
+| **Deliverable SPEC** | `deliverables/{slug}-SPEC.md` (flat under `deliverables/`) | `role-management-ui-SPEC.md` |
+| **Deliverable PLAN** | `deliverables/{slug}-PLAN.md` (same directory as its SPEC) | `role-management-ui-PLAN.md` |
+| **Deliverable SPEC / PLAN (subdirectory)** | **Zazz or Jira** (not both): `deliverables/{id}/{slug}-SPEC.md` and `…/{slug}-PLAN.md`, slug-only files inside. `{id}` = Zazz **deliverable code** (board path sync) **or** Jira **issue key** (same convention, no board sync). | `deliverables/ZAZZ-142/role-management-ui-SPEC.md` — Jira: same pattern with issue-key folder |
 | **Proposal** | `proposals/{name}.md` | `role-management-options.md` |
+
+**Deliverable layout:** See the three modes under the layout tree (**neither** / **Zazz** / **Jira**). **Jira** reuses the **Zazz subdirectory convention**; only the folder name (issue key vs board code) changes. When using Zazz Board, `dedFilePath` / `specFilepath` must match the SPEC on disk. The `spec-builder` and `planner` skills describe agent steps; `zazz-board-api` applies only to Zazz Board.
+
+**Examples** (same fictional deliverable, slug `role-management-ui`; **pick the block that matches your project mode**):
+
+```text
+# Neither — flat
+.zazz/deliverables/role-management-ui-SPEC.md
+.zazz/deliverables/role-management-ui-PLAN.md
+```
+
+```text
+# Zazz Board — deliverable code ZAZZ-142 (path sync via zazz-board-api)
+# Jira projects: same layout; folder is the issue key (e.g. PROJ-453/) instead of ZAZZ-142/
+.zazz/deliverables/ZAZZ-142/role-management-ui-SPEC.md
+.zazz/deliverables/ZAZZ-142/role-management-ui-PLAN.md
+```
 
 `proposals/`, `standards/`, and `features/` are expected to be tracked in Git. `deliverables/` must exist in each worktree and should stay local unless the team explicitly wants canonical deliverable artifacts checked in.
 
