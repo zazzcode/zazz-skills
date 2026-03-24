@@ -4,7 +4,7 @@ How to use the Planner skill to turn an approved SPEC into an execution-ready PL
 
 ## What It Does
 
-The Planner skill converts a bounded deliverable SPEC into a concrete execution plan.
+The Planner skill converts an approved bounded deliverable SPEC into a concrete execution plan.
 
 It should:
 - verify current repository reality
@@ -12,6 +12,7 @@ It should:
 - map acceptance criteria to implementation and tests
 - identify safe parallelization
 - produce a PLAN file beside the SPEC
+- support review-and-revision when the owner sees planning gaps or mistakes
 
 This skill does not implement code.
 
@@ -32,15 +33,10 @@ Use this skill when:
 
 Before using this skill, you should have:
 - an approved SPEC path
-- the project code
 - relevant standards available through `AGENTS.md`
 
-If the repo uses Zazz Board, also provide:
-- deliverable code
-- deliverable numeric ID
-
-If the repo uses the Jira directory convention, also provide:
-- the Jira issue key
+In most cases, the planner should derive project code, deliverable code, issue key, and PLAN location from the approved SPEC and repo conventions.
+Only provide those identifiers separately when the SPEC or repo context does not already make them clear.
 
 ## Example Prompts
 
@@ -53,20 +49,19 @@ Please create an execution-ready PLAN with phased steps, AC traceability, file o
 ```text
 Use planner.
 We are in skills-assisted mode, not using Zazz Board.
-Please plan this deliverable from the approved SPEC and current repository reality only.
+Please plan this deliverable from the approved SPEC and current repository reality only, and call out any gaps you need me to clarify.
 ```
 
 ```text
 Use planner.
-The deliverable is ZAZZ-142 and the SPEC is approved.
-Please generate the canonical PLAN file beside the SPEC and include parallelization and merge points.
+The SPEC is approved and uses the Zazz Board folder convention.
+Please derive the canonical PLAN path from the SPEC, then include parallelization and merge points.
 ```
 
 ```text
 Use planner.
-We are using Jira for deliverable folders.
-The issue key is PROJ-453 and the SPEC is approved.
-Please generate the canonical PLAN beside the SPEC and keep the Jira folder convention.
+We are using Jira for deliverable folders and the SPEC is approved.
+Please derive the canonical PLAN beside the SPEC and keep the Jira folder convention.
 ```
 
 ## Output
@@ -75,9 +70,11 @@ The skill should produce:
 - a `-PLAN.md` file beside the approved SPEC
 - a clear execution structure for implementation and QA
 - traceability from acceptance criteria to work steps and tests
+- a revised PLAN when the owner identifies a real planning gap or incorrect assumption
 
 ## Notes
 
 - Use this after `spec-builder`, not instead of it.
 - A good PLAN should reduce ambiguity for `worker`, `qa`, and `coordinator`.
+- The planner should derive as much context as possible from the approved SPEC before asking follow-up questions.
 - If the work is tiny, a team may choose to execute directly from the SPEC without a formal PLAN.
