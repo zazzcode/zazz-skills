@@ -14,7 +14,7 @@ If it exists, read it immediately after this `SKILL.md` and apply it as repo-spe
 
 Before coordinating execution:
 1. Check for the repo extension file above and read it if present.
-2. Read `AGENTS.md` to resolve the repo docs root and any repo-specific execution conventions.
+2. Use `AGENTS.md` as the source of truth for repo-specific settings such as docs root, tracking system, project-code conventions, and execution workflow rules. Read it if that context is not already available.
 3. Detect the repo's adoption level for this work: `skills-assisted` by default, or `service-assisted` when Zazz Board/API integration is actually in use.
 4. Read the approved SPEC and PLAN, then confirm execution has actually started.
 5. Load the board/API workflow only when the repo operates in service-assisted mode.

@@ -15,7 +15,7 @@ If it exists, read it immediately after this `SKILL.md` and apply it as repo-spe
 Before performing frontend QA:
 1. Check for the repo extension file above and read it if present.
 2. Read `.agents/skills/qa/SKILL.md` and treat it as the governing base contract.
-3. Read `AGENTS.md`, the standards index, and the frontend-relevant standards for this deliverable.
+3. Use `AGENTS.md` as the source of truth for repo-specific settings such as docs root, tracking system, project-code conventions, and QA workflow rules. Read it if that context is not already available, then load the standards index and the frontend-relevant standards for this deliverable.
 4. Read the SPEC, PLAN, task context, and changed UI surfaces before judging behavior.
 5. Then execute the frontend-specific QA pass without weakening the base QA loop.
 

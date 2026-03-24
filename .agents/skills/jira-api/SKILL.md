@@ -15,7 +15,7 @@ Do not claim that Jira lookups, ticket sync, or issue validation have actually o
 
 If a task needs Jira context today:
 
-1. Read repo guidance such as `AGENTS.md` and any skill extension that declares Jira conventions.
+1. Use `AGENTS.md` as the source of truth for repo-specific settings such as tracking system, project-code conventions, and Jira workflow rules. Read it if that context is not already available, along with any skill extension that declares Jira conventions.
 2. Ask the user for the Jira issue key, URL, acceptance criteria, or related story details when they are not already available in repo docs.
 3. Use the user-provided or repo-provided Jira information as context for planning, QA, PR drafting, or execution.
 4. Clearly distinguish provided facts from anything still missing.
@@ -66,7 +66,7 @@ Until that exists, this skill is documentation-only.
 
 When this skill is implemented, it should likely follow the same broad framework pattern as other companion utility skills:
 
-1. Read repo guidance first.
+1. Use repo guidance first, with `AGENTS.md` as the source of truth for repo-specific settings.
 2. Resolve project-specific Jira conventions and authentication source.
 3. Use a stable agent-facing interface rather than embedding ad hoc HTTP requests in every skill.
 4. Return authoritative issue context for downstream skills.

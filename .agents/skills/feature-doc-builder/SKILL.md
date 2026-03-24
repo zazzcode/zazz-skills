@@ -14,7 +14,7 @@ If it exists, read it immediately after this `SKILL.md` and apply it as repo-spe
 
 Before starting the dialogue:
 1. Check for the repo extension file above and read it if present.
-2. Read `AGENTS.md` to resolve the repo docs root and any repo-specific documentation conventions.
+2. Use `AGENTS.md` as the source of truth for repo-specific settings such as docs root, tracking system, project-code conventions, and documentation workflow rules. Read it if that context is not already available.
 3. Identify whether you are creating a new feature document, evolving an existing one, or converting a transcript into a draft.
 4. Find the standards index and any existing feature documents or milestone references that should shape the discussion.
 5. Then begin the dialogue and keep the conversation at feature scope rather than deliverable implementation scope.

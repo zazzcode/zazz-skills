@@ -16,7 +16,7 @@ If it exists, read it immediately after this `SKILL.md` and apply it as repo-spe
 
 Before making board/API calls:
 1. Check for the repo extension file above and read it if present.
-2. Read `AGENTS.md` to resolve the repo docs root and any repo-specific board conventions.
+2. Use `AGENTS.md` as the source of truth for repo-specific settings such as docs root, tracking system, project-code conventions, and board workflow rules. Read it if that context is not already available.
 3. Confirm the environment variables, authentication source, and target project context.
 4. Prefer the CLI-first workflow this skill defines, and use OpenAPI as route truth or protocol fallback when needed.
 5. Then make only the board updates that are supported by the current role and task context.

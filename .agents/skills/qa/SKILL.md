@@ -14,7 +14,7 @@ If it exists, read it immediately after this `SKILL.md` and apply it as repo-spe
 
 Before evaluating work:
 1. Check for the repo extension file above and read it if present.
-2. Read `AGENTS.md` to resolve the repo docs root and any repo-specific QA conventions.
+2. Use `AGENTS.md` as the source of truth for repo-specific settings such as docs root, tracking system, project-code conventions, and QA workflow rules. Read it if that context is not already available.
 3. Detect the repo's adoption level for this work: `skills-assisted` by default, or `service-assisted` when Zazz Board/API integration is actually in use.
 4. Read the SPEC, PLAN, task context, and standards that define verification expectations.
 5. Decide whether a specialization such as `qa-backend` or `qa-frontend` is also required for this scope.

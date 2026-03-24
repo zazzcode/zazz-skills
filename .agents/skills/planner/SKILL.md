@@ -14,7 +14,7 @@ If it exists, read it immediately after this `SKILL.md` and apply it as repo-spe
 
 Before writing the PLAN:
 1. Check for the repo extension file above and read it if present.
-2. Read `AGENTS.md` to resolve the repo docs root and any repo-specific planning conventions.
+2. Use `AGENTS.md` as the source of truth for repo-specific settings such as docs root, tracking system, project-code conventions, and planning workflow rules. Read it if that context is not already available.
 3. Detect the repo's adoption level for this work: `skills-assisted` by default, or `service-assisted` when Zazz Board/API integration is actually in use.
 4. Ask early which deliverable storage mode applies for this work: `neither` (flat), `Zazz Board`, or `Jira`, unless the approved SPEC path already makes that clear.
 5. If the mode is `Zazz Board`, ask for the deliverable code. If the mode is `Jira`, ask for the issue key. If the mode is `neither`, continue without an external ID folder.

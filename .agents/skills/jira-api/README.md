@@ -31,7 +31,7 @@ Today this skill is documentation-only.
 Agents should not claim to have contacted Jira through it.
 
 If Jira information is needed right now, the agent should:
-- read repo guidance such as `AGENTS.md`
+- use `AGENTS.md` as the source of truth for repo-specific settings and read it when that context is not already available
 - ask the user for the Jira issue key or URL when missing
 - use that user-provided issue context explicitly and truthfully
 

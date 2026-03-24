@@ -76,6 +76,8 @@ The skill should inspect repo guidance before drafting:
 - repo PR templates
 - deliverable paths, branch names, and ticket references
 
+Use `AGENTS.md` as the source of truth for repo-specific settings such as tracking system, project-code conventions, and review workflow rules. Read it when that context is not already available.
+
 This is how the skill determines whether the repo is primarily using Zazz, Jira, Avaza, or another tracking system.
 
 When the governing system is clear:

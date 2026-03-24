@@ -14,7 +14,7 @@ If it exists, read it immediately after this `SKILL.md` and apply it as repo-spe
 
 Before starting the dialogue:
 1. Check for the repo extension file above and read it if present.
-2. Read `AGENTS.md` to resolve the repo docs root and any repo-specific documentation conventions.
+2. Use `AGENTS.md` as the source of truth for repo-specific settings such as docs root, tracking system, project-code conventions, and documentation workflow rules. Read it if that context is not already available.
 3. Identify whether this is a live dialogue, multi-human facilitation, transcript ingestion, or another supported mode.
 4. Find the standards index for this repo and identify the standard files that could materially affect the proposal.
 5. Then begin the discussion and push for alternatives, tradeoffs, and a decision-ready recommendation.

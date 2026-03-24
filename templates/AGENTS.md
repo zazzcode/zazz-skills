@@ -2,6 +2,8 @@
 
 This file is an example starter for a repo-level `AGENTS.md` in a project that uses the Zazz framework.
 
+For skills in this framework, `AGENTS.md` is the source of truth for repo-specific settings such as docs root, tracking system, project-code conventions, and workflow rules.
+
 Copy it into the target repository root as `AGENTS.md`, then replace the placeholder values and project-specific sections. The goal is not to preserve this file verbatim. The goal is to create a concise, repo-specific agent entry point that combines:
 
 - framework-required instructions

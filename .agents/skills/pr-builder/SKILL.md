@@ -14,7 +14,7 @@ If it exists, read it immediately after this `SKILL.md` and apply it as repo-spe
 
 Before drafting PR content:
 1. Check for the repo extension file above and read it if present.
-2. Read `AGENTS.md` and inspect any PR templates or repo-specific review conventions.
+2. Use `AGENTS.md` as the source of truth for repo-specific settings such as tracking system, project-code conventions, docs root, and review workflow rules. Read it if that context is not already available, then inspect any PR templates or repo-specific review conventions.
 3. Use repo guidance to determine the primary work-tracking system in use for this project:
    - Zazz deliverable
    - Jira issue
