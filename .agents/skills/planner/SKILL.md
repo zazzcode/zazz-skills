@@ -17,10 +17,15 @@ Before writing the PLAN:
 2. Use `AGENTS.md` as the source of truth for repo-specific settings such as docs root, tracking system, project-code conventions, and planning workflow rules. Read it if that context is not already available.
 3. Detect the repo's adoption level for this work: `skills-assisted` by default, or `service-assisted` when Zazz Board/API integration is actually in use.
 4. Start from the approved SPEC and derive the deliverable storage mode, canonical PLAN path, and any identifiers you can from the SPEC path, SPEC contents, and repo context.
-5. Ask clarifying questions only when the approved SPEC or repo context leaves a real gap, ambiguity, or inconsistency.
-6. Read the SPEC and the standards index, then load any companion skills required for this scope.
-7. Produce an execution-ready PLAN draft without implementing code.
-8. If the user or Owner reviews the draft and spots mistakes, gaps, or changed assumptions, revise the PLAN iteratively until it is execution-ready.
+5. Determine the shared-file coordination approach from `AGENTS.md` when parallel work or shared-file risk exists, so it can be documented for execution.
+   - If `AGENTS.md` names a repo coordination tool or rule, use that as authoritative.
+   - If `AGENTS.md` is silent, treat that as "no repo-declared external locking tool" and plan for harness-native coordination plus serialization of overlapping-file work when safe isolation is not guaranteed.
+   - Do not infer or search for an undeclared locking tool from incidental repo clues.
+   - Treat `AGENTS.md` as short repo policy, then translate that policy into explicit PLAN sequencing, parallelization, and serialization guidance for this deliverable.
+6. Ask clarifying questions only when the approved SPEC, `AGENTS.md`, or repo context leaves a real gap, ambiguity, or contradiction that blocks safe planning.
+7. Read the SPEC and the standards index, then load any companion skills required for this scope.
+8. Produce an execution-ready PLAN document draft that is detailed enough to guide implementation, including specific steps, recommended implementation patterns derived from standards, and concrete test guidance, without implementing product code.
+9. If the user or Owner reviews the draft and spots mistakes, gaps, or changed assumptions, revise the PLAN iteratively until it is execution-ready.
 
 ## Compatibility Levels
 
@@ -37,7 +42,14 @@ If the active agent/model provides built-in planning optimizations (plan mode, T
 
 ## Role
 Produce an execution-ready PLAN from an approved SPEC for Human Coordinator/Worker/QA execution in a shared worktree.
-You are planner-only in this step: DO NOT implement code.
+You are planner-only in this step: produce the detailed PLAN document, not product code.
+
+The core purpose of the PLAN is to take a complex SPEC and decompose it into:
+
+- phases that organize the execution flow
+- step-level work units inside those phases
+- explicit task-sized slices that can be assigned to an agent or sub-agent
+- file-level ownership and dependency edges that prevent conflicting parallel execution
 
 ## Interaction Model
 
@@ -51,6 +63,9 @@ The planner should:
 4. Revise the PLAN when the user or Owner identifies a mistake, missing dependency, incorrect assumption, or planning gap.
 
 Do not force a long question-and-answer intake if the approved SPEC already supplies the needed planning context.
+When shared-file coordination matters, use the policy declared in `AGENTS.md`.
+If `AGENTS.md` does not declare an external coordination tool, do not go searching for one; document harness-native coordination and serialization rules instead.
+The planner does not acquire locks or manage coordination itself; it turns the repo policy into explicit execution guidance so worker and coordinator agents know which phases and steps can overlap and which must be sequenced.
 
 ## Framework Context
 - Zazz is spec-driven and test-driven.
@@ -93,7 +108,9 @@ Supporting discovery artifact:
 
 Primary work product:
 
-- an execution-ready decomposition of the approved SPEC, not implementation code
+- an execution-ready PLAN document derived from the approved SPEC, including detailed execution steps, recommended implementation patterns from applicable standards, dependency-aware sequencing, and explicit testing guidance, not implementation code
+- a decomposition structure where each concrete PLAN step is suitable to become a worker-executable task during implementation
+- a documented shared-file coordination approach when parallel execution could touch shared files, so downstream execution agents know how to handle overlapping-file risk
 
 ## PLAN Naming + Location (Generic Rule)
 - Store the PLAN in the **same directory** as the approved SPEC under `<DOCS_ROOT>/deliverables/`.
@@ -141,12 +158,15 @@ Write one markdown PLAN file. Use this section order unless the Owner explicitly
    - Named streams
    - Serialization hotspots (high-conflict files)
    - Merge points between streams
+   - Shared-file coordination approach when parallel work may touch shared files, for worker/coordinator execution
 6. AC traceability matrix:
    - `AC -> implementation step IDs -> tests/evidence`
 7. Phased execution plan:
    - Numbered phases (`1`, `2`, `3`, ...)
    - Numbered steps (`1.1`, `1.2`, ...)
    - Each step follows the required step format below
+   - Recommended implementation patterns or standard-driven guidance where that guidance materially improves execution quality
+   - Each step should be concrete enough to become an implementation task for an agent or sub-agent
 8. Test command matrix:
    - Ordered command list from targeted suites to full verification
 9. Risks and mitigations:
@@ -163,15 +183,18 @@ Optional sections (for updating an existing active plan, not mandatory on first 
 2. Derive the canonical PLAN path from the approved SPEC path.
 3. Read relevant standards (`testing.md`, `coding-styles.md`, architecture/data docs); keep only actionable constraints.
 4. Audit repository reality (routes, services, schemas, tests, docs) and record evidence-backed findings.
-5. Ask targeted clarifying questions only when the SPEC and repo context leave a planning-critical gap or contradiction.
+5. Ask targeted clarifying questions only when the SPEC, `AGENTS.md`, and repo context leave a planning-critical gap or contradiction.
 6. For API work, resolve target capabilities from OpenAPI. If unavailable, state this explicitly in the plan.
 7. Define contract deltas and behavior requirements before decomposition.
 8. Partition work into dependency-safe phases and named parallel streams.
-9. Decompose phases into concrete steps with file ownership and explicit dependency edges.
-10. Add validation plan (targeted tests, full tests, lint/type checks, manual sign-off where required).
-11. Write the PLAN file **in the same directory** as the approved SPEC (flat or `deliverables/{external-id}/` per zazz-framework / spec-builder).
-12. If the user or Owner requests changes after review, revise the PLAN rather than treating the first draft as final.
-13. Update `<DOCS_ROOT>/deliverables/index.yaml` only when canonical plan target changes.
+9. Determine the shared-file coordination approach from `AGENTS.md` and document it for downstream execution agents when overlapping-file execution risk exists.
+   - If `AGENTS.md` declares no external tool, document harness-native isolation or strict serialization as the execution approach instead of inventing a tool choice.
+   - Make the sequencing consequences explicit in the PLAN: parallel streams, serialization hotspots, and steps that must not overlap.
+10. Decompose phases into concrete steps with file ownership, recommended implementation patterns where useful, and explicit dependency edges.
+11. Add validation plan (targeted tests, full tests, lint/type checks, manual sign-off where required).
+12. Write the PLAN file **in the same directory** as the approved SPEC (flat or `deliverables/{external-id}/` per zazz-framework / spec-builder).
+13. If the user or Owner requests changes after review, revise the PLAN rather than treating the first draft as final.
+14. Update `<DOCS_ROOT>/deliverables/index.yaml` only when canonical plan target changes.
 
 ## Decomposition Rules
 1. **File-first**: every step lists affected files.
@@ -185,6 +208,8 @@ Optional sections (for updating an existing active plan, not mandatory on first 
 9. **No hidden parallelism inside a step**: if work can be assigned to different owners on disjoint files and completed independently, it MUST be split into separate PLAN steps.
 10. **Parallel work needs explicit merge planning**: when parallel streams converge on a shared contract, shared file, or integrated UX/API outcome, add a downstream merge/integration step with explicit `DEPENDS_ON` edges.
 11. **Use PLAN step IDs, not execution-time suffixes**: parallel worker-visible work must be represented as separate numbered PLAN steps, not improvised labels like `4.2a`/`4.2b` during execution.
+12. **Step = task intent**: each numbered PLAN step should be written so it can become a task that an agent or sub-agent can execute with minimal ambiguity.
+13. **Shared-file coordination must be explicit when relevant**: if execution may touch overlapping files, the PLAN should restate the approach declared in `AGENTS.md`, or explicitly note that no repo-declared tool exists and execution should rely on harness-native isolation or strict serialization instead of concurrent edits.
 
 ## Step Format (Use for every step)
 Every step (`1.1`, `1.2`, ...) MUST include:
@@ -213,6 +238,12 @@ When the plan is instantiated as Zazz tasks:
 - Maximize concurrency across disjoint files/subsystems.
 - Call out merge points where parallel streams converge.
 - Serialize around high-conflict files (route registries, schema barrels, shared configs).
+- Use explicit file ownership to reduce the chance that multiple agents or sub-agents try to work the same files at the same time.
+- When shared-file risk exists, document the execution coordination approach declared in `AGENTS.md`:
+  - Zazz Board API locks
+  - another repo-declared tool such as Switchman
+  - harness-native isolation guarantees available in the active agent harness, such as Codex subagents with disjoint ownership
+  - or explicit serialization with no parallel overlap
 - If one provisional step contains multiple disjoint ownership sets, rewrite it into multiple steps before finalizing the PLAN.
 - Prefer one primary owned file set per step; if a step spans multiple independent owned file sets, that is usually a decomposition failure.
 - When UI work naturally splits into trigger/wiring/modal/i18n/test slices with disjoint ownership, plan those as separate steps if they can be executed independently.
@@ -234,11 +265,14 @@ A PLAN is complete only if all conditions below are true:
 - Uses correct `-PLAN.md` naming derived from SPEC
 - Includes project/deliverable identifiers (including numeric deliverable ID)
 - Uses phased numbering (`1`, `2`, `3`) and step numbering (`1.1`, `1.2`)
+- Decomposes the SPEC into concrete phases and task-sized steps rather than broad implementation buckets
 - Includes scope guardrails and repository-verified current state
 - Includes contract delta table when interfaces/routes/data contracts change
 - Includes development + testing + validation work
 - Includes AC traceability and test traceability
 - Explicitly documents dependencies and parallelizable groups
+- Explicitly documents files per step so parallel execution does not create preventable file conflicts
+- States the shared-file coordination approach whenever overlapping-file execution risk exists
 - Splits independently parallelizable owned work into separate numbered steps instead of burying it inside a single broad step
 - Includes explicit merge/integration steps wherever parallel streams converge
 - Includes concrete commands for required verification runs

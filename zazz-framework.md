@@ -975,7 +975,7 @@ The framework is still fully usable without Zazz Board. Board is an accelerator 
 
 ## Collaboration
 
-Prefer runtime-native isolation and planning features when the harness supports them. Use [zazz-board](https://github.com/zazzcode/zazz-board) coordination and file locking when multiple workers share mutable state.
+Prefer runtime-native isolation and planning features when the harness supports them. Repos should declare any repo-specific shared-file coordination policy in `AGENTS.md`; when that policy names [zazz-board](https://github.com/zazzcode/zazz-board) locking or coordination, use it for shared mutable state.
 
 ---
 

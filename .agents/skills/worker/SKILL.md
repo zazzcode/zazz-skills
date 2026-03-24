@@ -18,8 +18,11 @@ Before implementing work:
 3. Detect the repo's adoption level for this work: `skills-assisted` by default, or `service-assisted` when Zazz Board/API integration is actually in use.
 4. Read the approved SPEC, PLAN, current task context, and dependency state before touching code.
 5. Load the board/API workflow only when the repo operates in service-assisted mode; otherwise keep execution truth in the repo, worktree, and terminal workflow the repo uses.
-6. Confirm this worktree is executing one active deliverable and that you are not mixing unrelated deliverable scope into it.
-7. Then execute the assigned work with TDD and keep implementation scope aligned to the PLAN.
+6. Read `AGENTS.md` for the repo's shared-file coordination policy before starting execution, especially when parallel work, subagents, or shared files are involved.
+   - If `AGENTS.md` names a coordination tool or rule, use that as authoritative.
+   - If `AGENTS.md` is silent, do not infer or search for an undeclared external locking tool; use the coordination features native to the active agent harness and serialize overlapping-file work when safe isolation is not guaranteed.
+7. Confirm this worktree is executing one active deliverable and that you are not mixing unrelated deliverable scope into it.
+8. Then execute the assigned work with TDD and keep implementation scope aligned to the PLAN.
 
 ## Compatibility Levels
 
@@ -111,9 +114,13 @@ You MUST execute in this order:
 6. Ensure all required `DEPENDS_ON` edges for that task exist before starting.
    - If the task has non-`none` `DEPENDS_ON` entries, create those relation rows as soon as the dependent task exists on the board.
    - Do not defer edge creation until upstream work completes; the live graph must show planned dependency lines immediately.
-7. Before moving `READY -> IN_PROGRESS`, run `zazzctl exec begin ...` (acquire locks + block/unblock synchronization + claim status).
-8. If lock acquire conflicts, set `isBlocked=true` with `blockedReason='FILE_LOCK'`, poll every 3 seconds, and retry acquire until success.
-9. While task is active, run periodic `zazzctl exec tick ...` heartbeats and keep notes current.
+7. Before moving `READY -> IN_PROGRESS`, apply the shared-file coordination approach declared in `AGENTS.md`, with the PLAN used only to restate execution guidance for the current deliverable.
+   - If `AGENTS.md` requires Zazz Board locks, run `zazzctl exec begin ...` (acquire locks + block/unblock synchronization + claim status).
+   - If `AGENTS.md` requires another coordination mechanism such as Switchman, follow that mechanism before editing files.
+   - If `AGENTS.md` is silent or declares harness-native coordination, enforce disjoint ownership and parent-controlled integration before parallel edits begin.
+   - If `AGENTS.md` requires serialization, do not overlap execution on shared files.
+8. If the required coordination mechanism reports a conflict, keep workflow truth accurate, mark the task blocked when appropriate, and wait/retry according to the repo's declared process.
+9. While task is active, run periodic coordination/heartbeat updates required by the active workflow and keep notes current.
 10. Update workflow statuses continuously (`READY`, `IN_PROGRESS`, then `QA` if configured, then `COMPLETED`) and keep `isBlocked`/`blockedReason` truthful.
 11. If course correction/rework appears after completion, add new follow-up tasks + relations to the graph; do not reopen completed tasks.
 12. Recompute which tasks are now dependency-ready and repeat.
@@ -167,10 +174,19 @@ If API write operations are unavailable, pause and request Owner direction inste
 
 ---
 
-## File Lock API (Required)
+## Shared-File Coordination
 
-Before changing any task from `READY` to `IN_PROGRESS`, the worker MUST lock intended files via API.
-Do not create or rely on local lock files in `.zazz`; lock ownership source of truth is the Board API.
+Before changing any task from `READY` to `IN_PROGRESS`, the worker MUST follow the shared-file coordination approach declared in `AGENTS.md`.
+Use the PLAN only as a deliverable-level restatement of that policy when relevant.
+Do not assume every repo uses Zazz Board locks or Switchman. If `AGENTS.md` does not declare an external coordination tool, do not search for one; use the coordination available in the active agent harness and serialize overlapping-file work when safe isolation is not guaranteed.
+
+Use Zazz Board file locks only when `AGENTS.md` says the repo uses that workflow.
+When `AGENTS.md` names another coordination mechanism, follow that mechanism instead of treating Board locks as universal.
+
+### Zazz Board lock workflow (when required by `AGENTS.md`)
+
+When `AGENTS.md` requires Zazz Board file locks:
+- Do not create or rely on local lock files in `.zazz`; lock ownership source of truth is the Board API.
 
 Routes:
 1. `POST /projects/:code/deliverables/:delivId/locks/acquire`
@@ -206,7 +222,7 @@ When using this exception:
 3. Parent worker MUST still keep board task status/notes truthful.
 4. If any external worker/process may touch the same deliverable/files, DO NOT use this exception; use API locks.
 
-Default policy remains: use API file locks unless the harness guarantees above are explicitly present.
+When `AGENTS.md` uses Zazz Board locking, default policy remains: use API file locks unless the harness guarantees above are explicitly present.
 
 ---
 
@@ -232,16 +248,17 @@ When using subagents/teams, the parent worker must assign explicit ownership and
 ### Parallelization algorithm
 1. Compute the ready set (dependencies satisfied).
 2. Build each task's ownership set from PLAN file assignments (or the smallest defensible file set if PLAN omits explicit files).
-3. Select only tasks whose ownership sets are pairwise disjoint.
-4. If two ready tasks overlap on any file, serialize them (do not run in parallel).
-5. Spawn subagents for as many safe tasks as possible (default max parallel workers: 3 unless Owner specifies otherwise).
-6. Assign one task per subagent with explicit owned files, lock list, and test expectations.
-7. Track outputs; integrate changes sequentially in parent worker context; then update board statuses for each task.
-8. Recompute ready set and repeat.
+3. Apply the `AGENTS.md` shared-file coordination policy before deciding whether tasks can run concurrently.
+4. Select only tasks whose ownership sets are pairwise disjoint unless `AGENTS.md` explicitly permits another safe coordination mechanism.
+5. If two ready tasks overlap on any file, serialize them unless the documented coordination approach explicitly allows safe overlap.
+6. Spawn subagents for as many safe tasks as possible (default max parallel workers: 3 unless Owner specifies otherwise).
+7. Assign one task per subagent with explicit owned files, lock list or coordination instructions, and test expectations.
+8. Track outputs; integrate changes sequentially in parent worker context; then update board statuses for each task.
+9. Recompute ready set and repeat.
 
 If subagents are not supported, execute the same dependency order in single-agent mode.
 
-Do not run tasks in parallel when they overlap on locked/conflicting files.
+Do not run tasks in parallel when they overlap on files that the documented coordination approach does not allow to be edited concurrently.
 
 ### Merge and integration protocol (required)
 `Merge results` means parent-worker integration of completed subagent work, not blind acceptance:
@@ -291,8 +308,8 @@ Until clarified, keep workflow status unchanged, set `isBlocked=true` and `block
 
 Use these state rules:
 - `TO_DO` -> `READY` when the project workflow includes `TO_DO` and the task is selected for an executable wave
-- `READY` -> `IN_PROGRESS` only after required file locks are acquired
-- On lock conflict: keep workflow status unchanged, set `isBlocked=true`, `blockedReason='FILE_LOCK'`, poll every 3 seconds
+- `READY` -> `IN_PROGRESS` only after the shared-file coordination requirements declared in `AGENTS.md` are satisfied
+- On shared-file coordination conflict: keep workflow status unchanged, set `isBlocked=true`, `blockedReason='FILE_LOCK'`, poll/retry according to the declared process
 - On owner decision wait: keep workflow status unchanged, set `isBlocked=true`, `blockedReason='OWNER_DECISION'`
 - When blocker resolves: set `isBlocked=false`, clear `blockedReason`, then continue normal status flow
 - `IN_PROGRESS` -> `QA` when workflow requires QA, otherwise `IN_PROGRESS` -> `COMPLETED`

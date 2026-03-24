@@ -26,6 +26,7 @@ For a real in-use example, see the reference implementation:
    - features index location when used
    - deliverables policy
    - tracking system / issue-management declaration
+   - shared-file coordination policy
    - worktree / branch policy
 5. Add only repo-specific information that an agent actually needs during execution, planning, QA, or review.
 
@@ -39,6 +40,7 @@ The following are required for repos using the Zazz framework:
 - the path to `<DOCS_ROOT>/features/index.yaml` when the repo uses feature documents
 - the repo's policy for `<DOCS_ROOT>/deliverables/`
 - the repo's work-tracking system for deliverables / tickets / PR context
+- the repo's shared-file coordination policy for execution
 - worktree / branch workflow expectations
 
 Without those pieces, agents will tend to either miss important project rules or overload their context with unnecessary docs.
@@ -51,6 +53,7 @@ Without those pieces, agents will tend to either miss important project rules or
 - Separate framework rules from repo rules. Use the framework for shared concepts and this file for repo-specific behavior.
 - Be explicit about workflows. If the repo requires worktrees, branch naming, env copying, or GitHub-only merges, say so directly.
 - Be explicit about tracking. Say whether the repo uses Zazz Board, Jira, Avaza, or another system for PR-facing work items and whether that affects deliverable naming, SPEC paths, or PR links.
+- Be explicit about shared-file coordination. If the repo uses Zazz Board locks, Switchman, harness-native coordination, or strict serialization, say so in one short section.
 - State defaults and exceptions. Example: deliverables are local/untracked by default unless the repo explicitly commits them.
 - Avoid stale reference text. If a section is not maintained, delete it rather than leaving misleading instructions.
 - Include only actionable commands. If you list test or dev commands, make sure they are the ones maintainers actually expect agents to run.
@@ -176,6 +179,29 @@ Example:
 Keep this section short and factual.
 Its purpose is to remove ambiguity about how PRs and deliverable references should be anchored in this repo.
 
+## Shared-File Coordination Policy
+
+Declare the repo's single source of truth for how execution agents should coordinate edits when parallel work could touch the same files.
+
+Keep this section short. It should answer only:
+
+- what coordination model the repo uses
+- when it applies
+- what the fallback is
+
+Required behavior:
+
+- If this section names a coordination tool, agents may use that tool as declared.
+- If this section is silent or omitted, agents should assume no repo-declared external locking tool is available.
+- When no repo-declared tool is available, agents should use the coordination features native to the active agent harness and serialize overlapping-file work when safe isolation is not guaranteed.
+- Agents should not infer or search for an undeclared locking tool from incidental repo clues.
+
+Examples:
+
+- `Shared-file coordination: Use Zazz Board file locks for parallel deliverable execution. If locks are unavailable, serialize overlapping-file work.`
+- `Shared-file coordination: Use Switchman for shared-file execution.`
+- `Shared-file coordination: No external locking tool is declared. Use harness-native isolation when available; otherwise serialize overlapping-file work.`
+
 ## Worktree Policy
 
 Recommended default:
@@ -219,6 +245,7 @@ Before you commit a real repo `AGENTS.md`, verify that:
 - all referenced paths exist in that repo
 - the worktree / branch rules are accurate
 - standards and features sections reflect the repo's actual document model
+- tracking and shared-file coordination policies are explicit and accurate
 - command examples still work
 - the file is still lean and does not duplicate whole standards documents
 - the file helps an agent discover docs instead of duplicating them
