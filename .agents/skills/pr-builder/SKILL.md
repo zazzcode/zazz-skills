@@ -1,6 +1,6 @@
 ---
 name: pr-builder
-description: Help a user create, draft, refine, or update a reviewer-ready pull request title and body from the current changes and verification evidence; use when the user wants to write or improve PR content for human review.
+description: Help a human or an agent running the `qa` skill create, draft, refine, or update a reviewer-ready pull request title and body from the current changes and verification evidence.
 ---
 
 # PR Builder Skill
@@ -40,13 +40,13 @@ Create a clear, reviewer-ready pull request title and body that accurately expla
 - whether the PR is draft or ready for review
 - what review-relevant risks or constraints remain
 
-This skill packages work for review. It does not replace implementation, QA, or owner judgment.
+This skill packages work for review. It can be used either by a human-in-the-loop workflow or by an agent running the `qa` skill after verification work converges. It does not replace implementation, QA judgment, or owner judgment.
 It may help create or refine PR content, but it must never approve or merge a PR.
 
 ## Use This Skill When
 
 - the user asks to create, draft, update, or polish a PR
-- QA has completed verification and needs a high-quality PR description
+- an agent running the `qa` skill has completed verification and needs a high-quality PR description
 - a deliverable needs consistent reviewer-facing evidence
 - the repo has templates or conventions that should be applied reliably
 
@@ -156,7 +156,7 @@ If the user does not have the answer or prefers not to provide it:
 5. Read supporting docs that define intent when present:
    - deliverable SPEC
    - PLAN
-   - QA evidence
+   - verification evidence, including evidence produced by an agent running the `qa` skill when available
    - issue or ticket context supplied by the user
 6. Separate the PR content into:
    - context and links
@@ -245,7 +245,7 @@ Include:
    - the code stays within the intended scope
    - the touched areas look reasonable from a code-quality and maintainability standpoint
 
-If the validation was already performed by QA, reuse that evidence and compress it into reviewer-friendly instructions.
+If the validation was already performed by an agent running the `qa` skill or by a human QA process, reuse that evidence and compress it into reviewer-friendly instructions.
 
 ## Title Guidance
 

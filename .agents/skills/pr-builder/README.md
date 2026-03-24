@@ -5,6 +5,7 @@ How to use the PR Builder skill to prepare a reviewer-ready pull request title a
 ## What It Does
 
 The PR Builder skill packages completed work for human review.
+It can be used directly by a human or by an agent running the `qa` skill to prepare reviewer-facing PR content after verification.
 
 It helps produce:
 - a clear PR title
@@ -22,6 +23,7 @@ This skill does not approve or merge pull requests.
 Use this skill when:
 - implementation and QA are complete or nearly complete
 - you want help writing or polishing a PR
+- an agent running the `qa` skill needs to prepare the PR package from completed verification evidence
 - the repo has PR templates or review conventions
 - you need a stronger reviewer-facing summary of the work
 - you want the PR to emphasize functional change rather than a file-by-file inventory
@@ -45,7 +47,7 @@ Please draft a reviewer-ready PR title and body from the current branch, includi
 
 ```text
 Use pr-builder.
-The deliverable is complete and QA passed.
+The deliverable is complete and an agent running the qa skill finished verification.
 Please prepare the PR description from the current diff, SPEC, PLAN, and test evidence.
 ```
 

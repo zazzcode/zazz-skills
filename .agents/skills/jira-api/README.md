@@ -13,6 +13,10 @@ That future skill will likely help with:
 - resolving Jira links and workflow context
 - supporting PR, QA, planning, and execution flows with authoritative Jira issue data
 
+It is expected to support both:
+- interactive, human-in-the-loop use
+- automation-driven agent use, such as informing an agent running the `qa` skill with Jira issue context
+
 ## Planned Interface
 
 The current expectation is that this will eventually be implemented through:
@@ -30,6 +34,10 @@ If Jira information is needed right now, the agent should:
 - read repo guidance such as `AGENTS.md`
 - ask the user for the Jira issue key or URL when missing
 - use that user-provided issue context explicitly and truthfully
+
+That fallback applies whether the consumer is:
+- a human-facing workflow
+- or an automation-driven agent such as an agent running the `qa` skill
 
 ## Why This Exists Now
 
