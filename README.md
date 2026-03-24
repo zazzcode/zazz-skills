@@ -83,6 +83,7 @@ These are the framework's launch-and-leave skills. Once they have approved input
 | Skill | Purpose |
 |-------|---------|
 | **zazz-board-api** | Required for board/API interaction. CLI-first via `zazzctl`, with OpenAPI as the protocol-validation and fallback surface in the reference implementation. |
+| **jira-api** | Draft only, not yet implemented. Planned future companion utility for Jira-backed repos, likely via MCP or a CLI adapter, so agents can fetch authoritative issue context instead of relying on manual copy/paste. |
 | **coordinator** | Coordinates execution of an approved PLAN by materializing tasks, maintaining task graph state, and routing blockers or rework during execution. |
 
 ---

@@ -86,7 +86,7 @@ This repository is the canonical source of truth for the framework document and 
 | **Specification model** | Feature document for capability over time plus Deliverable SPEC (`-SPEC`) for one increment |
 | **Verification model** | TDD and explicit acceptance criteria are core mechanisms for proving the software was built correctly and delivers the intended functionality |
 | **Execution flow** | Proposal (optional) -> feature document (optional but recommended for long-lived features) -> SPEC (required) -> PLAN (optional) -> build/validate loop -> PR/UAT gate |
-| **Skills** | `proposal-builder`, `feature-doc-builder`, `spec-builder`, `planner`, `worker`, `qa`, optional `pr-builder` |
+| **Skills** | `proposal-builder`, `feature-doc-builder`, `spec-builder`, `planner`, `worker`, `qa`, optional `pr-builder`, optional companion utility skills such as `zazz-board-api` and draft `jira-api` |
 | **Skill modes** | Some skills are interactive and human-in-the-loop; others are designed for mostly autonomous execution once inputs are approved |
 | **Autonomy value** | Approved context should let agents converge on a verified solution with minimal supervision, improving delivery efficiency without dropping quality |
 | **Organization value** | The framework gives teams an opinionated structure for defining what the product does, why it exists, and how it can evolve over time |
@@ -229,15 +229,28 @@ Recommended layout:
     └── role-management-options.md
 ```
 
-The tree above shows **`deliverables/` with the flat layout** (the option for projects that use **neither** Zazz Board nor Jira for this convention).
+The tree above shows **`deliverables/` with the flat layout** (the option for projects that use neither the Zazz-style nor Jira-style subdirectory convention for deliverable files).
 
-A **project** adopts **one** of three modes—do not mix:
+A **project** adopts **one** deliverable file-layout mode—do not mix:
 
 1. **Neither** — flat only: `{slug}-SPEC.md` / `{slug}-PLAN.md` under `deliverables/`.
 2. **Zazz Board** — subdirectory layout: `deliverables/{deliverable-code}/{slug}-SPEC.md` (and `-PLAN.md`); sync paths via **zazz-board-api**; folder name = board deliverable code.
 3. **Jira** — **same subdirectory layout** as Zazz: `deliverables/{issue-key}/{slug}-SPEC.md` (and `-PLAN.md`); folder name = Jira issue key (e.g. `PROJ-453`).
 
 Zazz and Jira are **alternatives** (different `{id}` in the same pattern), not two folder schemes used together in one project.
+
+This deliverable file-layout choice is related to, but not identical to, the repo's broader work-tracking system.
+A repo may also use an external tracker for PR-facing links or issue management, such as:
+
+- Zazz Board
+- Jira
+- Avaza
+- another tracker
+- no external tracker beyond local deliverable docs
+
+That broader tracking declaration belongs in the repo's `AGENTS.md`.
+It tells skills how PRs, QA artifacts, and deliverable references should be anchored.
+Live integration with those systems, when present, belongs in companion utility skills rather than in the framework doc itself.
 
 Naming conventions:
 
@@ -509,7 +522,7 @@ Not every skill should behave the same way in human collaboration.
 | ---- | ------ | ------------------------ |
 | **Interactive / human-in-the-loop** | `proposal-builder`, `feature-doc-builder`, `spec-builder`, often `pr-builder` | These skills are expected to facilitate dialogue, ask follow-up questions, iterate drafts with humans, and help shape the artifact through conversation |
 | **Autonomous execution** | `planner`, `worker`, `qa`, `qa-frontend`, `qa-backend`, `coordinator` | These skills are expected to run mostly independently once approved inputs exist, escalating only when they hit a real decision gate, ambiguity, or approval boundary |
-| **Companion utility** | `zazz-board-api` | This skill is not a human-facing workflow on its own; it supports other skills with API capability and board truth synchronization |
+| **Companion utility** | `zazz-board-api`, draft `jira-api` | These skills are not human-facing workflows on their own; they support other skills with tracker/API capability and authoritative external context when available |
 
 "Launch-and-leave" is a good informal description for the autonomous execution class, and it is a real framework value proposition. The expectation is not zero human interaction. The expectation is minimal interruption once the skill has the approved context it needs.
 
@@ -650,9 +663,28 @@ At minimum, a repo-level `AGENTS.md` must tell agents:
 - that the standards index is the discovery surface for selective context loading
 - where `<DOCS_ROOT>/features/index.yaml` lives when feature context matters
 - whether `<DOCS_ROOT>/deliverables/` is local/untracked or committed in that repo
+- what work-tracking system the repo uses for deliverables, tickets, and PR context
 - the repo's worktree / branch policy
 
 The standards index is mandatory. The features index is also expected in repos that use feature documents.
+
+The tracking declaration should be concise but explicit. For example, it should clarify whether the repo uses:
+
+- Zazz Board
+- Jira
+- Avaza
+- another external tracker
+- no external tracker beyond local deliverable docs
+
+When relevant, it should also say whether that system affects:
+
+- deliverable folder naming
+- required IDs or URLs in PRs
+- how agents should anchor SPEC, PLAN, QA, and PR references
+
+This declaration does not require live tracker integration.
+It simply tells agents which system is authoritative for PR-facing references and review context.
+When a repo later adds live integration, that capability should be exposed through a companion utility skill such as `zazz-board-api` or a future Jira-style integration skill.
 
 Best-practice principle:
 

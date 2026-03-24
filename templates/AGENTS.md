@@ -23,6 +23,7 @@ For a real in-use example, see the reference implementation:
    - selective standards loading rules
    - features index location when used
    - deliverables policy
+   - tracking system / issue-management declaration
    - worktree / branch policy
 5. Add only repo-specific information that an agent actually needs during execution, planning, QA, or review.
 
@@ -35,6 +36,7 @@ The following are required for repos using the Zazz framework:
 - instructions to read the standards index first and load only relevant standards
 - the path to `<DOCS_ROOT>/features/index.yaml` when the repo uses feature documents
 - the repo's policy for `<DOCS_ROOT>/deliverables/`
+- the repo's work-tracking system for deliverables / tickets / PR context
 - worktree / branch workflow expectations
 
 Without those pieces, agents will tend to either miss important project rules or overload their context with unnecessary docs.
@@ -46,6 +48,7 @@ Without those pieces, agents will tend to either miss important project rules or
 - Prefer pointers over duplication. Point to standards and feature indexes instead of restating their contents.
 - Separate framework rules from repo rules. Use the framework for shared concepts and this file for repo-specific behavior.
 - Be explicit about workflows. If the repo requires worktrees, branch naming, env copying, or GitHub-only merges, say so directly.
+- Be explicit about tracking. Say whether the repo uses Zazz Board, Jira, Avaza, or another system for PR-facing work items and whether that affects deliverable naming, SPEC paths, or PR links.
 - State defaults and exceptions. Example: deliverables are local/untracked by default unless the repo explicitly commits them.
 - Avoid stale reference text. If a section is not maintained, delete it rather than leaving misleading instructions.
 - Include only actionable commands. If you list test or dev commands, make sure they are the ones maintainers actually expect agents to run.
@@ -138,6 +141,38 @@ Default policy:
 If this repo uses a different policy, document it here.
 
 This section should be explicit because agents need to know whether deliverable docs are expected to be committed, ignored locally, or promoted selectively.
+
+## Tracking System Policy
+
+Declare the primary project tracking system that agents should use when referencing work in PRs, SPECs, QA notes, and related review artifacts.
+
+Recommended contents:
+
+- whether the project uses Zazz Board, Jira, Avaza, another tracker, or no external tracker
+- which system is authoritative for PR-facing work-item links
+- the project-level identifier agents should use for that system
+- whether deliverable folder naming follows:
+  - flat slug layout
+  - Zazz deliverable-code layout
+  - Jira issue-key layout
+- whether external ticket URLs should be included in PRs even when they do not affect deliverable file paths
+- what agents should do when the exact ticket URL or ID is not available at draft time
+
+When relevant, also state how to resolve the tracker's project identifier:
+
+- **Zazz Board / service-assisted repos**: declare the board project code and whether agents should read it from `ZAZZ_PROJECT_CODE`
+- **Monorepos using Zazz Board**: clarify which monorepo-level project code applies and whether subprojects share one board project code or use separate ones
+- **Jira**: declare the Jira project key or state that it must match the issue-key prefix used for deliverables and PR links
+- **Other trackers**: declare the equivalent project/workspace identifier when agents need it for links, validation, or API usage
+
+Example:
+
+- `Tracking system: Zazz Board for service-assisted execution, board project code comes from ZAZZ_PROJECT_CODE, deliverable docs use the Zazz deliverable-code subdirectory layout under <DOCS_ROOT>/deliverables/.`
+- `Tracking system: Jira for issue management, Jira project key is PROJ, Jira issue link required at the top of PRs, deliverable docs use the Jira issue-key subdirectory layout under <DOCS_ROOT>/deliverables/.`
+- `Tracking system: Avaza for PR-facing task links, deliverable docs remain flat under <DOCS_ROOT>/deliverables/, include Avaza task URL in PR context when provided.`
+
+Keep this section short and factual.
+Its purpose is to remove ambiguity about how PRs and deliverable references should be anchored in this repo.
 
 ## Worktree Policy
 

@@ -9,9 +9,11 @@ The PR Builder skill packages completed work for human review.
 It helps produce:
 - a clear PR title
 - a concise, accurate PR body
+- a governing context block with the right deliverable, ticket, or spec links near the top
 - testing and verification summaries
-- manual validation guidance
-- risks, rollout notes, and follow-ups when needed
+- reviewer guidance tied to acceptance criteria
+- clear draft/ready-for-review signaling when relevant
+- risks or rollout notes only when they matter to review of the current PR
 
 This skill does not approve or merge pull requests.
 
@@ -22,12 +24,14 @@ Use this skill when:
 - you want help writing or polishing a PR
 - the repo has PR templates or review conventions
 - you need a stronger reviewer-facing summary of the work
+- you want the PR to emphasize functional change rather than a file-by-file inventory
 
 ## What You Should Have Ready
 
 The skill works best with:
 - the current diff or branch
 - commit history or a change summary
+- the primary work item link or ticket ID
 - test results
 - manual validation notes
 - SPEC and PLAN context when the work follows Zazz
@@ -55,7 +59,68 @@ Please use it and fill it out accurately from the repository state.
 
 The skill should produce:
 - a title that states the outcome clearly
-- a body that explains what changed, why, how it was verified, and what reviewers should focus on
+- a body that starts with the governing context the reviewer needs
+- a concise explanation of why the PR exists
+- a functional overview of what changed without overwhelming file-level detail
+- a clear draft indicator when the PR is not ready for full review
+- reviewer instructions for validating acceptance criteria, manual testing, and UAT where relevant
+- a short reminder that reviewers should confirm scope and do a cursory code-quality inspection
+
+## Governing Context
+
+The skill should inspect repo guidance before drafting:
+- `.agents/skill-extensions/pr-builder/EXTENSION.md`
+- `AGENTS.md`
+- repo PR templates
+- deliverable paths, branch names, and ticket references
+
+This is how the skill determines whether the repo is primarily using Zazz, Jira, Avaza, or another tracking system.
+
+When the governing system is clear:
+- put the primary deliverable or ticket link first near the top of the PR
+- include SPEC and PLAN links when they are part of the review contract
+- include extra links only when they materially help the reviewer
+- ask the user for the authoritative PR-specific ID or URL if it is not already available
+
+When it is not clear:
+- ask the user which system should anchor the PR instead of guessing
+
+The skill may use repo structure to recognize the project's system, but it should not guess authoritative Jira issue keys, Zazz deliverable IDs, or Avaza task URLs from weak signals like branch names.
+
+## Default Template
+
+If the repo does not provide a stronger PR template, use [`PR-TEMPLATE.md`](./PR-TEMPLATE.md).
+
+Before falling back to the skill template, the skill should check for repo-native templates such as:
+- `.github/pull_request_template.md`
+- `.github/PULL_REQUEST_TEMPLATE.md`
+- templates under `.github/pull_request_template/` or `.github/PULL_REQUEST_TEMPLATE/`
+
+If a repo template exists:
+- use it as the primary structure
+- preserve its headings and required prompts
+- weave the PR Builder recommendations into that structure instead of replacing it
+- add only small missing reviewer-facing context when needed
+
+If no repo template exists:
+- use [`PR-TEMPLATE.md`](./PR-TEMPLATE.md) as the default structure
+
+Teams that do not already have a PR template can also copy this file into the repo as:
+- `.github/pull_request_template.md`
+
+That makes the same baseline PR structure available to both:
+- humans opening PRs directly in GitHub
+- agents or tools that inspect repo-native PR templates before drafting
+
+That template is intentionally focused on:
+- why the PR exists
+- what changed functionally
+- whether the PR is draft or ready for review
+- how a reviewer should validate the acceptance criteria
+- what scope and code-quality checks the reviewer should perform
+
+It intentionally avoids a generic file-by-file changed list unless a specific area deserves attention.
+It also avoids turning the PR into a backlog for future work outside the scope of the current change.
 
 ## Notes
 
