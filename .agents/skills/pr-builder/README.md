@@ -12,7 +12,10 @@ It helps produce:
 - a concise, accurate PR body
 - a governing context block with the right deliverable, ticket, or spec links near the top
 - testing and verification summaries
-- reviewer guidance tied to acceptance criteria
+- reviewer notes with a checklist tied to acceptance criteria from the SPEC or PLAN when available
+- a clear split between automated coverage and manual confirmation still expected
+- some level of user acceptance testing when the change warrants human confirmation
+- additional verification guidance only when domain-specific checks materially help review
 - clear draft/ready-for-review signaling when relevant
 - risks or rollout notes only when they matter to review of the current PR
 
@@ -34,9 +37,10 @@ The skill works best with:
 - the current diff or branch
 - commit history or a change summary
 - the primary work item link or ticket ID
+- the governing SPEC and PLAN, especially the acceptance criteria and verification expectations
 - test results
 - manual validation notes
-- SPEC and PLAN context when the work follows Zazz
+- any domain-specific verification notes that matter for this PR
 
 ## Example Prompts
 
@@ -65,7 +69,11 @@ The skill should produce:
 - a concise explanation of why the PR exists
 - a functional overview of what changed without overwhelming file-level detail
 - a clear draft indicator when the PR is not ready for full review
-- reviewer instructions for validating acceptance criteria, manual testing, and UAT where relevant
+- a reviewer-notes checklist that a human can quickly work through in the PR
+- reviewer instructions for validating acceptance criteria, grounded in the SPEC or PLAN when available
+- explicit automated test confirmation so reviewers know what was already proven and whether the relevant suites passed
+- manual testing and UAT guidance for what still needs human confirmation
+- additional domain-specific verification steps only when they materially help the reviewer validate the change
 - a short reminder that reviewers should confirm scope and do a cursory code-quality inspection
 
 ## Governing Context
@@ -120,14 +128,22 @@ That template is intentionally focused on:
 - why the PR exists
 - what changed functionally
 - whether the PR is draft or ready for review
-- how a reviewer should validate the acceptance criteria
+- how a reviewer should validate the acceptance criteria from the SPEC or PLAN when available
+- what automated tests were run, whether they passed, and what still needs manual confirmation
+- some level of user acceptance testing when the change warrants it
+- any additional team- or domain-specific verification that materially helps review
 - what scope and code-quality checks the reviewer should perform
 
 It intentionally avoids a generic file-by-file changed list unless a specific area deserves attention.
 It also avoids turning the PR into a backlog for future work outside the scope of the current change.
+It is also intentionally generic so repo templates and `.agents/skill-extensions/pr-builder/EXTENSION.md` can layer on stricter team-specific process.
+It should omit optional sections entirely when those topics are not relevant to the PR.
 
 ## Notes
 
 - The skill should not invent tests or verification that did not happen.
+- It should use the SPEC or PLAN as the acceptance-check source when those documents exist.
+- It should avoid asking reviewers to manually repeat checks already well-covered by automated tests.
+- It should keep the fallback template generic and rely on repo conventions or extensions for stricter process requirements.
 - It should match repo templates when they exist.
 - Final review, approval, and merge remain human responsibilities.

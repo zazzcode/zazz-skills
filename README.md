@@ -36,7 +36,7 @@ The skills are a means to that end. They provide structured workflows for docume
 4. **Planning**: `planner` turns an approved SPEC into an execution-ready PLAN with sequencing, traceability, and verification steps.
 5. **Execution**: `worker` implements the PLAN using TDD and keeps execution state synchronized with the board when applicable.
 6. **Verification**: `qa`, `qa-frontend`, or `qa-backend` validates the result against acceptance criteria, standards, and evidence requirements.
-7. **PR Packaging**: `pr-builder` prepares reviewer-ready PR titles and bodies from the diff, governing docs, and verification evidence.
+7. **PR Packaging**: `pr-builder` prepares reviewer-ready PR titles and bodies from the diff, governing docs, and verification evidence, including acceptance-check guidance sourced from the SPEC or PLAN, automated test confirmation, and manual UI/UX or API verification steps when relevant.
 8. **Owner Gates**: Owners approve durable docs, accept deliverable outcomes, review PRs, and merge. Agents may prepare and verify PRs, but they do not merge them.
 
 The framework is intentionally feature-first. Durable product understanding comes before execution slicing.
@@ -76,7 +76,7 @@ These are the framework's launch-and-leave skills. Once they have approved input
 
 | Skill | Purpose |
 |-------|---------|
-| **pr-builder** | Builds reviewer-ready PR titles and bodies from the diff, SPEC/PLAN context, QA evidence, and manual validation notes. |
+| **pr-builder** | Builds reviewer-ready PR titles and bodies from the diff, SPEC/PLAN context, QA evidence, and manual validation notes, with reviewer checklists for acceptance criteria, user verification, and API checks where relevant. |
 
 ### Infrastructure
 

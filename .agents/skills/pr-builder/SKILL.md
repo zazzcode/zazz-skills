@@ -37,6 +37,8 @@ Create a clear, reviewer-ready pull request title and body that accurately expla
 - what changed
 - why it changed
 - how it was verified
+- which acceptance criteria were covered by automated tests versus manual confirmation
+- whether the relevant automated tests passed
 - whether the PR is draft or ready for review
 - what review-relevant risks or constraints remain
 
@@ -62,9 +64,11 @@ Gather as many of these as are available:
    - Avaza task
    - repo-specific ticket
 4. Deliverable SPEC / PLAN paths when the work follows the Zazz framework
-5. Test commands and results
-6. Manual validation steps
-7. Known risks, migrations, feature flags, or rollout notes
+5. Acceptance criteria or scenario groupings from the governing SPEC / PLAN when available
+6. Test commands and results
+7. Manual validation steps
+8. Additional domain-specific verification notes when relevant, such as API checks, data inspection, admin workflows, background jobs, or operational checks
+10. Known risks, migrations, feature flags, or rollout notes
 
 If a detail is missing, derive it from repository state when possible. Do not invent verification that did not happen.
 
@@ -163,9 +167,11 @@ If the user does not have the answer or prefers not to provide it:
    - why this PR exists
    - functional behavior summary
    - draft or ready-for-review state when relevant
-   - reviewer focus areas
+   - reviewer notes with checklist-style review items
+   - acceptance-criteria review checklist sourced from the SPEC or PLAN when available
    - testing and verification
    - manual or UAT validation steps mapped to acceptance criteria when possible
+   - additional verification guidance only for concerns that actually matter to this PR, following repo templates or extensions when present
    - risks, rollout notes, or review blockers inside the current PR scope
 7. Produce a concise PR title and body that match the repo's template if one exists.
 
@@ -188,7 +194,8 @@ Instead:
    - governing context links
    - clearer `Why`
    - functional summary instead of file inventory
-   - reviewer validation steps tied to acceptance criteria
+   - reviewer validation steps tied to acceptance criteria and sourced from the SPEC or PLAN when available
+   - explicit automated-test confirmation plus manual or domain-specific checks where relevant
    - scope, risk, and code-quality review focus
 4. Add a short extra section only if the repo template has no good place for critical reviewer context.
 5. Keep any add-on concise so the PR still feels native to the repo.
@@ -202,14 +209,23 @@ Instead:
 - Summarize functional areas, not a file-by-file inventory.
 - Call out specific code hotspots only when they matter to review or risk.
 - Keep the PR scoped to the change under review. Do not expand it into future features, backlog ideas, or unrelated follow-up work.
+- Keep the PR intelligent and context-aware: omit sections that do not apply to the current change instead of filling them with boilerplate.
 - Do not add a generic follow-up-work section by default.
 - Mention an open item only when it directly affects how the current PR should be reviewed, merged, or treated as draft.
 - Include only tests that were actually run.
+- State whether the relevant automated test suite passed, failed, or remains incomplete.
 - If verification is incomplete, say so plainly.
+- Make it clear which acceptance criteria are already covered by automated tests and which still need manual confirmation.
+- Do not require reviewers to manually re-prove every acceptance criterion when reliable automated coverage already demonstrates it.
 - Call out schema changes, migrations, feature flags, or operational risk explicitly.
 - Keep reviewer focus high: what changed, why it matters, where to pay attention, and how to validate.
 - Reviewer instructions should include:
-  - how to validate the acceptance criteria manually, functionally, or through UAT
+  - a checklist-style reviewer notes section rather than loose prose when the template allows it
+  - how to validate the acceptance criteria using SPEC or PLAN guidance when available
+  - which automated tests were run and what they cover
+  - whether the relevant automated tests passed
+  - what still needs manual, functional, or UAT confirmation
+  - additional verification guidance only when the change introduces review-relevant concerns beyond the baseline acceptance and UAT checks
   - what scope boundary the reviewer should confirm
   - a reminder to do a cursory code-quality inspection in the touched areas
 - When a repo PR template exists, strongly incorporate it rather than generating a competing structure.
@@ -223,29 +239,40 @@ When the repo does not provide a stronger template, use:
 2. Why
 3. Functional overview
 4. Draft status when relevant
-5. Reviewer guide
+5. Reviewer notes
 6. Verification
 7. Risks or rollout notes when relevant
 8. Demo when relevant
 
 `What changed` is optional. Include it only when the functional overview is not self-evident.
 
-## Reviewer Guide Requirements
+## Reviewer Notes Requirements
 
-The reviewer guidance must be specific enough that a human can validate the acceptance criteria without reverse-engineering the diff.
+The reviewer notes must be specific enough that a human can validate the acceptance criteria without reverse-engineering the diff.
+It should use the SPEC or PLAN as the source of truth for acceptance checks when those documents exist.
+When the template allows it, prefer checklist-style bullets that a reviewer can work through quickly.
 
 Include:
 
-1. Setup or preconditions
-2. Step-by-step validation actions
-3. Expected results tied to acceptance criteria or core scenarios
-4. Any commands, feature flags, test data, or environment notes required
-5. A short review-focus checklist that asks the reviewer to confirm:
+1. Acceptance-criteria groupings or scenario checklist sourced from the SPEC or PLAN when available
+2. Setup or preconditions
+3. Step-by-step validation actions
+4. Expected results tied to acceptance criteria or core scenarios
+5. Any commands, feature flags, test data, or environment notes required
+6. Automated tests that were run and the coverage they provide
+7. Whether the relevant automated tests passed, failed, or remain incomplete
+8. Manual validation still expected from the reviewer, especially for user-facing behavior, regressions, or high-risk flows
+9. Some level of user acceptance testing when the change affects user-facing behavior or requires human confirmation beyond automated coverage
+10. Additional domain-specific verification only when it materially helps review for this PR, such as API checks, data inspection, or operational validation
+11. A short review-focus checklist that asks the reviewer to confirm:
    - the implementation satisfies the linked deliverable/spec/ticket
    - the code stays within the intended scope
    - the touched areas look reasonable from a code-quality and maintainability standpoint
 
 If the validation was already performed by an agent running the `qa` skill or by a human QA process, reuse that evidence and compress it into reviewer-friendly instructions.
+It is acceptable to group acceptance criteria into meaningful scenarios rather than restating every criterion verbatim, especially when automated tests already provide reliable coverage.
+Keep the fallback structure generic. Use repo templates or `.agents/skill-extensions/pr-builder/EXTENSION.md` to enforce more specific team workflows when present.
+Omit optional subsections entirely when they do not apply to the current PR.
 
 ## Title Guidance
 

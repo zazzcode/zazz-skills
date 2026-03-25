@@ -2,6 +2,8 @@
 
 Use this when the repo does not provide a stronger PR template.
 Omit sections that do not add reviewer value.
+Keep this fallback template generic.
+Use repo templates or `.agents/skill-extensions/pr-builder/EXTENSION.md` when a team needs stricter or more specific review workflow requirements.
 
 ## Context
 - Primary work item:
@@ -29,28 +31,51 @@ Do not turn this section into an implementation diary.
 
 Avoid file-by-file inventories unless a specific file or subsystem deserves reviewer attention.
 
-## Reviewer Guide
+## Reviewer Notes
 
-### Validate Acceptance Criteria
-List the concrete ways a reviewer can confirm the acceptance criteria or key scenarios.
+### Acceptance Criteria Checklist
+Use the SPEC or PLAN as the source of truth when available.
+Group acceptance criteria into reviewable scenarios instead of restating every line item when that is clearer.
+If automated tests already prove a criterion reliably, cite that coverage and only ask for manual confirmation where it still adds value.
 
-1. Preconditions / setup:
-2. Action:
-3. Expected result:
-4. Evidence already available:
+- [ ] Acceptance criteria / scenario:
+  Source in SPEC / PLAN:
+  Automated coverage already run:
+  Automated tests passed:
+  Manual confirmation still needed:
+  Expected result:
 
 Repeat for each meaningful acceptance-criteria group or scenario when needed.
 
+### User Acceptance Testing (When Relevant)
+- [ ] Manual user acceptance testing completed
+  Scenarios or journeys checked:
+  What the reviewer should confirm:
+  Evidence or notes:
+
+Remove this subsection entirely when the PR does not require meaningful human validation beyond automated coverage.
+
+### Additional Verification (Optional)
+- [ ] Additional verification completed
+  Type of check:
+  Commands, queries, tools, or notes:
+  Expected outcome:
+
+Use this only when domain-specific checks materially help review, such as API checks, data inspection, admin workflows, operational validation, or other team-specific checks.
+Remove this subsection entirely when it does not add reviewer value.
+
 ### Review Focus
 Ask the reviewer to confirm:
-- the implementation satisfies the linked deliverable, ticket, and/or specification
-- the changed code stays within the intended scope
-- the touched areas look reasonable from a code-quality and maintainability standpoint
+- [ ] The implementation satisfies the linked deliverable, ticket, and/or specification
+- [ ] The changed code stays within the intended scope
+- [ ] The touched areas look reasonable from a code-quality and maintainability standpoint
 
 ## Verification
 - Automated tests run:
+- Automated tests passed:
 - Manual or functional validation performed:
-- UAT coverage:
+- User acceptance testing performed:
+- Additional verification performed:
 - Not run / not verified:
 
 Include only verification that actually happened.
@@ -64,3 +89,5 @@ Do not use the PR as a default place to discuss future features or unrelated fol
 
 ## Demo (Optional)
 - GIF, video, screenshots, CLI transcript, or reproduction notes when they materially help review
+
+Remove this section when demo artifacts do not materially help review.
