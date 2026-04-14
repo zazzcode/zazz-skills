@@ -2,9 +2,9 @@
 
 Zazz is an opinionated, spec-driven framework for delivering software with humans and AI agents. It separates long-lived product knowledge from short-lived execution contracts so teams can move quickly without losing the "why" behind the system.
 
-The framework is intentionally **feature-first** in its conceptual model: define the long-lived capability and its milestone evolution before creating the bounded deliverables that implement it. Deliverables are execution slices of a feature, not the primary home of product intent.
+The framework is intentionally **project-first** in its conceptual model: start with a top-level `project.md` that explains the software's value proposition, purpose, and major capabilities. Under that project context, proposals and feature requirements documents act as sibling durable artifacts, while milestones live inside feature requirements documents and deliverables remain bounded execution slices.
 
-The framework is also intentionally **git-native**. It relies heavily on built-in Git and GitHub functionality for both repository work and document lifecycle management: worktrees are a core execution requirement, durable docs live in the repository, draft PRs are the preferred way to share in-progress proposals/feature documents/standards, and final PR review is the approval path that promotes those docs into shared project truth.
+The framework is also intentionally **git-native**. Durable planning and product documents are version-controlled in Git and reviewed through the team's normal branch and PR workflow. GitHub is a common example, but the framework is agnostic to which Git hosting platform or review tooling a team uses. Git worktrees are strongly encouraged because they improve isolation and recovery, but they are not a hard requirement of the framework.
 
 ## Table of Contents
 
@@ -14,14 +14,16 @@ The framework is also intentionally **git-native**. It relies heavily on built-i
 - [Core Principles](#core-principles)
 - [Git-Native Collaboration](#git-native-collaboration)
 - [Document Root](#document-root)
+- [Hierarchy](#hierarchy)
 - [Opinionated Docs Layout](#opinionated-docs-layout)
+- [Project Document (`project.md`)](#project-document-projectmd)
 - [Proposals](#proposals)
-- [Features and Feature Documents](#features-and-feature-documents)
-  - [Why feature documents matter](#why-feature-documents-matter)
-  - [Product-owner success criteria in feature documents](#product-owner-success-criteria-in-feature-documents)
-  - [Feature Documents Are Living Documents](#feature-documents-are-living-documents)
+- [Features and Feature Requirements Documents](#features-and-feature-requirements-documents)
+  - [Why feature requirements documents matter](#why-feature-requirements-documents-matter)
+  - [Product-owner success criteria in feature requirements documents](#product-owner-success-criteria-in-feature-requirements-documents)
+  - [Feature Requirements Documents Are Living Documents](#feature-requirements-documents-are-living-documents)
   - [Milestones and deliverables](#milestones-and-deliverables)
-  - [Recommended Feature Document Contents](#recommended-feature-document-contents)
+  - [Recommended Feature Requirements Document Contents](#recommended-feature-requirements-document-contents)
   - [Example `features/index.yaml`](#example-featuresindexyaml)
   - [Feature Doc Builder Skill](#feature-doc-builder-skill)
   - [Feature Definition Flow](#feature-definition-flow)
@@ -38,8 +40,8 @@ The framework is also intentionally **git-native**. It relies heavily on built-i
   - [Example `standards/index.yaml`](#example-standardsindexyaml)
 - [Deliverables and Worktrees](#deliverables-and-worktrees)
   - [Acceptance Criteria and TDD](#acceptance-criteria-and-tdd)
-  - [Default framework position: keep deliverables local](#default-framework-position-keep-deliverables-local)
-  - [One worktree per deliverable](#one-worktree-per-deliverable)
+  - [Default framework position: durable docs in Git, transient execution docs in Zazz Board](#default-framework-position-durable-docs-in-git-transient-execution-docs-in-zazz-board)
+  - [Preferred: one worktree per deliverable](#preferred-one-worktree-per-deliverable)
   - [Durable knowledge must be promoted](#durable-knowledge-must-be-promoted)
 - [Execution Model](#execution-model)
 - [Core Entities](#core-entities)
@@ -55,16 +57,16 @@ Zazz is opinionated because the framework is designed to help teams **build the 
 
 In explicit terms, the framework provides:
 
-- **A durable structure for defining the right software to build.** Proposals, feature documents, milestones, and SPECs organize the product's purpose, current behavior, future direction, and execution intent so teams stay aligned on what the software is for and what it must do.
+- **A durable structure for defining the right software to build.** `project.md`, proposals, feature requirements documents, milestones, and SPECs organize the product's purpose, current behavior, future direction, and execution intent so teams stay aligned on what the software is for and what it must do.
 - **A delivery model for building that software correctly.** Explicit acceptance criteria, TDD, standards alignment, QA loops, and review gates exist so teams can verify that the implementation matches the intended functionality and is built using maintainable, expandable engineering patterns.
 - **A framework for building efficiently without losing quality.** Once the right context is approved, the execution skills can operate in a launch-and-leave mode that reduces supervision overhead while still escalating at real decision or approval boundaries.
 - **A system that preserves maintainability and future expansion.** Standards, disciplined execution contracts, and upstream documentation updates help ensure the software can be understood, maintained, and extended as capabilities grow.
 
-The skills, roles, document model, and opinionated workflow are means to that end. They are not the value proposition by themselves. Their purpose is to make those outcomes repeatable across features, deliverables, and teams.
+The skills, roles, document model, and opinionated workflow are means to that end. They are not the value proposition by themselves. Their purpose is to make those outcomes repeatable across projects, features, deliverables, and teams.
 
 The framework is opinionated on purpose. The goal is not arbitrary restriction; the goal is to reduce ambiguity, improve consistency across repos and teams, and make the desired outcomes more repeatable for both humans and agents.
 
-All framework markdown documents live under a repo-relative docs root declared in the repo's `AGENTS.md`. In most repos, the docs root will be either `.zazz/` or `docs/` at the root of the monorepo.
+All framework markdown documents live under a repo-relative docs root declared in the repo's `AGENTS.md`. In most repos, the docs root will be either `.zazz/` or `docs/` at the root of the monorepo. Framework skills should live under `.agents/skills/` so they stay reusable and AI-tool agnostic.
 
 The default mental model is one software project in one monorepo. If a product spans multiple repositories, it is reasonable to introduce a shared docs/framework repo or package so the same standards, features, and skills can be consumed across repos. That is an extension pattern, not the default assumption.
 
@@ -79,13 +81,14 @@ This repository is the canonical source of truth for the framework document and 
 | Concept | Summary |
 | ------- | ------- |
 | **Desired-state convergence** | Work iterates until implementation, tests, and review evidence align with the specification |
-| **Git-native model** | Worktrees, branches, draft PRs, and final PR review are core framework mechanisms for both code and durable docs |
+| **Git-native model** | Durable docs are version-controlled in Git, reviewed through branches and PRs, and can be managed on any Git hosting platform |
 | **Docs root** | The repo's `AGENTS.md` declares the repo-relative directory that contains framework markdown documents |
-| **Tracked docs** | `standards/`, `features/`, and `proposals/` are tracked, shared, and continuously updated with the application |
-| **Transient docs** | `deliverables/` contains per-deliverable execution artifacts and is usually local/untracked by default |
-| **Specification model** | Feature document for capability over time plus Deliverable SPEC (`-SPEC`) for one increment |
+| **Top-level durable doc** | `project.md` captures the project purpose, value proposition, and major established capabilities |
+| **Tracked docs** | `project.md`, `standards/`, `features/`, and `proposals/` are the durable, continuously maintained documents and should be tracked in Git |
+| **Execution docs** | Transient deliverable SPEC/PLAN artifacts generally live in Zazz Board rather than in Git; local files are working copies when needed |
+| **Specification model** | Feature requirements document for capability over time plus Deliverable SPEC (`-SPEC`) for one increment |
 | **Verification model** | TDD and explicit acceptance criteria are core mechanisms for proving the software was built correctly and delivers the intended functionality |
-| **Execution flow** | Proposal (optional) -> feature document (optional but recommended for long-lived features) -> SPEC (required) -> PLAN (optional) -> build/validate loop -> PR/UAT gate |
+| **Execution flow** | `project.md` -> proposal (optional) -> feature requirements document (optional but recommended for long-lived features) -> SPEC (required) -> PLAN (optional) -> build/validate loop -> PR/UAT gate |
 | **Skills** | `proposal-builder`, `feature-doc-builder`, `spec-builder`, `planner`, `worker`, `qa`, optional `pr-builder`, optional companion utility skills such as `zazz-board-api` and draft `jira-api` |
 | **Skill modes** | Some skills are interactive and human-in-the-loop; others are designed for mostly autonomous execution once inputs are approved |
 | **Autonomy value** | Approved context should let agents converge on a verified solution with minimal supervision, improving delivery efficiency without dropping quality |
@@ -98,7 +101,7 @@ This repository is the canonical source of truth for the framework document and 
 
 **Document scope:** This file defines framework philosophy, document contracts, and operating model. API syntax, route details, and tool-specific commands belong in skills and project docs.
 
-**Reading order:** Understand feature documents first, then Deliverables/SPECs. The feature is the durable product concept; the deliverable is the bounded execution increment.
+**Reading order:** Start with `project.md`, then any relevant proposal and feature requirements document, then the deliverable SPEC/PLAN. The project defines the product, the feature requirement defines capability evolution, and the deliverable defines one bounded execution increment.
 
 ## Humans, Agents, and Skills
 
@@ -127,45 +130,45 @@ This document sometimes uses skill names as shorthand for the agents operating w
 ## Core Principles
 
 1. **Acceptance criteria and TDD are central, not optional.** Value is clarified through explicit success criteria, then validated through tests and review evidence. If work cannot be described in verifiable terms, it is not ready.
-2. **Durable knowledge lives in tracked docs.** `proposals/`, `features/`, and `standards/` are shared repository knowledge. Proposals and features preserve product understanding over time; standards preserve the required engineering patterns for how the software must be built.
-3. **Feature intent comes before execution slices.** Define the long-lived capability, its value, and its milestone evolution before breaking work into deliverables whenever the work is part of an enduring feature.
+2. **Durable knowledge lives in tracked docs.** `project.md`, `proposals/`, `features/`, and `standards/` are shared repository knowledge. They preserve product understanding, active decisions, and engineering rules over time.
+3. **Project context comes before execution slices.** Start from `project.md`, then use proposals and feature requirements documents to clarify why and how the product should evolve before breaking work into deliverables whenever the work is part of an enduring capability.
 4. **Execution contracts are per increment.** A deliverable SPEC and optional PLAN define one bounded slice of work. They are not the permanent home for product narrative.
-5. **Git primitives are part of the framework.** Use branches, worktrees, draft PRs, review comments, and final PR approval as standard collaboration mechanisms for both code and durable docs.
-6. **The framework is opinionated about both product definition and engineering structure.** Proposals, feature documents, milestones, and SPECs define what the software should do and why; standards define how it must be built so it remains maintainable and expandable over time.
+5. **Git primitives are part of the framework.** Use branches, PRs, review comments, and final PR approval as standard collaboration mechanisms for both code and durable docs. Worktrees are a recommended isolation tool, not a framework prerequisite.
+6. **The framework is opinionated about both product definition and engineering structure.** `project.md`, proposals, feature requirements documents, milestones, and SPECs define what the software should do and why; standards define how it must be built so it remains maintainable and expandable over time.
 7. **Launch-and-leave execution is a design goal.** Once the approved context exists, planning, implementation, verification, and PR packaging should require minimal supervision until a real decision or approval boundary is reached.
-8. **Agents load only the context they need.** `index.yaml` files exist to help agents decide what to read instead of loading every standard or feature document into context.
+8. **Agents load only the context they need.** `index.yaml` files exist to help agents decide what to read instead of loading every standard or feature requirements document into context.
 9. **PR merge authority stays with an authorized human.** Agents may create draft PRs, update PR bodies, and provide verification evidence, but they must never approve or merge PRs on their own.
-10. **One worktree per active deliverable.** Execution should happen in isolated worktrees so implementation state, branch history, and transient deliverable files stay scoped to one increment.
-11. **Durable knowledge moves upstream.** When a deliverable changes the product, update the relevant feature document and standards so the long-lived docs reflect the shipped system.
+10. **Prefer isolated execution contexts.** One worktree per active deliverable is the recommended model because it isolates implementation state, branch history, and transient execution artifacts. Teams may use another isolation approach if it preserves the same safety properties.
+11. **Durable knowledge moves upstream.** When a deliverable changes the product, update `project.md`, the relevant feature requirements document, and any impacted standards so the long-lived docs reflect the shipped system.
 
 ---
 
 ## Git-Native Collaboration
 
-Zazz is designed to work with native Git and GitHub collaboration primitives instead of inventing a parallel document-management system.
+Zazz is designed to work with native Git collaboration primitives instead of inventing a parallel document-management system.
 
 Framework expectations:
 
-- use one worktree per active deliverable or document effort
-- keep durable docs in the repository so branches, commits, PR comments, and merge history become part of the document audit trail
-- use **draft PRs** to share in-progress proposals, feature document revisions, and standards updates that are still being shaped
+- keep durable docs in the repository so branches, commits, PR comments, and merge history become part of the durable document audit trail
+- use **draft PRs** to share in-progress proposals, feature requirements document revisions, and standards updates that are still being shaped
 - use **final PR review** to approve and merge durable docs once they are ready to become shared project truth
 - treat PR approval and merge as human-controlled gates; agents may prepare and verify PRs but must not merge them
-- treat worktrees as both an isolation mechanism and a recovery mechanism; if an execution path proves wrong, the worktree can be abandoned without polluting the main line of work
-- treat Git history as the durable change log for proposals, feature documents, standards, and committed execution artifacts
+- treat worktrees as the preferred isolation and recovery mechanism when the repo uses them; if an execution path proves wrong, the worktree can be abandoned without polluting the main line of work
+- treat Git history as the durable change log for `project.md`, proposals, feature requirements documents, and standards
+- remember that GitHub is only a common example; GitLab, Bitbucket, Forgejo, and other Git-based review systems fit the same framework model
 
 Required review pattern for durable docs:
 
-1. Create or revise the doc in a branch/worktree.
+1. Create or revise the doc in a branch, optionally in a dedicated worktree.
 2. Open a draft PR while the document is still being discussed.
 3. Iterate in the PR using comments, suggestions, and follow-up commits.
-4. Mark the PR ready for review once the proposal, feature document, or standards change is decision-ready.
+4. Mark the PR ready for review once the proposal, feature requirements document, or standards change is decision-ready.
 5. Merge when approved so the repository reflects the new shared truth.
 
 Recovery pattern:
 
 - if a worktree's implementation path goes in the wrong direction or fails review, abandon that worktree rather than forcing it forward
-- revisit the governing proposal, feature document, SPEC, or PLAN as appropriate
+- revisit the governing proposal, feature requirements document, SPEC, or PLAN as appropriate
 - open a new branch/worktree with the corrected approach once the contract is clarified
 
 ---
@@ -196,48 +199,109 @@ When the application spans multiple repos, point the relevant repo or shared pac
 
 ---
 
+## Hierarchy
+
+The framework's default hierarchy is:
+
+```text
+project.md
+├── proposals/
+└── features/
+    └── milestones
+        └── deliverables
+            └── tasks
+```
+
+Interpretation:
+
+- `project.md` is the top-level durable document for the software project.
+- proposals and feature requirements documents are sibling artifact families under the project.
+- milestones live inside feature requirements documents.
+- deliverables are execution increments associated with one milestone, or with standalone non-feature work.
+- tasks are the smallest execution units inside a deliverable.
+
+This hierarchy matters because the framework treats each layer differently:
+
+- `project.md` explains why the software project exists, what value it creates, and which capabilities are already established.
+- proposals explore uncertain solution space before the team commits to a direction.
+- feature requirements documents describe durable capability intent and milestone evolution.
+- deliverables define bounded execution contracts.
+- tasks are short-lived implementation units, not durable product-definition artifacts.
+
+Not every layer is required for every change. Bugs, chores, and small maintenance slices may go straight to a deliverable SPEC. But when the work changes the shape of the product, the framework expects the higher-level context to exist first.
+
+---
+
 ## Opinionated Docs Layout
 
 The framework is opinionated about the directory shape under the declared docs root.
 
-Required long-lived directories:
+Each document type in the framework is expected to justify its existence through the problem it solves. The framework does not introduce artifacts just to create ceremony. Each artifact exists because it addresses a different coordination need: project context, solution exploration, durable capability definition, implementation guidance, or bounded execution.
 
+Required long-lived artifacts:
+
+- `project.md`
 - `proposals/`
 - `standards/`
 - `features/`
 
-Required execution directory:
+Execution artifacts:
 
-- `deliverables/`
+- `deliverables/` when the repo keeps local deliverable files on disk
+- persisted deliverable records in Zazz Board when the project stores SPECs, PLANs, images, diagrams, and related assets in the database instead of Git
 
 Recommended layout:
 
 ```text
 <DOCS_ROOT>/
+├── project.md
 ├── standards/
 │   ├── index.yaml
 │   ├── testing.md
 │   ├── coding-style.md
 │   └── architecture.md
+├── proposals/
+│   ├── role-management-options.md
+│   └── research/
+│       └── role-management-options/
 ├── features/
 │   ├── index.yaml
 │   └── role-based-access-control.md
-├── deliverables/
+└── deliverables/                  <- optional local execution artifacts
 │   ├── role-management-ui-SPEC.md
 │   └── role-management-ui-PLAN.md
-└── proposals/
-    └── role-management-options.md
 ```
 
-The tree above shows **`deliverables/` with the flat layout** (the option for projects that use neither the Zazz-style nor Jira-style subdirectory convention for deliverable files).
+`project.md` is intentionally at the top of the docs root, not under `features/` or `proposals/`.
 
-A **project** adopts **one** deliverable file-layout mode—do not mix:
+Recommended responsibilities:
 
-1. **Neither** — flat only: `{slug}-SPEC.md` / `{slug}-PLAN.md` under `deliverables/`.
-2. **Zazz Board** — subdirectory layout: `deliverables/{deliverable-code}/{slug}-SPEC.md` (and `-PLAN.md`); sync paths via **zazz-board-api**; folder name = board deliverable code.
-3. **Jira** — **same subdirectory layout** as Zazz: `deliverables/{issue-key}/{slug}-SPEC.md` (and `-PLAN.md`); folder name = Jira issue key (e.g. `PROJ-453`).
+- `project.md` captures the software project's value proposition, business need, constraints, and major established capabilities
+- `proposals/` contains durable exploratory documents that help the team work through uncertain solutions
+- `features/` contains long-lived feature requirements documents plus `features/index.yaml`
+- `standards/` contains implementation rules plus `standards/index.yaml`
+- `deliverables/` is optional local storage for SPEC/PLAN files when they are not being persisted elsewhere
 
-Zazz and Jira are **alternatives** (different `{id}` in the same pattern), not two folder schemes used together in one project.
+### Deliverable storage modes
+
+The framework supports three common ways teams handle deliverable artifacts:
+
+1. **Zazz Board-backed deliverables** — SPEC/PLAN markdown, images, diagrams, and related assets are stored in the Zazz Board database. A local `deliverables/` directory may still exist for temporary execution use, but the durable execution record lives in Board rather than in Git.
+2. **Local-only deliverables** — `deliverables/` exists in the repo or worktree, is usually ignored, and SPEC/PLAN docs are treated as local execution artifacts.
+3. **Committed deliverables** — SPEC/PLAN docs are kept under `deliverables/` and tracked in Git because the team intentionally wants a Git-native audit trail for execution artifacts.
+
+The framework's general guideline is:
+
+- keep `project.md`, `proposals/`, `features/`, and `standards/` tracked in Git or another Git-based service because they are durable, continuously maintained documents
+- treat Zazz Board as the default durable home for transient execution artifacts such as deliverable SPECs, PLANs, diagrams, and related working assets
+- use local deliverable files as working copies when helpful
+- commit deliverable execution artifacts to Git only when a project intentionally wants that exception
+
+If a team adopts one deliverable file-layout mode on disk, do not mix modes inside a single repo:
+
+1. **Flat local files** — `{slug}-SPEC.md` / `{slug}-PLAN.md` under `deliverables/`
+2. **Tracker-key subdirectories** — `deliverables/{id}/{slug}-SPEC.md` and `.../{slug}-PLAN.md`, where `{id}` may be a Zazz Board deliverable code or a Jira issue key
+3. **No durable on-disk deliverable files** — deliverable content is stored outside Git, typically in Zazz Board
 
 This deliverable file-layout choice is related to, but not identical to, the repo's broader work-tracking system.
 A repo may also use an external tracker for PR-facing links or issue management, such as:
@@ -256,35 +320,62 @@ Naming conventions:
 
 | Artifact | Convention | Example |
 | ------- | ---------- | ------- |
+| **Project document** | `project.md` at docs root | `project.md` |
 | **Docs root** | repo-relative path declared in `AGENTS.md` | `.zazz`, `docs` |
-| **Feature document** | `features/{feature-key}.md` | `role-based-access-control.md` |
+| **Proposal** | `proposals/{name}.md` | `role-management-options.md` |
+| **Feature requirements document** | `features/{feature-key}.md` | `role-based-access-control.md` |
 | **Features index** | `features/index.yaml` | `features/index.yaml` |
 | **Standards index** | `standards/index.yaml` | `standards/index.yaml` |
-| **Deliverable SPEC** | `deliverables/{slug}-SPEC.md` (flat under `deliverables/`) | `role-management-ui-SPEC.md` |
-| **Deliverable PLAN** | `deliverables/{slug}-PLAN.md` (same directory as its SPEC) | `role-management-ui-PLAN.md` |
-| **Deliverable SPEC / PLAN (subdirectory)** | **Zazz or Jira** (not both): `deliverables/{id}/{slug}-SPEC.md` and `…/{slug}-PLAN.md`, slug-only files inside. `{id}` = Zazz **deliverable code** (board path sync) **or** Jira **issue key** (same convention, no board sync). | `deliverables/ZAZZ-142/role-management-ui-SPEC.md` — Jira: same pattern with issue-key folder |
-| **Proposal** | `proposals/{name}.md` | `role-management-options.md` |
+| **Deliverable SPEC** | `deliverables/{slug}-SPEC.md` when stored locally on disk | `role-management-ui-SPEC.md` |
+| **Deliverable PLAN** | `deliverables/{slug}-PLAN.md` when stored locally on disk | `role-management-ui-PLAN.md` |
+| **Deliverable SPEC / PLAN (subdirectory)** | `deliverables/{id}/{slug}-SPEC.md` and `.../{slug}-PLAN.md` when using tracker-key folders | `deliverables/ZAZZ-142/role-management-ui-SPEC.md` |
 
-**Deliverable layout:** See the three modes under the layout tree (**neither** / **Zazz** / **Jira**). **Jira** reuses the **Zazz subdirectory convention**; only the folder name (issue key vs board code) changes. When using Zazz Board, `dedFilePath` / `specFilepath` must match the SPEC on disk. The `spec-builder` and `planner` skills describe agent steps; `zazz-board-api` applies only to Zazz Board.
-
-**Examples** (same fictional deliverable, slug `role-management-ui`; **pick the block that matches your project mode**):
+**Examples** (same fictional deliverable, slug `role-management-ui`; pick the block that matches your project mode):
 
 ```text
-# Neither — flat
+# Flat local files
 .zazz/deliverables/role-management-ui-SPEC.md
 .zazz/deliverables/role-management-ui-PLAN.md
 ```
 
 ```text
-# Zazz Board — deliverable code ZAZZ-142 (path sync via zazz-board-api)
-# Jira projects: same layout; folder is the issue key (e.g. PROJ-453/) instead of ZAZZ-142/
+# Tracker-key subdirectory
 .zazz/deliverables/ZAZZ-142/role-management-ui-SPEC.md
 .zazz/deliverables/ZAZZ-142/role-management-ui-PLAN.md
 ```
 
-`proposals/`, `standards/`, and `features/` are expected to be tracked in Git. `deliverables/` must exist in each worktree and should stay local unless the team explicitly wants canonical deliverable artifacts checked in.
-
 Keep `features/` flat by default. Introduce per-feature subdirectories only if the project later discovers a real need for multiple durable artifacts per feature.
+
+---
+
+## Project Document (`project.md`)
+
+`project.md` is the framework's top-level durable document.
+
+### Why `project.md` exists
+
+`project.md` exists to solve the "what is this software project, and why does it exist?" problem. Without it, teams are forced to reconstruct product purpose from scattered proposals, feature requirements documents, tickets, PRs, and tribal knowledge.
+
+Its value is that it gives the project one durable home for:
+
+- the software's value proposition
+- the business or operational need it serves
+- key constraints and shaping assumptions
+- major established capabilities that are already part of the product story
+
+`project.md` should stay stable enough to orient new readers, but live enough to evolve when the project's durable shape changes.
+
+### Recommended `project.md` contents
+
+A strong `project.md` should usually include:
+
+- a short description of what the software is and who it is for
+- the core value proposition or business need
+- the major durable capabilities or product areas that define the project
+- important constraints, context, or boundary assumptions
+- links to the most relevant feature requirements documents when helpful
+
+`project.md` is not a roadmap, not a proposal, not a deliverable contract, and not an implementation guide. Its purpose is durable orientation.
 
 ---
 
@@ -304,7 +395,17 @@ Proposal scope may be:
 - deliverable-oriented
 - joint, when the decision spans both feature and deliverable concerns
 
-Proposal docs are durable and are expected to be tracked in Git. The required collaboration pattern is:
+### Why proposals exist
+
+Proposals exist to solve uncertainty before the team commits to a direction. Their job is to create a place to compare options, examine tradeoffs, surface risks, and make recommendations while the answer is still legitimately in question.
+
+Their value is that they keep exploration out of documents that need to be more durable or more authoritative. A proposal absorbs uncertain thinking so the later feature requirements document or SPEC can be clearer and more decisive.
+
+Proposal docs are durable and are expected to be tracked in Git. They sit beside feature requirements documents in the hierarchy, not underneath them. Their job is to help the team work through options before the team decides to author or revise a feature requirements document or SPEC.
+
+Not every feature requirements document needs a proposal. Use one when it improves decision quality; skip it when the direction is already clear.
+
+The recommended collaboration pattern is:
 
 1. draft the proposal in `<DOCS_ROOT>/proposals/`
 2. open a **draft PR** to share it while the proposal is still being discussed
@@ -312,15 +413,15 @@ Proposal docs are durable and are expected to be tracked in Git. The required co
 4. finalize and merge the PR once the proposal is approved
 5. use the approved proposal as input to the next authoring session, typically with an agent running `feature-doc-builder`, `spec-builder`, or both
 
-Proposal docs do not replace feature documents or SPECs. They help a team decide what should move forward and on what basis.
+Proposal docs do not replace feature requirements documents or SPECs. They help a team decide what should move forward and on what basis.
 
 ---
 
-## Features and Feature Documents
+## Features and Feature Requirements Documents
 
-The feature document is a core framework concept.
+The feature requirements document is a core framework concept.
 
-A feature document is a **long-lived, continuously maintained document** for one application capability. It explains:
+A feature requirements document is a **long-lived, continuously maintained document** for one application capability. It explains:
 
 - why the capability exists
 - who it serves
@@ -337,12 +438,14 @@ The primary audiences are:
 - developers onboarding to the project
 - anyone using the repo as a current source of product and user-facing behavior
 
-A feature document is not an execution doc. It does not replace a deliverable SPEC. Instead:
+A feature requirements document is not an execution doc. It does not replace a deliverable SPEC. Instead:
 
-- **Feature document** = capability over time, the why, the current state, and the milestone roadmap/history
+- **Feature requirements document** = capability over time, the why, the current state, and the milestone roadmap/history
 - **Deliverable SPEC** = execution contract for one increment
 
-### Why feature documents matter
+### Why feature requirements documents matter
+
+Feature requirements documents exist to solve the "how does this capability evolve over time?" problem. A project needs a durable home for capability-level intent that is too important to leave inside transient deliverables, but too specific to belong in `project.md`.
 
 - They preserve product intent beyond any single deliverable.
 - They keep milestone history and current functionality in one place.
@@ -350,9 +453,9 @@ A feature document is not an execution doc. It does not replace a deliverable SP
 - They help stakeholders see what is already live, what is next, and why work is being prioritized.
 - They can double as accurate source material for user documentation when kept current.
 
-### Product-owner success criteria in feature documents
+### Product-owner success criteria in feature requirements documents
 
-The Product Owner should define the success signals for the feature and its milestones. At the feature document level, these are usually not low-level implementation acceptance criteria yet. They are feature-level statements of value and milestone outcomes such as:
+The Product Owner should define the success signals for the feature and its milestones. At the feature requirements level, these are usually not low-level implementation acceptance criteria yet. They are feature-level statements of value and milestone outcomes such as:
 
 - what user or business problem is solved
 - what new capability exists after a milestone ships
@@ -360,25 +463,25 @@ The Product Owner should define the success signals for the feature and its mile
 
 These feature-level success criteria inform later deliverable acceptance criteria. They should be concrete enough to guide decomposition, but they do not replace deliverable-level TDD and execution detail.
 
-### Feature Documents Are Living Documents
+### Feature Requirements Documents Are Living Documents
 
-Feature documents must evolve with the software. After each milestone lands:
+Feature requirements documents must evolve with the software. After each milestone lands:
 
-- update the feature document's current-state sections so they describe what is actually live now
+- update the feature requirements document's current-state sections so they describe what is actually live now
 - update milestone status to reflect what was completed
 - revise introductory and functional sections when the shipped behavior changes
 - keep future milestone sections forward-looking but clearly separated from current behavior
 
-The goal is that the feature document always describes the current application as shaped by the most recent completed milestones.
+The goal is that the feature requirements document always describes the current application as shaped by the most recent completed milestones.
 
-Milestones are also living planning elements inside the feature document. Teams do not need to define the entire milestone roadmap up front. In many cases, a feature document may begin with only one near-term milestone and one or two forward-looking milestones. Additional milestones may be added later as:
+Milestones are also living planning elements inside the feature requirements document. Teams do not need to define the entire milestone roadmap up front. In many cases, a feature requirements document may begin with only one near-term milestone and one or two forward-looking milestones. Additional milestones may be added later as:
 
 - new feature needs are discovered
 - follow-on capabilities become clearer
 - shipped milestones change what the next most valuable increment should be
 - technical or product learning changes the roadmap
 
-The important rule is that the milestone model lives in the feature document and is revised there as the feature evolves.
+The important rule is that the milestone model lives in the feature requirements document and is revised there as the feature evolves.
 
 ### Milestones and deliverables
 
@@ -386,13 +489,13 @@ The important rule is that the milestone model lives in the feature document and
 - A **milestone** is a meaningful increment of that feature and may contain multiple deliverables.
 - A **deliverable** is one bounded execution slice that advances a milestone or handles a standalone need.
 - Teams may define only the next one, two, or three milestones at a time. The framework does not require a complete long-range milestone map before execution begins.
-- Not every deliverable requires a feature document. Bugs, chores, maintenance, migration work, and other non-feature increments may go straight to SPEC.
+- Not every deliverable requires a feature requirements document. Bugs, chores, maintenance, migration work, and other non-feature increments may go straight to SPEC.
 
 Relationship model:
 
 ```mermaid
 flowchart LR
-    F["Feature document\n(long-lived, tracked)"] --> M1["Milestone 1"]
+    F["Feature requirements document\n(long-lived, tracked)"] --> M1["Milestone 1"]
     F --> M2["Milestone 2"]
     M1 --> D1["Deliverable A"]
     M1 --> D2["Deliverable B"]
@@ -400,14 +503,14 @@ flowchart LR
     D1 --> S1["Shipped behavior"]
     D2 --> S1
     D3 --> S2["Expanded behavior"]
-    S1 --> U["Update feature document current state,\nflows, and milestone status"]
+    S1 --> U["Update feature requirements document current state,\nflows, and milestone status"]
     S2 --> U
     U --> F
 ```
 
-### Recommended Feature Document Contents
+### Recommended Feature Requirements Document Contents
 
-A feature document should include:
+A feature requirements document should include:
 
 - feature title and short summary
 - current or active milestone plus the next likely milestones when known
@@ -424,7 +527,7 @@ The exact headings can vary by project, but those concepts should be present.
 
 ### Example `features/index.yaml`
 
-The features index exists for discovery. It lets agents and humans quickly identify which feature doc is relevant without loading every feature document.
+The features index exists for discovery. It lets agents and humans quickly identify which feature requirements document is relevant without loading every feature requirements document.
 
 ```yaml
 features:
@@ -439,13 +542,15 @@ features:
       for role management across backend and frontend.
 ```
 
-The specific text can vary, but the index should give enough information for an agent to decide whether the feature document belongs in context.
+The specific text can vary, but the index should give enough information for an agent to decide whether the feature requirements document belongs in context.
 
 ### Feature Doc Builder Skill
 
-The framework includes a dedicated skill for authoring and evolving feature documents:
+The framework includes a dedicated skill for authoring and evolving feature requirements documents:
 
 - `feature-doc-builder`
+
+The skill name remains `feature-doc-builder` for compatibility, but the canonical artifact term in the framework is **feature requirements document**.
 
 Its purpose is to work with a product owner, project owner, or stakeholders to define:
 
@@ -455,7 +560,7 @@ Its purpose is to work with a product owner, project owner, or stakeholders to d
 - what the system should do at a feature level
 - how the feature should evolve across milestones
 
-It may also ingest transcripts or meeting notes to create or refresh a feature document draft.
+It may also ingest transcripts or meeting notes to create or refresh a feature requirements document draft.
 
 `feature-doc-builder` is intentionally different from `spec-builder`:
 
@@ -469,11 +574,11 @@ This is the recommended flow when a team is defining or revising a long-lived fe
 ```mermaid
 flowchart TD
     A([Product owner or stakeholder]) --> B[Agent running feature-doc-builder: elicit problem, value, current state, system intent]
-    B --> C[Draft or update feature document]
+    B --> C[Draft or update feature requirements document]
     C --> D[Review with development team]
     D --> E{Clear enough?}
     E -->|No| B
-    E -->|Yes| F[Define or revise near-term milestones in the feature document]
+    E -->|Yes| F[Define or revise near-term milestones in the feature requirements document]
     F --> G[Product owner and development team select one milestone to advance now]
     G --> H[Deliverable Owner works through an interactive dialogue with an agent running spec-builder to define one or more deliverables for that milestone and draft their SPECs]
 
@@ -486,9 +591,9 @@ flowchart TD
     class E decision
 ```
 
-The key idea is that the feature document is not just written once. It is refined through owner/stakeholder input and development-team review, then updated as milestones ship.
+The key idea is that the feature requirements document is not just written once. It is refined through owner/stakeholder input and development-team review, then updated as milestones ship.
 
-Another key idea is that milestones are defined within the feature document, not produced as a separate one-time decomposition artifact. The feature document owns the milestone roadmap. When a team is ready to execute, the product owner and development team select one milestone to advance. The Deliverable Owner then works through an interactive dialogue with an agent running the `spec-builder` skill to break that milestone into one or more deliverables and draft the corresponding SPECs.
+Another key idea is that milestones are defined within the feature requirements document, not produced as a separate one-time decomposition artifact. The feature requirements document owns the milestone roadmap. When a team is ready to execute, the product owner and development team select one milestone to advance. The Deliverable Owner then works through an interactive dialogue with an agent running the `spec-builder` skill to break that milestone into one or more deliverables and draft the corresponding SPECs.
 
 ---
 
@@ -500,7 +605,7 @@ One person may hold multiple roles in a smaller team.
 
 | Role | Primary scope | Typical responsibilities |
 | ---- | ------------- | ------------------------ |
-| **Product Owner** | Application and feature value | Owns feature intent, business/domain value, feature documents, milestone direction, and feature-level success criteria |
+| **Product Owner** | Application and feature value | Owns feature intent, business/domain value, feature requirements documents, milestone direction, and feature-level success criteria |
 | **Project Owner** | Engineering project and delivery system | Owns repo/process/framework conventions, implementation-facing priorities, and delivery structure |
 | **Deliverable Owner** | One bounded execution increment | Usually a software developer, tech lead, or other technical owner. Owns deliverable scope, deliverable acceptance criteria, implementation clarifications during execution, and final acceptance/rejection |
 
@@ -588,7 +693,7 @@ The framework is designed to maximize safe agent autonomy without removing owner
 
 Agents are expected to work with minimal supervision when they are operating inside an already approved contract or clearly delegated task, including:
 
-- drafting and revising proposals, feature documents, and SPECs during interactive authoring sessions
+- drafting and revising proposals, feature requirements documents, and SPECs during interactive authoring sessions
 - producing a PLAN from an approved SPEC
 - implementing code from an approved SPEC and PLAN
 - running tests, performing QA verification, and generating rework content
@@ -599,8 +704,8 @@ Agents are expected to work with minimal supervision when they are operating ins
 
 Owner approval or another authorized human decision remains mandatory at these boundaries:
 
-- approving a proposal as the basis for moving into feature-document and/or SPEC work
-- approving feature-document direction, milestone framing, and major feature-scope changes
+- approving a proposal as the basis for moving into feature-requirements and/or SPEC work
+- approving feature-requirements direction, milestone framing, and major feature-scope changes
 - approving the SPEC as the authoritative execution contract
 - approving the PLAN when the project/team expects an explicit planning gate
 - resolving ambiguities or scope changes that materially alter the approved contract
@@ -625,9 +730,15 @@ Standards are long-lived, tracked implementation rules. They should live beside 
 
 Standards are **not** the place to describe product functionality, feature intent, or user-facing behavior. Their purpose is to define the engineering patterns, structural rules, and implementation constraints that make the software maintainable, consistent, and expandable over time.
 
+### Why standards exist
+
+Standards exist to solve the "how should this software be built?" problem. Without them, humans and agents default to whatever nearby pattern they happen to see, even when the surrounding code is legacy, inconsistent, or already known to be undesirable.
+
+Their value is that they turn implementation expectations into explicit shared rules instead of informal convention.
+
 Use this distinction:
 
-- `proposals/`, `features/`, and `deliverable SPECs` describe what the software should do and why
+- `project.md`, `proposals/`, `features/` (feature requirements documents), and `deliverable SPECs` describe what the software should do and why
 - `standards/` describes how the software should be built
 
 The key contract is:
@@ -641,6 +752,8 @@ The key contract is:
 This is how the framework manages context without requiring every task to load the entire project's standards corpus.
 
 ### `AGENTS.md` Strategy
+
+`AGENTS.md` exists to solve the "how do I enter this repo correctly?" problem. Its job is routing, not deep policy. It tells agents where the durable docs live, which indexes to use for selective loading, what tracking model the repo uses, and what execution constraints matter before work begins.
 
 Every repo using the framework should have a real `AGENTS.md` at its repo root.
 
@@ -659,14 +772,15 @@ If you want a concrete real-world repo-level `AGENTS.md` in practice, use the re
 At minimum, a repo-level `AGENTS.md` must tell agents:
 
 - what the repo's framework docs root is
+- where `<DOCS_ROOT>/project.md` lives
 - where `<DOCS_ROOT>/standards/index.yaml` lives
 - that the standards index is the discovery surface for selective context loading
 - where `<DOCS_ROOT>/features/index.yaml` lives when feature context matters
-- whether `<DOCS_ROOT>/deliverables/` is local/untracked or committed in that repo
+- whether `<DOCS_ROOT>/deliverables/` is local/untracked, committed, or backed by Zazz Board in that repo
 - what work-tracking system the repo uses for deliverables, tickets, and PR context
 - the repo's worktree / branch policy
 
-The standards index is mandatory. The features index is also expected in repos that use feature documents.
+The standards index is mandatory. The features index is also expected in repos that use feature requirements documents.
 
 The tracking declaration should be concise but explicit. For example, it should clarify whether the repo uses:
 
@@ -748,7 +862,13 @@ Deliverables are the execution layer of the framework.
 
 - Every active deliverable must have a SPEC.
 - A PLAN is optional, but once a team decides a deliverable needs explicit planning, that PLAN becomes part of the authoritative execution contract.
-- Deliverable artifacts live under `<DOCS_ROOT>/deliverables/`.
+- Deliverable artifacts may have local working copies under `<DOCS_ROOT>/deliverables/`, but as a general rule they should be treated as transient execution artifacts and persisted in Zazz Board when the project uses Board.
+
+### Why deliverables exist
+
+Deliverables exist to solve the "what exactly are we building right now?" problem. They create a bounded execution contract for one increment of work so implementation, QA, and review can converge on a clear scope.
+
+Their value is precision and boundedness. They let the team isolate one unit of execution without overloading `project.md`, proposals, or feature requirements documents with short-lived implementation detail.
 
 ### Acceptance Criteria and TDD
 
@@ -756,7 +876,7 @@ Acceptance criteria and TDD are core framework mechanisms for ensuring value del
 
 Framework expectations:
 
-- the Product Owner defines feature-level value and milestone outcomes in the feature document
+- the Product Owner defines feature-level value and milestone outcomes in the feature requirements document
 - the Deliverable Owner defines explicit deliverable acceptance criteria in the SPEC
 - each deliverable acceptance criterion must be testable or clearly marked for owner sign-off
 - the implementation loop should use TDD wherever applicable
@@ -769,28 +889,29 @@ They work together with standards:
 - acceptance criteria and TDD prove the deliverable does the right thing
 - standards help ensure it is built the right way
 
-### Default framework position: keep deliverables local
+### Default framework position: durable docs in Git, transient execution docs in Zazz Board
 
-In practice, deliverable docs are often more useful as **worktree-local execution artifacts** than as long-lived repo content. They change frequently, can be highly agent-specific, and tend to clutter the shared repository when every in-flight deliverable is committed.
+In practice, deliverable docs are transient execution artifacts, not long-lived product-definition docs. They change frequently, can be highly agent-specific, and tend to clutter the shared repository when every in-flight deliverable is committed.
 
 So the framework default is:
 
-- keep `standards/` and `features/` tracked
-- keep `deliverables/` present in each worktree
-- keep deliverable files untracked by default via worktree-local ignore configuration
+- keep `project.md`, `standards/`, `proposals/`, and `features/` tracked in Git or another Git-based service
+- persist transient deliverable markdown and associated assets in Zazz Board
+- use local deliverable files only as temporary execution working copies when they are helpful
 
 Examples of acceptable mechanisms:
 
 - `.git/info/exclude`
 - an equivalent worktree-local exclude file in a shared-bare/worktree setup
+- Zazz Board as the durable store for SPECs, PLANs, diagrams, and related deliverable assets
 
-The important idea is not the exact Git plumbing. The important idea is that deliverables are usually **local execution docs**, while feature documents and standards are **shared durable knowledge**.
+The important idea is not the exact Git plumbing. The important idea is that `project.md`, proposals, feature requirements documents, and standards are **shared durable knowledge**, while deliverables are usually **transient execution docs**.
 
-Teams may still choose to commit deliverable docs when they want a canonical audit trail in Git. The framework allows that. The framework default simply biases toward keeping transient execution clutter out of the shared history.
+Teams may still choose to commit deliverable docs when they want a canonical audit trail in Git. The framework allows that, but it should be treated as an explicit exception rather than the default.
 
-### One worktree per deliverable
+### Preferred: one worktree per deliverable
 
-Required operating model:
+Worktrees are strongly encouraged, but they are not required. When a repo uses them, the preferred operating model is:
 
 - one active deliverable per worktree
 - one branch per worktree
@@ -798,35 +919,48 @@ Required operating model:
 - do not use `/` in branch names
 - use flat branch names so the branch name can map cleanly to a sibling worktree directory
 
-This keeps execution isolated and makes it easy to keep local deliverable docs alongside the code they govern.
+This keeps execution isolated and makes it easy to keep local deliverable docs alongside the code they govern. It is the framework's recommended default because it improves safety, reviewability, and recovery, especially when multiple humans or agents are working in parallel.
 
-Explicit framework rule:
+If a team does not use worktrees, the framework still applies. The team should preserve the same outcomes by using some other isolation strategy for in-flight deliverables.
+
+If the repo does use worktrees, use worktree-safe branch names:
 
 - `feature/rbac` is not an acceptable Zazz branch name
 - `docs/reorg-mw1` is not an acceptable Zazz branch name
 - use `feature-rbac` or `docs-reorg-mw1` instead
 
-Branch names such as `feature/rbac` are valid Git refs, but they imply nested path segments when reused as worktree directory names. Because Zazz standardizes on sibling worktrees under one container directory, flat names are required:
+Branch names such as `feature/rbac` are valid Git refs, but they imply nested path segments when reused as worktree directory names. Because the recommended Zazz setup standardizes on sibling worktrees under one container directory, flat names are preferred:
 
 - `feature-rbac`
 - `docs-reorg-mw1`
 - `deliverable-zazz-142-role-management-ui`
 
-It also provides a clean rollback boundary for human review. If a deliverable implementation goes down the wrong path, fails review, or reveals that the contract itself needs revision, the worktree can be abandoned and the team can return to the governing docs:
+Worktrees also provide a clean rollback boundary for human review. If a deliverable implementation goes down the wrong path, fails review, or reveals that the contract itself needs revision, the worktree can be abandoned and the team can return to the governing docs:
 
 - revisit the proposal if the approach or justification is wrong
-- revisit the feature document if the feature intent or milestone framing is wrong
+- revisit the feature requirements document if the feature intent or milestone framing is wrong
 - revisit the SPEC and PLAN if the execution contract is wrong or incomplete
 
 This is one of the practical benefits of the framework's git-native design: incorrect execution paths can be discarded cleanly without confusing the durable project history or forcing a bad implementation to keep moving forward.
 
-For detailed setup guidance, see [worktree-setup.md](worktree-setup.md).
+Useful background references:
+
+- [Git worktree documentation](https://git-scm.com/docs/git-worktree)
+- [Worktrunk CLI](https://worktrunk.dev/worktrunk/)
+
+`git worktree` is the underlying Git feature. [Worktrunk](https://worktrunk.dev/worktrunk/) is an encouraged convenience CLI that makes worktree workflows easier, especially for parallel human/agent execution, but it is not a framework requirement.
+
+For detailed setup guidance, see:
+
+- [docs/worktree-setup.md](docs/worktree-setup.md)
+- [docs/wt-cheat-sheet.md](docs/wt-cheat-sheet.md)
 
 ### Durable knowledge must be promoted
 
 If a deliverable changes the product, the final knowledge should not stay trapped in a local SPEC or PLAN. Promote the durable outcome into:
 
-- the relevant feature document
+- `project.md` when the project's high-level capability story changes
+- the relevant feature requirements document
 - any impacted standards
 - other long-lived project docs as needed
 
@@ -840,8 +974,9 @@ Document flow:
 
 | Stage | Artifact | Purpose |
 | ----- | -------- | ------- |
+| **Project context** | `project.md` | Top-level durable description of the software project, its value proposition, and major established capabilities |
 | **Proposal** | `proposals/{name}.md` | Optional. Explore whether or how to proceed before feature definition or execution commitment; use a draft PR to collaborate while the proposal is still in progress |
-| **Feature definition** | `features/{feature-key}.md` | Long-lived capability doc: why, what is live, system-level intent, milestone roadmap, future direction, and feature-level success criteria |
+| **Feature definition** | `features/{feature-key}.md` | Long-lived feature requirements document: why, what is live, system-level intent, milestone roadmap, future direction, and feature-level success criteria |
 | **Specification** | `-SPEC` | Required execution contract for one deliverable, including explicit acceptance criteria and verification expectations |
 | **Plan** | `-PLAN` | Optional execution decomposition for implementation |
 | **Build / validate** | code, tests, QA evidence | An agent running `worker` implements with TDD where applicable; an agent running `qa` verifies against acceptance criteria and evidence until convergence |
@@ -851,13 +986,14 @@ Execution relationship:
 
 ```mermaid
 flowchart LR
-    P["Proposal\n(optional)"] --> FB["Agent running\nfeature-doc-builder"]
+    PJ["project.md"] --> P["Proposal\n(optional)"]
+    PJ --> FB["Agent running\nfeature-doc-builder"]
+    P --> FB
     P --> SB["Agent running\nspec-builder"]
-    FB --> F["Feature document\n(optional for bugs/chores)"]
-    F --> M["Milestones live inside the feature document"]
+    FB --> F["Feature requirements document\n(optional for bugs/chores)"]
+    F --> M["Milestones live inside the feature requirements document"]
     M --> SM["Owner/team select one milestone to advance"]
     SM --> SB
-    P --> FB
     SB --> SPEC["Deliverable SPEC"]
     SPEC --> PL["Agent running\nplanner"]
     PL --> PLAN["PLAN\n(optional)"]
@@ -866,37 +1002,45 @@ flowchart LR
     W --> QA["Agent running\nqa"]
     QA --> PR["Agent running\npr-builder\n(optional)"]
     PR --> G["Owner UAT + PR review"]
-    G --> U["Merge + update feature document / standards"]
+    G --> U["Merge + update project.md /\nfeature requirements / standards"]
 ```
 
 Notes:
 
-- A deliverable may be created without a feature document when the work is a bug, chore, migration, or other non-feature slice.
+- A deliverable may be created without a feature requirements document when the work is a bug, chore, migration, or other non-feature slice.
 - A feature may drive many deliverables over time.
-- Milestones are defined and maintained inside the feature document.
-- Teams do not need to define every future milestone up front; the feature document may start with only the next few meaningful milestones.
+- Milestones are defined and maintained inside the feature requirements document.
+- Teams do not need to define every future milestone up front; the feature requirements document may start with only the next few meaningful milestones.
 - Execution advances one selected milestone at a time.
 - The Deliverable Owner works through an interactive dialogue with an agent running the `spec-builder` skill to decompose that selected milestone into one or more deliverables and draft their SPECs.
-- The feature document is typically created or updated before milestone-specific SPECs are written.
+- `project.md` should already exist before proposal or feature-definition work begins.
+- The feature requirements document is typically created or updated before milestone-specific SPECs are written.
 
 ---
 
 ## Core Entities
 
 ```text
-Project -> Feature -> Milestone -> Deliverable -> Task
-         (optional layers)
+Project
+├── Proposal (optional)
+├── Feature requirements document (optional for some work)
+│   └── Milestone
+│       └── Deliverable
+│           └── Task
+└── Standalone deliverable
+    └── Task
 ```
 
 | Entity | Description |
 | ------ | ----------- |
-| **Project** | Long-lived product or application context; default assumption is one monorepo |
-| **Feature** | Long-lived capability with one feature document that evolves over time |
+| **Project** | Long-lived product or application context with a top-level `project.md`; default assumption is one monorepo |
+| **Proposal** | Optional exploratory artifact used to compare options before committing to feature-definition or execution direction |
+| **Feature** | Long-lived capability with one feature requirements document that evolves over time |
 | **Milestone** | Named increment of a feature or release target; may span multiple deliverables |
-| **Deliverable** | Bounded unit of execution with one SPEC and optional PLAN |
+| **Deliverable** | Bounded unit of execution with one SPEC and optional PLAN; may be associated with a milestone or may stand alone |
 | **Task** | Smallest execution unit; an agent running `planner` decomposes, an agent running `worker` implements, and the relevant owner coordinates |
 
-**Adoption path:** Start with Deliverable -> Task if needed. Add Feature and Milestone when the product needs durable capability tracking and stakeholder-visible roadmap/history.
+**Adoption path:** Start with `project.md`. Add Proposal when the direction is uncertain. Add Feature and Milestone when the product needs durable capability tracking and stakeholder-visible roadmap/history. Go straight to Deliverable -> Task for bounded non-feature work when that is enough.
 
 **Variants:** Each alternative implementation gets its own deliverable identity and worktree. Human review selects one or triggers a synthesis deliverable.
 
@@ -938,7 +1082,7 @@ By framework layer:
 | Layer | Scope |
 | ----- | ----- |
 | **Execution** | Deliverable -> Task with SPEC/PLAN |
-| **Capability** | Add feature documents and feature-linked deliverables |
+| **Capability** | Add feature requirements documents and feature-linked deliverables |
 | **Portfolio** | Add Milestones for roadmap and release coordination |
 
 ---

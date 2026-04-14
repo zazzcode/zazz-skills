@@ -1,6 +1,6 @@
 ---
 name: feature-doc-builder
-description: Help a user create, draft, refine, or update a long-lived feature document for a product capability; use when the user wants to define or improve feature purpose, current state, milestone roadmap, and feature-level direction before or alongside deliverable planning.
+description: Help a user create, draft, refine, or update a long-lived feature requirements document for a product capability; use when the user needs durable capability intent, current state, milestone evolution, and feature-level direction before or alongside deliverable planning.
 ---
 
 # Feature Doc Builder Skill
@@ -10,32 +10,55 @@ description: Help a user create, draft, refine, or update a long-lived feature d
 Before doing anything else, check for `.agents/skill-extensions/feature-doc-builder/EXTENSION.md`.
 If it exists, read it immediately after this `SKILL.md` and apply it as repo-specific guidance that augments this skill.
 
+## Canonical Term
+
+This skill's canonical artifact is a **feature requirements document**.
+
+Some repos or users may still say "feature document" or "feature doc" as legacy shorthand. Treat those as aliases unless the repo defines a different artifact model.
+
+## When To Use This Skill
+
+Use this skill when the user needs to:
+
+- define or revise a long-lived product capability
+- describe what is live today versus what is planned next
+- organize capability evolution into milestones
+- turn notes or transcripts into a durable feature requirements document
+- prepare feature-level context before deliverable SPEC authoring
+
+Do not use this skill when the user mainly needs to:
+
+- evaluate competing approaches before deciding whether to proceed; use `proposal-builder`
+- define one bounded implementation increment; use `spec-builder`
+- decompose approved work into execution tasks; use `planner`
+- implement or verify code; use `worker` or `qa`
+
 ## Startup Sequence
 
 Before starting the dialogue:
+
 1. Check for the repo extension file above and read it if present.
-2. Use `AGENTS.md` as the source of truth for repo-specific settings such as docs root, tracking system, project-code conventions, and documentation workflow rules. Read it if that context is not already available.
-3. Identify whether you are creating a new feature document, evolving an existing one, or converting a transcript into a draft.
-4. Find the standards index and any existing feature documents or milestone references that should shape the discussion.
-5. Then begin the dialogue and keep the conversation at feature scope rather than deliverable implementation scope.
+2. Read `AGENTS.md` for repo-specific docs-root, tracking, and workflow rules if that context is not already available.
+3. Identify whether you are creating a new feature requirements document, revising an existing one, or drafting from a transcript.
+4. Read `<DOCS_ROOT>/features/index.yaml` if it exists so you do not duplicate or overlap an existing feature.
+5. Read `<DOCS_ROOT>/standards/index.yaml` only when system constraints materially shape the feature boundary or milestone breakdown.
+6. Keep the conversation at feature scope rather than deliverable implementation scope.
 
 ## Mission
 
-Create or evolve a feature document that explains a long-lived application capability at the product and system level.
+Create or evolve a feature requirements document that explains a long-lived application capability at the product and system level.
 
-The feature document should help answer:
+The document should answer:
 
-- why this feature exists
+- why the capability exists
 - what value it creates
 - what is live today
 - what still needs to be built
-- how the work should be organized into milestones
+- how the capability should evolve across milestones
 
-This skill is for feature definition and feature evolution. It is not an implementation-planning skill and it does not replace deliverable SPEC authoring.
+This skill is for feature definition and feature evolution. It does not replace proposal analysis, deliverable SPEC authoring, or implementation planning.
 
-It should help the Product Owner articulate feature-level success criteria and milestone outcome criteria that later inform deliverable acceptance criteria.
-
-## Primary Audience
+## Audience
 
 Work primarily with:
 
@@ -43,10 +66,10 @@ Work primarily with:
 - project owner
 - stakeholders with domain context
 
-Secondary audiences for the resulting feature document:
+The resulting feature requirements document should also help:
 
 - developers onboarding to the project
-- the development team reviewing feature intent and milestone breakdown
+- the development team reviewing feature intent and milestone framing
 - future agents that need product context before creating deliverable specs
 
 ## Docs Root Convention
@@ -61,7 +84,7 @@ Primary artifact:
 
 Supporting discovery artifact:
 
-- update `<DOCS_ROOT>/features/index.yaml` when the feature document is created or materially revised
+- update `<DOCS_ROOT>/features/index.yaml` when the feature requirements document is created or materially revised
 
 ## Boundaries
 
@@ -69,177 +92,111 @@ Supporting discovery artifact:
 
 - define the feature's purpose, value, and current state
 - capture feature-level success criteria and milestone outcomes
-- capture system-level behavior and important user/system flows
+- capture important user flows and system flows
 - decompose feature evolution into milestones
-- identify what is live, planned, proposed, or deferred
-- ingest transcripts or meeting notes and turn them into a feature document draft
-- produce handoff guidance for later deliverable specs
+- distinguish what is live, planned, proposed, and deferred
+- convert transcripts or meeting notes into a feature requirements document draft
+- produce handoff guidance for later deliverable SPEC work
 
 ### This skill does not
 
-- write deliverable-level acceptance criteria for implementation tasks
+- write deliverable-level acceptance criteria
 - produce execution-ready task decomposition
-- replace proposal analysis when the team is still deciding whether to pursue an idea
+- replace proposal analysis when the direction is still uncertain
 - implement the feature
 
 Artifact boundaries:
 
-- `proposal-builder` helps decide whether or how to proceed
-- `feature-doc-builder` defines the long-lived feature and milestone roadmap
+- `proposal-builder` decides whether or how to proceed
+- `feature-doc-builder` defines the long-lived capability and milestone roadmap
 - `spec-builder` defines one deliverable's execution contract
 
 ## Interaction Modes
 
-### Mode A: Live owner dialogue (default)
+### Mode A: Live owner dialogue
 
-Use a conversational process with a product owner, project owner, or stakeholder to draw out the feature's why, current state, and future milestones.
+Use a conversational process with a product owner, project owner, or stakeholder to draw out the feature's value, current state, and future milestones.
 
 ### Mode B: Transcript ingestion
 
-If the user provides a transcript or meeting notes:
+If the user provides notes or a transcript:
 
 1. summarize the core problem, goals, and decisions
-2. infer the feature's intent and current/planned states
-3. identify open questions and missing milestone detail
-4. generate or refresh the feature document draft
+2. infer the feature intent, current state, and likely milestone model
+3. identify open questions and assumptions
+4. generate or refresh the feature requirements document draft
 
-### Mode C: Existing feature-document revision
+### Mode C: Existing-document revision
 
-When the user already has a feature document:
+When the user already has a feature requirements document:
 
-1. read the current feature document
+1. read the current document
 2. identify what changed after the latest milestone or discussion
 3. update current-state sections, milestone statuses, and flows
-4. preserve long-lived feature intent while refreshing stale sections
+4. preserve durable feature intent while refreshing stale sections
 
 ### Mode D: Development mode
 
 If the owner says "development mode" or equivalent, the focus is on improving this skill itself. In development mode, you may edit `.agents/skills/feature-doc-builder/SKILL.md`. Outside development mode, this file is read-only.
 
-## Human-Facing Usage Guidance
-
-This is an interactive, back-and-forth skill.
-
-The owner does not need to provide a complete feature document up front. A strong starting prompt plus iterative dialogue is enough. The agent should:
-
-- ask clarifying questions about the feature's value and current state
-- help distinguish current behavior from planned future behavior
-- help define or revise the next few meaningful milestones
-- draft the feature document early enough that the owner can react to a concrete document
-
-This skill should feel like a structured product-definition conversation, not an implementation planning session.
-
-### Example starter prompts
-
-#### Example 1: New feature document
-
-```text
-Use feature-doc-builder.
-I want to create a feature document for role-based access control in our application.
-This feature needs to explain why RBAC matters, what the system does today, what needs to be added, and how we should break it into milestones.
-Please guide me through this in a back-and-forth dialogue and draft the feature document as we refine it.
-```
-
-#### Example 2: Update an existing feature document after a milestone
-
-```text
-Use feature-doc-builder.
-We already have a feature document for our billing feature, and milestone 1 has shipped.
-Please help me update the feature document so it reflects the current live behavior, marks milestone 1 complete, and refines the next milestones based on what we learned.
-```
-
-#### Example 3: Transcript-first feature-document drafting
-
-```text
-Use feature-doc-builder.
-I am pasting notes from a product and engineering meeting about a new approvals workflow.
-Please infer the feature intent, current state, likely milestones, and open questions, then draft a feature document and ask follow-up questions where the discussion was ambiguous.
-```
-
-### Prompt structure that works well
-
-The best starting prompts usually include:
-
-- the feature name
-- why the feature matters
-- what is known about the current state
-- whether this is a new feature document or an update
-- a request for iterative dialogue and drafting
-
 ## Dialogue Principles
 
-- Start with the problem and business/domain value before discussing solution shape.
-- Keep the discussion at the feature level, not the deliverable-task level.
-- Ask about current state explicitly. A feature document must describe what the application does today, not just the future vision.
+- Start with the problem and business or domain value before discussing solution shape.
+- Keep the discussion at feature scope, not deliverable-task scope.
+- Ask about current state explicitly; the document must describe what the application does today.
 - Distinguish what is live, planned, proposed, and deferred.
 - Treat milestones as meaningful increments of user or system value.
-- Push back when the conversation collapses into low-level implementation detail that belongs in standards or deliverable specs.
-- Use transcripts as evidence, not truth. Surface inferred assumptions and ask for confirmation.
+- Push back when the conversation collapses into implementation detail that belongs in standards or deliverable specs.
+- Use transcripts as evidence, not truth; surface inferred assumptions and ask for confirmation.
 
 ## Required Inputs
 
-Before drafting a serious feature document, elicit or infer:
+Before drafting a serious feature requirements document, elicit or infer:
 
 1. feature name and feature key
 2. problem statement
-3. business/domain justification
+3. business or domain justification
 4. who is affected
-5. current state of the system
+5. current system state
 6. desired future state
 7. major system concepts or entities involved
 8. milestone breakdown or at least a first-pass milestone model
 
 If important inputs are missing, continue the dialogue and mark assumptions explicitly.
 
-## Standards and Feature Context Integration
+## Content Requirements
 
-Process:
+Each feature requirements document draft should usually include:
 
-1. Read `<DOCS_ROOT>/features/index.yaml` if it exists to avoid duplicating or overlapping an existing feature doc.
-2. Read `<DOCS_ROOT>/standards/index.yaml` only as needed for system-level constraints that materially shape the feature.
-3. Reference standards where they affect feature boundaries or milestone decomposition, but do not restate detailed implementation rules inside the feature document.
+1. feature title and summary
+2. current milestone and next milestone
+3. introduction or problem statement
+4. why this feature matters
+5. current state
+6. feature-level success criteria
+7. core concepts or domain model
+8. user flows and system flows
+9. milestone overview table
+10. milestone detail sections with outcome criteria
+11. risks, constraints, and non-goals
+12. open questions
+13. deliverable handoff considerations
 
-The feature document should stay product/system-oriented. Detailed coding conventions remain in standards. Deliverable-level test and execution detail remains in SPECs and PLANs.
+### Current state
 
-## Feature Document Content Requirements
+Current state means what the application actually does today as of the latest completed milestone. This is one of the most important differences between a feature requirements document and a proposal.
 
-Each feature document draft should usually include:
+### Milestones
 
-1. Feature title and summary
-2. Current milestone and next milestone
-3. Introduction / problem statement
-4. Why this feature matters
-5. Current state
-6. Feature-level success criteria
-7. Core concepts / domain model
-8. User flows and system flows
-9. Milestone overview table
-10. Milestone detail sections with milestone outcome criteria
-11. Risks, constraints, and non-goals
-12. Open questions
-13. Deliverable handoff considerations
+A milestone is a meaningful feature increment that advances the capability. A milestone may contain one or more deliverables. The milestone sequence should be intelligible to both stakeholders and the development team.
 
-### What "current state" means
+### Feature-level success criteria
 
-The feature document must explain what the application actually does today as of the latest completed milestone. This is one of the most important distinctions between a feature document and a proposal.
+At this layer, success criteria should describe value and system outcomes rather than implementation tests. They should help later SPEC authors derive deliverable acceptance criteria, not replace them.
 
-### What "milestone" means
+## Recommended Section Order
 
-A milestone is a meaningful feature increment that advances the capability. A milestone may contain one or more deliverables. The feature document should make the milestone sequence intelligible to both stakeholders and the development team.
-
-### Feature-level success criteria vs deliverable acceptance criteria
-
-At the feature document level, success criteria should describe value and system outcomes, not implementation tests. They answer questions like:
-
-- what valuable capability exists after this milestone?
-- what should be true of the product when this feature is successful?
-- what outcome should later deliverables prove through acceptance criteria and TDD?
-
-Those feature-document-level success criteria should inform later SPEC acceptance criteria, but should not replace deliverable-level testability requirements.
-
-## Recommended Feature Document Sections
-
-Use this section order unless the owner explicitly asks for a different structure:
+Use this order unless the owner explicitly wants a different structure:
 
 1. Title
 2. Feature summary
@@ -273,7 +230,7 @@ Use this section order unless the owner explicitly asks for a different structur
 
 - What are the important nouns and concepts in this feature?
 - Which actors or systems participate?
-- What terminology should be stable in the feature document?
+- What terminology should stay stable in the document?
 
 ### Flows
 
@@ -291,15 +248,15 @@ Use this section order unless the owner explicitly asks for a different structur
 ### Handoff to deliverables
 
 - Which milestone slices are likely to become separate deliverables?
-- Are there milestone dependencies the spec-builder should know about later?
+- Are there milestone dependencies the `spec-builder` should know about later?
 - Which parts require multiple deliverables rather than one large implementation?
 
 ## Output Naming and Placement
 
 Use framework naming guidance:
 
-- Feature document: `<DOCS_ROOT>/features/{feature-key}.md`
-- Features index: `<DOCS_ROOT>/features/index.yaml`
+- feature requirements document: `<DOCS_ROOT>/features/{feature-key}.md`
+- features index: `<DOCS_ROOT>/features/index.yaml`
 
 Keep `features/` flat by default. If a project later has a real need for multiple durable artifacts per feature, it may introduce subdirectories, but that is not the default framework recommendation.
 
@@ -307,26 +264,28 @@ Keep `features/` flat by default. If a project later has a real need for multipl
 
 When the user says:
 
+- "generate the feature requirements document"
 - "generate the feature document"
 - "draft the feature doc"
 - "write the feature requirements"
 - "create a feature document"
 
-...generate a draft immediately from the discussion so far, then iterate.
+generate a draft immediately from the discussion so far, then iterate.
 
 When the user says:
 
 - "milestone 1 is complete"
+- "update the feature requirements document"
 - "update the feature document"
 - "refresh the feature doc"
 
-...update the current-state and milestone sections to reflect the new system reality.
+update the current-state and milestone sections to reflect the new system reality.
 
-## Feature Document -> Deliverable Handoff
+## Feature Requirements Document -> Deliverable Handoff
 
-When the feature document is approved or a milestone is ready for execution, provide a handoff package for later spec work containing:
+When the document is approved or a milestone is ready for execution, provide a handoff package for later SPEC work containing:
 
-1. feature key and feature document path
+1. feature key and document path
 2. milestone being implemented
 3. current-state summary
 4. desired milestone outcome
@@ -338,10 +297,10 @@ This handoff informs deliverable SPEC creation but does not replace `spec-builde
 
 ## Quality Bar
 
-A feature document draft is high quality when:
+A feature requirements document draft is high quality when:
 
 1. the feature's why is explicit and persuasive
-2. the current state is accurate and not hand-wavy
+2. the current state is accurate and concrete
 3. the major concepts and flows are understandable to a new developer
 4. milestones are meaningful, ordered, and not just arbitrary task buckets
 5. the document helps both stakeholders and the development team
@@ -350,6 +309,6 @@ A feature document draft is high quality when:
 ## Example Use Cases
 
 - define a new long-lived capability before any deliverable specs exist
-- turn a stakeholder workshop transcript into a first feature document draft
-- update a feature document after milestone 1 ships
+- turn a stakeholder workshop transcript into a first feature requirements document draft
+- update a feature requirements document after milestone 1 ships
 - decompose a feature into milestone 1, 2, and 3 before creating individual deliverable specs
