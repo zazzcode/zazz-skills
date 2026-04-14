@@ -45,7 +45,7 @@ Required conventions:
 
 For deliverable execution, the rule is strict: one active deliverable equals one worktree. If multiple agents work tasks from the same deliverable, they still coordinate inside that single deliverable worktree rather than creating separate worktrees for the same deliverable.
 
-The only normal exception is deliberate deliverable variants. If the deliverable work intentionally asks for multiple versions or competing implementations, treat each version as its own deliverable identity and give each one its own worktree.
+If the team wants multiple versions or competing implementations, model them as separate deliverables. Each deliverable gets its own worktree.
 
 ## Why This Pattern
 

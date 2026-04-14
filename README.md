@@ -27,7 +27,7 @@ Zazz is opinionated about why different artifacts exist and where they belong.
 - Local deliverable files are useful as working copies, but they are not the default durable record.
 - Worktrees are a required part of the framework because they provide the isolation, recoverability, and execution boundaries the framework depends on.
 - The opinionated operating rule is one active deliverable per worktree.
-- The only normal exception is deliberate deliverable variants: if the work is explicitly split into multiple deliverable versions, each version becomes its own deliverable and gets its own worktree.
+- If the team wants multiple versions of the work, those should be modeled as separate deliverables, and each deliverable gets its own worktree.
 - Worktrunk is encouraged when a team wants a friendlier workflow on top of `git worktree`, but native Git remains the base capability.
 
 ## Document Model

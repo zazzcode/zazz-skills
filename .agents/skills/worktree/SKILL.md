@@ -132,7 +132,7 @@ Conventions:
 
 For deliverables, do not create multiple worktrees for one active deliverable. If several agents are working different tasks from the same deliverable, they coordinate inside that single deliverable worktree.
 
-The only normal exception is deliberate deliverable variants. If the user explicitly wants multiple versions of the deliverable, each version should be treated as its own deliverable identity and given its own worktree.
+If the user wants multiple versions or competing implementations, treat them as separate deliverables. Each deliverable gets its own worktree.
 
 ## Branch Naming Guidance
 

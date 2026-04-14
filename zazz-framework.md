@@ -923,7 +923,7 @@ This keeps execution isolated and makes it easy to keep local deliverable docs a
 
 The framework's unit of isolation is the deliverable worktree. Do not create multiple worktrees for the same active deliverable just because multiple agents are participating. Parallel task execution for one deliverable should still happen inside that single deliverable worktree, with file coordination handled through the PLAN, repo coordination policy, and the active agent harness.
 
-The only normal exception is deliberate deliverable variants. If a SPEC or owner decision explicitly calls for multiple versions of the deliverable, each version must become its own deliverable identity with its own SPEC/PLAN pathing as needed and its own dedicated worktree.
+If the team wants multiple versions or competing implementations, model them as separate deliverables. Each deliverable gets its own identity, its own execution contract as needed, and its own dedicated worktree.
 
 Use worktree-safe branch names:
 
@@ -1044,7 +1044,7 @@ Project
 
 **Adoption path:** Start with `project.md`. Add Proposal when the direction is uncertain. Add Feature and Milestone when the product needs durable capability tracking and stakeholder-visible roadmap/history. Go straight to Deliverable -> Task for bounded non-feature work when that is enough.
 
-**Variants:** The only normal exception to one-deliverable-per-worktree is deliberate deliverable variants. Each alternative implementation gets its own deliverable identity and worktree. Human review selects one or triggers a synthesis deliverable.
+**Variants:** If the team wants alternative implementations, treat them as separate deliverables. Each alternative gets its own deliverable identity and worktree. Human review selects one or triggers a synthesis deliverable.
 
 ---
 
