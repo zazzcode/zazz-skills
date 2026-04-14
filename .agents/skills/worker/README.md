@@ -72,6 +72,6 @@ The skill should produce:
 ## Notes
 
 - This skill is not for defining scope; use `spec-builder` and `planner` first.
-- One active deliverable per worktree is the intended operating model.
+- One active deliverable per worktree is the required operating model.
 - If the implementation contract is unclear, the worker should escalate instead of guessing.
 - The PLAN can restate deliverable-specific coordination guidance, but `AGENTS.md` is the repo-level source of truth for whether Zazz Board locks, Switchman, harness-native coordination, or serialization should be used.

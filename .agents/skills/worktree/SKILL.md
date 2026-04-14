@@ -7,17 +7,11 @@ description: Set up or manage Git worktrees for a Zazz-style repo; use when the 
 
 ## Prerequisites
 
-For full use of this skill, the working environment should have:
+This skill requires:
 
 - `git` installed
-- Worktrunk installed
 
-This skill is meant to help operate a Zazz-style worktree workflow with both native Git capabilities and the convenience layer Worktrunk provides.
-
-If Worktrunk is missing:
-
-- the skill may still explain the framework's worktree model and native `git worktree` commands
-- but the preferred operational path is to install Worktrunk before relying on this skill for day-to-day setup and management
+Worktrunk is optional but recommended. This skill should fully support the framework's required worktree model with native `git worktree` commands, while using Worktrunk as a convenience layer when it is available.
 
 ## Startup Sequence
 
@@ -52,10 +46,10 @@ Its value is consistency, isolation, and recoverability. It helps teams keep one
 
 ## Framework Alignment
 
-- Worktrees are strongly encouraged by the framework, not strictly required.
-- The preferred model is a bare-repo container with sibling worktrees.
+- Worktrees are required by the framework.
+- The required model is a bare-repo container with sibling worktrees.
 - Durable docs belong in Git; transient deliverable execution artifacts generally belong in Zazz Board.
-- When a repo uses worktrees, one active deliverable or document effort should map to one branch and one worktree.
+- One active deliverable or document effort must map to one branch and one worktree.
 - Flat branch names are preferred because they map cleanly to sibling worktree directory names.
 - Worktrunk is encouraged when available, but plain `git worktree` remains the base capability.
 
@@ -118,7 +112,7 @@ Depending on the task, this skill may produce:
 6. When Worktrunk is available, prefer it for routine worktree management if it preserves the repo's conventions.
 7. If the repo is already using a different but stable layout, explain the tradeoff before trying to reshape it.
 
-## Preferred Layout
+## Required Layout
 
 ```text
 repo-container/
@@ -135,6 +129,10 @@ Conventions:
 - the container directory is not itself the active checkout
 - every active worktree is a sibling directory
 - one active effort maps to one branch and one worktree
+
+For deliverables, do not create multiple worktrees for one active deliverable. If several agents are working different tasks from the same deliverable, they coordinate inside that single deliverable worktree.
+
+The only normal exception is deliberate deliverable variants. If the user explicitly wants multiple versions of the deliverable, each version should be treated as its own deliverable identity and given its own worktree.
 
 ## Branch Naming Guidance
 
@@ -167,8 +165,8 @@ git worktree prune
 Bare-repo style example:
 
 ```bash
-git --git-dir=.bare worktree add ../feature-rbac -b feature-rbac origin/main
-git --git-dir=.bare worktree add ../docs-reorg-mw1 -b docs-reorg-mw1 origin/main
+git --git-dir=.bare worktree add ../feature-rbac -b feature-rbac origin/<integration-branch>
+git --git-dir=.bare worktree add ../docs-reorg-mw1 -b docs-reorg-mw1 origin/<integration-branch>
 git --git-dir=.bare worktree list
 ```
 

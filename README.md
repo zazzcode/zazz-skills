@@ -25,7 +25,9 @@ Zazz is opinionated about why different artifacts exist and where they belong.
 - Durable, continuously maintained documents such as `project.md`, proposals, feature requirements documents, and standards belong in Git or another Git-based service.
 - Transient execution artifacts such as deliverable SPECs, PLANs, diagrams, and related working assets generally belong in Zazz Board.
 - Local deliverable files are useful as working copies, but they are not the default durable record.
-- Worktrees are strongly encouraged because they improve isolation and recovery, but they are not a hard requirement of the framework.
+- Worktrees are a required part of the framework because they provide the isolation, recoverability, and execution boundaries the framework depends on.
+- The opinionated operating rule is one active deliverable per worktree.
+- The only normal exception is deliberate deliverable variants: if the work is explicitly split into multiple deliverable versions, each version becomes its own deliverable and gets its own worktree.
 - Worktrunk is encouraged when a team wants a friendlier workflow on top of `git worktree`, but native Git remains the base capability.
 
 ## Document Model
@@ -86,7 +88,7 @@ zazz-framework.md      primary framework philosophy and document model
 | Skill | Purpose |
 | ----- | ------- |
 | `pr-builder` | Produces reviewer-ready PR packaging from diff, docs, and evidence. |
-| `worktree` | Sets up or manages Zazz-style worktrees using `git worktree` and Worktrunk; intended for environments where both are installed. |
+| `worktree` | Sets up or manages the framework's required Zazz-style worktree model using `git worktree`, with optional Worktrunk convenience commands. |
 | `zazz-board-api` | Companion utility skill for Zazz Board integration. |
 | `jira-api` | Draft companion utility for Jira-backed repos. |
 
@@ -95,7 +97,7 @@ zazz-framework.md      primary framework philosophy and document model
 If you are adopting the framework in another repo:
 
 1. Read [zazz-framework.md](zazz-framework.md).
-2. Read [docs/worktree-setup.md](docs/worktree-setup.md) if your repo will use the recommended worktree model.
+2. Read [docs/worktree-setup.md](docs/worktree-setup.md) because the framework requires the worktree operating model.
 3. Review [templates/AGENTS.md](templates/AGENTS.md).
 4. Copy the skills you want from `.agents/skills/` into your agent runtime or repo.
 

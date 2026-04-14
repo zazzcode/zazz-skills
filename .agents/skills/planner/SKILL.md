@@ -71,7 +71,7 @@ The planner does not acquire locks or manage coordination itself; it turns the r
 - Zazz is spec-driven and test-driven.
 - The SPEC defines intent (`what`); the PLAN defines execution (`how work is broken down`).
 - The SPEC is read-only during planning.
-- One active deliverable should execute in one worktree.
+- One active deliverable must execute in one worktree.
 - `deliverables/` are usually local execution artifacts unless the repo explicitly tracks them in Git.
 - The human coordinator (Owner acting as coordinator) executes and maintains the PLAN during implementation.
 

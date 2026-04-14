@@ -4,7 +4,7 @@ Zazz is an opinionated, spec-driven framework for delivering software with human
 
 The framework is intentionally **project-first** in its conceptual model: start with a top-level `project.md` that explains the software's value proposition, purpose, and major capabilities. Under that project context, proposals and feature requirements documents act as sibling durable artifacts, while milestones live inside feature requirements documents and deliverables remain bounded execution slices.
 
-The framework is also intentionally **git-native**. Durable planning and product documents are version-controlled in Git and reviewed through the team's normal branch and PR workflow. GitHub is a common example, but the framework is agnostic to which Git hosting platform or review tooling a team uses. Git worktrees are strongly encouraged because they improve isolation and recovery, but they are not a hard requirement of the framework.
+The framework is also intentionally **git-native**. Durable planning and product documents are version-controlled in Git and reviewed through the team's normal branch and PR workflow. GitHub is a common example, but the framework is agnostic to which Git hosting platform or review tooling a team uses. Git worktrees are a required part of the framework because they provide the isolation, recovery, and bounded execution model the framework depends on.
 
 ## Table of Contents
 
@@ -41,7 +41,7 @@ The framework is also intentionally **git-native**. Durable planning and product
 - [Deliverables and Worktrees](#deliverables-and-worktrees)
   - [Acceptance Criteria and TDD](#acceptance-criteria-and-tdd)
   - [Default framework position: durable docs in Git, transient execution docs in Zazz Board](#default-framework-position-durable-docs-in-git-transient-execution-docs-in-zazz-board)
-  - [Preferred: one worktree per deliverable](#preferred-one-worktree-per-deliverable)
+  - [Required: one worktree per deliverable](#required-one-worktree-per-deliverable)
   - [Durable knowledge must be promoted](#durable-knowledge-must-be-promoted)
 - [Execution Model](#execution-model)
 - [Core Entities](#core-entities)
@@ -81,7 +81,7 @@ This repository is the canonical source of truth for the framework document and 
 | Concept | Summary |
 | ------- | ------- |
 | **Desired-state convergence** | Work iterates until implementation, tests, and review evidence align with the specification |
-| **Git-native model** | Durable docs are version-controlled in Git, reviewed through branches and PRs, and can be managed on any Git hosting platform |
+| **Git-native model** | Durable docs are version-controlled in Git, reviewed through branches and PRs, and executed through the framework's required worktree model |
 | **Docs root** | The repo's `AGENTS.md` declares the repo-relative directory that contains framework markdown documents |
 | **Top-level durable doc** | `project.md` captures the project purpose, value proposition, and major established capabilities |
 | **Tracked docs** | `project.md`, `standards/`, `features/`, and `proposals/` are the durable, continuously maintained documents and should be tracked in Git |
@@ -133,12 +133,12 @@ This document sometimes uses skill names as shorthand for the agents operating w
 2. **Durable knowledge lives in tracked docs.** `project.md`, `proposals/`, `features/`, and `standards/` are shared repository knowledge. They preserve product understanding, active decisions, and engineering rules over time.
 3. **Project context comes before execution slices.** Start from `project.md`, then use proposals and feature requirements documents to clarify why and how the product should evolve before breaking work into deliverables whenever the work is part of an enduring capability.
 4. **Execution contracts are per increment.** A deliverable SPEC and optional PLAN define one bounded slice of work. They are not the permanent home for product narrative.
-5. **Git primitives are part of the framework.** Use branches, PRs, review comments, and final PR approval as standard collaboration mechanisms for both code and durable docs. Worktrees are a recommended isolation tool, not a framework prerequisite.
+5. **Git primitives are part of the framework.** Use branches, worktrees, PRs, review comments, and final PR approval as standard collaboration mechanisms for both code and durable docs.
 6. **The framework is opinionated about both product definition and engineering structure.** `project.md`, proposals, feature requirements documents, milestones, and SPECs define what the software should do and why; standards define how it must be built so it remains maintainable and expandable over time.
 7. **Launch-and-leave execution is a design goal.** Once the approved context exists, planning, implementation, verification, and PR packaging should require minimal supervision until a real decision or approval boundary is reached.
 8. **Agents load only the context they need.** `index.yaml` files exist to help agents decide what to read instead of loading every standard or feature requirements document into context.
 9. **PR merge authority stays with an authorized human.** Agents may create draft PRs, update PR bodies, and provide verification evidence, but they must never approve or merge PRs on their own.
-10. **Prefer isolated execution contexts.** One worktree per active deliverable is the recommended model because it isolates implementation state, branch history, and transient execution artifacts. Teams may use another isolation approach if it preserves the same safety properties.
+10. **Use isolated execution contexts.** One worktree per active deliverable is the framework's required operating model because it isolates implementation state, branch history, and transient execution artifacts.
 11. **Durable knowledge moves upstream.** When a deliverable changes the product, update `project.md`, the relevant feature requirements document, and any impacted standards so the long-lived docs reflect the shipped system.
 
 ---
@@ -153,13 +153,13 @@ Framework expectations:
 - use **draft PRs** to share in-progress proposals, feature requirements document revisions, and standards updates that are still being shaped
 - use **final PR review** to approve and merge durable docs once they are ready to become shared project truth
 - treat PR approval and merge as human-controlled gates; agents may prepare and verify PRs but must not merge them
-- treat worktrees as the preferred isolation and recovery mechanism when the repo uses them; if an execution path proves wrong, the worktree can be abandoned without polluting the main line of work
+- treat worktrees as the required isolation and recovery mechanism for active deliverable execution; if an execution path proves wrong, the worktree can be abandoned without polluting the main line of work
 - treat Git history as the durable change log for `project.md`, proposals, feature requirements documents, and standards
 - remember that GitHub is only a common example; GitLab, Bitbucket, Forgejo, and other Git-based review systems fit the same framework model
 
 Required review pattern for durable docs:
 
-1. Create or revise the doc in a branch, optionally in a dedicated worktree.
+1. Create or revise the doc in a dedicated branch and worktree.
 2. Open a draft PR while the document is still being discussed.
 3. Iterate in the PR using comments, suggestions, and follow-up commits.
 4. Mark the PR ready for review once the proposal, feature requirements document, or standards change is decision-ready.
@@ -909,9 +909,9 @@ The important idea is not the exact Git plumbing. The important idea is that `pr
 
 Teams may still choose to commit deliverable docs when they want a canonical audit trail in Git. The framework allows that, but it should be treated as an explicit exception rather than the default.
 
-### Preferred: one worktree per deliverable
+### Required: one worktree per deliverable
 
-Worktrees are strongly encouraged, but they are not required. When a repo uses them, the preferred operating model is:
+Worktrees are required by the framework. The operating model is:
 
 - one active deliverable per worktree
 - one branch per worktree
@@ -919,17 +919,19 @@ Worktrees are strongly encouraged, but they are not required. When a repo uses t
 - do not use `/` in branch names
 - use flat branch names so the branch name can map cleanly to a sibling worktree directory
 
-This keeps execution isolated and makes it easy to keep local deliverable docs alongside the code they govern. It is the framework's recommended default because it improves safety, reviewability, and recovery, especially when multiple humans or agents are working in parallel.
+This keeps execution isolated and makes it easy to keep local deliverable docs alongside the code they govern. It is required because it improves safety, reviewability, and recovery, especially when multiple humans or agents are working in parallel.
 
-If a team does not use worktrees, the framework still applies. The team should preserve the same outcomes by using some other isolation strategy for in-flight deliverables.
+The framework's unit of isolation is the deliverable worktree. Do not create multiple worktrees for the same active deliverable just because multiple agents are participating. Parallel task execution for one deliverable should still happen inside that single deliverable worktree, with file coordination handled through the PLAN, repo coordination policy, and the active agent harness.
 
-If the repo does use worktrees, use worktree-safe branch names:
+The only normal exception is deliberate deliverable variants. If a SPEC or owner decision explicitly calls for multiple versions of the deliverable, each version must become its own deliverable identity with its own SPEC/PLAN pathing as needed and its own dedicated worktree.
+
+Use worktree-safe branch names:
 
 - `feature/rbac` is not an acceptable Zazz branch name
 - `docs/reorg-mw1` is not an acceptable Zazz branch name
 - use `feature-rbac` or `docs-reorg-mw1` instead
 
-Branch names such as `feature/rbac` are valid Git refs, but they imply nested path segments when reused as worktree directory names. Because the recommended Zazz setup standardizes on sibling worktrees under one container directory, flat names are preferred:
+Branch names such as `feature/rbac` are valid Git refs, but they imply nested path segments when reused as worktree directory names. Because the required Zazz setup standardizes on sibling worktrees under one container directory, flat names are preferred:
 
 - `feature-rbac`
 - `docs-reorg-mw1`
@@ -1042,7 +1044,7 @@ Project
 
 **Adoption path:** Start with `project.md`. Add Proposal when the direction is uncertain. Add Feature and Milestone when the product needs durable capability tracking and stakeholder-visible roadmap/history. Go straight to Deliverable -> Task for bounded non-feature work when that is enough.
 
-**Variants:** Each alternative implementation gets its own deliverable identity and worktree. Human review selects one or triggers a synthesis deliverable.
+**Variants:** The only normal exception to one-deliverable-per-worktree is deliberate deliverable variants. Each alternative implementation gets its own deliverable identity and worktree. Human review selects one or triggers a synthesis deliverable.
 
 ---
 

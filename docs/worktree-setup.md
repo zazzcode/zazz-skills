@@ -1,10 +1,10 @@
 # Zazz Worktree Setup
 
-This document defines the recommended worktree structure for repos using the Zazz framework.
+This document defines the required worktree structure for repos using the Zazz framework.
 
 The framework is opinionated here on purpose. A consistent worktree model reduces ambiguity, makes agent execution safer, and gives teams a clean recovery path when a deliverable or document branch goes in the wrong direction.
 
-Worktrees are strongly encouraged by the framework, but they are not mandatory. This document applies when a repo chooses the worktree operating model.
+Worktrees are required by the framework. This document describes the framework's opinionated worktree operating model.
 
 Background references:
 
@@ -17,7 +17,7 @@ Supporting docs in this repo:
 
 - [wt-cheat-sheet.md](wt-cheat-sheet.md)
 
-## Recommended Model
+## Required Model
 
 Use a bare-repo container with sibling worktrees.
 
@@ -32,7 +32,7 @@ repo-container/
 └── docs-or-proposal-branch/
 ```
 
-Recommended conventions:
+Required conventions:
 
 - the container directory is not itself the active development checkout
 - `.bare/` is the shared Git directory
@@ -42,6 +42,10 @@ Recommended conventions:
 - do not use `/` in branch names
 - use flat branch names so the branch name can map directly to a sibling worktree directory
 - merges happen through PRs, not by locally merging feature branches into the integration worktree
+
+For deliverable execution, the rule is strict: one active deliverable equals one worktree. If multiple agents work tasks from the same deliverable, they still coordinate inside that single deliverable worktree rather than creating separate worktrees for the same deliverable.
+
+The only normal exception is deliberate deliverable variants. If the deliverable work intentionally asks for multiple versions or competing implementations, treat each version as its own deliverable identity and give each one its own worktree.
 
 ## Why This Pattern
 
@@ -59,7 +63,7 @@ It also pairs well with the framework's document model:
 
 ## Integration Worktree
 
-Keep one integration worktree such as `dev/` or `main/`.
+Keep one integration worktree for the repo's declared integration branch, such as `main/` or `dev/`.
 
 Its role is:
 
@@ -78,7 +82,7 @@ If you already have a normal clone and want to convert it into the bare + siblin
 1. Make sure your current checkout is clean or intentionally stashed/committed.
 2. Rename `.git` to `.bare`.
 3. Mark `.bare` as a bare repository.
-4. Create the integration worktree from the intended base branch.
+4. Create the integration worktree from the repo's declared integration branch.
 
 Example:
 
@@ -89,9 +93,9 @@ git status
 mv .git .bare
 git --git-dir=.bare config --bool core.bare true
 
-git --git-dir=.bare worktree add dev -b dev origin/dev
-# or, if dev does not exist yet:
-git --git-dir=.bare worktree add dev -b dev origin/main
+git --git-dir=.bare worktree add <integration-branch> -b <integration-branch> origin/<integration-branch>
+# or, if that branch does not exist yet:
+git --git-dir=.bare worktree add <integration-branch> -b <integration-branch> origin/main
 ```
 
 ### Option B: Fresh setup
@@ -102,9 +106,9 @@ If you are starting from scratch:
 mkdir -p <repo-container>
 cd <repo-container>
 git clone --bare <repo-url> .bare
-git --git-dir=.bare worktree add dev -b dev origin/dev
-# or:
-git --git-dir=.bare worktree add dev -b dev origin/main
+git --git-dir=.bare worktree add <integration-branch> -b <integration-branch> origin/<integration-branch>
+# or, if that branch does not exist yet:
+git --git-dir=.bare worktree add <integration-branch> -b <integration-branch> origin/main
 ```
 
 ## Verification Checklist
@@ -122,7 +126,7 @@ Useful commands:
 ```bash
 git --git-dir=.bare rev-parse --is-bare-repository
 git --git-dir=.bare worktree list
-cd dev && git branch -vv
+cd <integration-branch> && git branch -vv
 ```
 
 ## Branch Naming Rules
@@ -163,14 +167,14 @@ From the repo container:
 
 ```bash
 git --git-dir=.bare fetch origin
-git --git-dir=.bare worktree add feature-rbac -b feature-rbac origin/dev
-git --git-dir=.bare worktree add proposal-role-management-options -b proposal-role-management-options origin/dev
+git --git-dir=.bare worktree add feature-rbac -b feature-rbac origin/<integration-branch>
+git --git-dir=.bare worktree add proposal-role-management-options -b proposal-role-management-options origin/<integration-branch>
 ```
 
 From inside the integration worktree:
 
 ```bash
-git pull origin dev
+git pull origin <integration-branch>
 git worktree add ../feature-rbac -b feature-rbac
 git worktree add ../proposal-role-management-options -b proposal-role-management-options
 ```
@@ -215,7 +219,7 @@ git --git-dir=.bare worktree list --verbose
 ```bash
 cd <repo-container>/feature-rbac
 git fetch origin
-git rebase origin/dev
+git rebase origin/<integration-branch>
 ```
 
 ### Commit and push
@@ -286,7 +290,7 @@ If the repo has a fixed integration branch such as `dev`, keep that policy expli
 
 ## Recovery Model
 
-One of the reasons the framework strongly encourages worktrees is recovery.
+One of the reasons the framework requires worktrees is recovery.
 
 If a session of work:
 
@@ -318,13 +322,13 @@ This document is the operational companion to [../zazz-framework.md](../zazz-fra
 
 The framework defines:
 
-- why worktrees are encouraged
+- why worktrees are required
 - where human gates remain
 - how worktrees support isolation and recovery
 
 This document defines:
 
-- the recommended bare-repo + sibling-worktree layout
+- the required bare-repo + sibling-worktree layout
 - setup and conversion paths
 - worktree-local exclusion guidance
 - daily operations with `git worktree`
