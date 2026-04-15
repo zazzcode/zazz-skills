@@ -1,13 +1,13 @@
 # Zazz Skills
 
-Zazz is an opinionated framework for delivering software with humans and AI agents.
+Zazz is an opinionated framework for collaborative software delivery by builders and AI agents.
 It exists to help teams build the right software, build it correctly, build it efficiently, and keep it maintainable as the system evolves.
 
 Use Zazz when you want more than ad hoc agent prompting.
 The framework gives teams durable product context, bounded execution contracts, explicit verification, and isolated worktree-based execution so they can move faster without losing clarity, quality, or control.
 
 Its opinionated structure is the point.
-Zazz draws hard lines between durable product knowledge and transient execution artifacts, expects clear acceptance criteria and verification, and uses worktrees as the default isolation model so both humans and agents can collaborate safely.
+Zazz draws hard lines between durable product knowledge and transient execution artifacts, expects clear acceptance criteria and verification, and uses worktrees as the default isolation model so builders and AI agents can collaborate safely.
 
 This repository is the canonical source of truth for:
 

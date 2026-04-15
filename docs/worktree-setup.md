@@ -11,7 +11,7 @@ Background references:
 - [Git worktree documentation](https://git-scm.com/docs/git-worktree)
 - [Worktrunk CLI](https://worktrunk.dev/worktrunk/)
 
-`git worktree` is the underlying Git feature. Worktrunk is an encouraged convenience CLI that makes worktree workflows easier, especially when humans and agents are working in parallel.
+`git worktree` is the underlying Git feature. Worktrunk is an encouraged convenience CLI that makes worktree workflows easier, especially when builders and AI agents are working in parallel.
 
 Supporting docs in this repo:
 
@@ -53,7 +53,7 @@ This pattern gives the framework three important properties:
 
 - isolation: each active effort has its own checkout and branch
 - recoverability: a failed line of work can be abandoned cleanly
-- consistency: humans and agents can use the same branch/worktree mental model
+- consistency: builders and AI agents can use the same branch/worktree mental model
 
 It also pairs well with the framework's document model:
 

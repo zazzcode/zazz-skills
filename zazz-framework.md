@@ -1,6 +1,6 @@
 # The Zazz Framework
 
-Zazz is an opinionated, spec-driven framework for delivering software with humans and AI agents. It separates long-lived product knowledge from short-lived execution contracts so teams can move quickly without losing the "why" behind the system.
+Zazz is an opinionated, spec-driven framework for collaborative software delivery by builders and AI agents. It separates long-lived product knowledge from short-lived execution contracts so teams can move quickly without losing the "why" behind the system.
 
 The framework is intentionally **project-first** in its conceptual model: start with a top-level `project.md` that explains the software's value proposition, purpose, and major capabilities. Under that project context, proposals and feature requirements documents act as sibling durable artifacts, while milestones live inside feature requirements documents and deliverables remain bounded execution slices.
 
@@ -64,7 +64,7 @@ In explicit terms, the framework provides:
 
 The skills, roles, document model, and opinionated workflow are means to that end. They are not the value proposition by themselves. Their purpose is to make those outcomes repeatable across projects, features, deliverables, and teams.
 
-The framework is opinionated on purpose. The goal is not arbitrary restriction; the goal is to reduce ambiguity, improve consistency across repos and teams, and make the desired outcomes more repeatable for both humans and agents.
+The framework is opinionated on purpose. The goal is not arbitrary restriction; the goal is to reduce ambiguity, improve consistency across repos and teams, and make the desired outcomes more repeatable for builders and AI agents.
 
 All framework markdown documents live under a repo-relative docs root resolved by repo policy. In most repos, that root will be either `.zazz/` or `docs/` at the root of the monorepo. The repo should explain the resolution rule in `AGENTS.md`, whether that means declaring the path directly or declaring how to resolve it from an environment variable. Framework skills should live under `.agents/skills/` so they stay reusable and AI-tool agnostic.
 
@@ -531,7 +531,7 @@ The exact headings can vary by project, but those concepts should be present.
 
 ### Example `features/index.yaml`
 
-The features index exists for discovery. It lets agents and humans quickly identify which feature requirements document is relevant without loading every feature requirements document.
+The features index exists for discovery. It lets builders and AI agents quickly identify which feature requirements document is relevant without loading every feature requirements document.
 
 ```yaml
 features:
@@ -736,7 +736,7 @@ Standards are **not** the place to describe product functionality, feature inten
 
 ### Why standards exist
 
-Standards exist to solve the "how should this software be built?" problem. Without them, humans and agents default to whatever nearby pattern they happen to see, even when the surrounding code is legacy, inconsistent, or already known to be undesirable.
+Standards exist to solve the "how should this software be built?" problem. Without them, builders and AI agents default to whatever nearby pattern they happen to see, even when the surrounding code is legacy, inconsistent, or already known to be undesirable.
 
 Their value is that they turn implementation expectations into explicit shared rules instead of informal convention.
 
@@ -925,7 +925,7 @@ Worktrees are required by the framework. The operating model is:
 - do not use `/` in branch names
 - use flat branch names so the branch name can map cleanly to a sibling worktree directory
 
-This keeps execution isolated and makes it easy to keep local deliverable docs alongside the code they govern. It is required because it improves safety, reviewability, and recovery, especially when multiple humans or agents are working in parallel.
+This keeps execution isolated and makes it easy to keep local deliverable docs alongside the code they govern. It is required because it improves safety, reviewability, and recovery, especially when multiple builders or AI agents are working in parallel.
 
 The framework's unit of isolation is the deliverable worktree. Do not create multiple worktrees for the same active deliverable just because multiple agents are participating. Parallel task execution for one deliverable should still happen inside that single deliverable worktree, with file coordination handled through the PLAN, repo coordination policy, and the active agent harness.
 
@@ -956,7 +956,7 @@ Useful background references:
 - [Git worktree documentation](https://git-scm.com/docs/git-worktree)
 - [Worktrunk CLI](https://worktrunk.dev/worktrunk/)
 
-`git worktree` is the underlying Git feature. [Worktrunk](https://worktrunk.dev/worktrunk/) is an encouraged convenience CLI that makes worktree workflows easier, especially for parallel human/agent execution, but it is not a framework requirement.
+`git worktree` is the underlying Git feature. [Worktrunk](https://worktrunk.dev/worktrunk/) is an encouraged convenience CLI that makes worktree workflows easier, especially when builders and AI agents are working in parallel, but it is not a framework requirement.
 
 For detailed setup guidance, see:
 
