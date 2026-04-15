@@ -2,7 +2,7 @@
 
 How to work with the Spec Builder skill to create a Deliverable Specification (SPEC) for the Zazz framework.
 
-Examples in this guide may use `.zazz/` or `<DOCS_ROOT>/` as shorthand. In a real repo, use the framework docs root declared in `AGENTS.md`.
+Examples in this guide may use `.zazz/` or `<DOCS_ROOT>/` as shorthand. In a real repo, use the framework docs root resolved by repo policy, usually documented in `AGENTS.md`.
 
 ---
 
@@ -88,7 +88,7 @@ This should feel like working with a technically strong teammate, not filling ou
    - "I want to create a spec for user authentication"
    - "Let's define a deliverable for the API rate-limiting feature"
 3. Answer the agent's questions. It will ask about problem statement, standards, features, acceptance criteria, tests, and more.
-4. Early in the dialogue, expect it to confirm whether the deliverable uses **Zazz Board**, **Jira**, or **neither** for file placement. If it uses Zazz Board, have the deliverable code ready. If it uses Jira, have the issue key ready.
+4. Early in the dialogue, expect it to confirm the repo's deliverable-file policy. That usually means clarifying whether the deliverable uses a flat local path, a tracker-key folder convention, ignored local files, committed files, or an external integration such as Zazz Board or Jira.
 
 ## Example Starter Prompts
 
@@ -146,25 +146,25 @@ The best starting prompts usually include:
 2. **Answer** — Respond to clarifying questions (features, edge cases, constraints, standards).
 3. **Generate** — When ready, say "generate the spec" or "create a draft" to get a file to review.
 4. **Iterate** — Review the draft, give feedback ("add X", "clarify Y", "AC3 should say..."), and ask for another version.
-5. **Approve** — When satisfied, approve. The agent will sync the spec path to Zazz Board (unless in development mode).
+5. **Approve** — When satisfied, approve. If the repo uses an external integration such as Zazz Board, the agent may also sync the relevant spec metadata or path (unless in development mode).
 
 ---
 
 ## Output
 
-- **File**: `<DOCS_ROOT>/deliverables/<spec-path>` (always ends with `-SPEC.md`). The project is **flat**, **Zazz Board**, or **Jira**—see `SKILL.md` → **Deliverable files: storage, naming, and index**. **Jira** uses the **same subfolder convention** as Zazz; only the folder name (issue key vs board code) differs. Any **PLAN** lives in the **same folder** with `-PLAN.md`.
-- **Board** (if not in development mode): The agent updates the deliverable card with the spec path (`dedFilePath`) so it's visible and stored in the database.
+- **File**: `<DOCS_ROOT>/deliverables/<spec-path>` (always ends with `-SPEC.md`) when the repo keeps deliverable files on disk. See `SKILL.md` -> **Deliverable files: storage, naming, and index** for the repo policy and naming convention. Any **PLAN** lives in the **same folder** with `-PLAN.md`.
+- **External integration**: If the repo uses an external system such as Zazz Board, the agent may update the deliverable metadata or path there. That integration is optional and repo-specific.
 
 ### Filename examples (same deliverable)
 
-Deliverable name: **"Role management UI"** → slug **`role-management-ui`**. Replace `.zazz` with your real docs root if different. **SPEC and PLAN always share the same folder and basename**—only `-SPEC.md` vs `-PLAN.md` changes. The **project** is one of: **neither** (flat), **Zazz Board**, or **Jira**—not a mix.
+Deliverable name: **"Role management UI"** -> slug **`role-management-ui`**. Replace `<DOCS_ROOT>` with your repo's resolved docs root. **SPEC and PLAN always share the same folder and basename**—only `-SPEC.md` vs `-PLAN.md` changes. The exact layout depends on the repo's deliverables policy.
 
 | Project mode | SPEC | PLAN |
 |--------------|------|------|
-| **Neither** — flat | `.zazz/deliverables/role-management-ui-SPEC.md` | `.zazz/deliverables/role-management-ui-PLAN.md` |
-| **Zazz Board** — e.g. deliverable code `ZAZZ-142`, path sync via board API | `.zazz/deliverables/ZAZZ-142/role-management-ui-SPEC.md` | `.zazz/deliverables/ZAZZ-142/role-management-ui-PLAN.md` |
+| **Flat local files** | `<DOCS_ROOT>/deliverables/role-management-ui-SPEC.md` | `<DOCS_ROOT>/deliverables/role-management-ui-PLAN.md` |
+| **Tracker-key subdirectory** — e.g. `ZAZZ-142` or `PROJ-453` | `<DOCS_ROOT>/deliverables/ZAZZ-142/role-management-ui-SPEC.md` | `<DOCS_ROOT>/deliverables/ZAZZ-142/role-management-ui-PLAN.md` |
 
-**Jira:** same as the Zazz row, but the folder is the **issue key** (e.g. `PROJ-453/`) instead of the board code—no Zazz path sync.
+External systems such as Zazz Board or Jira may use the same tracker-key folder pattern, but the repo's declared policy is the source of truth.
 
 The planner writes the PLAN next to the SPEC.
 

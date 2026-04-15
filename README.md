@@ -1,6 +1,13 @@
 # Zazz Skills
 
-Skills and framework documents for the Zazz framework.
+Zazz is an opinionated framework for delivering software with humans and AI agents.
+It exists to help teams build the right software, build it correctly, build it efficiently, and keep it maintainable as the system evolves.
+
+Use Zazz when you want more than ad hoc agent prompting.
+The framework gives teams durable product context, bounded execution contracts, explicit verification, and isolated worktree-based execution so they can move faster without losing clarity, quality, or control.
+
+Its opinionated structure is the point.
+Zazz draws hard lines between durable product knowledge and transient execution artifacts, expects clear acceptance criteria and verification, and uses worktrees as the default isolation model so both humans and agents can collaborate safely.
 
 This repository is the canonical source of truth for:
 
@@ -18,13 +25,25 @@ The reference implementation is [zazz-board](https://github.com/zazzcode/zazz-bo
 - [AGENTS.md example template](templates/AGENTS.md)
 - [Reference implementation: zazz-board](https://github.com/zazzcode/zazz-board)
 
-## Current Framework Position
+## Why Use Zazz
 
-Zazz is opinionated about why different artifacts exist and where they belong.
+Zazz is designed for teams that want agent-assisted delivery to be reliable, reviewable, and maintainable rather than clever-but-chaotic.
+
+- Keep long-lived product knowledge in durable docs instead of letting it disappear into chats, tickets, or transient execution notes.
+- Break work into bounded deliverables with explicit acceptance criteria so implementation and QA can converge on a clear contract.
+- Give agents enough approved context to operate with meaningful autonomy while preserving human approval, review, and merge gates.
+- Use worktrees as the default execution boundary so active efforts stay isolated, recoverable, and easier to coordinate.
+- Preserve the "why" behind the system while still moving quickly on the "what are we building right now?" question.
+
+## Framework Position
+
+Zazz is intentionally opinionated about why different artifacts exist and where they belong.
 
 - Durable, continuously maintained documents such as `project.md`, proposals, feature requirements documents, and standards belong in Git or another Git-based service.
-- Transient execution artifacts such as deliverable SPECs, PLANs, diagrams, and related working assets generally belong in Zazz Board.
-- Local deliverable files are useful as working copies, but they are not the default durable record.
+- Framework docs live under the repo's resolved docs root, commonly `docs/` or `.zazz/`, as declared by repo policy in `AGENTS.md` and optionally resolved through an environment variable when that repo chooses.
+- Execution artifacts such as deliverable SPECs, PLANs, diagrams, and related working assets belong under `<DOCS_ROOT>/deliverables/` when they live on disk.
+- Those deliverable files may be ignored locally, committed intentionally, or mirrored/tracked in an external system such as Zazz Board.
+- Zazz Board is a valid integration pattern, not a framework requirement.
 - Worktrees are a required part of the framework because they provide the isolation, recoverability, and execution boundaries the framework depends on.
 - The opinionated operating rule is one active deliverable per worktree.
 - If the team wants multiple versions of the work, those should be modeled as separate deliverables, and each deliverable gets its own worktree.
@@ -35,7 +54,8 @@ Zazz is opinionated about why different artifacts exist and where they belong.
 The framework is intentionally project-first:
 
 ```text
-project.md
+<DOCS_ROOT>/
+├── project.md
 ├── proposals/
 └── features/
     └── milestones
@@ -46,9 +66,9 @@ project.md
 Each document type exists to solve a different coordination problem:
 
 - `project.md` provides top-level durable orientation for the software project.
-- proposals provide a durable place to work through uncertainty before committing to a direction.
-- feature requirements documents provide a long-lived home for capability intent and milestone evolution.
-- standards define how the software should be built.
+- proposals under `<DOCS_ROOT>/proposals/` provide a durable place to work through uncertainty before committing to a direction.
+- feature requirements documents under `<DOCS_ROOT>/features/` provide a long-lived home for capability intent and milestone evolution.
+- standards under `<DOCS_ROOT>/standards/` define how the software should be built.
 - deliverables provide bounded execution contracts for one increment of work.
 
 For the full framework model, read [zazz-framework.md](zazz-framework.md).
@@ -88,7 +108,7 @@ zazz-framework.md      primary framework philosophy and document model
 | Skill | Purpose |
 | ----- | ------- |
 | `pr-builder` | Produces reviewer-ready PR packaging from diff, docs, and evidence. |
-| `worktree` | Sets up or manages the framework's required Zazz-style worktree model using `git worktree`, with optional Worktrunk convenience commands. |
+| `worktree` | Sets up or manages the framework's required Zazz-style worktree model through the Worktrunk workflow used by the skill. |
 | `zazz-board-api` | Companion utility skill for Zazz Board integration. |
 | `jira-api` | Draft companion utility for Jira-backed repos. |
 
@@ -115,9 +135,9 @@ Historical naming note:
 
 - `feature-doc-builder` remains the skill name for compatibility, but the framework's canonical artifact term is **feature requirements document**
 
-## Zazz Board and Git
+## Git and Execution Artifacts
 
-Zazz Board is the reference implementation and the preferred durable home for transient execution artifacts.
+Zazz Board is the reference implementation, but it is optional in the framework.
 
 Git remains the durable home for:
 
@@ -127,7 +147,13 @@ Git remains the durable home for:
 - standards
 - framework and skill source
 
-Zazz Board is generally the durable home for:
+Execution artifacts generally live under `<DOCS_ROOT>/deliverables/` when they are kept on disk, and a repo may choose to:
+
+- keep them ignored locally as execution working files
+- commit them intentionally for a Git-native audit trail
+- mirror or track them in an external system such as Zazz Board
+
+External systems such as Zazz Board may also hold or reference:
 
 - deliverable SPECs
 - deliverable PLANs

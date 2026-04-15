@@ -14,6 +14,10 @@ wt -C .bare switch pr:123
 wt -C .bare remove <branch-name>
 ```
 
+Human-friendly framing:
+
+- "I need to review PR 123" -> `wt -C .bare switch pr:123`
+
 ## Quick Start: Create a Feature or Deliverable
 
 From the repo container:
@@ -30,6 +34,8 @@ wt -C .bare remove <branch-name>
 ## Why `.bare` is Central
 
 The `.bare` directory contains the actual Git repository and manages all worktrees. Individual worktree directories are working copies linked to `.bare`.
+
+In the Worktrunk workflow used with Zazz repos, the worktree setup also carries over the ignored local files a worktree needs in order to run the program.
 
 ## Where You Are and the Right Command
 

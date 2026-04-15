@@ -2,7 +2,7 @@
 
 This file is an example starter for a repo-level `AGENTS.md` in a project that uses the Zazz framework.
 
-For skills in this framework, `AGENTS.md` is the source of truth for repo-specific settings such as docs root, tracking system, project-code conventions, and workflow rules.
+For skills in this framework, `AGENTS.md` is the source of truth for repo-specific settings such as docs-root resolution, tracking system, project-code conventions, and workflow rules.
 
 Copy it into the target repository root as `AGENTS.md`, then replace the placeholder values and project-specific sections. The goal is not to preserve this file verbatim. The goal is to create a concise, repo-specific agent entry point that combines:
 
@@ -17,7 +17,7 @@ For a real in-use example, see the reference implementation:
 ## How to Use This Template
 
 1. Copy this file to the target repo root as `AGENTS.md`.
-2. Declare the repo-relative framework docs root used by that project.
+2. Declare how the repo-relative framework docs root is resolved for that project.
 3. Replace every placeholder section with real repo instructions or remove the section if it does not apply.
 4. Keep the framework-required parts intact:
    - docs-root declaration
@@ -34,10 +34,10 @@ For a real in-use example, see the reference implementation:
 
 The following are required for repos using the Zazz framework:
 
-- the repo's framework docs root
+- the repo's framework docs-root rule
 - the path to `<DOCS_ROOT>/standards/index.yaml`
 - instructions to read the standards index first and load only relevant standards
-- the path to `<DOCS_ROOT>/features/index.yaml` when the repo uses feature documents
+- the path to `<DOCS_ROOT>/features/index.yaml` when the repo uses feature requirements documents
 - the repo's policy for `<DOCS_ROOT>/deliverables/`
 - the repo's work-tracking system for deliverables / tickets / PR context
 - the repo's shared-file coordination policy for execution
@@ -80,6 +80,10 @@ Agents should use this file as the starting point for:
 
 `Framework docs root: <SET_REPO_RELATIVE_DOCS_ROOT>`
 
+or
+
+`Framework docs root: resolve from <ENV_VAR> (must be a repo-relative path)`
+
 Recommended values:
 
 - `.zazz` at the monorepo root
@@ -89,7 +93,9 @@ Rules:
 
 - The docs root is a repo-relative path, not an absolute path.
 - Framework docs live under `<DOCS_ROOT>/`.
+- `project.md`, `proposals/`, `features/`, and `standards/` live under that same root.
 - Do not hardcode `.zazz` if this repo uses another docs root.
+- If this repo resolves the docs root from an environment variable, document that rule explicitly here.
 - If the repo is a monorepo, set this to the monorepo-level docs location that governs the project as a whole.
 
 ## Standards Loading Rules
@@ -120,16 +126,16 @@ Feature index:
 
 - `<DOCS_ROOT>/features/index.yaml`
 
-Use feature docs when the task touches product behavior, user-facing capability, roadmap context, milestone history, or stakeholder intent.
+Use feature requirements documents when the task touches product behavior, user-facing capability, roadmap context, milestone history, or stakeholder intent.
 
 Rules:
 
 1. Read `<DOCS_ROOT>/features/index.yaml` when product context may matter.
-2. Load only the relevant feature document(s), not the entire features directory.
-3. Treat feature documents as long-lived capability docs, not execution specs.
-4. When a deliverable changes shipped behavior, update the relevant feature document so it reflects the current system.
+2. Load only the relevant feature requirements document(s), not the entire features directory.
+3. Treat feature requirements documents as long-lived capability docs, not execution specs.
+4. When a deliverable changes shipped behavior, update the relevant feature requirements document so it reflects the current system.
 
-If the repo does not yet use feature docs, either remove this section or replace it with a note that the repo is currently deliverable-only.
+If the repo does not yet use feature requirements documents, either remove this section or replace it with a note that the repo is currently deliverable-only.
 
 ## Deliverables Policy
 
@@ -137,11 +143,17 @@ Deliverable docs live under:
 
 - `<DOCS_ROOT>/deliverables/`
 
-Default policy:
+Declare the actual repo policy here. Valid patterns include:
 
-- deliverable SPECs and PLANs are worktree-local execution artifacts
+- deliverable SPECs and PLANs are local ignored execution artifacts
+- deliverable SPECs and PLANs are intentionally committed
+- deliverable SPECs and PLANs are mirrored, tracked, or referenced through an external system such as Zazz Board
+
+Regardless of the mode:
+
 - `standards/` and `features/` are long-lived tracked docs
-- deliverable files are untracked by default unless this repo explicitly chooses to commit them
+- the repo should state whether `<DOCS_ROOT>/deliverables/` exists on disk, is ignored locally, is committed, or is mostly external
+- agents should not guess this policy from repo shape alone
 
 If this repo uses a different policy, document it here.
 

@@ -1,6 +1,6 @@
 ---
 name: worktree
-description: Set up or manage Git worktrees for a Zazz-style repo; use when the user wants the opinionated bare-repo plus sibling-worktree pattern, needs help creating or repairing worktrees and flat branch names, or wants guidance on using git worktree and Worktrunk within the Zazz framework.
+description: Set up or manage worktrees for a Zazz-style repo; use when the user wants the opinionated bare-repo plus sibling-worktree pattern, needs help creating or repairing worktrees and flat branch names, or wants guidance on the Worktrunk workflow used with the Zazz framework.
 ---
 
 # Worktree Skill
@@ -10,8 +10,13 @@ description: Set up or manage Git worktrees for a Zazz-style repo; use when the 
 This skill requires:
 
 - `git` installed
+- `worktrunk` installed
 
-Worktrunk is optional but recommended. This skill should fully support the framework's required worktree model with native `git worktree` commands, while using Worktrunk as a convenience layer when it is available.
+Framework note:
+
+- Worktrees are required by the Zazz framework.
+- Worktrunk is optional at the framework level.
+- This specific skill requires Worktrunk because it assumes the `wt` workflow for setup, switching, cleanup, and day-to-day management.
 
 ## Startup Sequence
 
@@ -31,27 +36,31 @@ Before doing any work:
 5. Inspect current Git reality before making recommendations or changes:
    - current branch
    - current worktree list
-   - whether the repo is already using a bare container + sibling worktrees
-   - whether Worktrunk is installed and intended for use
+   - whether the repo is already using a bare-repo container with sibling worktrees
+   - whether Worktrunk is installed
 6. Prefer the repo's existing declared pattern when it already matches the framework. Do not "upgrade" a repo into the opinionated layout unless the user wants that change.
 
 ## Purpose
 
 This skill exists to solve two related problems:
 
-1. How to establish a clean, opinionated Zazz-style worktree layout.
-2. How to operate that layout safely over time with `git worktree` and optional Worktrunk commands.
+1. How to establish a clean, opinionated bare-repo container with sibling worktrees.
+2. How to operate that layout safely over time with a consistent Worktrunk workflow.
 
 Its value is consistency, isolation, and recoverability. It helps teams keep one active deliverable or document effort per branch/worktree, avoid naming patterns that fight the filesystem layout, and preserve a clear rollback path when execution goes wrong.
+
+It is also a convenience skill for humans. Most of the underlying work can be done directly by a human with the right commands; this skill exists to make that workflow easier for people who want the framework behavior without having to remember or type every command themselves.
+
+That includes simple human requests such as "I need to review PR 193" or "create a deliverable worktree for me" where the skill can translate the request into the right Worktrunk flow and explain the next command or action clearly.
 
 ## Framework Alignment
 
 - Worktrees are required by the framework.
 - The required model is a bare-repo container with sibling worktrees.
-- Durable docs belong in Git; transient deliverable execution artifacts generally belong in Zazz Board.
+- Durable docs belong in Git; execution artifacts follow the repo's declared deliverables policy.
 - One active deliverable or document effort must map to one branch and one worktree.
 - Flat branch names are preferred because they map cleanly to sibling worktree directory names.
-- Worktrunk is encouraged when available, but plain `git worktree` remains the base capability.
+- Worktrunk is optional in the framework, but required to use this skill.
 
 ## Interaction Modes
 
@@ -75,7 +84,7 @@ Use this mode when the layout already exists and the user needs help with:
 - pruning stale entries
 - removing abandoned worktrees
 - checking current branch/worktree state
-- choosing between `git worktree` and Worktrunk commands
+- using the Worktrunk workflow correctly for day-to-day worktree management
 
 ### Mode C: Recovery / repair
 
@@ -100,7 +109,7 @@ Depending on the task, this skill may produce:
 - new worktrees and branches following Zazz naming conventions
 - repaired or pruned worktree state
 - repo guidance for worktree usage in `AGENTS.md` or related docs when explicitly requested
-- command examples for `git worktree` and optional Worktrunk usage
+- command examples for the Worktrunk workflow used by this skill
 
 ## Core Rules
 
@@ -109,7 +118,7 @@ Depending on the task, this skill may produce:
 3. Do not remove a worktree or branch unless the user clearly intends that cleanup.
 4. Keep branch names flat when using sibling worktrees.
 5. Keep the integration worktree clean; do not use it as the default place for feature implementation.
-6. When Worktrunk is available, prefer it for routine worktree management if it preserves the repo's conventions.
+6. Use Worktrunk for routine worktree management through this skill.
 7. If the repo is already using a different but stable layout, explain the tradeoff before trying to reshape it.
 
 ## Required Layout
@@ -151,38 +160,55 @@ Avoid when using sibling worktrees:
 
 ## Command Guidance
 
-### Base Git commands
-
-Typical creation flow:
-
-```bash
-git worktree add ../feature-rbac -b feature-rbac
-git worktree add ../proposal-role-management-options -b proposal-role-management-options
-git worktree list
-git worktree prune
-```
-
-Bare-repo style example:
-
-```bash
-git --git-dir=.bare worktree add ../feature-rbac -b feature-rbac origin/<integration-branch>
-git --git-dir=.bare worktree add ../docs-reorg-mw1 -b docs-reorg-mw1 origin/<integration-branch>
-git --git-dir=.bare worktree list
-```
-
 ### Worktrunk guidance
 
-If Worktrunk is installed and the repo uses it, prefer its wrappers for:
+This skill assumes Worktrunk is installed and uses it for:
 
 - creating worktrees
 - switching between active efforts
 - keeping worktree naming and lifecycle consistent
 
-Use plain `git worktree` when:
+Representative commands:
 
-- Worktrunk is unavailable
-- the repo explicitly prefers native Git commands
-- debugging a lower-level Git worktree issue
+```bash
+wt -C .bare list
+wt -C .bare switch --create feature-rbac
+wt -C .bare switch proposal-role-management-options
+wt -C .bare switch pr:193
+wt -C .bare remove feature-rbac
+```
+
+Use plain `git worktree` references only as conceptual background or when debugging a lower-level Git issue outside this skill's normal workflow.
+
+## Example Requests
+
+Example human-to-skill requests:
+
+```text
+Use worktree.
+Please set up this repo with the required bare-repo plus sibling-worktree layout.
+```
+
+```text
+Use worktree.
+Please create a new deliverable worktree from the integration branch using a flat, worktree-safe branch name.
+```
+
+```text
+Use worktree.
+Please inspect the current worktree state, explain what is broken, and repair it safely.
+```
+
+```text
+Use worktree.
+I don't want to remember the Worktrunk commands. Please tell me exactly what to run to create, switch, and remove worktrees in this repo.
+```
+
+```text
+Use worktree.
+I need to review PR 193.
+Please create the review worktree and tell me what to run next.
+```
 
 ## Safety Checks
 
@@ -191,7 +217,7 @@ Before creating or modifying worktrees, confirm:
 - the intended base branch
 - the intended branch name
 - whether the target directory already exists
-- whether the worktree is for a deliverable, proposal, feature, or docs effort
+- whether the worktree is for a deliverable, proposal, feature, or document effort
 - whether the repo has a declared integration branch such as `main` or `dev`
 
 Before cleanup actions, confirm:
@@ -209,6 +235,10 @@ When a worktree effort goes wrong:
 3. Decide whether to repair the same worktree or abandon it.
 4. If abandoning, remove or archive the worktree intentionally and create a fresh sibling worktree for the corrected approach.
 
+## Practical Worktrunk Note
+
+In the workflow assumed by this skill, Worktrunk handles the worktree setup in a way that also carries over the ignored local files the program needs in order to run inside the new worktree. Treat that as part of the expected day-to-day developer ergonomics of the Worktrunk-based approach used here.
+
 ## When To Escalate
 
 Escalate to the user when:
@@ -217,4 +247,4 @@ Escalate to the user when:
 - cleanup would delete or orphan work
 - the base branch is unclear
 - the branch naming policy is inconsistent with existing team practice
-- the user may need to choose between native Git and Worktrunk as the repo standard
+- Worktrunk is not installed but the user is trying to use this skill

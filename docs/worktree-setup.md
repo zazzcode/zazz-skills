@@ -58,7 +58,7 @@ This pattern gives the framework three important properties:
 It also pairs well with the framework's document model:
 
 - durable docs stay in Git
-- transient execution artifacts can stay local or live in Zazz Board
+- execution artifacts can stay local, be committed intentionally, or be mirrored/tracked in an external system such as Zazz Board
 - worktrees keep those transient artifacts scoped to one effort at a time
 
 ## Integration Worktree
@@ -183,8 +183,11 @@ git worktree add ../proposal-role-management-options -b proposal-role-management
 
 Within each worktree:
 
-- local deliverable files are temporary execution artifacts unless the repo intentionally commits them
-- when a project uses Zazz Board as the durable deliverable store, local deliverable files are working copies rather than the source of truth
+- the repo's `AGENTS.md` should declare the docs root, commonly `docs/` or `.zazz/`
+- when the repo keeps deliverable files on disk, they belong under `<DOCS_ROOT>/deliverables/`
+- local ignored deliverable files are a valid first-class framework mode, not a workaround
+- some repos intentionally commit deliverable files for a Git-native audit trail
+- some repos also mirror, track, or store execution artifacts in an external system such as Zazz Board
 - worktree-local excludes are preferred over committed `.gitignore` rules when the team wants deliverable execution artifacts to stay local
 
 Typical mechanisms:
@@ -197,7 +200,7 @@ Canonical example exclusion:
 
 | Path | Reason |
 | ---- | ------ |
-| `docs/deliverables/` | Local deliverable working files should not pollute shared Git history |
+| `<DOCS_ROOT>/deliverables/` | Local deliverable working files should not pollute shared Git history when the repo uses ignored local deliverables |
 
 Why `info/exclude` instead of `.gitignore`:
 

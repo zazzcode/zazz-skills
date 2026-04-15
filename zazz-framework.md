@@ -66,7 +66,7 @@ The skills, roles, document model, and opinionated workflow are means to that en
 
 The framework is opinionated on purpose. The goal is not arbitrary restriction; the goal is to reduce ambiguity, improve consistency across repos and teams, and make the desired outcomes more repeatable for both humans and agents.
 
-All framework markdown documents live under a repo-relative docs root declared in the repo's `AGENTS.md`. In most repos, the docs root will be either `.zazz/` or `docs/` at the root of the monorepo. Framework skills should live under `.agents/skills/` so they stay reusable and AI-tool agnostic.
+All framework markdown documents live under a repo-relative docs root resolved by repo policy. In most repos, that root will be either `.zazz/` or `docs/` at the root of the monorepo. The repo should explain the resolution rule in `AGENTS.md`, whether that means declaring the path directly or declaring how to resolve it from an environment variable. Framework skills should live under `.agents/skills/` so they stay reusable and AI-tool agnostic.
 
 The default mental model is one software project in one monorepo. If a product spans multiple repositories, it is reasonable to introduce a shared docs/framework repo or package so the same standards, features, and skills can be consumed across repos. That is an extension pattern, not the default assumption.
 
@@ -82,10 +82,10 @@ This repository is the canonical source of truth for the framework document and 
 | ------- | ------- |
 | **Desired-state convergence** | Work iterates until implementation, tests, and review evidence align with the specification |
 | **Git-native model** | Durable docs are version-controlled in Git, reviewed through branches and PRs, and executed through the framework's required worktree model |
-| **Docs root** | The repo's `AGENTS.md` declares the repo-relative directory that contains framework markdown documents |
+| **Docs root** | The repo's policy resolves the repo-relative directory that contains framework markdown documents, usually documented in `AGENTS.md` |
 | **Top-level durable doc** | `project.md` captures the project purpose, value proposition, and major established capabilities |
 | **Tracked docs** | `project.md`, `standards/`, `features/`, and `proposals/` are the durable, continuously maintained documents and should be tracked in Git |
-| **Execution docs** | Transient deliverable SPEC/PLAN artifacts generally live in Zazz Board rather than in Git; local files are working copies when needed |
+| **Execution docs** | Deliverable SPEC/PLAN artifacts follow the repo's declared policy: ignored local files, committed files, external tracking, or a combination the repo defines explicitly |
 | **Specification model** | Feature requirements document for capability over time plus Deliverable SPEC (`-SPEC`) for one increment |
 | **Verification model** | TDD and explicit acceptance criteria are core mechanisms for proving the software was built correctly and delivers the intended functionality |
 | **Execution flow** | `project.md` -> proposal (optional) -> feature requirements document (optional but recommended for long-lived features) -> SPEC (required) -> PLAN (optional) -> build/validate loop -> PR/UAT gate |
@@ -175,7 +175,7 @@ Recovery pattern:
 
 ## Document Root
 
-The framework requires a single docs-root declaration in the repo's `AGENTS.md`.
+The framework requires a single docs-root resolution rule for each repo.
 
 Recommended values:
 
@@ -187,13 +187,15 @@ Rules:
 
 - The value is a **relative path within the repository**.
 - All framework markdown and index files resolve relative to this root.
-- Skills and agents should refer to framework docs through this declared root rather than hardcoding `.zazz`.
+- `AGENTS.md` should document the rule clearly, either by declaring the path directly or by declaring how to resolve it from an environment variable.
+- Skills and agents should refer to framework docs through this resolved root rather than hardcoding `.zazz`.
 
 Examples:
 
 - `Framework docs root: .zazz`
 - `Framework docs root: docs`
 - `Framework docs root: packages/platform-docs`
+- `Framework docs root comes from <ENV_VAR>, which resolves to a repo-relative path such as docs or .zazz`
 
 When the application spans multiple repos, point the relevant repo or shared package at the directory that contains the framework docs. The important contract is that the path is repo-relative and stable for that repo.
 
@@ -211,6 +213,8 @@ project.md
         └── deliverables
             └── tasks
 ```
+
+On disk, these durable docs live under `<DOCS_ROOT>/`, for example `<DOCS_ROOT>/project.md`, `<DOCS_ROOT>/proposals/`, and `<DOCS_ROOT>/features/`.
 
 Interpretation:
 
@@ -248,7 +252,7 @@ Required long-lived artifacts:
 Execution artifacts:
 
 - `deliverables/` when the repo keeps local deliverable files on disk
-- persisted deliverable records in Zazz Board when the project stores SPECs, PLANs, images, diagrams, and related assets in the database instead of Git
+- optional external tracking or storage systems such as Zazz Board when the project chooses to use them
 
 Recommended layout:
 
@@ -280,28 +284,28 @@ Recommended responsibilities:
 - `proposals/` contains durable exploratory documents that help the team work through uncertain solutions
 - `features/` contains long-lived feature requirements documents plus `features/index.yaml`
 - `standards/` contains implementation rules plus `standards/index.yaml`
-- `deliverables/` is optional local storage for SPEC/PLAN files when they are not being persisted elsewhere
+- `deliverables/` is the on-disk home for SPEC/PLAN files when the repo keeps execution artifacts locally
 
-### Deliverable storage modes
+### Execution artifact storage modes
 
-The framework supports three common ways teams handle deliverable artifacts:
+The framework supports three common ways teams handle deliverable artifacts on disk and in tooling:
 
-1. **Zazz Board-backed deliverables** — SPEC/PLAN markdown, images, diagrams, and related assets are stored in the Zazz Board database. A local `deliverables/` directory may still exist for temporary execution use, but the durable execution record lives in Board rather than in Git.
-2. **Local-only deliverables** — `deliverables/` exists in the repo or worktree, is usually ignored, and SPEC/PLAN docs are treated as local execution artifacts.
-3. **Committed deliverables** — SPEC/PLAN docs are kept under `deliverables/` and tracked in Git because the team intentionally wants a Git-native audit trail for execution artifacts.
+1. **Local ignored deliverables** — `<DOCS_ROOT>/deliverables/` exists in the repo or worktree, is usually ignored, and SPEC/PLAN docs are treated as local execution artifacts.
+2. **Committed deliverables** — SPEC/PLAN docs are kept under `<DOCS_ROOT>/deliverables/` and tracked in Git because the team intentionally wants a Git-native audit trail for execution artifacts.
+3. **Externally tracked deliverables** — the repo still has a declared deliverables policy, but the team also mirrors, tracks, or stores execution artifacts in an external system such as Zazz Board.
 
 The framework's general guideline is:
 
 - keep `project.md`, `proposals/`, `features/`, and `standards/` tracked in Git or another Git-based service because they are durable, continuously maintained documents
-- treat Zazz Board as the default durable home for transient execution artifacts such as deliverable SPECs, PLANs, diagrams, and related working assets
-- use local deliverable files as working copies when helpful
-- commit deliverable execution artifacts to Git only when a project intentionally wants that exception
+- keep the deliverables policy explicit in the repo's `AGENTS.md`
+- allow deliverable execution artifacts under `<DOCS_ROOT>/deliverables/` to be ignored locally, committed intentionally, or connected to an external system when the repo chooses
+- treat external systems such as Zazz Board as optional integrations, not framework requirements
 
 If a team adopts one deliverable file-layout mode on disk, do not mix modes inside a single repo:
 
 1. **Flat local files** — `{slug}-SPEC.md` / `{slug}-PLAN.md` under `deliverables/`
 2. **Tracker-key subdirectories** — `deliverables/{id}/{slug}-SPEC.md` and `.../{slug}-PLAN.md`, where `{id}` may be a Zazz Board deliverable code or a Jira issue key
-3. **No durable on-disk deliverable files** — deliverable content is stored outside Git, typically in Zazz Board
+3. **No durable on-disk deliverable files** — the repo treats execution artifacts as external or ephemeral and documents that policy explicitly in `AGENTS.md`
 
 This deliverable file-layout choice is related to, but not identical to, the repo's broader work-tracking system.
 A repo may also use an external tracker for PR-facing links or issue management, such as:
@@ -321,7 +325,7 @@ Naming conventions:
 | Artifact | Convention | Example |
 | ------- | ---------- | ------- |
 | **Project document** | `project.md` at docs root | `project.md` |
-| **Docs root** | repo-relative path declared in `AGENTS.md` | `.zazz`, `docs` |
+| **Docs root** | repo-relative path resolved by repo policy and documented in `AGENTS.md` | `.zazz`, `docs` |
 | **Proposal** | `proposals/{name}.md` | `role-management-options.md` |
 | **Feature requirements document** | `features/{feature-key}.md` | `role-based-access-control.md` |
 | **Features index** | `features/index.yaml` | `features/index.yaml` |
@@ -889,25 +893,27 @@ They work together with standards:
 - acceptance criteria and TDD prove the deliverable does the right thing
 - standards help ensure it is built the right way
 
-### Default framework position: durable docs in Git, transient execution docs in Zazz Board
+### Default framework position: durable docs in Git, execution artifacts declared per repo
 
 In practice, deliverable docs are transient execution artifacts, not long-lived product-definition docs. They change frequently, can be highly agent-specific, and tend to clutter the shared repository when every in-flight deliverable is committed.
 
 So the framework default is:
 
 - keep `project.md`, `standards/`, `proposals/`, and `features/` tracked in Git or another Git-based service
-- persist transient deliverable markdown and associated assets in Zazz Board
-- use local deliverable files only as temporary execution working copies when they are helpful
+- declare in `AGENTS.md` whether `<DOCS_ROOT>/deliverables/` is ignored locally, committed, externally tracked, or absent on disk in that repo
+- use local deliverable files as execution working copies when they are helpful
+- use an external system such as Zazz Board only when that repo chooses to integrate one
 
 Examples of acceptable mechanisms:
 
 - `.git/info/exclude`
 - an equivalent worktree-local exclude file in a shared-bare/worktree setup
-- Zazz Board as the durable store for SPECs, PLANs, diagrams, and related deliverable assets
+- committed deliverable docs under `<DOCS_ROOT>/deliverables/`
+- an external system such as Zazz Board for deliverable metadata, files, diagrams, task state, or related execution assets
 
 The important idea is not the exact Git plumbing. The important idea is that `project.md`, proposals, feature requirements documents, and standards are **shared durable knowledge**, while deliverables are usually **transient execution docs**.
 
-Teams may still choose to commit deliverable docs when they want a canonical audit trail in Git. The framework allows that, but it should be treated as an explicit exception rather than the default.
+Teams may choose local ignored deliverables, committed deliverables, or external tracking. The framework allows all three, but the repo must declare the policy clearly so agents do not guess.
 
 ### Required: one worktree per deliverable
 
