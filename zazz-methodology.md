@@ -1,10 +1,12 @@
-# The Zazz Framework
+# The Zazz Methodology
 
-Zazz is an opinionated, spec-driven framework for collaborative software delivery by builders and AI agents. It separates long-lived product knowledge from short-lived execution contracts so teams can move quickly without losing the "why" behind the system.
+Zazz is an opinionated, spec-driven methodology for collaborative software delivery by builders and AI agents. It separates long-lived product knowledge from short-lived execution contracts so teams can move quickly without losing the "why" behind the system.
 
-The framework is intentionally **project-first** in its conceptual model: start with a top-level `project.md` that explains the software's value proposition, purpose, and major capabilities. Under that project context, proposals and feature requirements documents act as sibling durable artifacts, while milestones live inside feature requirements documents and deliverables remain bounded execution slices.
+Zazz is a **methodology** that includes a document framework, skills, and tooling. The methodology is the umbrella: it defines how to structure features, milestones, deliverables, and SPECs; how to organize human and agent collaboration; and how to verify that the right software was built correctly. The document framework is a component within the methodology — it defines the durable document model, naming conventions, and file layout that give the methodology a consistent on-disk shape. Skills and tooling implement the methodology's opinions in practice.
 
-The framework is also intentionally **git-native**. Durable planning and product documents are version-controlled in Git and reviewed through the team's normal branch and PR workflow. GitHub is a common example, but the framework is agnostic to which Git hosting platform or review tooling a team uses. Git worktrees are a required part of the framework because they provide the isolation, recovery, and bounded execution model the framework depends on.
+The methodology is intentionally **project-first** in its conceptual model: start with a top-level `project.md` that explains the software's value proposition, purpose, and major capabilities. Under that project context, proposals and feature requirements documents act as sibling durable artifacts, while milestones live inside feature requirements documents and deliverables remain bounded execution slices.
+
+The methodology is also intentionally **git-native**. Durable planning and product documents are version-controlled in Git and reviewed through the team's normal branch and PR workflow. GitHub is a common example, but the methodology is agnostic to which Git hosting platform or review tooling a team uses. Git worktrees are a required part of the methodology because they provide the isolation, recovery, and bounded execution model the document framework depends on.
 
 ## Table of Contents
 
@@ -41,7 +43,7 @@ The framework is also intentionally **git-native**. Durable planning and product
   - [Example `standards/index.yaml`](#example-standardsindexyaml)
 - [Deliverables and Worktrees](#deliverables-and-worktrees)
   - [Acceptance Criteria and TDD](#acceptance-criteria-and-tdd)
-  - [Default framework position: durable docs in Git, transient execution docs in Zazz Board](#default-framework-position-durable-docs-in-git-transient-execution-docs-in-zazz-board)
+  - [Default methodology position: durable docs in Git, execution artifacts declared per repo](#default-methodology-position-durable-docs-in-git-execution-artifacts-declared-per-repo)
   - [Required: one worktree per deliverable](#required-one-worktree-per-deliverable)
   - [Durable knowledge must be promoted](#durable-knowledge-must-be-promoted)
 - [Execution Model](#execution-model)
@@ -54,26 +56,26 @@ The framework is also intentionally **git-native**. Durable planning and product
 
 ## Value Proposition
 
-Zazz is opinionated because the framework is designed to help teams **build the right software, build it correctly, build it efficiently, and keep it maintainable and expandable over time**.
+Zazz is opinionated because the methodology is designed to help teams **build the right software, build it correctly, build it efficiently, and keep it maintainable and expandable over time**.
 
-In explicit terms, the framework provides:
+In explicit terms, the methodology provides:
 
 - **A durable structure for defining the right software to build.** `project.md`, proposals, feature requirements documents, milestones, and SPECs organize the product's purpose, current behavior, future direction, and execution intent so teams stay aligned on what the software is for and what it must do.
 - **A delivery model for building that software correctly.** Explicit acceptance criteria, TDD, standards alignment, QA loops, and review gates exist so teams can verify that the implementation matches the intended functionality and is built using maintainable, expandable engineering patterns.
-- **A framework for building efficiently without losing quality.** Once the right context is approved, the execution skills can operate in a launch-and-leave mode that reduces supervision overhead while still escalating at real decision or approval boundaries.
+- **A methodology for building efficiently without losing quality.** Once the right context is approved, the execution skills can operate in a launch-and-leave mode that reduces supervision overhead while still escalating at real decision or approval boundaries.
 - **A system that preserves maintainability and future expansion.** Standards, disciplined execution contracts, and upstream documentation updates help ensure the software can be understood, maintained, and extended as capabilities grow.
 
 The skills, roles, document model, and opinionated workflow are means to that end. They are not the value proposition by themselves. Their purpose is to make those outcomes repeatable across projects, features, deliverables, and teams.
 
-The framework is opinionated on purpose. The goal is not arbitrary restriction; the goal is to reduce ambiguity, improve consistency across repos and teams, and make the desired outcomes more repeatable for builders and AI agents.
+The methodology is opinionated on purpose. The goal is not arbitrary restriction; the goal is to reduce ambiguity, improve consistency across repos and teams, and make the desired outcomes more repeatable for builders and AI agents.
 
-All framework markdown documents live under a repo-relative docs root resolved by repo policy. In most repos, that root will be either `.zazz/` or `docs/` at the root of the monorepo. The repo should explain the resolution rule in `AGENTS.md`, whether that means declaring the path directly or declaring how to resolve it from an environment variable. Framework skills should live under `.agents/skills/` so they stay reusable and AI-tool agnostic.
+All methodology markdown documents live under a repo-relative docs root resolved by repo policy. In most repos, that root will be either `.zazz/` or `docs/` at the root of the monorepo. The repo should explain the resolution rule in `AGENTS.md`, whether that means declaring the path directly or declaring how to resolve it from an environment variable. Methodology skills should live under `.agents/skills/` so they stay reusable and AI-tool agnostic.
 
-The default mental model is one software project in one monorepo. If a product spans multiple repositories, it is reasonable to introduce a shared docs/framework repo or package so the same standards, features, and skills can be consumed across repos. That is an extension pattern, not the default assumption.
+The default mental model is one software project in one monorepo. If a product spans multiple repositories, it is reasonable to introduce a shared docs/methodology repo or package so the same standards, features, and skills can be consumed across repos. That is an extension pattern, not the default assumption.
 
-This repository is the canonical source of truth for the framework document and the Zazz skills. Copies of the framework or skills that live in consuming repos, including [zazz-board](https://github.com/zazzcode/zazz-board), may lag behind. Changes should land here first and then be propagated outward.
+This repository is the canonical source of truth for the methodology document and the Zazz skills. Copies of the methodology or skills that live in consuming repos, including [zazz-board](https://github.com/zazzcode/zazz-board), may lag behind. Changes should land here first and then be propagated outward.
 
-[zazz-board](https://github.com/zazzcode/zazz-board) is the reference implementation of the framework and actively dogfoods it.
+[zazz-board](https://github.com/zazzcode/zazz-board) is the reference implementation of the methodology and actively dogfoods it.
 
 ---
 
@@ -82,8 +84,8 @@ This repository is the canonical source of truth for the framework document and 
 | Concept | Summary |
 | ------- | ------- |
 | **Desired-state convergence** | Work iterates until implementation, tests, and review evidence align with the specification |
-| **Git-native model** | Durable docs are version-controlled in Git, reviewed through branches and PRs, and executed through the framework's required worktree model |
-| **Docs root** | The repo's policy resolves the repo-relative directory that contains framework markdown documents, usually documented in `AGENTS.md` |
+| **Git-native model** | Durable docs are version-controlled in Git, reviewed through branches and PRs, and executed through the methodology's required worktree model |
+| **Docs root** | The repo's policy resolves the repo-relative directory that contains methodology markdown documents, usually documented in `AGENTS.md` |
 | **Top-level durable doc** | `project.md` captures the project purpose, value proposition, and major established capabilities |
 | **Tracked docs** | `project.md`, `standards/`, `features/`, and `proposals/` are the durable, continuously maintained documents and should be tracked in Git |
 | **Execution docs** | Deliverable SPEC artifacts follow the repo's declared policy: ignored local files, committed files, external tracking, or a combination the repo defines explicitly |
@@ -93,20 +95,20 @@ This repository is the canonical source of truth for the framework document and 
 | **Skills** | `proposal-builder`, `feature-doc-builder`, `architecture-doc-builder`, `spec-builder`, `qa`, optional `pr-builder`, optional companion utility skills such as `zazz-board-api`, `gh-stack`, and draft `jira-api` |
 | **Skill modes** | Some skills are interactive and human-in-the-loop; others are designed for mostly autonomous execution once inputs are approved |
 | **Autonomy value** | Approved context should let agents converge on a verified solution with minimal supervision, improving delivery efficiency without dropping quality |
-| **Organization value** | The framework gives teams an opinionated structure for defining what the product does, why it exists, and how it can evolve over time |
+| **Organization value** | The methodology gives teams an opinionated structure for defining what the product does, why it exists, and how it can evolve over time |
 | **Authority model** | Agents may work autonomously inside approved contracts; owners retain approval, scope, sign-off, and merge authority |
 | **Merge authority** | Agents may prepare and verify PRs, but final approval and merge are always reserved to the Deliverable Owner or another authorized human reviewer |
 | **Human gates** | UAT and PR review after convergence, before merge |
-| **Source of truth** | This repository is canonical for framework and skill definitions; downstream copies may lag |
-| **Reference implementation** | [zazz-board](https://github.com/zazzcode/zazz-board) dogfoods the framework, skills, and document model |
+| **Source of truth** | This repository is canonical for methodology and skill definitions; downstream copies may lag |
+| **Reference implementation** | [zazz-board](https://github.com/zazzcode/zazz-board) dogfoods the methodology, skills, and document model |
 
-**Document scope:** This file defines framework philosophy, document contracts, and operating model. API syntax, route details, and tool-specific commands belong in skills and project docs.
+**Document scope:** This file defines methodology philosophy, document contracts, and operating model. API syntax, route details, and tool-specific commands belong in skills and project docs.
 
 **Reading order:** Start with `project.md`, then any relevant proposal and feature requirements document, then the deliverable SPEC. The project defines the product, the feature requirement defines capability evolution, and the deliverable defines one bounded execution increment.
 
 ## Humans, Agents, and Skills
 
-The framework distinguishes three different things that are easy to blur together if the wording is loose:
+The methodology distinguishes three different things that are easy to blur together if the wording is loose:
 
 - **Human actors**: Product Owner, Project Owner, Deliverable Owner, stakeholders, and reviewers
 - **Agent actors**: the runtime AI agents that execute work or facilitate dialogue
@@ -134,12 +136,12 @@ This document sometimes uses skill names as shorthand for the agents operating w
 2. **Durable knowledge lives in tracked docs.** `project.md`, `proposals/`, `features/`, and `standards/` are shared repository knowledge. They preserve product understanding, active decisions, and engineering rules over time.
 3. **Project context comes before execution slices.** Start from `project.md`, then use proposals and feature requirements documents to clarify why and how the product should evolve before breaking work into deliverables whenever the work is part of an enduring capability.
 4. **Execution contracts are per increment.** A deliverable SPEC defines one bounded slice of work. It is the executable contract that contains both intent and implementation guidance, replacing the old SPEC + PLAN split. It is not the permanent home for product narrative.
-5. **Git primitives are part of the framework.** Use branches, worktrees, PRs, review comments, and final PR approval as standard collaboration mechanisms for both code and durable docs.
-6. **The framework is opinionated about both product definition and engineering structure.** `project.md`, proposals, feature requirements documents, milestones, and SPECs define what the software should do and why; standards define how it must be built so it remains maintainable and expandable over time.
+5. **Git primitives are part of the methodology.** Use branches, worktrees, PRs, review comments, and final PR approval as standard collaboration mechanisms for both code and durable docs.
+6. **The methodology is opinionated about both product definition and engineering structure.** `project.md`, proposals, feature requirements documents, milestones, and SPECs define what the software should do and why; standards define how it must be built so it remains maintainable and expandable over time.
 7. **Launch-and-leave execution is a design goal.** Once the approved context exists, planning, implementation, verification, and PR packaging should require minimal supervision until a real decision or approval boundary is reached.
 8. **Agents load only the context they need.** `index.yaml` files exist to help agents decide what to read instead of loading every standard or feature requirements document into context.
 9. **PR merge authority stays with an authorized human.** Agents may create draft PRs, update PR bodies, and provide verification evidence, but they must never approve or merge PRs on their own.
-10. **Use isolated execution contexts.** One worktree per active deliverable is the framework's required operating model because it isolates implementation state, branch history, and transient execution artifacts.
+10. **Use isolated execution contexts.** One worktree per active deliverable is the methodology's required operating model because it isolates implementation state, branch history, and transient execution artifacts.
 11. **Durable knowledge moves upstream.** When a deliverable changes the product, update `project.md`, the relevant feature requirements document, and any impacted standards so the long-lived docs reflect the shipped system.
 
 ---
@@ -148,7 +150,7 @@ This document sometimes uses skill names as shorthand for the agents operating w
 
 Zazz is designed to work with native Git collaboration primitives instead of inventing a parallel document-management system.
 
-Framework expectations:
+Methodology expectations:
 
 - keep durable docs in the repository so branches, commits, PR comments, and merge history become part of the durable document audit trail
 - use **draft PRs** to share in-progress proposals, feature requirements document revisions, and standards updates that are still being shaped
@@ -156,7 +158,7 @@ Framework expectations:
 - treat PR approval and merge as human-controlled gates; agents may prepare and verify PRs but must not merge them
 - treat worktrees as the required isolation and recovery mechanism for active deliverable execution; if an execution path proves wrong, the worktree can be abandoned without polluting the main line of work
 - treat Git history as the durable change log for `project.md`, proposals, feature requirements documents, and standards
-- remember that GitHub is only a common example; GitLab, Bitbucket, Forgejo, and other Git-based review systems fit the same framework model
+- remember that GitHub is only a common example; GitLab, Bitbucket, Forgejo, and other Git-based review systems fit the same methodology model
 
 Required review pattern for durable docs:
 
@@ -176,7 +178,7 @@ Recovery pattern:
 
 ## Document Root
 
-The framework requires a single docs-root resolution rule for each repo.
+The document framework requires a single docs-root resolution rule for each repo.
 
 Recommended values:
 
@@ -187,24 +189,24 @@ Recommended values:
 Rules:
 
 - The value is a **relative path within the repository**.
-- All framework markdown and index files resolve relative to this root.
+- All methodology markdown and index files resolve relative to this root.
 - `AGENTS.md` should document the rule clearly, either by declaring the path directly or by declaring how to resolve it from an environment variable.
-- Skills and agents should refer to framework docs through this resolved root rather than hardcoding `.zazz`.
+- Skills and agents should refer to methodology docs through this resolved root rather than hardcoding `.zazz`.
 
 Examples:
 
-- `Framework docs root: .zazz`
-- `Framework docs root: docs`
-- `Framework docs root: packages/platform-docs`
-- `Framework docs root comes from <ENV_VAR>, which resolves to a repo-relative path such as docs or .zazz`
+- `Methodology docs root: .zazz`
+- `Methodology docs root: docs`
+- `Methodology docs root: packages/platform-docs`
+- `Methodology docs root comes from <ENV_VAR>, which resolves to a repo-relative path such as docs or .zazz`
 
-When the application spans multiple repos, point the relevant repo or shared package at the directory that contains the framework docs. The important contract is that the path is repo-relative and stable for that repo.
+When the application spans multiple repos, point the relevant repo or shared package at the directory that contains the methodology docs. The important contract is that the path is repo-relative and stable for that repo.
 
 ---
 
 ## Hierarchy
 
-The framework's default hierarchy is:
+The document framework's default hierarchy is:
 
 ```text
 project.md
@@ -225,7 +227,7 @@ Interpretation:
 - deliverables are execution increments associated with one milestone, or with standalone non-feature work.
 - tasks are the smallest execution units inside a deliverable.
 
-This hierarchy matters because the framework treats each layer differently:
+This hierarchy matters because the methodology treats each layer differently:
 
 - `project.md` explains why the software project exists, what value it creates, and which capabilities are already established.
 - proposals explore uncertain solution space before the team commits to a direction.
@@ -233,15 +235,15 @@ This hierarchy matters because the framework treats each layer differently:
 - deliverables define bounded execution contracts.
 - tasks are short-lived implementation units, not durable product-definition artifacts.
 
-Not every layer is required for every change. Bugs, chores, and small maintenance slices may go straight to a deliverable SPEC. But when the work changes the shape of the product, the framework expects the higher-level context to exist first.
+Not every layer is required for every change. Bugs, chores, and small maintenance slices may go straight to a deliverable SPEC. But when the work changes the shape of the product, the methodology expects the higher-level context to exist first.
 
 ---
 
 ## Opinionated Docs Layout
 
-The framework is opinionated about the directory shape under the declared docs root.
+The document framework is opinionated about the directory shape under the declared docs root.
 
-Each document type in the framework is expected to justify its existence through the problem it solves. The framework does not introduce artifacts just to create ceremony. Each artifact exists because it addresses a different coordination need: project context, solution exploration, durable capability definition, implementation guidance, or bounded execution.
+Each document type in the methodology is expected to justify its existence through the problem it solves. The methodology does not introduce artifacts just to create ceremony. Each artifact exists because it addresses a different coordination need: project context, solution exploration, durable capability definition, implementation guidance, or bounded execution.
 
 Required long-lived artifacts:
 
@@ -288,18 +290,18 @@ Recommended responsibilities:
 
 ### Execution artifact storage modes
 
-The framework supports three common ways teams handle deliverable artifacts on disk and in tooling:
+The document framework supports three common ways teams handle deliverable artifacts on disk and in tooling:
 
 1. **Local ignored deliverables** — `<DOCS_ROOT>/deliverables/` exists in the repo or worktree, is usually ignored, and SPEC docs are treated as local execution artifacts.
 2. **Committed deliverables** — SPEC docs are kept under `<DOCS_ROOT>/deliverables/` and tracked in Git because the team intentionally wants a Git-native audit trail for execution artifacts.
 3. **Externally tracked deliverables** — the repo still has a declared deliverables policy, but the team also mirrors, tracks, or stores execution artifacts in an external system such as Zazz Board.
 
-The framework's general guideline is:
+The methodology's general guideline is:
 
 - keep `project.md`, `proposals/`, `features/`, and `standards/` tracked in Git or another Git-based service because they are durable, continuously maintained documents
 - keep the deliverables policy explicit in the repo's `AGENTS.md`
 - allow deliverable execution artifacts under `<DOCS_ROOT>/deliverables/` to be ignored locally, committed intentionally, or connected to an external system when the repo chooses
-- treat external systems such as Zazz Board as optional integrations, not framework requirements
+- treat external systems such as Zazz Board as optional integrations, not methodology requirements
 
 If a team adopts one deliverable file-layout mode on disk, do not mix modes inside a single repo:
 
@@ -318,7 +320,7 @@ A repo may also use an external tracker for PR-facing links or issue management,
 
 That broader tracking declaration belongs in the repo's `AGENTS.md`.
 It tells skills how PRs, QA artifacts, and deliverable references should be anchored.
-Live integration with those systems, when present, belongs in companion utility skills rather than in the framework doc itself.
+Live integration with those systems, when present, belongs in companion utility skills rather than in the methodology doc itself.
 
 Naming conventions:
 
@@ -351,7 +353,7 @@ Keep `features/` flat by default. Introduce per-feature subdirectories only if t
 
 ## Project Document (`project.md`)
 
-`project.md` is the framework's top-level durable document.
+`project.md` is the methodology's top-level durable document.
 
 ### Why `project.md` exists
 
@@ -382,7 +384,7 @@ A strong `project.md` should usually include:
 
 ## Proposals
 
-Proposal documents are the framework's exploratory, pre-commitment decision artifacts.
+Proposal documents are the methodology's exploratory, pre-commitment decision artifacts.
 
 They live under:
 
@@ -420,7 +422,7 @@ Proposal docs do not replace feature requirements documents or SPECs. They help 
 
 ## Features and Feature Requirements Documents
 
-The feature requirements document is a core framework concept.
+The feature requirements document is a core methodology concept.
 
 A feature requirements document is a **long-lived, continuously maintained document** for one application capability. It explains:
 
@@ -489,7 +491,7 @@ The important rule is that the milestone model lives in the feature requirements
 - A **feature** can span many milestones.
 - A **milestone** is a meaningful increment of that feature and may contain multiple deliverables.
 - A **deliverable** is one bounded execution slice that advances a milestone or handles a standalone need.
-- Teams may define only the next one, two, or three milestones at a time. The framework does not require a complete long-range milestone map before execution begins.
+- Teams may define only the next one, two, or three milestones at a time. The methodology does not require a complete long-range milestone map before execution begins.
 - Not every deliverable requires a feature requirements document. Bugs, chores, maintenance, migration work, and other non-feature increments may go straight to SPEC.
 
 Relationship model:
@@ -547,11 +549,11 @@ The specific text can vary, but the index should give enough information for an 
 
 ### Feature Doc Builder Skill
 
-The framework includes a dedicated skill for authoring and evolving feature requirements documents:
+The methodology includes a dedicated skill for authoring and evolving feature requirements documents:
 
 - `feature-doc-builder`
 
-The skill name remains `feature-doc-builder` for compatibility, but the canonical artifact term in the framework is **feature requirements document**.
+The skill name remains `feature-doc-builder` for compatibility, but the canonical artifact term in the methodology is **feature requirements document**.
 
 Its purpose is to work with a product owner, project owner, or stakeholders to define:
 
@@ -608,7 +610,7 @@ One person may hold multiple roles in a smaller team.
 | Role | Primary scope | Typical responsibilities |
 | ---- | ------------- | ------------------------ |
 | **Product Owner** | Application and feature value | Owns feature intent, business/domain value, feature requirements documents, milestone direction, and feature-level success criteria |
-| **Project Owner** | Engineering project and delivery system | Owns repo/process/framework conventions, implementation-facing priorities, and delivery structure |
+| **Project Owner** | Engineering project and delivery system | Owns repo/process/methodology conventions, implementation-facing priorities, and delivery structure |
 | **Deliverable Owner** | One bounded execution increment | Usually a software developer, tech lead, or other technical owner. Owns deliverable scope, deliverable acceptance criteria, implementation clarifications during execution, and final acceptance/rejection |
 
 Rule of thumb:
@@ -631,7 +633,7 @@ Not every skill should behave the same way in human collaboration.
 | **Autonomous execution** | `qa`, `qa-frontend`, `qa-backend` | These skills are expected to run mostly independently once approved inputs exist, escalating only when they hit a real decision gate, ambiguity, or approval boundary |
 | **Companion utility** | `zazz-board-api`, `gh-stack`, draft `jira-api` | These skills are not human-facing workflows on their own; they support other skills with tracker/API capability, stacked PR workflows, or authoritative external context when available |
 
-"Launch-and-leave" is a good informal description for the autonomous execution class, and it is a real framework value proposition. The expectation is not zero human interaction. The expectation is minimal interruption once the skill has the approved context it needs.
+"Launch-and-leave" is a good informal description for the autonomous execution class, and it is a real methodology value proposition. The expectation is not zero human interaction. The expectation is minimal interruption once the skill has the approved context it needs.
 
 Interactive skills should optimize for dialogue quality and artifact clarity. Autonomous skills should optimize for execution quality, truthful state, TDD discipline, and the ability to iterate toward a verified final solution before escalating.
 
@@ -641,9 +643,9 @@ In this section and elsewhere, the skill names are shorthand for agents operatin
 
 ## Repo-Specific Skill Extensions
 
-Framework skills are intended to stay reusable across many repositories, but real application repos often need a small amount of repo-specific guidance for how a skill should behave in that environment.
+Methodology skills are intended to stay reusable across many repositories, but real application repos often need a small amount of repo-specific guidance for how a skill should behave in that environment.
 
-The framework supports that through an optional companion directory:
+The methodology supports that through an optional companion directory:
 
 ```text
 .agents/
@@ -653,22 +655,22 @@ The framework supports that through an optional companion directory:
     └── <skill-name>/EXTENSION.md
 ```
 
-Use this mechanism when a repo needs to add application-specific or harness-specific guidance without forking the base framework skill.
+Use this mechanism when a repo needs to add application-specific or harness-specific guidance without forking the base methodology skill.
 
 Typical examples:
 
 - preferred agent harness capabilities available in that repo
 - repo-specific commands, wrappers, or verification flows
 - local escalation rules or evidence expectations
-- project-specific cautions that refine how a shared framework skill should be applied
+- project-specific cautions that refine how a shared methodology skill should be applied
 
 Rules:
 
-- base skills under `.agents/skills/` remain the canonical framework-owned contract
+- base skills under `.agents/skills/` remain the canonical methodology-owned contract
 - repo-specific guidance lives in `.agents/skill-extensions/<skill-name>/EXTENSION.md`
 - the extension is additive guidance, not a silent replacement for the base skill
 - the extension should stay concise and point to repo-local references or scripts when it grows
-- repo-specific extensions must not quietly weaken framework safety or authority boundaries
+- repo-specific extensions must not quietly weaken methodology safety or authority boundaries
 
 Recommended skill behavior:
 
@@ -677,11 +679,11 @@ Recommended skill behavior:
 3. If it exists, read it immediately after the base skill.
 4. Treat it as friendly repo-specific guidance for how that skill should be applied in the current application.
 
-Why the framework prefers a companion extension directory:
+Why the methodology prefers a companion extension directory:
 
-- it keeps the shared base skill easy to sync from the framework source of truth
+- it keeps the shared base skill easy to sync from the methodology source of truth
 - it avoids cluttering `AGENTS.md` with large skill-by-skill exceptions
-- it lets each repo add local nuance without pretending those details belong in every downstream user of the framework
+- it lets each repo add local nuance without pretending those details belong in every downstream user of the methodology
 
 This pattern is especially useful for execution skills such as `qa`, where the available agent harness, board wrappers, or validation tools may vary by repository.
 
@@ -689,7 +691,7 @@ This pattern is especially useful for execution skills such as `qa`, where the a
 
 ## Agent Authority and Owner Gates
 
-The framework is designed to maximize safe agent autonomy without removing owner accountability.
+The methodology is designed to maximize safe agent autonomy without removing owner accountability.
 
 ### Where agents may operate autonomously
 
@@ -718,7 +720,7 @@ Owner approval or another authorized human decision remains mandatory at these b
 
 Use agents to do the work. Use the Deliverable Owner or another authorized human to approve the contract, accept the result, and authorize merge.
 
-This is the framework's intended balance:
+This is the methodology's intended balance:
 
 - maximum autonomy inside approved boundaries
 - explicit human control at approval, acceptance, and merge boundaries
@@ -727,7 +729,7 @@ This is the framework's intended balance:
 
 ## Agent Execution Discipline
 
-The framework expects agents to behave with disciplined scope awareness and verification habits. These rules reduce wasted work, prevent out-of-scope edits, and keep branch footprints minimal.
+The methodology expects agents to behave with disciplined scope awareness and verification habits. These rules reduce wasted work, prevent out-of-scope edits, and keep branch footprints minimal.
 
 ### Verify scope before acting
 
@@ -746,7 +748,7 @@ Rules:
 
 ### Integration branch invariant
 
-The framework assumes the integration branch is always green. There are no pre-existing test failures on the base branch.
+The methodology assumes the integration branch is always green. There are no pre-existing test failures on the base branch.
 
 Rules:
 
@@ -824,15 +826,15 @@ The key contract is:
 - agents should **not** inject every standard document into context by default
 - `AGENTS.md` itself should stay lean and should not duplicate large sections of standards content
 
-This is how the framework manages context without requiring every task to load the entire project's standards corpus.
+This is how the methodology manages context without requiring every task to load the entire project's standards corpus.
 
 ### `AGENTS.md` Strategy
 
 `AGENTS.md` exists to solve the "how do I enter this repo correctly?" problem. Its job is routing, not deep policy. It tells agents where the durable docs live, which indexes to use for selective loading, what tracking model the repo uses, and what execution constraints matter before work begins.
 
-Every repo using the framework should have a real `AGENTS.md` at its repo root.
+Every repo using the methodology should have a real `AGENTS.md` at its repo root.
 
-This repo defines the framework contract for what that file must contain and provides an example template:
+This repo defines the methodology contract for what that file must contain and provides an example template:
 
 - `templates/AGENTS.md`
 
@@ -846,7 +848,7 @@ If you want a concrete real-world repo-level `AGENTS.md` in practice, use the re
 
 At minimum, a repo-level `AGENTS.md` must tell agents:
 
-- what the repo's framework docs root is
+- what the repo's methodology docs root is
 - where `<DOCS_ROOT>/project.md` lives
 - where `<DOCS_ROOT>/standards/index.yaml` lives
 - that the standards index is the discovery surface for selective context loading
@@ -933,7 +935,7 @@ Index structure expectations:
 
 ## Deliverables and Worktrees
 
-Deliverables are the execution layer of the framework.
+Deliverables are the execution layer of the methodology.
 
 - Every active deliverable must have a SPEC that serves as the execution contract, replacing the old SPEC + PLAN split.
 - The SPEC contains both the intent and implementation guidance (including execution sequence) for one bounded increment.
@@ -947,9 +949,9 @@ Their value is precision and boundedness. They let the team isolate one unit of 
 
 ### Acceptance Criteria and TDD
 
-Acceptance criteria and TDD are core framework mechanisms for ensuring value delivery.
+Acceptance criteria and TDD are core methodology mechanisms for ensuring value delivery.
 
-Framework expectations:
+Methodology expectations:
 
 - the Product Owner defines feature-level value and milestone outcomes in the feature requirements document
 - the Deliverable Owner defines explicit deliverable acceptance criteria in the SPEC
@@ -957,18 +959,18 @@ Framework expectations:
 - the implementation loop should use TDD wherever applicable
 - QA validates against both the SPEC and the supporting test evidence
 
-This is the framework's main protection against building the wrong thing, building something unverifiable, or shipping work that does not produce real value.
+This is the methodology's main protection against building the wrong thing, building something unverifiable, or shipping work that does not produce real value.
 
 They work together with standards:
 
 - acceptance criteria and TDD prove the deliverable does the right thing
 - standards help ensure it is built the right way
 
-### Default framework position: durable docs in Git, execution artifacts declared per repo
+### Default methodology position: durable docs in Git, execution artifacts declared per repo
 
 In practice, deliverable docs are transient execution artifacts, not long-lived product-definition docs. They change frequently, can be highly agent-specific, and tend to clutter the shared repository when every in-flight deliverable is committed.
 
-So the framework default is:
+So the methodology default is:
 
 - keep `project.md`, `standards/`, `proposals/`, and `features/` tracked in Git or another Git-based service
 - declare in `AGENTS.md` whether `<DOCS_ROOT>/deliverables/` is ignored locally, committed, externally tracked, or absent on disk in that repo
@@ -984,11 +986,11 @@ Examples of acceptable mechanisms:
 
 The important idea is not the exact Git plumbing. The important idea is that `project.md`, proposals, feature requirements documents, and standards are **shared durable knowledge**, while deliverables are usually **transient execution docs**.
 
-Teams may choose local ignored deliverables, committed deliverables, or external tracking. The framework allows all three, but the repo must declare the policy clearly so agents do not guess.
+Teams may choose local ignored deliverables, committed deliverables, or external tracking. The methodology allows all three, but the repo must declare the policy clearly so agents do not guess.
 
 ### Required: one worktree per deliverable
 
-Worktrees are required by the framework. The operating model is:
+Worktrees are required by the methodology. The operating model is:
 
 - one active deliverable per worktree
 - one branch per worktree
@@ -998,7 +1000,7 @@ Worktrees are required by the framework. The operating model is:
 
 This keeps execution isolated and makes it easy to keep local deliverable docs alongside the code they govern. It is required because it improves safety, reviewability, and recovery, especially when multiple builders or AI agents are working in parallel.
 
-The framework's unit of isolation is the deliverable worktree. Do not create multiple worktrees for the same active deliverable just because multiple agents are participating. Parallel task execution for one deliverable should still happen inside that single deliverable worktree, with file coordination handled through the repo coordination policy and the active agent harness.
+The methodology's unit of isolation is the deliverable worktree. Do not create multiple worktrees for the same active deliverable just because multiple agents are participating. Parallel task execution for one deliverable should still happen inside that single deliverable worktree, with file coordination handled through the repo coordination policy and the active agent harness.
 
 If the team wants multiple versions or competing implementations, model them as separate deliverables. Each deliverable gets its own identity, its own execution contract as needed, and its own dedicated worktree.
 
@@ -1020,14 +1022,14 @@ Worktrees also provide a clean rollback boundary for human review. If a delivera
 - revisit the feature requirements document if the feature intent or milestone framing is wrong
 - revisit the SPEC if the execution contract is wrong or incomplete
 
-This is one of the practical benefits of the framework's git-native design: incorrect execution paths can be discarded cleanly without confusing the durable project history or forcing a bad implementation to keep moving forward.
+This is one of the practical benefits of the methodology's git-native design: incorrect execution paths can be discarded cleanly without confusing the durable project history or forcing a bad implementation to keep moving forward.
 
 Useful background references:
 
 - [Git worktree documentation](https://git-scm.com/docs/git-worktree)
 - [Worktrunk CLI](https://worktrunk.dev/worktrunk/)
 
-`git worktree` is the underlying Git feature. [Worktrunk](https://worktrunk.dev/worktrunk/) is an encouraged convenience CLI that makes worktree workflows easier, especially when builders and AI agents are working in parallel, but it is not a framework requirement.
+`git worktree` is the underlying Git feature. [Worktrunk](https://worktrunk.dev/worktrunk/) is an encouraged convenience CLI that makes worktree workflows easier, especially when builders and AI agents are working in parallel, but it is not a methodology requirement.
 
 For detailed setup guidance, see:
 
@@ -1043,7 +1045,7 @@ If a deliverable changes the product, the final knowledge should not stay trappe
 - any impacted standards
 - other long-lived project docs as needed
 
-That is how the framework avoids stale onboarding docs and stale product descriptions.
+That is how the methodology avoids stale onboarding docs and stale product descriptions.
 
 ---
 
@@ -1128,7 +1130,7 @@ Project
 | **UAT** | Validate delivered behavior meets expectations |
 | **PR review** | Gate for code integration and release readiness |
 
-Framework rule:
+Methodology rule:
 
 - agents may prepare, verify, and update PRs, but PR approval and merge are always reserved to the Deliverable Owner or another authorized human reviewer
 
@@ -1148,11 +1150,11 @@ You can adopt Zazz at three levels:
 
 | Level | What you use | When it fits |
 | ----- | ------------ | ------------ |
-| **Process-only** | Framework philosophy and document flow | Apply the process manually; no tools required |
+| **Process-only** | Methodology philosophy and document flow | Apply the process manually; no tools required |
 | **Skills-assisted** | Process + `zazz-skills` | Use skills to facilitate proposal, feature requirements, spec, implementation, QA, and PR packaging |
 | **Service-assisted** | Process + skills + [zazz-board](https://github.com/zazzcode/zazz-board) | Add Board to organize relationships and execution state across features, milestones, deliverables, and tasks |
 
-By framework layer:
+By methodology layer:
 
 | Layer | Scope |
 | ----- | ----- |
@@ -1166,17 +1168,17 @@ By framework layer:
 
 This repo is the canonical source of truth for:
 
-- the framework document
+- the methodology document
 - the skill definitions
 - the intended document model and naming conventions
 
 Other repos may contain copies of these files for convenience or local execution, but those copies are downstream artifacts and may be out of date. When there is a conflict, treat this repo as authoritative.
 
-[zazz-board](https://github.com/zazzcode/zazz-board) remains the reference implementation and dogfooding app for the framework.
+[zazz-board](https://github.com/zazzcode/zazz-board) remains the reference implementation and dogfooding app for the methodology.
 
 ## Zazz Board
 
-Zazz Board is optional tooling and the framework's reference implementation.
+Zazz Board is optional tooling and the methodology's reference implementation.
 
 It provides:
 
@@ -1186,9 +1188,9 @@ It provides:
 - shared-state coordination such as file locking
 - explicit human control points for review, rework, and successor deliverables
 
-[zazz-board](https://github.com/zazzcode/zazz-board) dogfoods the framework: the app is built using the same framework docs, skills, and delivery model it provides to other repos.
+[zazz-board](https://github.com/zazzcode/zazz-board) dogfoods the methodology: the app is built using the same methodology docs, skills, and delivery model it provides to other repos.
 
-The framework is still fully usable without Zazz Board. Board is an accelerator and reference implementation, not a prerequisite for the framework.
+The methodology is still fully usable without Zazz Board. Board is an accelerator and reference implementation, not a prerequisite for the methodology.
 
 ---
 
@@ -1198,4 +1200,4 @@ Prefer runtime-native isolation and planning features when the harness supports 
 
 ---
 
-**Framework maturity:** Pre-1.0 working draft `0.8.1`
+**Methodology maturity:** Pre-1.0 working draft `0.8.1`

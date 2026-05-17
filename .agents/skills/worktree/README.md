@@ -4,7 +4,7 @@ How to use the Worktree skill to set up and manage the required Zazz worktree mo
 
 ## What It Does
 
-The Worktree skill helps teams work inside the Zazz framework's required worktree model.
+The Worktree skill helps teams work inside the Zazz methodology's required worktree model.
 
 Official Worktrunk docs: [worktrunk.dev/worktrunk](https://worktrunk.dev/worktrunk/)
 
@@ -18,11 +18,11 @@ It helps with:
 
 ## Important Distinction
 
-- Worktrees are required by the Zazz framework.
-- Worktrunk is optional at the framework level.
+- Worktrees are required by the Zazz methodology.
+- Worktrunk is optional at the methodology level.
 - This specific skill requires Worktrunk. If you want to use this skill, `worktrunk` must be installed.
 
-If a team wants to follow the framework without Worktrunk, they can still do so with native `git worktree` commands. They just should not expect this skill to be the right tool for that environment.
+If a team wants to follow the methodology without Worktrunk, they can still do so with native `git worktree` commands. They just should not expect this skill to be the right tool for that environment.
 
 ## When to Use It
 
@@ -30,7 +30,7 @@ Use this skill when:
 - you are adopting the Zazz worktree model in a repo
 - you need to create or manage sibling worktrees for deliverables, proposals, or document efforts
 - you want help repairing broken worktree state
-- you want explicit Worktrunk command guidance that matches the framework's rules
+- you want explicit Worktrunk command guidance that matches the methodology's rules
 
 ## What You Should Have Ready
 
@@ -109,8 +109,8 @@ The skill should produce:
 
 ## Notes
 
-- The framework requires worktrees even when a repo does not use Zazz Board.
-- The framework does not require Worktrunk, but this skill does.
+- The methodology requires worktrees even when a repo does not use Zazz Board.
+- The methodology does not require Worktrunk, but this skill does.
 - In the Worktrunk-based workflow used by this skill, ignored local files needed to run the program in the worktree are carried over as part of the worktree setup flow.
 - For day-to-day Worktrunk commands, see [docs/wt-cheat-sheet.md](../../../docs/wt-cheat-sheet.md).
 - For the full worktree operating model, see [docs/worktree-setup.md](../../../docs/worktree-setup.md).

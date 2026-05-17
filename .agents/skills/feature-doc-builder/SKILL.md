@@ -57,7 +57,7 @@ Secondary audiences for the resulting feature document:
 
 ## Docs Root Convention
 
-Use the repo docs root declared in `AGENTS.md` as the base for framework docs. Example paths in this skill may use
+Use the repo docs root declared in `AGENTS.md` as the base for methodology docs. Example paths in this skill may use
 `<DOCS_ROOT>/...` as shorthand.
 
 ## What This Skill Produces
@@ -362,13 +362,13 @@ Use this section order unless the owner explicitly asks for a different structur
 
 ## Output Naming and Placement
 
-Use framework naming guidance:
+Use methodology naming guidance:
 
 - Feature document: `<DOCS_ROOT>/features/{feature-key}-feature.md`
 - Features index: `<DOCS_ROOT>/features/index.yaml`
 
 Keep `features/` flat by default. If a project later has a real need for multiple durable artifacts per feature, it may
-introduce subdirectories, but that is not the default framework recommendation.
+introduce subdirectories, but that is not the default methodology recommendation.
 
 ## Generation Triggers
 

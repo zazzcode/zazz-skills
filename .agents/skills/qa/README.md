@@ -4,7 +4,7 @@ How to use the QA skill to verify a deliverable against its SPEC, PLAN, tests, a
 
 ## What It Does
 
-The QA skill is the primary verification skill in the Zazz framework.
+The QA skill is the primary verification skill in the Zazz methodology.
 
 It should:
 - validate acceptance criteria

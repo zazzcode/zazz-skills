@@ -24,11 +24,11 @@ Before making board/API calls:
 ## Purpose
 Agents use this API to create/manage deliverables and tasks, update statuses, append notes, and inspect task graph/readiness. Projects and users are pre-configured; agents do not create them.
 
-This skill is only for **service-assisted** adoption. It is optional in the framework and should not be required in `process-only` or ordinary `skills-assisted` repos that are just following the framework's document model and directory structure.
+This skill is only for **service-assisted** adoption. It is optional in the methodology and should not be required in `process-only` or ordinary `skills-assisted` repos that are just following the methodology's document model and directory structure.
 
 ### Deliverable SPEC paths on disk
 
-Projects are **flat**, **Zazz Board**, or **Jira** (mutually exclusive). **Flat:** `deliverables/{slug}-SPEC.md`. **Subdirectory:** `deliverables/{id}/{slug}-SPEC.md` with slug-only filenames inside—**Zazz** uses board **deliverable code** as `{id}` (this API syncs `dedFilePath` / `specFilepath`); **Jira** uses the **same layout** with an **issue key** as `{id}` and does **not** sync paths through this API. Paths you send must match files on disk. See [zazz-framework.md](../../../zazz-framework.md) and **spec-builder** → **Deliverable files: storage, naming, and index**.
+Projects are **flat**, **Zazz Board**, or **Jira** (mutually exclusive). **Flat:** `deliverables/{slug}-SPEC.md`. **Subdirectory:** `deliverables/{id}/{slug}-SPEC.md` with slug-only filenames inside—**Zazz** uses board **deliverable code** as `{id}` (this API syncs `dedFilePath` / `specFilepath`); **Jira** uses the **same layout** with an **issue key** as `{id}` and does **not** sync paths through this API. Paths you send must match files on disk. See [zazz-methodology.md](../../../zazz-methodology.md) and **spec-builder** → **Deliverable files: storage, naming, and index**.
 
 ---
 

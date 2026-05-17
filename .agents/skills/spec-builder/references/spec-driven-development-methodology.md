@@ -2,7 +2,7 @@
 
 **Purpose:** Define the working philosophy for using specifications, worktrees, branches, run logs, and agent
 implementation in this repository. This document is intentionally methodological rather than feature-specific. It
-should inform the local `spec-builder` skill and broader Zazz Framework thinking, but it is not itself an operating
+should inform the local `spec-builder` skill and broader Zazz Methodology thinking, but it is not itself an operating
 skill.
 
 ---

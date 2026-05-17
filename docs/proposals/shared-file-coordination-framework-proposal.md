@@ -1,4 +1,4 @@
-# Proposal: Shared-File Coordination in the Zazz Framework
+# Proposal: Shared-File Coordination in the Zazz Methodology
 
 ## Status
 
@@ -6,11 +6,11 @@ Draft
 
 ## Scope
 
-Framework-level proposal
+Methodology-level proposal
 
 ## Context and Problem Statement
 
-The framework now expects planner and worker agents to reason about parallel execution, file ownership, and overlapping-file risk. That introduces a practical question:
+The methodology now expects planner and worker agents to reason about parallel execution, file ownership, and overlapping-file risk. That introduces a practical question:
 
 - where should a repo declare its shared-file coordination model
 - how should worker agents know whether to use Zazz Board locks, Switchman, harness-native coordination, or strict serialization
@@ -22,7 +22,7 @@ The current need is clarity first, not premature abstraction. Repos may use very
 
 In scope:
 
-- define a clear framework approach for shared-file coordination policy
+- define a clear methodology approach for shared-file coordination policy
 - decide whether this should live in `AGENTS.md`, a separate skill, or both
 - outline a future roadmap for dedicated coordination tooling
 
@@ -36,7 +36,7 @@ Out of scope:
 
 - Reduces collisions and rework when multiple agents or sub-agents operate in the same deliverable.
 - Gives maintainers one clear place to declare execution policy.
-- Keeps framework adoption practical for repos that do not use Zazz Board or any external coordination tool.
+- Keeps methodology adoption practical for repos that do not use Zazz Board or any external coordination tool.
 
 ## Technical Justification
 
@@ -57,7 +57,7 @@ Pros:
 - One obvious source of truth per repo
 - Easy for humans to review and update
 - Works whether the repo uses Zazz Board, Switchman, or no external tool
-- Minimizes framework complexity right now
+- Minimizes methodology complexity right now
 
 Cons:
 
@@ -102,7 +102,7 @@ Cons:
 
 The key tradeoff is simplicity versus future modularity.
 
-Right now, the framework needs:
+Right now, the methodology needs:
 
 - a single place to declare policy
 - clear worker behavior when no external coordination tool exists
@@ -114,7 +114,7 @@ A separate coordination skill becomes attractive later, but only once there is r
 
 ## Standards and Constraints Analysis
 
-This proposal should align with existing framework direction:
+This proposal should align with existing methodology direction:
 
 - `AGENTS.md` already serves as the repo source of truth for docs root, tracking system, and workflow rules
 - planner should produce execution guidance, not execute workflow policy
@@ -134,7 +134,7 @@ Risk:
 Repos forget to declare any coordination policy.
 
 Mitigation:
-Make the framework default explicit: if `AGENTS.md` is silent, assume no repo-declared external locking tool exists and use harness-native coordination with serialization for overlapping-file work.
+Make the methodology default explicit: if `AGENTS.md` is silent, assume no repo-declared external locking tool exists and use harness-native coordination with serialization for overlapping-file work.
 
 Risk:
 Different repos will need different implementations over time.
@@ -173,7 +173,7 @@ Use a simple two-layer model.
    - phase and step sequencing implications
 3. The worker should apply the repo policy and the PLAN's sequencing guidance during execution.
 
-Framework default:
+Methodology default:
 
 - If `AGENTS.md` is silent, assume no repo-declared external locking tool exists.
 - In that case, use coordination native to the active agent harness.
@@ -208,19 +208,19 @@ Suggested maturity path:
 - Shared-file coordination should not become a maze of hierarchy and fallback rules.
 - Environment variables are a poor primary source for this kind of repo policy.
 - Worker agents need clarity more than flexibility.
-- Many repos will have no external locking tool, so the framework default must be explicit and safe.
+- Many repos will have no external locking tool, so the methodology default must be explicit and safe.
 - A future Switchman-style skill is likely valuable, but only when it is real enough to justify the abstraction.
 
 ## Decision Checklist
 
-- Should the framework formally require a `Shared-file coordination` section in repo `AGENTS.md`?
-- Should the framework add a draft `shared-file-coordination` skill to the roadmap now, without implementation?
+- Should the methodology formally require a `Shared-file coordination` section in repo `AGENTS.md`?
+- Should the methodology add a draft `shared-file-coordination` skill to the roadmap now, without implementation?
 - Should `coordinator` also be updated later to consume the same policy model as `worker`?
 
 ## Open Questions
 
 - Should the future coordination skill be generic (`shared-file-coordination`) or tool-specific (`switchman`, `zazz-locking`)?
-- Should the framework eventually normalize a common coordination vocabulary across all supported tools?
+- Should the methodology eventually normalize a common coordination vocabulary across all supported tools?
 - Should the future skill expose only execution behavior, or also lightweight policy validation against `AGENTS.md`?
 
 ## Sign-off Outcome and Next-Phase Handoff

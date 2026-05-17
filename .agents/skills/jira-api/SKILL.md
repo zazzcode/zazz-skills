@@ -7,7 +7,7 @@ description: Draft only, not yet implemented. Planned future companion utility s
 
 ## Draft Status
 
-This skill is a draft placeholder for the framework.
+This skill is a draft placeholder for the methodology.
 It is not implemented yet.
 
 Do not present this skill as live Jira connectivity.
@@ -45,7 +45,7 @@ Planned responsibilities may include:
 
 ## Intended Interface Direction
 
-The framework expects this to be implemented later through one of these approaches:
+The methodology expects this to be implemented later through one of these approaches:
 
 - an MCP-backed Jira integration
 - a CLI-first adapter that agents can call consistently
@@ -64,7 +64,7 @@ Until that exists, this skill is documentation-only.
 
 ## Future Integration Contract
 
-When this skill is implemented, it should likely follow the same broad framework pattern as other companion utility skills:
+When this skill is implemented, it should likely follow the same broad methodology pattern as other companion utility skills:
 
 1. Use repo guidance first, with `AGENTS.md` as the source of truth for repo-specific settings.
 2. Resolve project-specific Jira conventions and authentication source.

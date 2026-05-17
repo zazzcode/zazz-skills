@@ -63,7 +63,7 @@ Secondary audiences for the resulting architecture document:
 
 ## Docs Root Convention
 
-Use the repo docs root declared in `AGENTS.md` as the base for framework docs. Example paths in this skill may use
+Use the repo docs root declared in `AGENTS.md` as the base for methodology docs. Example paths in this skill may use
 `<DOCS_ROOT>/...` as shorthand.
 
 ## What This Skill Produces
@@ -394,7 +394,7 @@ Use this section order unless the user explicitly asks for a different structure
 
 ## Output Naming and Placement
 
-Use framework naming guidance:
+Use methodology naming guidance:
 
 - Architecture document: `<DOCS_ROOT>/architecture/{feature-key}-architecture.md` — must match the paired feature document's key
 - Architecture index: `<DOCS_ROOT>/architecture/index.yaml`

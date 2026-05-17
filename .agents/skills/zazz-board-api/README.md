@@ -54,6 +54,6 @@ If you are setting up or debugging Board-assisted execution, make sure you have:
 
 ## Notes
 
-- This skill is optional in the framework.
+- This skill is optional in the methodology.
 - It should stay cleanly separated from the base process and skills-assisted workflow.
 - When the CLI does not support a needed capability yet, OpenAPI is the validation and fallback surface.

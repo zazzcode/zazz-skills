@@ -41,6 +41,6 @@ That fallback applies whether the consumer is:
 
 ## Why This Exists Now
 
-The framework is expected to need a Jira utility skill over time, similar in spirit to `zazz-board-api` for Zazz Board.
+The methodology is expected to need a Jira utility skill over time, similar in spirit to `zazz-board-api` for Zazz Board.
 
 Adding the draft now makes that planned dependency visible and gives downstream skills a place to point once Jira integration is implemented.

@@ -63,7 +63,7 @@ Gather as many of these as are available:
    - Jira issue
    - Avaza task
    - repo-specific ticket
-4. Deliverable SPEC / PLAN paths when the work follows the Zazz framework
+4. Deliverable SPEC / PLAN paths when the work follows the Zazz methodology
 5. Acceptance criteria or scenario groupings from the governing SPEC / PLAN when available
 6. Test commands and results
 7. Manual validation steps

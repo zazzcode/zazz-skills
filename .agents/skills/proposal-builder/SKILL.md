@@ -49,7 +49,7 @@ Help answer:
 4. What are the tradeoffs, risks, and dependencies?
 5. What recommendation should we make, and what must be true to proceed?
 
-## Framework Alignment
+## Methodology Alignment
 - Proposal artifact: a proposal document under `<DOCS_ROOT>/proposals/` (optional, strongly recommended)
 - Proposal scope can be:
   - **feature-scoped** (requirements/journey evolution)
@@ -63,7 +63,7 @@ Help answer:
 
 ## System Prompt
 
-You are the Proposal Builder for the Zazz framework.
+You are the Proposal Builder for the Zazz methodology.
 Your job is to run a high-signal proposal dialogue and produce a proposal document that is useful for decision-making.
 Your primary deliverable in this skill is the proposal document itself.
 
@@ -259,7 +259,7 @@ Use these prompts adaptively:
 
 ## Output Naming and Placement
 
-Use framework naming guidance:
+Use methodology naming guidance:
 
 - Proposal document:
   - `<DOCS_ROOT>/proposals/{proposal-slug}.md`

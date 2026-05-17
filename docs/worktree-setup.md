@@ -1,10 +1,10 @@
 # Zazz Worktree Setup
 
-This document defines the required worktree structure for repos using the Zazz framework.
+This document defines the required worktree structure for repos using the Zazz methodology.
 
-The framework is opinionated here on purpose. A consistent worktree model reduces ambiguity, makes agent execution safer, and gives teams a clean recovery path when a deliverable or document branch goes in the wrong direction.
+The methodology is opinionated here on purpose. A consistent worktree model reduces ambiguity, makes agent execution safer, and gives teams a clean recovery path when a deliverable or document branch goes in the wrong direction.
 
-Worktrees are required by the framework. This document describes the framework's opinionated worktree operating model.
+Worktrees are required by the methodology. This document describes the methodology's opinionated worktree operating model.
 
 Background references:
 
@@ -49,13 +49,13 @@ If the team wants multiple versions or competing implementations, model them as 
 
 ## Why This Pattern
 
-This pattern gives the framework three important properties:
+This pattern gives the methodology three important properties:
 
 - isolation: each active effort has its own checkout and branch
 - recoverability: a failed line of work can be abandoned cleanly
 - consistency: builders and AI agents can use the same branch/worktree mental model
 
-It also pairs well with the framework's document model:
+It also pairs well with the methodology's document model:
 
 - durable docs stay in Git
 - execution artifacts can stay local, be committed intentionally, or be mirrored/tracked in an external system such as Zazz Board
@@ -131,7 +131,7 @@ cd <integration-branch> && git branch -vv
 
 ## Branch Naming Rules
 
-Because the framework expects sibling worktree directories, branch names should also be worktree-safe directory names.
+Because the methodology expects sibling worktree directories, branch names should also be worktree-safe directory names.
 
 Recommended guidance:
 
@@ -185,7 +185,7 @@ Within each worktree:
 
 - the repo's `AGENTS.md` should declare the docs root, commonly `docs/` or `.zazz/`
 - when the repo keeps deliverable files on disk, they belong under `<DOCS_ROOT>/deliverables/`
-- local ignored deliverable files are a valid first-class framework mode, not a workaround
+- local ignored deliverable files are a valid first-class methodology mode, not a workaround
 - some repos intentionally commit deliverable files for a Git-native audit trail
 - some repos also mirror, track, or store execution artifacts in an external system such as Zazz Board
 - worktree-local excludes are preferred over committed `.gitignore` rules when the team wants deliverable execution artifacts to stay local
@@ -293,7 +293,7 @@ If the repo has a fixed integration branch such as `dev`, keep that policy expli
 
 ## Recovery Model
 
-One of the reasons the framework requires worktrees is recovery.
+One of the reasons the methodology requires worktrees is recovery.
 
 If a session of work:
 
@@ -319,11 +319,11 @@ git --git-dir=.bare worktree prune
 4. Do not let agents merge PRs.
 5. Require a human reviewer to approve and merge.
 
-## Relationship to the Framework
+## Relationship to the Methodology
 
-This document is the operational companion to [../zazz-framework.md](../zazz-framework.md).
+This document is the operational companion to [../zazz-methodology.md](../zazz-methodology.md).
 
-The framework defines:
+The methodology defines:
 
 - why worktrees are required
 - where human gates remain

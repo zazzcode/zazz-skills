@@ -1,12 +1,12 @@
 # AGENTS.md Example Template for Zazz Repositories
 
-This file is an example starter for a repo-level `AGENTS.md` in a project that uses the Zazz framework.
+This file is an example starter for a repo-level `AGENTS.md` in a project that uses the Zazz methodology.
 
-For skills in this framework, `AGENTS.md` is the source of truth for repo-specific settings such as docs-root resolution, tracking system, project-code conventions, and workflow rules.
+For skills in this methodology, `AGENTS.md` is the source of truth for repo-specific settings such as docs-root resolution, tracking system, project-code conventions, and workflow rules.
 
 Copy it into the target repository root as `AGENTS.md`, then replace the placeholder values and project-specific sections. The goal is not to preserve this file verbatim. The goal is to create a concise, repo-specific agent entry point that combines:
 
-- framework-required instructions
+- methodology-required instructions
 - repo-specific standards and workflow rules
 - only the highest-signal operational guidance an agent needs to work well
 
@@ -17,9 +17,9 @@ For a real in-use example, see the reference implementation:
 ## How to Use This Template
 
 1. Copy this file to the target repo root as `AGENTS.md`.
-2. Declare how the repo-relative framework docs root is resolved for that project.
+2. Declare how the repo-relative methodology docs root is resolved for that project.
 3. Replace every placeholder section with real repo instructions or remove the section if it does not apply.
-4. Keep the framework-required parts intact:
+4. Keep the methodology-required parts intact:
    - docs-root declaration
    - standards index location
    - selective standards loading rules
@@ -32,9 +32,9 @@ For a real in-use example, see the reference implementation:
 
 ## What Must Be In a Real `AGENTS.md`
 
-The following are required for repos using the Zazz framework:
+The following are required for repos using the Zazz methodology:
 
-- the repo's framework docs-root rule
+- the repo's methodology docs-root rule
 - the path to `<DOCS_ROOT>/standards/index.yaml`
 - instructions to read the standards index first and load only relevant standards
 - the path to `<DOCS_ROOT>/features/index.yaml` when the repo uses feature requirements documents
@@ -50,7 +50,7 @@ Without those pieces, agents will tend to either miss important project rules or
 - Keep it lean. `AGENTS.md` should be a routing and orientation file, not a large knowledge dump.
 - Keep it short. This file should orient the agent, not replace the full docs set.
 - Prefer pointers over duplication. Point to standards and feature indexes instead of restating their contents.
-- Separate framework rules from repo rules. Use the framework for shared concepts and this file for repo-specific behavior.
+- Separate methodology rules from repo rules. Use the methodology for shared concepts and this file for repo-specific behavior.
 - Be explicit about workflows. If the repo requires worktrees, branch naming, env copying, or GitHub-only merges, say so directly.
 - Be explicit about tracking. Say whether the repo uses Zazz Board, Jira, Avaza, or another system for PR-facing work items and whether that affects deliverable naming, SPEC paths, or PR links.
 - Be explicit about shared-file coordination. If the repo uses Zazz Board locks, Switchman, harness-native coordination, or strict serialization, say so in one short section.
@@ -67,7 +67,7 @@ Why this matters:
 
 ## Purpose
 
-This repository uses the Zazz framework for long-lived product docs, execution contracts, and selective standards loading.
+This repository uses the Zazz methodology for long-lived product docs, execution contracts, and selective standards loading.
 
 Agents should use this file as the starting point for:
 
@@ -78,11 +78,11 @@ Agents should use this file as the starting point for:
 
 ## Docs Root
 
-`Framework docs root: <SET_REPO_RELATIVE_DOCS_ROOT>`
+`Methodology docs root: <SET_REPO_RELATIVE_DOCS_ROOT>`
 
 or
 
-`Framework docs root: resolve from <ENV_VAR> (must be a repo-relative path)`
+`Methodology docs root: resolve from <ENV_VAR> (must be a repo-relative path)`
 
 Recommended values:
 
@@ -92,7 +92,7 @@ Recommended values:
 Rules:
 
 - The docs root is a repo-relative path, not an absolute path.
-- Framework docs live under `<DOCS_ROOT>/`.
+- Methodology docs live under `<DOCS_ROOT>/`.
 - `project.md`, `proposals/`, `features/`, and `standards/` live under that same root.
 - Do not hardcode `.zazz` if this repo uses another docs root.
 - If this repo resolves the docs root from an environment variable, document that rule explicitly here.
@@ -112,7 +112,7 @@ Required behavior:
 4. Do not inject every standards document into context by default.
 5. If a standard lists a companion document, load that too when relevant.
 
-This section is framework-specific and should almost always remain in the final repo `AGENTS.md`.
+This section is methodology-specific and should almost always remain in the final repo `AGENTS.md`.
 
 When conflicting implementation patterns exist in the repo:
 
@@ -233,7 +233,7 @@ If the repo has no special worktree policy, replace this section with the actual
 ## Agent Execution Discipline
 
 These rules reduce wasted work, prevent out-of-scope edits, and keep branch footprints minimal.
-They are framework-level expectations; repos may add project-specific rules here.
+They are methodology-level expectations; repos may add project-specific rules here.
 
 ### Verify scope before acting
 
@@ -250,7 +250,7 @@ git diff <base-branch> --stat
 
 ### Integration branch invariant
 
-The framework assumes the integration branch is always green. There are no pre-existing test failures on the base branch.
+The methodology assumes the integration branch is always green. There are no pre-existing test failures on the base branch.
 
 - Do not dismiss a failure as "pre-existing" or "unrelated" without proving the branch did not cause it.
 - If the base branch has a known exception, document it here explicitly; otherwise assume green.
@@ -300,7 +300,7 @@ Add anything repo-specific that agents must know, for example:
 - forbidden edit zones
 - secrets and environment handling
 
-This is the right place for repo-specific instructions that should not live in the framework doc itself.
+This is the right place for repo-specific instructions that should not live in the methodology doc itself.
 
 ## Quick Links
 

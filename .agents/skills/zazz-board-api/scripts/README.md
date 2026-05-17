@@ -3,7 +3,7 @@
 Canonical location:
 - `.agents/skills/zazz-board-api/scripts/zazzctl.mjs`
 
-Role in the framework:
+Role in the methodology:
 - `zazzctl` is the primary agent/operator interface for Zazz Board operations
 - this repository defines the expected agent-facing command contract
 - [zazz-board](https://github.com/zazzcode/zazz-board) is the reference implementation that should keep the CLI and API in sync

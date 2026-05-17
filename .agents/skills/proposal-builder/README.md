@@ -149,7 +149,7 @@ A proposal document with:
 - discussion log highlights (especially for multi-person dialogue)
 - sign-off outcome and handoff notes for the next phase
 
-Naming follows framework conventions:
+Naming follows methodology conventions:
 - Proposal document: `proposals/{proposal-slug}.md`
 
 ---

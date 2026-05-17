@@ -1,6 +1,6 @@
 ---
 name: worktree
-description: Set up or manage worktrees for a Zazz-style repo; use when the user wants the opinionated bare-repo plus sibling-worktree pattern, needs help creating or repairing worktrees and flat branch names, or wants guidance on the Worktrunk workflow used with the Zazz framework.
+description: Set up or manage worktrees for a Zazz-style repo; use when the user wants the opinionated bare-repo plus sibling-worktree pattern, needs help creating or repairing worktrees and flat branch names, or wants guidance on the Worktrunk workflow used with the Zazz methodology.
 ---
 
 # Worktree Skill
@@ -12,10 +12,10 @@ This skill requires:
 - `git` installed
 - `worktrunk` installed
 
-Framework note:
+Methodology note:
 
-- Worktrees are required by the Zazz framework.
-- Worktrunk is optional at the framework level.
+- Worktrees are required by the Zazz methodology.
+- Worktrunk is optional at the methodology level.
 - This specific skill requires Worktrunk because it assumes the `wt` workflow for setup, switching, cleanup, and day-to-day management.
 
 ## Startup Sequence
@@ -23,8 +23,8 @@ Framework note:
 Before doing any work:
 
 1. Read `AGENTS.md` if it exists and use it as the source of truth for repo-specific worktree, branch, docs-root, and tracking rules.
-2. Read the framework guidance that applies to worktree setup and usage.
-   - In the framework source repo, that guidance is [zazz-framework.md](../../../zazz-framework.md) and [docs/worktree-setup.md](../../../docs/worktree-setup.md).
+2. Read the methodology guidance that applies to worktree setup and usage.
+   - In the methodology source repo, that guidance is [zazz-methodology.md](../../../zazz-methodology.md) and [docs/worktree-setup.md](../../../docs/worktree-setup.md).
    - In consuming repos, use the repo's declared docs root and any equivalent worktree guidance there.
 3. Read the supporting Worktrunk docs selectively when they matter.
    - Read [docs/wt-cheat-sheet.md](../../../docs/wt-cheat-sheet.md) when the user needs day-to-day Worktrunk commands or quick command selection.
@@ -38,7 +38,7 @@ Before doing any work:
    - current worktree list
    - whether the repo is already using a bare-repo container with sibling worktrees
    - whether Worktrunk is installed
-6. Prefer the repo's existing declared pattern when it already matches the framework. Do not "upgrade" a repo into the opinionated layout unless the user wants that change.
+6. Prefer the repo's existing declared pattern when it already matches the methodology. Do not "upgrade" a repo into the opinionated layout unless the user wants that change.
 
 ## Purpose
 
@@ -49,18 +49,18 @@ This skill exists to solve two related problems:
 
 Its value is consistency, isolation, and recoverability. It helps teams keep one active deliverable or document effort per branch/worktree, avoid naming patterns that fight the filesystem layout, and preserve a clear rollback path when execution goes wrong.
 
-It is also a convenience skill for humans. Most of the underlying work can be done directly by a human with the right commands; this skill exists to make that workflow easier for people who want the framework behavior without having to remember or type every command themselves.
+It is also a convenience skill for humans. Most of the underlying work can be done directly by a human with the right commands; this skill exists to make that workflow easier for people who want the methodology behavior without having to remember or type every command themselves.
 
 That includes simple human requests such as "I need to review PR 193" or "create a deliverable worktree for me" where the skill can translate the request into the right Worktrunk flow and explain the next command or action clearly.
 
-## Framework Alignment
+## Methodology Alignment
 
-- Worktrees are required by the framework.
+- Worktrees are required by the methodology.
 - The required model is a bare-repo container with sibling worktrees.
 - Durable docs belong in Git; execution artifacts follow the repo's declared deliverables policy.
 - One active deliverable or document effort must map to one branch and one worktree.
 - Flat branch names are preferred because they map cleanly to sibling worktree directory names.
-- Worktrunk is optional in the framework, but required to use this skill.
+- Worktrunk is optional in the methodology, but required to use this skill.
 
 ## Interaction Modes
 
@@ -99,7 +99,7 @@ Examples:
 
 ### Mode D: Guidance only
 
-Use this mode when the user wants command examples, operating guidance, or framework-aware recommendations without filesystem changes.
+Use this mode when the user wants command examples, operating guidance, or methodology-aware recommendations without filesystem changes.
 
 ## What This Skill Produces
 

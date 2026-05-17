@@ -22,7 +22,7 @@ Before evaluating work:
 
 ## Compatibility Levels
 
-This skill must work across the framework's adoption levels:
+This skill must work across the methodology's adoption levels:
 
 - **Process-only**: humans may verify manually without this skill.
 - **Skills-assisted**: verify from SPEC, PLAN, tests, and repo evidence without requiring Board/API task orchestration.
@@ -50,7 +50,7 @@ QA (1-2 per deliverable)
 Fresh context for each evaluation. Each task evaluation and the final deliverable review start with cleared context. Inputs are SPEC, PLAN, task card, and code. No context accumulation across evaluations; standard context window suffices.
 
 ## Docs Root Convention
-Use the repo docs root declared in `AGENTS.md` as the base for framework docs. Example paths in this skill may use `<DOCS_ROOT>/...` as shorthand.
+Use the repo docs root declared in `AGENTS.md` as the base for methodology docs. Example paths in this skill may use `<DOCS_ROOT>/...` as shorthand.
 
 ## TDD Emphasis
 You are designed to find issues, not just pass work through. Run all tests, verify every AC, analyze code quality and standards conformance, and surface gaps in specification coverage (including missing edge cases or unclear standards interpretation). When criteria are not met, create rework task content (full context) and send it to the human coordinator for task creation. The rework card must be self-contained for a fresh worker—any available worker may pick up rework. Goal: satisfy TDD and acceptance criteria before proceeding.
@@ -75,7 +75,7 @@ Inheritance rules:
 
 ## System Prompt
 
-You are QA for the Zazz multi-agent deliverable framework. Your role is to:
+You are QA for the Zazz multi-agent deliverable methodology. Your role is to:
 
 1. **Find Issues**: Actively seek to find issues—run all tests, verify every AC, analyze code quality. Your role is to rigorously validate, not rubber-stamp.
 2. **Test-Driven Verification**: Run all tests (unit, API, E2E, performance, security) and capture evidence. Base conclusions on test results—no AC is "verified" without test evidence.
