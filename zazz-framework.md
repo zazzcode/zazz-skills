@@ -85,11 +85,11 @@ This repository is the canonical source of truth for the framework document and 
 | **Docs root** | The repo's policy resolves the repo-relative directory that contains framework markdown documents, usually documented in `AGENTS.md` |
 | **Top-level durable doc** | `project.md` captures the project purpose, value proposition, and major established capabilities |
 | **Tracked docs** | `project.md`, `standards/`, `features/`, and `proposals/` are the durable, continuously maintained documents and should be tracked in Git |
-| **Execution docs** | Deliverable SPEC/PLAN artifacts follow the repo's declared policy: ignored local files, committed files, external tracking, or a combination the repo defines explicitly |
+| **Execution docs** | Deliverable SPEC artifacts follow the repo's declared policy: ignored local files, committed files, external tracking, or a combination the repo defines explicitly |
 | **Specification model** | Feature requirements document for capability over time plus Deliverable SPEC (`-SPEC`) for one increment |
 | **Verification model** | TDD and explicit acceptance criteria are core mechanisms for proving the software was built correctly and delivers the intended functionality |
-| **Execution flow** | `project.md` -> proposal (optional) -> feature requirements document (optional but recommended for long-lived features) -> SPEC (required) -> PLAN (optional) -> build/validate loop -> PR/UAT gate |
-| **Skills** | `proposal-builder`, `feature-doc-builder`, `spec-builder`, `planner`, `worker`, `qa`, optional `pr-builder`, optional companion utility skills such as `zazz-board-api` and draft `jira-api` |
+| **Execution flow** | `project.md` -> proposal (optional) -> feature requirements document (optional but recommended for long-lived features) -> architecture document (optional, paired with feature) -> SPEC (required, contains implementation guidance including prescriptive execution sequence) -> agent executes directly -> build/validate loop -> PR/UAT gate |
+| **Skills** | `proposal-builder`, `feature-doc-builder`, `architecture-doc-builder`, `spec-builder`, `qa`, optional `pr-builder`, optional companion utility skills such as `zazz-board-api`, `gh-stack`, and draft `jira-api` |
 | **Skill modes** | Some skills are interactive and human-in-the-loop; others are designed for mostly autonomous execution once inputs are approved |
 | **Autonomy value** | Approved context should let agents converge on a verified solution with minimal supervision, improving delivery efficiency without dropping quality |
 | **Organization value** | The framework gives teams an opinionated structure for defining what the product does, why it exists, and how it can evolve over time |
@@ -101,7 +101,7 @@ This repository is the canonical source of truth for the framework document and 
 
 **Document scope:** This file defines framework philosophy, document contracts, and operating model. API syntax, route details, and tool-specific commands belong in skills and project docs.
 
-**Reading order:** Start with `project.md`, then any relevant proposal and feature requirements document, then the deliverable SPEC/PLAN. The project defines the product, the feature requirement defines capability evolution, and the deliverable defines one bounded execution increment.
+**Reading order:** Start with `project.md`, then any relevant proposal and feature requirements document, then the deliverable SPEC. The project defines the product, the feature requirement defines capability evolution, and the deliverable defines one bounded execution increment.
 
 ## Humans, Agents, and Skills
 
@@ -109,7 +109,7 @@ The framework distinguishes three different things that are easy to blur togethe
 
 - **Human actors**: Product Owner, Project Owner, Deliverable Owner, stakeholders, and reviewers
 - **Agent actors**: the runtime AI agents that execute work or facilitate dialogue
-- **Skills**: the capability packages loaded into an agent's context, such as `feature-doc-builder`, `spec-builder`, `worker`, or `qa`
+- **Skills**: the capability packages loaded into an agent's context, such as `feature-doc-builder`, `spec-builder`, or `qa`
 
 The important model is:
 
@@ -132,7 +132,7 @@ This document sometimes uses skill names as shorthand for the agents operating w
 1. **Acceptance criteria and TDD are central, not optional.** Value is clarified through explicit success criteria, then validated through tests and review evidence. If work cannot be described in verifiable terms, it is not ready.
 2. **Durable knowledge lives in tracked docs.** `project.md`, `proposals/`, `features/`, and `standards/` are shared repository knowledge. They preserve product understanding, active decisions, and engineering rules over time.
 3. **Project context comes before execution slices.** Start from `project.md`, then use proposals and feature requirements documents to clarify why and how the product should evolve before breaking work into deliverables whenever the work is part of an enduring capability.
-4. **Execution contracts are per increment.** A deliverable SPEC and optional PLAN define one bounded slice of work. They are not the permanent home for product narrative.
+4. **Execution contracts are per increment.** A deliverable SPEC defines one bounded slice of work. It is the executable contract that contains both intent and implementation guidance, replacing the old SPEC + PLAN split. It is not the permanent home for product narrative.
 5. **Git primitives are part of the framework.** Use branches, worktrees, PRs, review comments, and final PR approval as standard collaboration mechanisms for both code and durable docs.
 6. **The framework is opinionated about both product definition and engineering structure.** `project.md`, proposals, feature requirements documents, milestones, and SPECs define what the software should do and why; standards define how it must be built so it remains maintainable and expandable over time.
 7. **Launch-and-leave execution is a design goal.** Once the approved context exists, planning, implementation, verification, and PR packaging should require minimal supervision until a real decision or approval boundary is reached.
@@ -168,7 +168,7 @@ Required review pattern for durable docs:
 Recovery pattern:
 
 - if a worktree's implementation path goes in the wrong direction or fails review, abandon that worktree rather than forcing it forward
-- revisit the governing proposal, feature requirements document, SPEC, or PLAN as appropriate
+- revisit the governing proposal, feature requirements document, or SPEC as appropriate
 - open a new branch/worktree with the corrected approach once the contract is clarified
 
 ---
@@ -272,8 +272,7 @@ Recommended layout:
 │   ├── index.yaml
 │   └── role-based-access-control.md
 └── deliverables/                  <- optional local execution artifacts
-│   ├── role-management-ui-SPEC.md
-│   └── role-management-ui-PLAN.md
+│   └── role-management-ui-SPEC.md
 ```
 
 `project.md` is intentionally at the top of the docs root, not under `features/` or `proposals/`.
@@ -284,14 +283,14 @@ Recommended responsibilities:
 - `proposals/` contains durable exploratory documents that help the team work through uncertain solutions
 - `features/` contains long-lived feature requirements documents plus `features/index.yaml`
 - `standards/` contains implementation rules plus `standards/index.yaml`
-- `deliverables/` is the on-disk home for SPEC/PLAN files when the repo keeps execution artifacts locally
+- `deliverables/` is the on-disk home for SPEC files when the repo keeps execution artifacts locally
 
 ### Execution artifact storage modes
 
 The framework supports three common ways teams handle deliverable artifacts on disk and in tooling:
 
-1. **Local ignored deliverables** — `<DOCS_ROOT>/deliverables/` exists in the repo or worktree, is usually ignored, and SPEC/PLAN docs are treated as local execution artifacts.
-2. **Committed deliverables** — SPEC/PLAN docs are kept under `<DOCS_ROOT>/deliverables/` and tracked in Git because the team intentionally wants a Git-native audit trail for execution artifacts.
+1. **Local ignored deliverables** — `<DOCS_ROOT>/deliverables/` exists in the repo or worktree, is usually ignored, and SPEC docs are treated as local execution artifacts.
+2. **Committed deliverables** — SPEC docs are kept under `<DOCS_ROOT>/deliverables/` and tracked in Git because the team intentionally wants a Git-native audit trail for execution artifacts.
 3. **Externally tracked deliverables** — the repo still has a declared deliverables policy, but the team also mirrors, tracks, or stores execution artifacts in an external system such as Zazz Board.
 
 The framework's general guideline is:
@@ -303,8 +302,8 @@ The framework's general guideline is:
 
 If a team adopts one deliverable file-layout mode on disk, do not mix modes inside a single repo:
 
-1. **Flat local files** — `{slug}-SPEC.md` / `{slug}-PLAN.md` under `deliverables/`
-2. **Tracker-key subdirectories** — `deliverables/{id}/{slug}-SPEC.md` and `.../{slug}-PLAN.md`, where `{id}` may be a Zazz Board deliverable code or a Jira issue key
+1. **Flat local files** — `{slug}-SPEC.md` under `deliverables/`
+2. **Tracker-key subdirectories** — `deliverables/{id}/{slug}-SPEC.md`, where `{id}` may be a Zazz Board deliverable code or a Jira issue key
 3. **No durable on-disk deliverable files** — the repo treats execution artifacts as external or ephemeral and documents that policy explicitly in `AGENTS.md`
 
 This deliverable file-layout choice is related to, but not identical to, the repo's broader work-tracking system.
@@ -331,21 +330,18 @@ Naming conventions:
 | **Features index** | `features/index.yaml` | `features/index.yaml` |
 | **Standards index** | `standards/index.yaml` | `standards/index.yaml` |
 | **Deliverable SPEC** | `deliverables/{slug}-SPEC.md` when stored locally on disk | `role-management-ui-SPEC.md` |
-| **Deliverable PLAN** | `deliverables/{slug}-PLAN.md` when stored locally on disk | `role-management-ui-PLAN.md` |
-| **Deliverable SPEC / PLAN (subdirectory)** | `deliverables/{id}/{slug}-SPEC.md` and `.../{slug}-PLAN.md` when using tracker-key folders | `deliverables/ZAZZ-142/role-management-ui-SPEC.md` |
+| **Deliverable SPEC (subdirectory)** | `deliverables/{id}/{slug}-SPEC.md` when using tracker-key folders | `deliverables/ZAZZ-142/role-management-ui-SPEC.md` |
 
 **Examples** (same fictional deliverable, slug `role-management-ui`; pick the block that matches your project mode):
 
 ```text
 # Flat local files
 .zazz/deliverables/role-management-ui-SPEC.md
-.zazz/deliverables/role-management-ui-PLAN.md
 ```
 
 ```text
 # Tracker-key subdirectory
 .zazz/deliverables/ZAZZ-142/role-management-ui-SPEC.md
-.zazz/deliverables/ZAZZ-142/role-management-ui-PLAN.md
 ```
 
 Keep `features/` flat by default. Introduce per-feature subdirectories only if the project later discovers a real need for multiple durable artifacts per feature.
@@ -569,6 +565,7 @@ It may also ingest transcripts or meeting notes to create or refresh a feature r
 `feature-doc-builder` is intentionally different from `spec-builder`:
 
 - `feature-doc-builder` is feature-level, long-lived, and milestone-oriented
+- `architecture-doc-builder` is system-level, technical-design-oriented, and paired with feature requirements documents
 - `spec-builder` is deliverable-level, execution-oriented, and implementation-contract-focused
 
 ### Feature Definition Flow
@@ -629,9 +626,9 @@ Not every skill should behave the same way in human collaboration.
 
 | Mode | Skills | Expected operating style |
 | ---- | ------ | ------------------------ |
-| **Interactive / human-in-the-loop** | `proposal-builder`, `feature-doc-builder`, `spec-builder`, often `pr-builder` | These skills are expected to facilitate dialogue, ask follow-up questions, iterate drafts with humans, and help shape the artifact through conversation |
-| **Autonomous execution** | `planner`, `worker`, `qa`, `qa-frontend`, `qa-backend`, `coordinator` | These skills are expected to run mostly independently once approved inputs exist, escalating only when they hit a real decision gate, ambiguity, or approval boundary |
-| **Companion utility** | `zazz-board-api`, draft `jira-api` | These skills are not human-facing workflows on their own; they support other skills with tracker/API capability and authoritative external context when available |
+| **Interactive / human-in-the-loop** | `proposal-builder`, `feature-doc-builder`, `architecture-doc-builder`, `spec-builder`, often `pr-builder` | These skills are expected to facilitate dialogue, ask follow-up questions, iterate drafts with humans, and help shape the artifact through conversation |
+| **Autonomous execution** | `qa`, `qa-frontend`, `qa-backend` | These skills are expected to run mostly independently once approved inputs exist, escalating only when they hit a real decision gate, ambiguity, or approval boundary |
+| **Companion utility** | `zazz-board-api`, `gh-stack`, draft `jira-api` | These skills are not human-facing workflows on their own; they support other skills with tracker/API capability, stacked PR workflows, or authoritative external context when available |
 
 "Launch-and-leave" is a good informal description for the autonomous execution class, and it is a real framework value proposition. The expectation is not zero human interaction. The expectation is minimal interruption once the skill has the approved context it needs.
 
@@ -685,7 +682,7 @@ Why the framework prefers a companion extension directory:
 - it avoids cluttering `AGENTS.md` with large skill-by-skill exceptions
 - it lets each repo add local nuance without pretending those details belong in every downstream user of the framework
 
-This pattern is especially useful for execution skills such as `worker`, `qa`, and `coordinator`, where the available agent harness, board wrappers, or validation tools may vary by repository.
+This pattern is especially useful for execution skills such as `qa`, where the available agent harness, board wrappers, or validation tools may vary by repository.
 
 ---
 
@@ -697,9 +694,8 @@ The framework is designed to maximize safe agent autonomy without removing owner
 
 Agents are expected to work with minimal supervision when they are operating inside an already approved contract or clearly delegated task, including:
 
-- drafting and revising proposals, feature requirements documents, and SPECs during interactive authoring sessions
-- producing a PLAN from an approved SPEC
-- implementing code from an approved SPEC and PLAN
+- drafting and revising proposals, feature requirements documents, architecture documents, and SPECs during interactive authoring sessions
+- implementing code from an approved SPEC (agents execute directly without needing a worker skill wrapper)
 - running tests, performing QA verification, and generating rework content
 - preparing PR titles, bodies, verification evidence, and manual test instructions
 - updating transient execution state such as task status, notes, blockers, and local deliverable artifacts
@@ -708,10 +704,10 @@ Agents are expected to work with minimal supervision when they are operating ins
 
 Owner approval or another authorized human decision remains mandatory at these boundaries:
 
-- approving a proposal as the basis for moving into feature-requirements and/or SPEC work
+- approving a proposal as the basis for moving into feature-requirements, architecture, and/or SPEC work
 - approving feature-requirements direction, milestone framing, and major feature-scope changes
+- approving architecture direction and system design for active milestones
 - approving the SPEC as the authoritative execution contract
-- approving the PLAN when the project/team expects an explicit planning gate
 - resolving ambiguities or scope changes that materially alter the approved contract
 - providing sign-off for acceptance criteria marked as owner-reviewed
 - approving the PR for integration
@@ -798,7 +794,7 @@ When relevant, it should also say whether that system affects:
 
 - deliverable folder naming
 - required IDs or URLs in PRs
-- how agents should anchor SPEC, PLAN, QA, and PR references
+- how agents should anchor SPEC, QA, and PR references
 
 This declaration does not require live tracker integration.
 It simply tells agents which system is authoritative for PR-facing references and review context.
@@ -864,8 +860,8 @@ Index structure expectations:
 
 Deliverables are the execution layer of the framework.
 
-- Every active deliverable must have a SPEC.
-- A PLAN is optional, but once a team decides a deliverable needs explicit planning, that PLAN becomes part of the authoritative execution contract.
+- Every active deliverable must have a SPEC that serves as the execution contract, replacing the old SPEC + PLAN split.
+- The SPEC contains both the intent and implementation guidance (including execution sequence) for one bounded increment.
 - Deliverable artifacts may have local working copies under `<DOCS_ROOT>/deliverables/`, but as a general rule they should be treated as transient execution artifacts and persisted in Zazz Board when the project uses Board.
 
 ### Why deliverables exist
@@ -927,7 +923,7 @@ Worktrees are required by the framework. The operating model is:
 
 This keeps execution isolated and makes it easy to keep local deliverable docs alongside the code they govern. It is required because it improves safety, reviewability, and recovery, especially when multiple builders or AI agents are working in parallel.
 
-The framework's unit of isolation is the deliverable worktree. Do not create multiple worktrees for the same active deliverable just because multiple agents are participating. Parallel task execution for one deliverable should still happen inside that single deliverable worktree, with file coordination handled through the PLAN, repo coordination policy, and the active agent harness.
+The framework's unit of isolation is the deliverable worktree. Do not create multiple worktrees for the same active deliverable just because multiple agents are participating. Parallel task execution for one deliverable should still happen inside that single deliverable worktree, with file coordination handled through the repo coordination policy and the active agent harness.
 
 If the team wants multiple versions or competing implementations, model them as separate deliverables. Each deliverable gets its own identity, its own execution contract as needed, and its own dedicated worktree.
 
@@ -947,7 +943,7 @@ Worktrees also provide a clean rollback boundary for human review. If a delivera
 
 - revisit the proposal if the approach or justification is wrong
 - revisit the feature requirements document if the feature intent or milestone framing is wrong
-- revisit the SPEC and PLAN if the execution contract is wrong or incomplete
+- revisit the SPEC if the execution contract is wrong or incomplete
 
 This is one of the practical benefits of the framework's git-native design: incorrect execution paths can be discarded cleanly without confusing the durable project history or forcing a bad implementation to keep moving forward.
 
@@ -965,7 +961,7 @@ For detailed setup guidance, see:
 
 ### Durable knowledge must be promoted
 
-If a deliverable changes the product, the final knowledge should not stay trapped in a local SPEC or PLAN. Promote the durable outcome into:
+If a deliverable changes the product, the final knowledge should not stay trapped in a local SPEC. Promote the durable outcome into:
 
 - `project.md` when the project's high-level capability story changes
 - the relevant feature requirements document
@@ -986,8 +982,7 @@ Document flow:
 | **Proposal** | `proposals/{name}.md` | Optional. Explore whether or how to proceed before feature definition or execution commitment; use a draft PR to collaborate while the proposal is still in progress |
 | **Feature definition** | `features/{feature-key}.md` | Long-lived feature requirements document: why, what is live, system-level intent, milestone roadmap, future direction, and feature-level success criteria |
 | **Specification** | `-SPEC` | Required execution contract for one deliverable, including explicit acceptance criteria and verification expectations |
-| **Plan** | `-PLAN` | Optional execution decomposition for implementation |
-| **Build / validate** | code, tests, QA evidence | An agent running `worker` implements with TDD where applicable; an agent running `qa` verifies against acceptance criteria and evidence until convergence |
+| **Build / validate** | code, tests, QA evidence | Agent implements directly from SPEC with TDD where applicable; agent running `qa` verifies against acceptance criteria and evidence until convergence |
 | **Review package** | PR title/body, manual test plan | Reviewer-facing packaging of what changed and how to validate it |
 
 Execution relationship:
@@ -1003,10 +998,7 @@ flowchart LR
     M --> SM["Owner/team select one milestone to advance"]
     SM --> SB
     SB --> SPEC["Deliverable SPEC"]
-    SPEC --> PL["Agent running\nplanner"]
-    PL --> PLAN["PLAN\n(optional)"]
-    SPEC --> W["Agent running\nworker"]
-    PLAN --> W
+    SPEC --> W["Agent executes\ndirectly from SPEC"]
     W --> QA["Agent running\nqa"]
     QA --> PR["Agent running\npr-builder\n(optional)"]
     PR --> G["Owner UAT + PR review"]
@@ -1045,8 +1037,8 @@ Project
 | **Proposal** | Optional exploratory artifact used to compare options before committing to feature-definition or execution direction |
 | **Feature** | Long-lived capability with one feature requirements document that evolves over time |
 | **Milestone** | Named increment of a feature or release target; may span multiple deliverables |
-| **Deliverable** | Bounded unit of execution with one SPEC and optional PLAN; may be associated with a milestone or may stand alone |
-| **Task** | Smallest execution unit; an agent running `planner` decomposes, an agent running `worker` implements, and the relevant owner coordinates |
+| **Deliverable** | Bounded unit of execution with one SPEC; may be associated with a milestone or may stand alone |
+| **Task** | Smallest execution unit; agent decomposes dynamically from SPEC during execution, and the relevant owner coordinates |
 
 **Adoption path:** Start with `project.md`. Add Proposal when the direction is uncertain. Add Feature and Milestone when the product needs durable capability tracking and stakeholder-visible roadmap/history. Go straight to Deliverable -> Task for bounded non-feature work when that is enough.
 
@@ -1082,14 +1074,14 @@ You can adopt Zazz at three levels:
 | Level | What you use | When it fits |
 | ----- | ------------ | ------------ |
 | **Process-only** | Framework philosophy and document flow | Apply the process manually; no tools required |
-| **Skills-assisted** | Process + `zazz-skills` | Use skills to facilitate proposal, feature requirements, spec, plan, implementation, QA, and PR packaging |
+| **Skills-assisted** | Process + `zazz-skills` | Use skills to facilitate proposal, feature requirements, spec, implementation, QA, and PR packaging |
 | **Service-assisted** | Process + skills + [zazz-board](https://github.com/zazzcode/zazz-board) | Add Board to organize relationships and execution state across features, milestones, deliverables, and tasks |
 
 By framework layer:
 
 | Layer | Scope |
 | ----- | ----- |
-| **Execution** | Deliverable -> Task with SPEC/PLAN |
+| **Execution** | Deliverable -> Task with SPEC |
 | **Capability** | Add feature requirements documents and feature-linked deliverables |
 | **Portfolio** | Add Milestones for roadmap and release coordination |
 

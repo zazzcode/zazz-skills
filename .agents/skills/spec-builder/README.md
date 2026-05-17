@@ -1,190 +1,121 @@
 # Spec Builder Skill — User Guide
 
-How to work with the Spec Builder skill to create a Deliverable Specification (SPEC) for the Zazz framework.
+How to use the **spec-builder** skill in the qb-mono-wt repo to write deliverable
+specifications (SPECs).
 
-Examples in this guide may use `.zazz/` or `<DOCS_ROOT>/` as shorthand. In a real repo, use the framework docs root resolved by repo policy, usually documented in `AGENTS.md`.
+## What it does
 
----
+Helps you draft a SPEC for a bounded deliverable: a feature slice, bug fix, refactor,
+report migration slice, milestone slice, or other implementation unit.
 
-## How to Load the Skill
-
-The skill lives at `.agents/skills/spec-builder/`. Different tools discover and invoke it differently.
-
-### Cursor
-
-1. **Open Agent chat** — `Cmd+I` (Mac) or `Ctrl+I` (Windows/Linux).
-
-2. **Load the skill** (pick one):
-   - **Slash command**: Type `/` in the chat input, then search for `spec-builder` or `spec builder`. Select the `spec-builder` skill.
-   - **@ mention**: Type `@` and the path: `@.agents/skills/spec-builder/SKILL.md`. This adds the skill file to context.
-   - **Explicit request**: Say "Use the spec-builder skill" or "Load the spec builder skill" at the start of your message.
-
-3. **Start the dialogue** — e.g., "I want to create a spec for user authentication."
-
-**Note**: Cursor auto-discovers skills in `.agents/skills/`. For reliable behavior, use `/spec-builder` or @ mention the skill.
-
----
-
-### Claude Code
-
-Claude Code looks for skills in `.claude/skills/` (project) or `~/.claude/skills/` (personal). This skill is in `.agents/skills/`, so you have two options:
-
-**Option A — Symlink** (keeps one copy):
-```bash
-mkdir -p .claude/skills
-ln -s ../../.agents/skills/spec-builder .claude/skills/spec-builder
-```
-
-**Option B — Copy** the skill folder into `.claude/skills/spec-builder/`.
-
-Then:
-
-1. **Invoke directly**: Type `/spec-builder` in the Claude Code chat. The skill name (from frontmatter) becomes the slash command.
-2. **Auto-load**: Describe your task—e.g., "I want to create a deliverable spec for user auth." Claude may load the skill automatically when it matches the description.
-3. **Start the dialogue** — e.g., "I want to create a spec for user authentication."
-
----
-
-### Warp
-
-Warp discovers skills from `.agents/skills/` (and `.claude/skills/`, `.cursor/skills/`, etc.) at the project root. No extra setup needed.
-
-1. **Open an Agent conversation** in Warp.
-
-2. **Load the skill** (pick one):
-   - **Slash command**: Type `/spec-builder` in the chat. Warp invokes the skill directly.
-   - **Natural language**: Say "Use the spec-builder skill" or "Create a deliverable spec for user authentication." The agent receives all available skills and loads this one when it matches your request.
-   - **List skills**: Ask "What skills do I have?" to see `spec-builder` in the list.
-
-3. **Start the dialogue** — e.g., "I want to create a spec for user authentication."
-
-**Note**: Warp scans from your current directory up to the repo root. Ensure you're in the project (or a subdirectory) so the skill is discovered. Use `/open-skill` to browse or edit skills.
-
----
-
-## What It Does
-
-The Spec Builder skill guides a **dialogue** with you to produce a comprehensive SPEC document. The SPEC defines what gets built, acceptance criteria, tests, and agent guidelines. It becomes the source of truth for the Planner, Workers, and QA.
-
-## How the Dialogue Works
-
-This is an interactive, back-and-forth skill.
-
-You do not need to arrive with a perfect spec in your head. A useful starting prompt plus a few rounds of clarification is enough. The agent should:
-
-- ask focused follow-up questions
-- push for testable acceptance criteria
-- help narrow scope if the deliverable is too large
-- draft the SPEC before everything is perfect so you can iterate on a real document
-
-This should feel like working with a technically strong teammate, not filling out a rigid form.
-
----
-
-## How to Start
-
-1. Load the `spec-builder` skill (see [How to Load the Skill](#how-to-load-the-skill) above for Cursor, Claude Code, or Warp). Load `zazz-board-api` too if you want board integration.
-2. Tell the agent what you want to build, e.g.:
-   - "I want to create a spec for user authentication"
-   - "Let's define a deliverable for the API rate-limiting feature"
-3. Answer the agent's questions. It will ask about problem statement, standards, features, acceptance criteria, tests, and more.
-4. Early in the dialogue, expect it to confirm the repo's deliverable-file policy. That usually means clarifying whether the deliverable uses a flat local path, a tracker-key folder convention, ignored local files, committed files, or an external integration such as Zazz Board or Jira.
-
-## Example Starter Prompts
-
-Use prompts like these:
-
-### Example 1: New deliverable spec
+The stable rule is:
 
 ```text
-Use spec-builder.
-I need a deliverable spec for adding project-scoped agent tokens to the API.
-The deliverable should cover token creation, token revocation, and authorization checks.
-Please guide me through this in a back-and-forth dialogue and help me make the acceptance criteria and tests explicit.
+one deliverable = one SPEC
 ```
 
-### Example 2: Refining an existing idea into a SPEC
+The flexible rule is delivery topology:
 
 ```text
-Use spec-builder.
-We already know we need a role management UI, but I want help turning that into a tight deliverable spec.
-Please ask clarifying questions, push back if the scope is too large for one deliverable, and generate a draft spec once we have enough to review.
+a worktree / branch / PR may contain one deliverable, multiple deliverables, or a
+single-lane stack of branches
 ```
 
-### Example 3: Feature-document-to-SPEC handoff
+The skill conducts an interactive dialogue, captures decisions and acceptance criteria,
+and produces a self-contained SPEC. The SPEC includes the execution sequence,
+definition of done, halt conditions, run-log protocol, and paste-ready implementation
+prompt. There is no separate PLAN document.
 
-```text
-Use spec-builder.
-We have a Feature Requirements Document for role-based access control and want to create a spec for the next milestone deliverable.
-Please help me define one bounded deliverable from that milestone, including acceptance criteria, test coverage, and agent constraints.
-```
+The skill writes SPECs. It does **not** implement product code.
 
-### Prompt structure that works well
+## Team integration rule
 
-The best starting prompts usually include:
+This is a team repository. Agents may commit to their feature branch and push their
+feature branch when the SPEC says to, but they must never merge directly to `dev`.
 
-- the deliverable idea
-- what problem or milestone it supports
-- major functional expectations
-- any hard constraints or non-goals
-- a request for iterative dialogue and draft generation
+All integration to `dev` happens through human PR review. SPECs should use wording like
+"submit a PR to `dev`", "after the PR lands", or "after the lower PR lands" rather than
+instructing an agent to merge.
 
----
+## When to use it
 
-## Key Phrases You Can Say
+- You have a bounded deliverable and want to capture scope, decisions, and ACs before
+  implementation.
+- You are defining a milestone branch with multiple ordered deliverables/SPECs that
+  will be reviewed as one PR.
+- You are defining sibling deliverables that will be reviewed as separate PRs.
+- You are defining a stacked review lane where branches are stacked inside one lane
+  worktree using `gh-stack`.
+- You are updating an existing SPEC after Owner-approved scope or contract changes.
 
-| Say this | Agent does |
-|----------|------------|
-| **"Generate the spec"** / **"Generate a version"** / **"Create a draft"** / **"Write the spec"** / **"Draft it"** | Writes the SPEC document immediately so you can review it. You don't have to wait for the full dialogue—the agent produces the best draft from what's been discussed so far. Then you give feedback and iterate. |
-| **"Development mode"** / **"We're in development mode"** / **"Run in development mode"** | **For improving the skill itself.** The focus is on iterating on SKILL.md—the spec dialogue is a way to exercise and refine the skill. Agent writes the SPEC file only (no API calls) and may edit SKILL.md based on your feedback. |
+## Delivery topologies
 
----
+The skill should help choose the simplest topology that matches the intended review
+artifact.
 
-## Workflow
+- **Single-deliverable branch** — one deliverable, one SPEC, one branch/PR.
+- **Milestone branch** — multiple deliverables/SPECs in one worktree and branch, one
+  shared run log, one PR. Use when the milestone is reviewed as a whole.
+- **Sibling branches** — multiple independently reviewable branches/PRs for one
+  milestone. Use when deliverables do not depend on each other strongly enough to need
+  a stack.
+- **Stacked review lane** — stacked branches inside one lane worktree using
+  `gh-stack`. Use only when separate review/merge boundaries or lower-layer/upper-layer
+  dependency justify stack overhead.
 
-1. **Describe** — Tell the agent what you're building and why.
-2. **Answer** — Respond to clarifying questions (features, edge cases, constraints, standards).
-3. **Generate** — When ready, say "generate the spec" or "create a draft" to get a file to review.
-4. **Iterate** — Review the draft, give feedback ("add X", "clarify Y", "AC3 should say..."), and ask for another version.
-5. **Approve** — When satisfied, approve. If the repo uses an external integration such as Zazz Board, the agent may also sync the relevant spec metadata or path (unless in development mode).
+Do not create stacked worktrees. Stacks are branches inside one worktree.
 
----
+## How to invoke
 
-## Output
+In Claude Code: `/spec-builder` or `@.claude/skills/spec-builder/SKILL.md`. Then
+describe the deliverable or milestone.
 
-- **File**: `<DOCS_ROOT>/deliverables/<spec-path>` (always ends with `-SPEC.md`) when the repo keeps deliverable files on disk. See `SKILL.md` -> **Deliverable files: storage, naming, and index** for the repo policy and naming convention. Any **PLAN** lives in the **same folder** with `-PLAN.md`.
-- **External integration**: If the repo uses an external system such as Zazz Board, the agent may update the deliverable metadata or path there. That integration is optional and repo-specific.
+## What to tell the skill at invocation
 
-### Filename examples (same deliverable)
+State these up front when you know them:
 
-Deliverable name: **"Role management UI"** -> slug **`role-management-ui`**. Replace `<DOCS_ROOT>` with your repo's resolved docs root. **SPEC and PLAN always share the same folder and basename**—only `-SPEC.md` vs `-PLAN.md` changes. The exact layout depends on the repo's deliverables policy.
+- **Delivery topology** — single-deliverable branch, milestone branch, sibling
+  branches, or stacked review lane.
+- **Deliverable slug** — kebab-case identifier used in SPEC filenames.
+- **Milestone / effort slug** — when multiple SPECs share one run log or PR.
+- **Review artifact** — one PR for the whole milestone, separate sibling PRs, or
+  stacked PRs.
 
-| Project mode | SPEC | PLAN |
-|--------------|------|------|
-| **Flat local files** | `<DOCS_ROOT>/deliverables/role-management-ui-SPEC.md` | `<DOCS_ROOT>/deliverables/role-management-ui-PLAN.md` |
-| **Tracker-key subdirectory** — e.g. `ZAZZ-142` or `PROJ-453` | `<DOCS_ROOT>/deliverables/ZAZZ-142/role-management-ui-SPEC.md` | `<DOCS_ROOT>/deliverables/ZAZZ-142/role-management-ui-PLAN.md` |
+The skill will ask follow-ups on scope boundaries, decisions, acceptance criteria,
+run-log shape, and review boundaries.
 
-External systems such as Zazz Board or Jira may use the same tracker-key folder pattern, but the repo's declared policy is the source of truth.
+You do not need to arrive with every answer. If topology, deliverable boundaries,
+reference data, acceptance criteria, or test evidence are unclear, the skill should
+interview you in small batches and propose defaults for confirmation. It should not
+produce a final SPEC that leaves an implementation agent guessing about what proves the
+deliverable is done.
 
-The planner writes the PLAN next to the SPEC.
+## Output paths
 
----
+- **Regular / non-stacked SPEC**:
+  `<worktree>/docs/implementation/<slug>-SPEC.md`
+- **Milestone branch SPECs**:
+  `<worktree>/docs/implementation/<milestone>-spec-<n>-<slug>.md` or another
+  Owner-approved consistent naming pattern.
+- **Run log**:
+  `<worktree>/docs/implementation/<effort-slug>-RUN-LOG.md`
+- **Stacked SPEC**:
+  `<container-root>/<slug>-stacked-SPEC.md`
+  (container root, shared across stacked branches in the lane).
 
-## Development Mode
+## What you should have ready
 
-**Development mode is for improving the skill itself.**
+- A rough sketch of the deliverable or milestone and why it is needed.
+- The intended review shape: one PR, sibling PRs, or stacked PRs.
+- Any constraints that already exist: legacy compatibility, performance targets,
+  coordination with other work in flight.
+- Known source documents: feature docs, architecture docs, standards, prior SPECs.
 
-Use it when you want to iterate on the spec-builder skill—refine the dialogue flow, questions, template, or techniques. The spec generation is secondary: you run the dialogue to exercise the skill, see what it produces, and give feedback. The **primary goal** is to improve `SKILL.md` so the next session works better.
+## After approval
 
-- Say **"development mode"** at any point, or set `ZAZZ_SPEC_BUILDER_DEV_MODE=1` before starting.
-- Agent writes the SPEC file only (no API calls).
-- Agent may edit `SKILL.md` based on your feedback—e.g., "add a question about X", "the AC format should...", "the decomposition section needs to probe for Y".
+Implementation starts from the SPEC itself and the run log. A fresh implementing agent
+reads the SPEC, resolves open questions, maintains the run log, executes the phases,
+and dispatches a verifier when the definition of done is complete.
 
----
-
-## Tips
-
-- **Be specific** — "Fast" → "API response < 200ms for p99". The agent will ask if you're vague.
-- **Generate early** — You can say "generate a draft" partway through to see what you have. Iterate from there.
-- **Reference standards** — The agent reads `<DOCS_ROOT>/standards/` and will discuss which apply. You can override or add exceptions.
-- **Complex deliverables** — The agent will help you break them into components and define what can run in parallel vs sequential.
+Material contract changes during implementation require Owner sign-off and SPEC
+revision; progress and evidence go in the run log.

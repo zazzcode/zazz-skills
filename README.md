@@ -41,7 +41,7 @@ Zazz is intentionally opinionated about why different artifacts exist and where 
 
 - Durable, continuously maintained documents such as `project.md`, proposals, feature requirements documents, and standards belong in Git or another Git-based service.
 - Framework docs live under the repo's resolved docs root, commonly `docs/` or `.zazz/`, as declared by repo policy in `AGENTS.md` and optionally resolved through an environment variable when that repo chooses.
-- Execution artifacts such as deliverable SPECs, PLANs, diagrams, and related working assets belong under `<DOCS_ROOT>/deliverables/` when they live on disk.
+- Execution artifacts such as deliverable SPECs, diagrams, and related working assets belong under `<DOCS_ROOT>/deliverables/` when they live on disk.
 - Those deliverable files may be ignored locally, committed intentionally, or mirrored/tracked in an external system such as Zazz Board.
 - Zazz Board is a valid integration pattern, not a framework requirement.
 - Worktrees are a required part of the framework because they provide the isolation, recoverability, and execution boundaries the framework depends on.
@@ -90,24 +90,23 @@ zazz-framework.md      primary framework philosophy and document model
 | ----- | ------- |
 | `proposal-builder` | Facilitates proposal discussions and drafts decision-ready proposals. |
 | `feature-doc-builder` | Creates and evolves feature requirements documents for long-lived capabilities; the skill keeps its historical name for compatibility. |
-| `spec-builder` | Guides bounded deliverable SPEC authoring. |
+| `architecture-doc-builder` | Creates and evolves architecture documents paired with feature requirements documents. |
+| `spec-builder` | Guides bounded deliverable SPEC authoring, including prescriptive execution sequence and implementation guidance. |
 
-### Execution skills
+### Execution and verification skills
 
 | Skill | Purpose |
 | ----- | ------- |
-| `planner` | Converts an approved SPEC into an execution-ready PLAN. |
-| `worker` | Implements approved work with TDD and execution-discipline. |
 | `qa` | Runs verification against requirements, standards, and evidence. |
 | `qa-frontend` | Frontend-focused QA specialization. |
 | `qa-backend` | Backend-focused QA specialization. |
-| `coordinator` | Coordinates execution of an approved PLAN across tasks and blockers. |
 
 ### Delivery and infrastructure skills
 
 | Skill | Purpose |
 | ----- | ------- |
 | `pr-builder` | Produces reviewer-ready PR packaging from diff, docs, and evidence. |
+| `gh-stack` | Manages stacked branches and dependent PRs for incremental review workflows. |
 | `worktree` | Sets up or manages the framework's required Zazz-style worktree model through the Worktrunk workflow used by the skill. |
 | `zazz-board-api` | Companion utility skill for Zazz Board integration. |
 | `jira-api` | Draft companion utility for Jira-backed repos. |
@@ -156,7 +155,6 @@ Execution artifacts generally live under `<DOCS_ROOT>/deliverables/` when they a
 External systems such as Zazz Board may also hold or reference:
 
 - deliverable SPECs
-- deliverable PLANs
 - execution diagrams and related working assets
 - task and execution state
 
@@ -171,6 +169,40 @@ rsync -avc /path/to/zazz-skills/zazz-framework.md /path/to/consumer-repo/zazz-fr
 rsync -avc --delete /path/to/zazz-skills/.agents/skills/ /path/to/consumer-repo/.agents/skills/
 rsync -avc --delete /path/to/zazz-skills/docs/ /path/to/consumer-repo/docs/
 ```
+
+## Changelog
+
+### 2026-05-17 — Execution model simplification
+
+**Removed `planner` skill (obsolete).**
+Modern agents have large context windows and native planning capabilities. A separate PLAN artifact added ceremony without value. The SPEC now includes a prescriptive execution sequence, and the agent decomposes implementation dynamically from live repo context.
+
+- Rationale: agents now read a SPEC, inspect the codebase, and internally plan tool-call sequences. A pre-baked text PLAN was rarely more useful than the SPEC's scope boundaries + the agent's own discovery.
+- Migration: previous PLAN files are replaced by the SPEC's execution sequence section. No loss of planning rigor; the planning is now done by the agent at execution time.
+
+**Removed `worker` skill (execution is now native agent behavior).**
+Writing code, running tests, and iterating is what modern agents do by default. The `worker` skill conflated native execution with board state sync, which is now handled by `coordinator` when multi-agent orchestration is needed.
+
+- Rationale: agents don't need a skill wrapper to tell them "write code, then run tests." TDD and iteration are intrinsic. Multi-agent coordination is now handled by harness-native subagent features (GPT-4.5, Opus, etc.), not a framework skill.
+- Migration: single-agent execution needs no skill. Multi-agent execution uses the agent harness's native subagent/teams feature. External system sync uses `zazz-board-api` when needed.
+
+**Removed `coordinator` skill (harness-native subagents replace it).**
+Modern agent harnesses (e.g., GPT-4.5, Opus) include built-in manager/subagent orchestration, task decomposition, and dependency management. The `coordinator` skill replicated what the harness now does natively. Teams should use the agent's native multi-agent mode instead of a framework-level coordination wrapper.
+
+- Rationale: when the harness can spawn subagents, assign file ownership, and enforce serialization automatically, a separate `coordinator` skill adds indirection and drift. The framework should document how to use harness-native coordination, not reimplement it.
+- Migration: use the agent's native subagent or "teams" feature. The SPEC's prescriptive execution sequence provides the decomposition input; the harness handles the orchestration.
+
+**Added `architecture-doc-builder` and `gh-stack` skills.**
+These reflect evolved practices: paired architecture documents for feature requirements, and stacked PR workflows for incremental review.
+
+**SPEC is now the single execution contract.**
+The old SPEC + PLAN split is gone. The SPEC contains:
+- capability statement and acceptance criteria
+- prescriptive execution sequence (what the old PLAN used to provide at a high level)
+- test plan and halt conditions
+
+**Added `docs/implementation/` methodology docs.**
+Incorporated guidelines from active project work on feature/architecture definition methodology and spec-driven development methodology.
 
 ## License
 

@@ -1,700 +1,560 @@
 ---
 name: spec-builder
-description: Help a user create, draft, refine, or update a deliverable specification (SPEC) for a bounded feature, component, bug fix, refactor, or milestone slice; use when the user wants to write a new spec or improve an existing one, not implement the solution.
+description: Help a user create, draft, refine, or update a deliverable specification (SPEC) for a bounded feature, component, bug fix, refactor, or milestone slice in the qb-mono-wt repo; use when the user wants to write a new spec or improve an existing one, not implement the solution.
 ---
 
 # Spec Builder Skill
 
-## Required Repo Extension Check
+Operational guidance for the agent. User-facing onboarding lives in `README.md`.
 
-Before doing anything else, check for `.agents/skill-extensions/spec-builder/EXTENSION.md`.
-If it exists, read it immediately after this `SKILL.md` and apply it as repo-specific guidance that augments this skill.
+## Operating model (revised 2026-05; M2 Reporting API onward)
 
-## Startup Sequence
+This skill produces **self-contained SPEC documents**. The stable mapping is:
 
-This is the canonical startup order for this skill. If later sections restate parts of it, follow this sequence first.
+```text
+one deliverable = one SPEC
+```
 
-Before starting the dialogue:
-1. Check for the repo extension file above and read it if present.
-2. Use `AGENTS.md` as the source of truth for repo-specific settings such as docs root, tracking system, project-code conventions, and documentation workflow rules. Read it if that context is not already available.
-3. Detect the repo's adoption level for this work: `skills-assisted` by default, or `service-assisted` when Zazz Board/API integration is actually in use.
-4. Detect whether development mode is on.
-5. Ask early which deliverable storage mode applies for this work: `neither` (flat), `Zazz Board`, or `Jira`.
-6. If the mode is `Zazz Board`, ask for the deliverable code. If the mode is `Jira`, ask for the issue key. If the mode is `neither`, continue without an external ID folder.
-7. Find the standards index for this repo and identify the standard files likely to matter for this deliverable.
-8. Then begin the dialogue and keep the discussion focused on one bounded deliverable.
+The flexible mapping is delivery topology:
 
-## Compatibility Levels
+```text
+a worktree / branch / PR may contain one deliverable, multiple deliverables, or a
+single-lane stack of branches
+```
 
-This skill must work across the framework's adoption levels:
+The SPEC is the complete contract for its deliverable — intent, decisions, scope,
+acceptance criteria, test plan, execution sequence, code skeletons, halt conditions,
+definition of done, and the agent-implementation prompt all live in the SPEC itself.
+**There is no separate PLAN document.**
 
-- **Process-only**: humans may follow the framework manually without this skill.
-- **Skills-assisted**: use this skill plus the repo docs and directory structure; do not require Zazz Board or API integration.
-- **Service-assisted**: use this skill plus Zazz Board/API integration when the repo and workflow support it.
+Progress tracking, OQ resolutions, deviations, and manual evidence locations are recorded
+in a **RUN-LOG.md** that the implementing agent maintains. RUN-LOG.md is append-only,
+local-only (lives in `docs/implementation/`, excluded via `.bare/info/exclude`), never
+committed, never appears in PR diffs unless the Owner explicitly changes that.
 
-Default to **skills-assisted** unless the repo clearly uses Zazz Board for this deliverable.
+A single-deliverable branch may have a small run log. A milestone branch with multiple
+SPECs uses one shared run log with sections per SPEC. A stacked lane uses one shared run
+log when lower-branch decisions or deviations can affect upper branches.
 
-## Audience
+This is a deliberate departure from earlier convention. The earlier convention split
+SPEC (intent) from PLAN (execution); experience showed that split adds friction for
+walk-away execution with cheaper implementing agents (e.g. Sonnet 4.6) and that the
+run-log handles PLAN's progress-tracking function more cleanly. The branch or stack PR is
+the reviewable artifact; the SPECs are the executable contracts inside that artifact.
+The current operating model is still being refined. If it surfaces problems, revise it.
+Until then, this is the default.
 
-**You are reading this as the runtime agent** with the `spec-builder` skill loaded. This file is **operational guidance for you**, not onboarding for the human. The Deliverable Owner should use `.agents/skills/spec-builder/README.md` for how to invoke the skill and what to expect in chat.
+### Team integration rule
 
-## Core guidance
+This is a team repository. Agents and implementors work on feature branches. They may
+commit to their branch and push their branch when the SPEC says to, but **they never
+merge directly to the integration branch** and SPECs must not instruct them to do so.
 
-### Mission
+All integration happens through human pull-request review. Use language like
+"submit a PR to `{{ integration-branch }}`", "after the PR lands", or "after the lower
+PR lands" — not "merge to `{{ integration-branch }}`" as an agent action.
 
-You conduct an interactive dialogue with the Deliverable Owner and **write** the SPEC (and related index updates) per this skill. Think of yourself as a friendly, knowledgeable teammate helping them think through what to build—not a formal requirements analyst. You do not implement product code.
+The integration branch name is captured during intake (see §Intake / interview model).
+It is repo-specific — common values are `dev`, `main`, `master`, `trunk`. Never assume
+a value; always ask.
 
-### Role
+### Bundled methodology reference
 
-**You** are the Spec Builder (one per deliverable; you work with the Deliverable Owner).
+This skill is intended to be portable. Its required methodology lives in this skill
+bundle, not in a repo-local document that may be absent elsewhere.
 
-### Context
+Before changing this skill's philosophy, read
+`references/spec-driven-development-methodology.md` in this skill directory. If the
+active repo also has local methodology docs, use them as project-specific context only;
+do not make them required dependencies for this skill.
 
-A deliverable is a discrete unit of work (feature, bug fix, refactor, etc.) within a larger software project. The SPEC is the source of truth for what gets built. The Planner decomposes it into a PLAN; Workers implement; QA verifies. Your job is to draw out from the Owner everything downstream agents need so they never have to guess.
+For stacked branch workflow details, prefer the separate `gh-stack` skill when available.
+If it is installed, read its `SKILL.md` and bundled references before drafting stacked
+workflow sections. If it is not installed, use the concise stacked-lane guidance bundled
+in this skill and tell the Owner that command-level stack guidance should be reviewed.
 
-### Deliverable sizing
-A single deliverable should be completable by agents in **less than one 24-hour working day**. If what the Owner describes would take several days, it likely spans multiple deliverables—**you** probe and help them split. One deliverable = one coherent unit of value that fits within that horizon.
+### What the SPEC must contain
 
-### SPEC scope
-**Keep the SPEC thin:** point to standards and conventions under the repo docs root (`AGENTS.md` / `<DOCS_ROOT>`)—**reference**, don’t copy architecture, test stack, or DB rules into the SPEC. **Planning** (phases, tasks, who edits which files) belongs in the PLAN, not here; you only supply requirements and **break patterns** for the Planner.
+Every SPEC produced by this skill carries these sections (numbering matches the
+template):
 
-### Docs root convention
-Resolve all framework doc paths from the repo docs root declared in `AGENTS.md`. This skill uses `<DOCS_ROOT>/...` as shorthand—you expand it from `AGENTS.md` for the repo you are in.
+1. **Capability** — one-paragraph statement of what the deliverable does.
+2. **Required reading** — section-pinned references to feature docs, architecture
+   docs, prior SPECs in the same deliverable, applicable standards, existing-code
+   patterns to mirror, and orientation sections. Cited by section number; never
+   restated verbatim.
+3. **Invariants** — load-bearing constraints stated verbatim, restated in PR bodies.
+4. **Scope** — file list (path + new/modified + reason), strict scope constraint
+   naming the allowed directory, and explicit out-of-scope list.
+5. **Decisions** — each with "why this over the alternative" rationale. 3-8 typical.
+6. **Agent implementation rules** — shared behavior for implementation: branch/PR
+   integration rule, commit/push guidance, scope verification topology, autonomy
+   boundaries, command working-directory convention, run-log requirements, halt
+   conditions.
+7. **Acceptance criteria** — numbered, testable, each citing the verifying test or
+   command.
+8. **Test plan** — concrete test names, what each asserts, reference data sources
+   named (existing fixtures, locked baselines, etc.). The test plan implements the ACs;
+   it must be defined before the execution sequence.
+9. **TDD entry point + Prescriptive Execution Sequence** — a first failing test, then
+   phase-by-phase implementation order with code skeletons for non-test files. The
+   sequence is derived from the ACs and test plan.
+10. **Definition of Done** — binary checklist; unchecked boxes go to the user, not
+    self-marked by the agent.
+11. **Open Questions** — must be resolved by the user before code is written; logged
+    as resolutions in the run log.
+12. **Run Log Protocol** — pointer to the shared per-deliverable RUN-LOG.md with
+    append rules, sections, and session-start protocol.
+13. **Appendix — Agent Implementation Prompt** — paste-ready bootstrap for the
+    implementing agent session.
 
-## Deliverable files: storage, naming, and index
+The numbering is not load-bearing; the *presence* of each section is. If a section is
+genuinely N/A for a deliverable (rare), state so explicitly rather than omitting.
 
-**Canonical rules** for SPEC/PLAN paths, `deliverables/index.yaml`, and Zazz `dedFilePath` / `specFilepath`. Other sections only link here.
+### What the RUN-LOG.md contains
 
-**Mode** (one per project—don’t mix schemes in one tree): **neither** = flat under `deliverables/`. **Zazz Board** = `deliverables/{deliverableCode}/` + sync path via API. **Jira** = same folder shape as Zazz, `{id}` = issue key, no Zazz sync. Unsure → ask Owner. Details: [zazz-framework.md](../../../zazz-framework.md).
+One run log per delivery effort. A single-SPEC branch may have one section. A milestone
+branch may contain multiple deliverables/SPECs and uses sections per SPEC. A stacked lane
+uses sections per branch/SPEC when needed.
 
-**Dialogue rule**: Ask explicitly: "Are we using Zazz Board, Jira, or neither for this deliverable?" If the answer is **Zazz Board**, ask for the deliverable code before locking the canonical path. If the answer is **Jira**, ask for the issue key before locking the canonical path.
+- **Standards verification** — agent confirms the SPEC's standards-prescription matches
+  a fresh `docs/standards/index.yaml` lookup.
+- **OQ Resolutions** — verbatim user answers, timestamped.
+- **Phase Completions** — commit SHAs, verifying-command outcomes.
+- **Deviations** — every departure from the SPEC body, with reason and user-confirmation
+  status.
+- **Manual Evidence Locations** — paths to baselines, smoke outputs, screenshots, query
+  outputs.
+- **Issues & Recoveries** — load-bearing failed attempts only (not every red test).
+- **Verifier sub-agent report** — pasted PASS/FAIL summary from the final verification.
 
-**Files**: `{slug}-SPEC.md` and `{slug}-PLAN.md`. **Slug** = hyphenated, lowercase, from deliverable name (default **first five words**). SPEC and PLAN share **one directory** and **one basename**—only the `-SPEC` / `-PLAN` suffix differs. **You** write the SPEC only; **Planner** writes `-PLAN.md` beside it—communicate the SPEC path.
+The run log is the recovery surface for walk-away execution. A fresh agent loaded with
+SPEC + RUN-LOG + `git log` can pick up cleanly from any phase.
 
-**Where to put them** (pick flat **or** subdir for that deliverable—never split SPEC/PLAN across layouts):
+## Role
 
-| Mode | Path under `<DOCS_ROOT>/deliverables/` |
-|------|----------------------------------------|
-| **Neither** | `{slug}-SPEC.md` |
-| **Zazz** | `{deliverableCode}/{slug}-SPEC.md` |
-| **Jira** | `{issueKey}/{slug}-SPEC.md` |
+You produce a SPEC through interactive dialogue with the deliverable Owner. The SPEC is
+the complete contract; you do **not** also produce a PLAN.
 
-**Legacy**: If Owner demands flat `PROJ-453-{slug}-SPEC.md`, mirror for PLAN; otherwise prefer `{issueKey}/{slug}-SPEC.md`.
+You do **not** implement product code in this skill.
 
-**`index.yaml`**: Touch it when you add/rename/move the canonical SPEC, or when the team tracks `plan` and it changes. `spec` and `plan` = paths **relative to `deliverables/`**. Typical keys: `id`, `name`, `spec`, optional `plan` (match repo schema).
+## Delivery topology
 
-**Do after write**: (1) `index.yaml` (2) if Zazz: set `dedFilePath` / `specFilepath` to **exact** repo-relative SPEC path (**§ Zazz Board API Integration**).
+The Owner may specify a delivery topology at invocation. If they do not, infer the
+simplest topology and confirm it.
 
-**Zazz only**: `dedFilePath` is full repo path, e.g. `.zazz/deliverables/ZAZZ-142/role-management-ui-SPEC.md`. If you get `deliverableCode` **after** writing flat files, `mkdir` the subdir and **move** SPEC and PLAN together—or resolve the code before locking the path.
+Use these topologies:
 
-**Examples** (slug `role-management-ui`, `<DOCS_ROOT>` = `.zazz`):
+- **Single-deliverable branch** — one deliverable, one SPEC, one branch/PR. Default for
+  small and medium changes.
+- **Milestone branch** — multiple ordered deliverables/SPECs in one worktree, one branch,
+  one shared run log, one PR. Use when the milestone is reviewed as one artifact. M2
+  Reporting API is the canonical example.
+- **Sibling branches** — multiple independently reviewable branches/PRs for one
+  milestone. Use when deliverables do not require a stack dependency.
+- **Stacked review lane** — multiple branches stacked inside **one lane worktree** using
+  `gh-stack`; each branch is separately reviewed. Use only when review boundaries or
+  lower-layer/upper-layer dependency justify stack overhead.
 
-| Mode | SPEC | PLAN (same folder, `-PLAN.md`) |
-|------|------|--------------------------------|
-| Neither | `.zazz/deliverables/role-management-ui-SPEC.md` | `…/role-management-ui-PLAN.md` |
-| Zazz | `.zazz/deliverables/ZAZZ-142/role-management-ui-SPEC.md` | `…/ZAZZ-142/role-management-ui-PLAN.md` |
-| Jira | `.zazz/deliverables/PROJ-453/role-management-ui-SPEC.md` | `…/PROJ-453/role-management-ui-PLAN.md` |
+Never model a stack as multiple stacked worktrees. That became too difficult to manage
+after even two worktrees. Stacks are branches inside one lane worktree.
 
----
+For stacked lanes, keep this mental model:
 
-## Standards index and testing docs
+- one worktree = one isolated agent lane / deliverable workspace
+- one stack inside that worktree = multiple review branches for the same deliverable
+  or tightly related deliverable group
+- one branch = one review unit, represented by commits, not by a remembered file list
 
-Project standards are **discovered** through the standards index; filenames are repo-specific. The framework default is `<DOCS_ROOT>/standards/index.yaml` (some repos declare the exact path in `AGENTS.md`—use that when it differs).
+If the Owner picks `stacked` for something that should be a milestone branch or sibling
+branches, flag the concern once and continue with the stated topology if reaffirmed.
 
-When you elicit tests or TDD expectations:
-1. Read the standards index first.
-2. Identify entries whose `applies_to.activities`, `applies_to.paths`, or `purpose` indicate testing, TDD, QA, HTTP/API routes, E2E, or similar—those `file` values point to the authoritative testing guidance for **that** repo (e.g. one repo may use `testing.md`; another may split into `api-testing.md` and `frontend-testing.md`).
-3. Open only the matched standard files; do not assume a file named `testing.md` exists.
+## Startup sequence
 
-The SPEC should **reference** whichever standard files apply, not copy their contents.
+1. Confirm the delivery topology the Owner specified, or propose the simplest topology
+   that fits the intended review artifact.
+2. Load the matching workflow + template from this skill directory:
+   - `regular-branch-workflow.md` + `regular-SPEC-TEMPLATE.md` for single-deliverable,
+     milestone-branch, and sibling-branch SPECs
+   - `stacked-branch-workflow.md` + `stacked-SPEC-TEMPLATE.md`
+3. Read this skill's bundled `references/spec-driven-development-methodology.md`.
+4. Read project orientation (for example `AGENTS.md`, `CLAUDE.md`, or a repo-specific
+   orientation file) if present.
+5. For stacked topology, read the `gh-stack` skill if available. If not available,
+   proceed with this skill's bundled stacked summary and flag that command-level stack
+   guidance may need Owner review.
+6. Read `docs/standards/index.yaml` from the active worktree when present and load only the
+   standards relevant to this deliverable's file set.
+7. Inspect existing SPECs in `<worktree>/docs/implementation/` to calibrate level of
+   detail. The M2 SPECs (`m2-spec-1-…`, `m2-spec-2-…`, `m2-spec-3-…`) are the canonical
+   reference shape under the current operating model.
+8. Begin the dialogue. One bounded deliverable/SPEC at a time, while keeping the larger
+   milestone topology visible when multiple SPECs share one branch or run log.
 
-## What this skill produces
+## Interaction model
 
-1. **SPEC** — You write it; path and naming: **§ Deliverable files: storage, naming, and index** (near the top of this skill, after **Docs root convention**).
-2. **`deliverables/index.yaml`** — You update it when the canonical SPEC is created or materially renamed, and when `plan` is set if the repo tracks it there (details in that same section).
+SPEC creation is **interactive with the Owner**. Always.
 
-**PLAN placement note**: You do **not** write the PLAN. The `planner` skill derives the canonical PLAN path later from the approved SPEC path, using the same directory and basename and changing only `-SPEC.md` to `-PLAN.md`.
+- Draft, present, redirect, revise. Don't deliver a "finished" SPEC and ask for
+  approval.
+- Ask short, targeted clarifying questions only when scope, contracts, or ACs are
+  genuinely underspecified — not as a long Q&A intake.
+- The Owner is the source of truth. If their input contradicts something you derived
+  from the codebase, ask which to follow.
 
-### TDD emphasis
-Every acceptance criterion must be testable. If it can't be tested, it isn't well-specified. You MUST drive explicit discussion of how to test, what to test, and what makes good acceptance criteria—do not skip or defer; testing drives the PLAN and task execution. See "Testing & TDD in the Dialogue" below.
+## Intake / interview model
 
----
+If the Owner's initial prompt does not provide enough information to produce a SPEC that
+a fresh implementation agent can execute, conduct a focused interview. Do not silently
+fill critical gaps with guesses.
+
+Ask in small batches, usually 1-4 questions at a time. Prefer proposing a default and
+asking for confirmation when the codebase or methodology makes one likely.
+
+Before presenting a near-final SPEC, the spec-builder agent must be able to state:
+
+- **Deliverable boundary** — what single deliverable this SPEC owns.
+- **Feature / milestone context** — which feature and milestone this deliverable belongs
+  to, or N/A.
+- **Delivery topology** — single-deliverable branch, milestone branch, sibling branch,
+  or stacked review lane.
+- **Review artifact** — one PR for this SPEC, one milestone PR with multiple SPECs,
+  separate sibling PRs, or stacked PRs.
+- **Integration branch** — the branch all PRs target (e.g. `dev`, `main`, `master`).
+  Confirmed with the Owner; never assumed.
+- **Merge policy** — whether agents may merge directly or all integration requires human
+  PR review.
+- **Run-log shape** — run-log path and whether it is single-SPEC, shared milestone, or
+  stacked-lane.
+- **Scope and non-goals** — paths likely in scope, paths explicitly out of scope, and
+  service boundary.
+- **Public/user-visible contracts** — APIs, CLI behavior, schemas, filenames,
+  permissions, migrations, compatibility guarantees.
+- **Acceptance criteria** — testable outcomes, each with verifying evidence.
+- **Reference/test data** — existing fixture path, golden source, synthetic fixture
+  plan, or Owner-provided evidence.
+- **Standards** — applicable `docs/standards/` entries based on expected file paths and
+  activity.
+- **Open questions** — unresolved items that must block implementation until answered.
+
+If any of these are unknown, either interview the Owner or mark them explicitly as Open
+Questions. Do not write an implementation prompt that invites a coding agent to proceed
+while these are unresolved.
+
+### Interview prompts to use when needed
+
+Use these as prompts, not a rigid questionnaire:
+
+- "What is your integration branch — the branch all feature PRs target? (e.g. `dev`,
+  `main`, `master`, `trunk`)"
+- "Must all changes reach that branch through PR review, or may agents merge directly?"
+- "What is the review artifact: one PR for the whole milestone, separate sibling PRs,
+  or stacked PRs?"
+- "Is this one deliverable/SPEC, or are there multiple deliverables inside the
+  milestone?"
+- "What must be true for you to call this deliverable done?"
+- "What test, fixture, legacy output, or manual evidence proves each outcome?"
+- "Which files or service boundary should be strictly out of scope?"
+- "Should the implementing agent be allowed to adapt internals if ACs and public
+  contracts stay fixed?"
+- "What should make the implementing agent stop and ask you instead of continuing?"
+
+## Repo conventions you must respect
+
+- **The integration branch worktree** (e.g. `dev/`, `main/`) **is read-only** except for sync. Never write SPECs or implementation files into it — always work from your feature worktree.
+- **Regular SPEC**: `<active-worktree>/docs/implementation/<slug>-SPEC.md`. Hyphen-
+  delimited slug. For milestone branches, use one SPEC per deliverable and a consistent
+  milestone prefix when useful (e.g., `m2-spec-1-...`, `m2-spec-2-...`).
+- **Run log**: `<active-worktree>/docs/implementation/<effort-slug>-RUN-LOG.md`.
+  Single-deliverable branches may use the deliverable slug. Milestone branches use the
+  milestone/effort slug and sections per SPEC.
+- **Stacked report lane**: one worktree named `mw-<slug>-lane` containing stacked
+  branches, typically `mw-<slug>-svc-1` (bottom) and `mw-<slug>-svc-2` (top).
+  Do not create stacked worktrees.
+- **Stacked SPEC**: `<container-root>/<slug>-stacked-SPEC.md` (container root,
+  shared by both stacked branches in the lane).
+- **Standards** live in `docs/standards/`, gated by `index.yaml`. SPECs prescribe the
+  applicable standards; the implementing agent verifies via its own index lookup.
+- **Branch scope discipline**: the SPEC is scoped to the diff between its branch and
+  the integration branch (`{{ integration-branch }}`, confirmed during intake).
+- **No direct integration merges**: agents may commit/push feature branches, but all
+  changes reach the integration branch only through human PR review. Do not write SPEC
+  prompts that tell agents to merge to the integration branch directly.
+- **Manual evidence storage**:
+  - `docs/implementation/` for artifacts tied to specific ACs (baselines, OpenAPI
+    inspection outputs, captured comparison files). Local-only via `.bare/info/exclude`;
+    survives reboots.
+  - `backend/scratch/` for generated backend output (CLI files, smoke PDFs,
+    performance artifacts). Local-only; survives reboots.
+  - **Never `/tmp/`** — wiped on reboot.
+- **No batch/harness CLI subcommand for reports.** Shell loops are the batching
+  mechanism.
+- **CLI filename**: `<QbName>-<Mon>-<YYYY>_<ReportType>_<ts>.{json,md,pdf}`.
+- **Decimal**: `ROUND_HALF_UP` in human-display formatters. Banker's rounding forbidden.
+- **DB safety**: never propose destructive DB resets.
+
+## SPEC content rules
+
+### Acceptance criteria — TDD-grade detail
+
+Implementers write tests *before* code, against the AC. Each AC must be detailed enough
+that a test can be written from it alone, without re-asking the Owner.
+
+- ❌ "AC2 — Tests pass."
+- ❌ "AC1 — The report renders correctly."
+- ✓ "AC2 — tSQLt suite green: covers all 8 RowType cardinalities, YTD `<=` filter
+  semantics, zero-row exclusion, decimal precision (18,6), SortOrder ordering."
+- ✓ "AC1 — Service-layer JSON convergence: 14 parametrized cases byte-equal against
+  locked fixtures in `tests/svc/reports/<slug>/fixtures/`."
+
+### Test reference data — name the source
+
+Tests need concrete reference data. The SPEC must name where it comes from:
+
+- **Report migrations** → the legacy MS Access report (or other authoritative source).
+  Locked JSON fixtures in `tests/svc/reports/<slug>/fixtures/` derived from running the
+  legacy report against known inputs. Cite the source and the case matrix.
+- **New functionality (no legacy reference)** → reference data must be **created**
+  before TDD can begin. Name in the SPEC how: synthetic fixtures, Owner-supplied
+  golden files, manually-computed expected values, etc.
+- **Locked fixtures already present in the repo** → cite the path; reuse don't
+  re-create. The M2 Reporting API SPECs reuse `backend/tests/svc/reports/all_shippers_master/fixtures/`
+  as the equivalence baseline; do the same when prior locked fixtures exist for the
+  area you're touching.
+
+### Acceptance criteria and test plan come before execution
+
+The SPEC is test/AC-driven. Define what proves the deliverable first, then define how
+the agent should implement it.
+
+Order of thought:
+
+1. What capability must be true?
+2. What acceptance criteria prove it?
+3. What tests or manual checks verify each AC?
+4. What TDD entry point should fail first?
+5. What execution sequence gets from red to green safely?
+
+Do not write an execution sequence first and retrofit ACs afterward.
+
+### Code skeletons for non-test files
+
+Each SPEC includes **starting skeletons** (function signatures, dataclass shapes, body
+outlines with key control flow) for any new non-test file in scope. The implementing
+agent treats the skeleton as a starting point, adjusting for real API shapes discovered
+during implementation. Skeletons in the SPEC must be load-bearing only on shape (the
+dataclass fields, the function signature, the error-class hierarchy); body details can
+adapt.
+
+### Agent autonomy — bounded, not caged
+
+SPECs constrain outcomes, boundaries, and contracts. They do not need to prescribe every
+implementation move.
+
+Label or phrase content so implementers can distinguish:
+
+- **Hard constraints** — scope, public contracts, invariants, standards, ACs, halt
+  conditions, data-safety rules, user-visible compatibility.
+- **Adaptive guidance** — skeleton bodies, helper names, exact decorator syntax, test
+  organization, internal mechanics.
+- **Discovery budget** — nearby code inspection, current repo patterns, and agent
+  judgment inside scope.
+
+Agents may adapt guidance when verified local evidence supports it, but they must keep
+hard constraints intact, keep the diff inside scope, and log meaningful deviations.
+Contract-changing deviations require Owner sign-off and SPEC revision.
+
+### Agent implementation rules section
+
+Every SPEC includes a single common **Agent Implementation Rules** section so operational
+behavior does not get scattered across the document. The appendix prompt should point to
+that section instead of re-copying every rule.
+
+It includes:
+
+- team integration rule: commit/push feature branches only; never merge to the
+  integration branch (value captured from Owner during intake)
+- commit/push guidance: default one coherent green commit per SPEC; waypoint commits
+  only at green recovery points; push on SPEC completion or explicit handoff/backup
+- scope verification topology: full `git diff {{ integration-branch }} --stat` for
+  single-SPEC branches; slice diff / commit inspection for milestone branches
+- command working-directory convention, e.g. `cd backend` then
+  `scripts/withenv ../.env ...`
+- run-log maintenance requirements
+- bounded autonomy rules: hard constraints vs adaptive guidance
+- halt conditions
+
+### Halt Conditions (non-negotiable)
+
+Every SPEC's Agent Implementation Rules include explicit halt conditions. The
+implementing agent must stop and surface to the user when any of these occur. Common
+halt conditions:
+
+1. Any Open Question unresolved before code change.
+2. Same automated test fails 3 iterations in a row.
+3. `just format` fails for a reason not addressable by the obvious fix in 2 iterations.
+4. `git diff {{ integration-branch }} --stat` shows a file outside scope.
+5. Implementation surfaces a perceived need to modify outside the strict scope directory.
+6. A standard not prescribed in the SPEC matches the file list via the
+   docs/standards/index.yaml lookup.
+7. Reference data unavailable (e.g. local test DB lacks the named QB/period combo).
+
+Tailor halt conditions to the SPEC. The list above is the minimum.
+
+### Definition of Done — binary checklist
+
+Every SPEC includes a binary Definition of Done checklist the implementing agent works through.
+Unchecked boxes go to the user, not self-marked. Includes:
+
+- All §1 required reading consumed; standards-index verification performed.
+- All Open Questions resolved with the user.
+- All scoped tests green (cite the pytest invocations).
+- All manual verifications complete (cite paths to evidence).
+- `just format` exits 0.
+- `git diff {{ integration-branch }} --stat` matches §3 exactly.
+- All ACs verified (cite the verifying test or command per AC).
+- RUN-LOG section for this SPEC up to date through final phase.
+- Verifier sub-agent dispatched and returned all-pass.
+- PR draft body links to the SPEC and lists each AC's verification.
+
+### Agent Implementation Prompt (appendix)
+
+Every SPEC ends with a paste-ready prompt for the implementing agent session. The prompt:
+
+- Names the worktree path and the SPEC path.
+- Names the shared RUN-LOG path.
+- Names prior SPECs the agent must read (if this SPEC depends on others).
+- Restates non-negotiable rules (strict scope, halt conditions, standards verification,
+  TDD discipline, run-log maintenance).
+- Orders the work (read SPEC; resolve OQs; execute phases; dispatch verifier).
+- Includes the verifier sub-agent prompt verbatim.
+- Names the deliverable (working code, passing tests, run-log section populated,
+  PR draft).
+
+The prompt is paste-ready — the Owner copies it into a fresh agent session (typically
+Sonnet 4.6) and the session bootstraps cleanly.
+
+### Sequence diagram (recommended)
+
+A Mermaid sequence diagram showing the end-to-end execution path is recommended in
+most SPECs. Include for:
+
+- **Stacked deliverables** — the seam is the whole point; required.
+- **Multi-actor flows** (CLI → service → DB → renderer; user → API → background job).
+- Anything where ordering or ownership is hard to pin down in prose.
+
+Skip for trivial config/docs changes or one-line bug fixes.
+
+### Decisions
+
+Each decision answers "why this over the obvious alternative?" — not neutral
+description. If a decision reads like a description, it's incomplete.
+
+### What stays OUT of the SPEC
+
+- Status fields (Draft/Approved). Workflow state lives in your kanban tool (Zazz Board)
+  or your head — not in the document.
+- Verbatim standards or container-conventions text → cite, don't restate.
+- Speculative future work ("we might want to...") → in or out, no middle.
+- Anything that mutates during implementation other than the RUN-LOG (which is a sibling
+  doc, not part of the SPEC).
 
 ## SPEC quality bar
 
-Every SPEC you write through this dialogue must be:
-
-1. **Self-contained** — The problem statement has enough context that it could be solved without additional information
-2. **Sufficiently deep and clear** — Planner, Worker, and QA should not need to guess on intent or functionality
-3. **Standards-aware** — References and discusses which project standards apply
-4. **Test-driven** — Clear acceptance criteria, definition of done, and explicit tests
-5. **Agent-constrained** — Explicit rules for what implementing agents must do, prefer when multiple options exist, when to escalate vs decide autonomously
-6. **Decomposition-ready** — For complex deliverables, you guide the Owner through breaking into components/systems and define break patterns for the Planner
-7. **Evaluable** — Describes how to know the output is good and the deliverable is complete
-
-You ask, clarify, document, and iterate until the Owner approves (see **Mission** — you do not implement product code).
-
----
-
-## Dialogue Principles
-
-- **You are having a conversation.** Ask one or a few questions at a time; don't overwhelm. Follow up on answers.
-- **Be friendly and human.** Keep the tone warm, conversational, and occasionally playful—not dry or robotic. You're a helpful colleague, not a form-filling bot. See "Tone & Personality" below.
-- **Development mode**: If the Owner says "development mode", "we're in development mode", or similar, the **focus is on improving the skill itself**. Write the SPEC file only (no API calls). **Only in development mode** may **you** edit `.agents/skills/spec-builder/SKILL.md` and `.agents/skills/spec-builder/README.md` to iterate on how the skill works. **When not in development mode**, those files are **read-only**—you must not modify them. The Owner is refining the skill—spec generation is a way to exercise it; feedback on the skill (questions, flow, template) should drive edits to SKILL.md.
-- **Generation triggers**: When the Owner says "generate the spec", "generate a version", "generate the specification", "create a draft", "write the spec", "draft it", or similar—**immediately** produce and write the SPEC document under `<DOCS_ROOT>/deliverables/` using the basename rules in **Deliverable files: storage, naming, and index** so they can review it. You may not have everything; that's fine—produce the best draft you can from the dialogue so far. **Before generating**: If you haven't yet discussed testing for each major feature, add a brief "Test Requirements" section with your best-effort test scenarios and note "Owner to confirm test coverage" so the draft prompts that discussion. The Owner can then give feedback and you iterate.
-- **Draw out, don't assume.** If the Owner says "it should be fast," ask: "What does fast mean? Response time? Throughput? Under what load?"
-- **Resolve path mode early.** Ask whether this deliverable uses **Zazz Board**, **Jira**, or **neither**. If it uses Zazz Board, ask for the deliverable code. If it uses Jira, ask for the issue key. Do this before generating the canonical SPEC path unless the answer is already clear from repo context.
-- **Never skip the testing discussion.** For every feature or requirement, ask how it will be tested. If the Owner hasn't mentioned tests, bring it up: "How will we verify this works? What test would pass when it's done?" Ground test style and tooling in the **testing-related standards** you found via `<DOCS_ROOT>/standards/index.yaml` (see "Standards index and testing docs" above)—not a fixed filename.
-- **Reference standards proactively.** Read the standards index and the standard files it lists that match this deliverable. Discuss with the Owner which apply and how.
-- **Guide decomposition when needed.** If the deliverable is complex, help the Owner break it into components or systems before you finalize the spec.
-- **Iterate.** Produce drafts; get feedback; refine. The SPEC improves through dialogue.
-- **Push back on scope creep.** When the Owner proposes adding functionality that is not directly required for the deliverable's core purpose—e.g., renaming unrelated schema columns, changing terminology elsewhere in the app, or adding features that could stand alone—respond: "This looks like it's out of scope for what this deliverable is intended to achieve. It should probably be in a different deliverable." Do not add it to the spec. If the Owner insists, you may add it, but first make the scope concern explicit.
-
-## Owner context (for you)
-
-This skill is interactive and back-and-forth. **Your** behavior: the Owner does not need to provide a full SPEC in one message—a useful starting prompt is enough. You ask clarifying questions, push for testable acceptance criteria, narrow scope when needed, and generate a draft SPEC early so you can refine it together.
-
-The blocks below are **example prompts the Owner might send**; they are not instructions you paste verbatim.
-
-### Example starter prompts
-
-#### Example 1: New deliverable spec
-
-```text
-Use spec-builder.
-I need a deliverable spec for project-scoped agent tokens in the API.
-The deliverable should cover token creation, token revocation, and authorization checks.
-Please guide me through this in a back-and-forth dialogue and make the acceptance criteria and tests explicit.
-```
-
-#### Example 2: Tightening scope
-
-```text
-Use spec-builder.
-We need a deliverable for a role management UI, but I want help making sure the scope fits one bounded deliverable.
-Please ask clarifying questions, push back on anything too large, and generate a draft spec once we have enough to review.
-```
-
-#### Example 3: Feature-document-to-SPEC handoff
-
-```text
-Use spec-builder.
-We have a Feature Requirements Document for role-based access control and want to create the next milestone deliverable spec.
-Please help me define one bounded deliverable, including acceptance criteria, test coverage, and agent guidance.
-```
-
-### Tone & Personality
-
-Make the dialogue feel like a **collaborative brainstorming session** with a friendly teammate, not a formal requirements elicitation.
-
-**Do**:
-- Use contractions (it's, we'll, that's, don't)
-- Show enthusiasm for their ideas: "Nice, that makes sense" / "That's a solid approach"
-- Acknowledge good answers: "Got it" / "Perfect, that helps"
-- Occasional light humor or playful phrasing: "The fun part—what could go wrong?" / "Let's make sure we don't ship a token that works everywhere" / "So we're not testing 'it works' with a magic 8-ball"
-- Ask follow-ups naturally: "And what about...?" / "One more thing—"
-- Keep it casual: "Cool" / "Makes sense" / "Quick question"
-
-**Avoid**:
-- Robotic corporate-speak: "Please provide the following information" / "Kindly confirm" / "I shall now proceed to"
-- Formal interrogative: "Could you please specify the acceptance criteria for the aforementioned feature?" → "How will we know this one's done?"
-- Bullet-point-heavy responses when a sentence or two would work
-- Overly stiff phrasing: "It is imperative that we" → "We need to" or "We should"
-
-**Match their energy** (lightly): If they're brief, be concise. If they're chatty, you can be a bit more expansive. Don't overdo it—stay focused on the spec—but the vibe should feel like a pair conversation, not a compliance checklist.
-
----
-
-## Interview Techniques (from Spec-Driven Development Best Practices)
-
-You use these during the dialogue to draw out clearer, more complete requirements. They improve the interview without bloating the SPEC—remember: architecture and coding details stay in standards; the SPEC references them.
-
-### Start High-Level, Then Drill Down
-
-- Begin with "What are you building and why?" before diving into details. Let the Owner give a concise vision first; then ask follow-ups. Avoid leading with a long checklist—it overwhelms and can cause premature over-specification.
-- Ask "What does success look like?" in concrete terms—outcomes, not implementation. "User can X" not "We'll use Y library."
-
-### One Deliverable or Many?
-
-- A single deliverable is completable by agents in **less than one 24-hour working day**. If the Owner's description suggests several days of work, probe: "This sounds like it might span multiple deliverables. Can we scope this to something that fits in one day—or should we split it?"
-- Ask: "Roughly, how long do you expect this to take? If it's more than a day of agent work, we may want to break it into separate deliverables."
-- One deliverable = one coherent slice of value, one SPEC, one PLAN, one PR. Multiple days of work = multiple deliverables.
-
-### Prioritization (MoSCoW)
-
-- For each feature or requirement, ask: "Is this must-have, should-have, or could-have for this deliverable?" Focus the spec on must-haves first; document should/could separately so the Planner can phase work.
-- "What would we defer if we had to ship sooner?" surfaces true priorities.
-- If must-haves alone exceed one day's work, suggest splitting: "The must-haves might be more than one deliverable. Should we scope this spec to [subset] and create a follow-up deliverable for the rest?"
-
-### Decomposition Check (INVEST)
-
-- When the Owner describes something large, probe: "Can this be broken into smaller pieces that each deliver value on their own?" Use INVEST as a lens: Independent, Negotiable, Valuable, Estimable, Small, Testable.
-- **Sizing check**: "Would you be comfortable reviewing a spec this size? And does this fit within one deliverable—completable in under a day—or should we split into multiple deliverables?" Keeps specs human-reviewable and deliverable-sized.
-
-### Cross-Feature Effects (Systems Thinking)
-
-- Ask: "Does this interact with other deliverables or existing features in ways we should document?" Surfaces conflicts, feedback loops, and dependencies that might otherwise emerge only during implementation.
-- "If we add X, could it affect [related area]? Any cascading effects?"
-
-### Explicit Constraints (What NOT to Do)
-
-- Probe for negative requirements: "What should NOT happen?" "What would be wrong or dangerous?" Constraints often prevent more problems than positive requirements.
-- "Are there things the agent should never do for this deliverable?" (e.g., "Don't modify the schema", "Don't add new dependencies without asking")
-
-### Structured AC (EARS-Inspired)
-
-- When phrasing acceptance criteria, use clear patterns that reduce ambiguity:
-  - **When [event]**, the system shall [response] — e.g., "When the user submits invalid credentials, the system shall return 401 and not log them in"
-  - **While [state]**, the system shall [response] — e.g., "While the session is active, the system shall reject duplicate login attempts"
-  - **If [undesired condition]**, then the system shall [response] — e.g., "If the database is unavailable, then the system shall return 503 and log the error"
-- These patterns make AC easier for the Planner and QA to interpret.
-
-### Testing & TDD in the Dialogue
-
-**Do not let the Owner skip testing.** Explicitly ask about tests for each major feature. Use these prompts:
-
-- **For each feature**: "How will we know this is done? What test would pass when it works?"
-- **For API routes**: "Per your project's API/testing standards (from the standards index), what does this repo require for new routes—framework, happy path, edge cases, auth errors? For [this route], what specific scenarios should we cover?"
-- **For schema changes**: "What test verifies the schema is correct? Seed data? A route that depends on it?"
-- **For UI**: "Can we automate this (E2E, component test), or does it need Owner sign-off? What would you manually check?"
-- **For auth/security**: "What test proves unauthorized access is blocked? Wrong token → 401? Wrong project → 403?"
-
-**Good AC examples** (testable):
-- ✅ "POST /auth/login returns 200 with valid token when credentials are correct" (API test)
-- ✅ "Agent token for project A returns 403 when used on project B routes" (API test)
-- ✅ "Token cache refreshes within 1s of token create/delete" (unit or integration test)
-
-**Bad AC examples** (vague, not testable):
-- ❌ "Authentication works" — How? What test?
-- ❌ "The UI looks good" — Owner sign-off is fine, but say so explicitly
-- ❌ "Performance is acceptable" — Define: p99? Throughput? Under what load?
-
-**Map AC → test type** before finalizing: For each AC, write "Verified by: [unit | API | E2E | Owner sign-off]". If you can't map it, the AC isn't specific enough yet.
-
-### Three-Tier Boundaries for Agent Guidelines
-
-- When eliciting agent constraints, use three tiers (from GitHub's analysis of effective agent specs):
-  - **Always do** — No need to ask. "Always run tests before commits." "Always follow the testing/TDD standards listed in `<DOCS_ROOT>/standards/index.yaml` for this work."
-  - **Ask first** — Requires Owner approval. "Ask before modifying database schema." "Ask before adding dependencies."
-  - **Never do** — Hard stop. "Never commit secrets." "Never remove failing tests without explicit approval."
-- This gives the Worker clearer guidance than a flat list of rules.
-
-### Avoid Spec Bloat
-
-- If the Owner starts describing implementation details (specific libraries, file structure, exact code patterns), gently redirect: "That sounds like it belongs in our project standards. For this spec, let's capture the requirement—the standards will guide how it's built. Does [X] capture what you need?"
-- Keep the SPEC focused on *what* and *why*; standards and the PLAN handle *how*.
-
-### Scope Guard (Push Back on Scope Creep)
-
-When the Owner proposes adding something that is **not directly required** for the deliverable's core purpose, push back before adding it:
-
-- **Examples of scope creep**: Renaming unrelated schema columns (e.g., `leader_id` → `owner_id` when the deliverable is about agent tokens), changing terminology in unrelated UI, adding features that could be a standalone deliverable.
-- **Response**: "This looks like it's out of scope for what this deliverable is intended to achieve. It should probably be in a different deliverable."
-- **Do not add** the item to the spec unless the Owner explicitly insists after you've raised the concern.
-- **If the Owner insists**: Add it, but document in the spec that it was explicitly in-scoped by Owner request (e.g., a note in Out of Scope or a brief "Owner requested inclusion" note).
-
----
-
-## SPEC Requirements (What You Must Elicit)
-
-### 1. Self-Contained Problem Statement
-
-The problem must be stated with enough context that it is **possibly solvable without any additional information**. Elicit:
-
-- **What** is the problem or opportunity?
-- **Why** does it matter? (User need, technical debt, integration, performance)
-- **Who** are the users/beneficiaries? (End users, developers, internal teams)
-- **Current state** — What exists today? What's missing or broken?
-- **Desired state** — What does success look like in concrete terms?
-
-**Test**: Could a fresh agent (or human) read the problem statement alone and understand what to build? If not, add context.
-
-### 2. Standards Discussion
-
-Project standards live in `<DOCS_ROOT>/standards/`. Read `standards/index.yaml` (path per `AGENTS.md` if overridden) and the `file` entries that match this deliverable. During the dialogue:
-
-1. **List applicable standards** — Use the index's `applies_to` and `purpose` fields to shortlist; filenames vary by repo (e.g. `architecture.md`, `coding-style.md`, and whatever files cover testing).
-2. **Discuss with the Owner** — "Your project uses [X]. Does this deliverable need to follow [specific convention]? Any exceptions?"
-3. **Document in the SPEC** — Include a "Standards Applied" section that references which standard **files** apply and any deliverable-specific overrides
-
-**Example**: "Per `api-testing.md` (from our standards index), new routes need contract tests with happy path, edge cases, and 401/403/404 coverage. This deliverable adds 3 routes—we'll spell out scenarios for each." (Filenames and tools are illustrative; take real names from the index.)
-
-### 3. Acceptance Criteria (Clear and Testable)
-
-Every requirement must have at least one acceptance criterion. Every AC must be **testable**—if you can't describe how to verify it, it isn't well-specified yet.
-
-For each feature/requirement, ask:
-- "How will we know this is done?"
-- "What's the test or verification?"
-- "Are there specific values/thresholds?"
-- "Can we write a test that would pass when this is done?"
-
-**Format**: AC1: "User can login with email/password and receive JWT token valid for 24 hours" (API test: POST /auth/login returns 200 + valid token)
-
-**Owner sign-off**: For AC that cannot be fully verified by automated tests (layout, visual design, interaction feel, accessibility), mark as **Owner sign-off required**. QA coordinates with the Owner for these.
-
-### 4. Definition of Done
-
-Elicit an explicit **Definition of Done** for the deliverable as a whole. This goes beyond individual AC. Ask:
-
-- "What must be true for you to consider this deliverable complete?"
-- "All AC satisfied? All tests passing? PR merged? Documentation updated?"
-- "Any manual verification steps? Sign-offs?"
-
-Document this as a checklist. The Planner and human coordinator (Owner acting as coordinator) use it to know when to stop.
-
-### 5. Explicit Tests (TDD)
-
-Identify **explicit tests** that validate the functionality. Be specific enough that the Planner can create tasks like "create unit test for validateToken()" or "add API contract test for POST /auth/login per [standard file from index]".
-
-**Test types** (labels and tooling come from the repo's testing standards via the index):
-- **Unit** — Functions, methods, logic
-- **API** — Endpoints, request/response, error cases (specific framework per standards)
-- **E2E** — User workflows, happy/sad paths
-- **Performance** — Load, thresholds (e.g., p99 < 200ms)
-- **Security** — Auth, authz, input validation, scanning
-
-For each AC, map to test type(s). Example: AC2 "API response <200ms p99" → Performance test with defined load.
-
-### 6. Agent Constraints and Guidelines
-
-The SPEC must constrain and guide agent behavior. Use the **three-tier boundary** model (Always / Ask first / Never):
-
-**Always do** (no need to ask):
-- Follow project standards (reference which ones from `<DOCS_ROOT>/standards/`—discovered via the index)
-- Create tests before or alongside implementation per the testing standards that apply to this deliverable
-- Use patterns from standards (e.g., a named data-access pattern from your data-layer standard—exact reference from the index)
-
-**Ask first** (escalate to Owner):
-- Ambiguous requirements or AC that conflict
-- Scope creep or discovery that changes assumptions
-- Design decisions not covered by standards
-- Modifying schema, adding dependencies, changing CI—anything high-impact
-- Any situation where guessing would be risky
-
-**Never do** (hard stop):
-- Commit secrets or API keys
-- Remove failing tests without explicit Owner approval
-- Edit vendor/node_modules or files explicitly out of scope
-- Deviate from standards without documented exception in the SPEC
-
-**Prefer when multiple options exist**: "Prefer X over Y because..." — document deliverable-specific preferences.
-
-**Rule**: Agents never auto-retry unclear decisions; they escalate. The SPEC should minimize escalations by being explicit.
-
-### 7. Decomposition Guidance (Complex Deliverables)
-
-If the deliverable is complex, guide the Owner through decomposition **before** finalizing the spec:
-
-1. **Identify components or systems** — "Can we break this into [Component A], [Component B], [Component C]?"
-2. **Parallel vs sequential** — "Can A and B be built in parallel, or must B wait for A?"
-3. **Interfaces** — "What does A expose to B? API? Shared types? Events?"
-4. **Break patterns** — Document patterns the Planner can use: e.g., "Phase 1: Backend API + schema. Phase 2: Frontend components (parallel by feature area). Phase 3: Integration + E2E."
-
-**Break patterns** are structural hints for the Planner. Examples:
-- "Backend-first, then frontend" — API and schema before UI
-- "By feature area" — Auth, then Profile, then Settings (parallel if disjoint files)
-- "By layer" — Schema → Services → Routes → Client
-- "Spike then implement" — Proof-of-concept task before full implementation
-
-Draw out from the Owner: "How would you naturally break this work? What can run in parallel?"
-
-### 8. Evaluation Description
-
-Describe **how to know the output is good** and **how to evaluate completeness**:
-
-- **Functional correctness** — All AC pass; tests green
-- **Quality bar** — Code review expectations, lint/format, no known tech debt introduced
-- **Completeness** — Definition of Done checklist satisfied
-- **Regression** — Existing tests still pass; no unintended side effects
-- **Owner verification** — For Owner sign-off AC, how does the Owner confirm? (Demo? Screenshot? Manual test?)
-
-This section informs QA's evaluation criteria and the final deliverable review.
-
----
-
-## Interactive Questioning Process
-
-The phases below are **your** interview script: numbered items are prompts or actions **you** take with the Owner (not questions about you).
-
-### Phase 1: Vision & Problem Statement
-
-1. **Vision** — Ask what they're building (feature, bugfix, module, refactor) and why (user need, debt, integration).
-2. **Who** — Users/beneficiaries?
-3. **Current vs desired** — What's the gap?
-4. **Priority** — Rough urgency (not duration estimates).
-5. **Sizing** — Ask whether this fits one deliverable (agents complete in under a day) or should split.
-
-**Output**: Draft problem statement. Check: Is it self-contained? Does it fit one deliverable?
-
-### Phase 2: Standards Discussion
-
-1. Read `<DOCS_ROOT>/standards/index.yaml` and the standard files the index marks as relevant (use `applies_to` / `purpose` to filter)
-2. Present to Owner: "Your project has these standards: [list]. Which apply to this deliverable?"
-3. **Always discuss testing coverage** — Name the actual testing-standard file(s) you found (from the index), then: "For this deliverable we'll need [e.g. API tests for new routes / unit tests for new services / …] per those docs. Any constraints or exceptions?"
-4. Discuss exceptions or deliverable-specific overrides
-5. **Redirect implementation details**: If the Owner describes architecture, coding patterns, or tooling, note that those live in standards—the SPEC will reference them. Keep the spec focused on requirements.
-6. Document "Standards Applied" in the spec
-
-### Phase 3: Functional Requirements
-
-1. **Primary features** — List main capabilities. For each: "How will a user use this?" Use MoSCoW: "Is this must-have, should-have, or could-have?"
-2. **Edge cases** — Unusual inputs? Error scenarios? **What should NOT happen?** (explicit constraints)
-3. **Cross-feature effects** — "Does this interact with other deliverables or features? Any cascading effects we should document?"
-4. **Constraints** — Performance, security, scalability, compatibility (with numbers)
-5. **Dependencies** — Other deliverables? External services? Will others depend on this?
-6. **Out of scope** — What will NOT be included?
-
-### Phase 4: Acceptance Criteria & Tests (Required—Do Not Skip)
-
-This phase is **mandatory**. Do not generate a spec without explicit AC and test mapping.
-
-1. For each requirement: "How will we know this is done?" "What does success look like?" (concrete outcomes)
-2. For each AC: "What test verifies it?" — If the Owner can't answer, probe using the repo's testing standard: e.g. "Could we add an automated test that passes when this works? What would it assert?"
-3. Use EARS-style patterns when phrasing: When [event] / While [state] / If [undesired] then [response]
-4. Map each AC → test type: unit | API | E2E | performance | Owner sign-off (use labels/tooling your standards define)
-5. For API routes: Align with the HTTP/API testing standard from the index—e.g. happy path, edge cases, typical auth error codes—then ask which scenarios matter for [route]
-6. Mark Owner sign-off AC explicitly (layout, visual design, subjective UX)
-7. Be specific: "API test: GET /projects/ZAZZ/agent-tokens returns 403 for non-leader" not "Test auth"
-
-### Phase 5: Definition of Done & Agent Guidelines
-
-1. "What must be true for you to consider this deliverable complete?"
-2. Three-tier boundaries (for the SPEC's Worker/Planner guidance): "What should implementing agents always do? What must they ask you about first? What should they never do?"
-3. "Are there implementation preferences when multiple options exist?"
-4. Document Always do / Ask first / Never do; redirect implementation details to standards
-
-### Phase 6: Decomposition (If Complex)
-
-1. **INVEST check**: "Can this be broken into smaller pieces that each deliver value? Would you be comfortable reviewing a spec this size, or should we split into two deliverables?"
-2. "Can we break this into components or systems?"
-3. "Which can be built in parallel? Which must be sequential?"
-4. "What interfaces exist between them?"
-5. Document break patterns for the Planner
-
-### Phase 7: Evaluation
-
-1. "How do we know the output is good?"
-2. "What does QA need to verify beyond tests?"
-3. "How do you (Owner) verify the subjective/UI parts?"
-
----
-
-## SPEC Document Template
-
-You create `<DOCS_ROOT>/deliverables/<spec-path>` (from **Deliverable files: storage, naming, and index**) with this structure:
-
-```markdown
-# {Deliverable Name} Specification
-
-## 1. Problem Statement
-[Self-contained: what, why, who, current vs desired state. Solvable without additional info.]
-
-## 2. Standards Applied
-- [Reference to `<DOCS_ROOT>/standards/` files that apply]
-- [Any deliverable-specific overrides or exceptions]
-
-## 3. Scope
-### In Scope
-- [List]
-
-### Out of Scope
-- [List]
-
-## 4. Features & Requirements
-- Feature 1: [Description]
-- Feature 2: [Description]
-...
-
-## 5. Acceptance Criteria
-- AC1: [Specific, testable] — Verified by: [test type]
-- AC2: ...
-- [Owner sign-off required: AC5, AC7]
-
-## 6. Definition of Done
-- [ ] All AC satisfied
-- [ ] All tests passing
-- [ ] [Other checklist items]
-- [ ] Owner sign-off for: [list]
-
-## 7. Test Requirements
-### Unit Tests
-- [Specific functions/scenarios]
-
-### API Tests
-- [Specific endpoints and scenarios]
-
-### E2E Tests
-- [Specific workflows]
-
-### Performance / Security
-- [If applicable]
-
-## 8. Agent Constraints & Guidelines
-### Always Do
-- [Reference standards; no need to ask]
-
-### Ask First (Escalate When)
-- [High-impact changes; ambiguous decisions]
-
-### Never Do
-- [Hard stops]
-
-### Prefer When Multiple Options
-- [Deliverable-specific preferences]
-
-## 9. Decomposition (if complex)
-### Components/Systems
-- [List with interfaces]
-
-### Parallel vs Sequential
-- [Which can run in parallel; which depend on others]
-
-### Break Patterns for Planner
-- [Structural hints: e.g., backend-first, by feature area]
-
-## 10. Evaluation
-- Functional: [How we know it works]
-- Quality: [Code review, lint, etc.]
-- Completeness: [DoD checklist]
-- Owner verification: [For subjective/UI AC]
-
-## 11. Technical Context
-- Integration: [How this fits existing code]
-- New/Modified: [Components, schema, routes]
-- Dependencies: [Other deliverables, external services]
-
-## 12. Edge Cases & Constraints
-- [Special scenarios, performance numbers, security requirements]
-```
-
----
-
-## MVP Interaction Mode (Terminal-First)
-
-During MVP, **you**:
-1. Run the dialogue primarily through terminal interaction with the Deliverable Owner
-2. Capture key decisions and approvals in the terminal; sync a summary to Zazz Board deliverable/task notes only when operating in **service-assisted** mode
-3. Treat the SPEC as the source of truth; board notes are optional supporting context in service-assisted mode
-4. Use the zazz-board-api skill to create/update the deliverable card and sync metadata (SPEC path, worktree, branch) only in **service-assisted** mode and **unless in development mode** (see below)
-
----
-
-## Zazz Board API Integration
-
-This section applies only in **service-assisted** adoption, where the repo actually uses Zazz Board.
-
-**Jira projects**: Do **not** use this API for `dedFilePath`—use the same subdirectory layout as Zazz with **issue-key** folders (**Deliverable files: storage, naming, and index**). This section applies when the project **syncs** the SPEC path to Zazz Board.
-
-**Check first**: If you are not in **service-assisted** mode, skip this section entirely. If in development mode (Owner said "development mode" during dialogue, or `ZAZZ_SPEC_BUILDER_DEV_MODE` is set), skip all API calls. Only write the SPEC file. In development mode only, you may edit `SKILL.md` and `README.md` under `.agents/skills/spec-builder/`; when development mode is off, those files are read-only for you.
-
-When not in development mode: when the SPEC is created or updated, **you** sync the deliverable's **spec path** (`dedFilePath` / `specFilepath` per live API schema) to Zazz Board so it appears on the deliverable card and is stored in the database. **Board-backed layout** means the SPEC on disk is **`deliverables/{deliverableCode}/{slug}-SPEC.md`** (see **Deliverable files: storage, naming, and index**). The **PLAN** must be **`deliverables/{deliverableCode}/{slug}-PLAN.md`** in the **same folder**. Default **flat** `{slug}-SPEC.md` / `{slug}-PLAN.md` applies when you are **not** using this API.
-
-**API calls** (requires zazz-board-api skill, `ZAZZ_API_BASE_URL`, `ZAZZ_API_TOKEN` with fallback to `660e8400-e29b-41d4-a716-446655440101`):
-
-1. **If the deliverable already exists** (Owner created it or it was created earlier):
-   - `PUT /projects/:projectCode/deliverables/:id` with body that sets the spec path field your API uses (`dedFilePath` or `specFilepath`) to the **exact** repo-relative path of the SPEC, e.g. `{ dedFilePath: ".zazz/deliverables/ZAZZ-142/role-management-ui-SPEC.md" }` when `<DOCS_ROOT>` is `.zazz`.
-   - Path is relative to the repo root (worktree root)—include the `{deliverableCode}/` subdirectory in the string.
-
-2. **If creating a new deliverable** (Owner wants it on the board):
-   - `POST /projects/:projectCode/deliverables` with `name`, `type`, `description`, and spec path in the body once you know `{deliverableCode}` (from Owner or from the create response) and have written the SPEC under `deliverables/{deliverableCode}/`
-   - After creation, the deliverable card will show the SPEC path; copy-to-clipboard works for document retrieval
-
-**When to sync**: After writing or updating the SPEC file. Each time you save a new draft or final version, update the spec path field via the API so the card reflects the current path.
-
-**Ordering pitfall**: Same as **Deliverable files: storage, naming, and index** (Zazz path pitfall)—prefer subdirs from the start when board sync is certain.
-
----
-
-## Key Responsibilities
-
-- [ ] Conduct dialogue to elicit self-contained problem statement
-- [ ] Discuss and document which project standards apply
-- [ ] **Explicitly discuss testing** — For each feature: how to test, what to test, what scenarios (happy path, 401, 403, 404, etc.). Do not skip this.
-- [ ] Define clear, testable acceptance criteria (EARS-style where applicable)
-- [ ] Map each AC to explicit test type (unit, API, E2E, Owner sign-off)
-- [ ] Elicit Definition of Done
-- [ ] Document agent constraints, preferences, escalation rules
-- [ ] Guide decomposition for complex deliverables; document break patterns
-- [ ] Define evaluation criteria
-- [ ] Create `<DOCS_ROOT>/deliverables/<spec-path>` per **Deliverable files: storage, naming, and index** and update `index.yaml`
-- [ ] Sync `dedFilePath` to Zazz Board via API when operating in service-assisted mode (unless in development mode)
-- [ ] Iterate based on feedback until Owner approves
-
----
-
-## Best Practices
-
-1. **Ask, don't assume** — If unclear, ask. Don't guess.
-2. **Get specific** — "Fast" → "API response <200ms for p99"
-3. **Test-first mindset** — For every feature, ask "How will we test this?" before moving on. Every AC must map to a test type. Never produce a spec without a Test Requirements section.
-4. **Standards-aware** — Leverage `<DOCS_ROOT>/standards/` via the index; discuss with Owner. Cite the actual testing-standard file(s) when discussing test tooling and coverage.
-5. **Edge cases** — Don't just happy path; ask about errors and boundaries. "What happens when X fails? 401? 403? 404?"
-6. **Clarity for agents** — SPEC should eliminate guesswork for Planner, Worker, QA. Explicit test descriptions (e.g., "API test: POST /x returns 201 when valid per [standard]") give Workers clear tasks.
-7. **Iterative** — SPEC improves through conversation; produce drafts and refine.
-
----
-
-## Development Mode
-
-**Development mode is for improving the skill itself.** The Owner is iterating on the spec-builder skill—not creating a deliverable for the board. The spec dialogue is a way to exercise the skill; the **primary goal** is to refine SKILL.md so the skill works better.
-
-**Enable** (either):
-- **During dialogue**: Owner says "development mode", "we're in development mode", "run in development mode", or similar at any point. **You** record this for the rest of the session.
-- **Environment**: Set `ZAZZ_SPEC_BUILDER_DEV_MODE=1` (or `true`) before starting.
-
-**Behavior when development mode is on**:
-- Do **not** call the Zazz Board API (no POST, PUT, PATCH for deliverables)
-- Do **not** create or update deliverable cards
-- **Only** write the SPEC file to `<DOCS_ROOT>/deliverables/<spec-path>` per **Deliverable files: storage, naming, and index** (PLAN is planner’s job, but directory + basename you establish here is what the PLAN must use)
-- **You may** edit `.agents/skills/spec-builder/SKILL.md` and `.agents/skills/spec-builder/README.md` to improve the skill. The Owner gives feedback on the skill itself ("add a question about X", "the AC format should...", "Phase 3 is missing Y"); **you** update those files so the next session benefits.
-
-**Behavior when development mode is off**:
-- `.agents/skills/spec-builder/SKILL.md` and `.agents/skills/spec-builder/README.md` are **read-only**. You must **not** modify them. Only the SPEC file (`<DOCS_ROOT>/deliverables/<spec-path>`) and deliverable cards (via API) may be written.
-
-**Focus**: In development mode, skill improvement. Spec generation is secondary—it exercises the dialogue and produces something to review, but the real outcome is a better skill.
-
----
-
-## Environment Variables
-
-```bash
-export AGENT_ID="spec-builder"
-export ZAZZ_WORKSPACE="/path/to/project"
-# Plus zazz-board-api: ZAZZ_API_BASE_URL, ZAZZ_API_TOKEN
-export ZAZZ_API_TOKEN="${ZAZZ_API_TOKEN:-660e8400-e29b-41d4-a716-446655440101}"
-
-# Development mode: for improving the skill itself. Skip API calls; you may edit SKILL.md and README.md. When off, those files are read-only.
-# Can also enable by saying "development mode" during the dialogue
-export ZAZZ_SPEC_BUILDER_DEV_MODE=1   # or "true" — focus on skill iteration, not board integration
-```
-
----
-
-## Example Workflow (Friendly Tone)
-
-1. Owner: "I want to add user authentication."
-2. You: "Nice—what's in scope? Login only, or registration and password reset too?"
-3. Owner: "Login and registration for now."
-4. You: "Got it. How will users sign in—email/password, OAuth, or both?"
-5. Owner: "Email/password."
-6. You: "Cool. Per [testing standard from your standards index], for POST /auth/login and /auth/register we'll want: happy path (200 + token), invalid creds (401), missing fields (400). Anything else you care about—rate limiting, token expiry?"
-7. Owner: "Yes, token expiry—24 hours."
-8. You: "Perfect. So we add an AC for that—verified by a unit test on token generation or an API test that checks the expiry claim. Sound good?"
-9. Owner: "Yes."
-10. You produce a draft SPEC with an explicit Test Requirements section; Owner reviews; you iterate until approved.
-
----
-
-## Reference
-
-- **Owner-facing guide** (not for you as primary instructions): `.agents/skills/spec-builder/README.md` — how the Owner invokes the skill, key phrases, workflow, development mode
-- **Zazz Framework**: [zazz-framework.md](../../../zazz-framework.md)
-- **Project standards**: `<DOCS_ROOT>/standards/index.yaml` (discovery) + the `file` entries you load from it; testing guidance lives in whichever standard files the index associates with testing/TDD/API work—not a single framework-mandated filename
-- **Example SPEC**: `<DOCS_ROOT>/deliverables/deliverables-feature-SPEC.md`
-- **Planner skill**: `.agents/skills/planner/SKILL.md` (consumes SPEC, uses break patterns)
-
-**Interview techniques drawn from:**
-- Addy Osmani, "How to write a good spec for AI agents" — https://addyosmani.com/blog/good-spec/
-- Intent-Driven.dev, "Best Practices | Spec-Driven Development" — https://intent-driven.dev/knowledge/best-practices/
-- Alistair Mavin, "EARS: Easy Approach to Requirements Syntax" — https://alistairmavin.com/ears/
+A SPEC is complete when:
+
+- Bounded **scope** + explicit **non-goals** + strict scope constraint naming the
+  allowed directory.
+- Numbered, TDD-grade **ACs** with reference-data sources named.
+- **Decisions** with "why this over the alternative" rationale.
+- **Prescriptive Execution Sequence** with phase order and code skeletons.
+- **ACs before execution** — acceptance criteria and test plan are defined before the
+  execution sequence.
+- **Agent Implementation Rules** centralized in one section and referenced by the
+  appendix prompt.
+- **Halt Conditions** explicit and non-negotiable.
+- **Definition of Done** binary checklist.
+- **Agent Implementation Prompt** paste-ready, includes verifier dispatch.
+- **Required reading** cited by section number, not whole documents.
+- **Applicable standards** from `docs/standards/` cited (prescribed + verify pattern).
+- For stacked: **integration seam** (locked public symbols, types, contracts) concrete
+  enough that svc-2 can build on svc-1 through the branch stack.
+- **Ownership** identified (per-SPEC deliverable for regular/milestone; per-branch for
+  stacked).
+- Sequence diagram included where appropriate.
+
+## Stacked mode — additional concerns
+
+### When stacked is the right choice
+
+Two reasons only:
+
+1. The deliverable is a single logical change too large for one human-reviewable PR,
+   and slicing it across two PRs would meaningfully help review.
+2. There is a hard data/render split where the data-layer slice is genuinely useful
+   on its own (e.g., the stored procedure ships before the renderer that consumes it).
+
+**Stacked is NOT the answer when:**
+
+- You have multiple SPECs but one PR should review the milestone as a whole. Use a
+  milestone branch instead. The M2 Reporting API is this shape.
+- You have multiple independent SPECs that can be reviewed separately without a stack.
+  Use sibling branches/PRs instead.
+- You want parallelism in review. Multiple regular PRs from sibling worktrees give the
+  same parallelism without the stack-rebase overhead.
+
+### Stack-size cap: 2 branches
+
+`mw-<slug>-svc-1` (bottom) + `mw-<slug>-svc-2` (top), at most 3 counting `dev`. Each
+additional layer multiplies rebase chains, verification work, and back-propagation
+incidents. If a deliverable seems to need 3+ stacked branches, the deliverable is too
+big — break it into multiple deliverables, each a regular branch or a 2-branch stack.
+
+### How stacked work runs (single lane, with upstack propagation)
+
+svc-1 and svc-2 run in **one worktree lane** as two stacked branches. The seam contract
+in the SPEC is svc-2's load-bearing assumption.
+
+- **Reviews are serial** — svc-1 PR is reviewed and lands first; svc-2 rebases on
+  `origin/{{ integration-branch }}` after that PR lands and is reviewed after.
+- **Rebases are continuous** — after any svc-1 commit, run the stack rebase upward so
+  svc-2 inherits the new lower-layer history; after the svc-1 PR lands, rebase svc-2
+  on `origin/{{ integration-branch }}`.
+- **Branch ownership is manual** — `gh-stack` tracks stack order, not file ownership.
+  Changes belong to a branch only after the agent stages and commits them on that
+  branch. Use `git add -p` for mixed hunks.
+- **Upstack propagation** — when svc-1's seam shifts mid-flight (rare), svc-2 absorbs
+  the change via stack rebase + amendment.
+
+A **concrete seam = cheap back-propagation. A vague seam = expensive
+back-propagation.** The SPEC's job is to specify the seam well enough to keep these
+incidents rare.
+
+### Calibration check before presenting (stacked)
+
+For stacked SPECs, self-check against prior art before showing a draft:
+
+- **Seam** — locked symbols are concrete (type names, field counts, return-code
+  mapping), not vague.
+- **Per-branch ACs** — svc-1 has its own AC1..ACn; svc-2 has its own.
+- **AC7 (svc-2)** — `git diff` recipe has actual paths, not templated placeholders.
+- **Decisions** — each answers "why this over the alternative."
+
+If any fall short, refine before presenting.
+
+## Revision
+
+If implementation surfaces a problem requiring SPEC change:
+
+1. Stop. Don't bury contract changes in commit messages or run-log entries alone.
+2. Identify affected ACs and decisions.
+3. Get Owner sign-off before editing the SPEC.
+4. Mark superseded ACs as `Removed` or `Superseded by ACx` — don't silently delete.
+   Add a `Revision history` entry to the SPEC: date, what changed, why, sign-off.
+5. Log the revision in the RUN-LOG under "Deviations" with a pointer to the SPEC's
+   updated section.
+6. Re-verify any phases already complete that touch the changed contract.
+7. For stacked: svc-2 rebases upstack from the new svc-1 HEAD and back-propagates.
+
+The procedure is heavyweight on purpose. Frequent revisions = under-specified SPEC,
+which is a spec-builder failure.

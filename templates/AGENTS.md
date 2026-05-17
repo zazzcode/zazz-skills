@@ -145,9 +145,9 @@ Deliverable docs live under:
 
 Declare the actual repo policy here. Valid patterns include:
 
-- deliverable SPECs and PLANs are local ignored execution artifacts
-- deliverable SPECs and PLANs are intentionally committed
-- deliverable SPECs and PLANs are mirrored, tracked, or referenced through an external system such as Zazz Board
+- deliverable SPECs are local ignored execution artifacts
+- deliverable SPECs are intentionally committed
+- deliverable SPECs are mirrored, tracked, or referenced through an external system such as Zazz Board
 
 Regardless of the mode:
 
