@@ -230,6 +230,65 @@ Project-specific worktree rules for this repo:
 
 If the repo has no special worktree policy, replace this section with the actual branch workflow rather than leaving placeholders behind.
 
+## Agent Execution Discipline
+
+These rules reduce wasted work, prevent out-of-scope edits, and keep branch footprints minimal.
+They are framework-level expectations; repos may add project-specific rules here.
+
+### Verify scope before acting
+
+Before editing files, running linters, or applying auto-fixes, determine what the current branch actually changes.
+
+```bash
+# Show exactly which files differ between this branch and the base branch
+git diff <base-branch> --stat
+```
+
+- If a file does not appear in that diff, it is out of scope for edits.
+- If running the full test suite shows a failure in an unmodified file, the branch likely changed a shared dependency (fixture, import, config) that the test relies on; treat the failure as in-scope until proven otherwise.
+- For stacked branches, scope formatting, linting, and fixes to the current slice only; do not auto-fix parent-slice files unless the user explicitly asks to change that lower branch.
+
+### Integration branch invariant
+
+The framework assumes the integration branch is always green. There are no pre-existing test failures on the base branch.
+
+- Do not dismiss a failure as "pre-existing" or "unrelated" without proving the branch did not cause it.
+- If the base branch has a known exception, document it here explicitly; otherwise assume green.
+
+### Concurrent work awareness
+
+Developers may edit files while an agent is working. This is normal.
+
+- Do not treat concurrent developer edits as corruption, agent failure, or a reason to improvise a recovery plan.
+- If a file changes unexpectedly, ask whether the developer changed it.
+- Verify assumptions before acting on them.
+
+### Command shape discipline
+
+Approval friction is real. Reusing the same command shapes across a session reduces interruptions.
+
+- Prefer a small, stable set of command wrappers.
+- Batch related work into fewer commands when possible.
+- If a command must be rerun with a slightly different target, keep the wrapper and argument order the same.
+- Do not vary wrappers casually just because a command is technically equivalent.
+
+Declare the repo's preferred command wrappers here:
+
+```bash
+# Example:
+scripts/withenv .env just ...
+scripts/withenv .env uv run pytest ...
+```
+
+### Database and environment safety
+
+Treat shared state as sensitive by default.
+
+- Never drop, recreate, truncate, or bulk-delete database state as a troubleshooting shortcut.
+- Never run destructive reset or rebuild commands because an error message is confusing.
+- If a destructive action might be needed, stop and ask the user; any command that could destroy shared state must be given to the user for manual execution.
+- Prefer logs, configuration checks, connection checks, and read-only queries before any recovery step.
+
 ## Project-Specific Constraints
 
 Add anything repo-specific that agents must know, for example:

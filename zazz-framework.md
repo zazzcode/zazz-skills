@@ -34,6 +34,7 @@ The framework is also intentionally **git-native**. Durable planning and product
   - [Where agents may operate autonomously](#where-agents-may-operate-autonomously)
   - [Where owner-controlled gates remain mandatory](#where-owner-controlled-gates-remain-mandatory)
   - [Practical rule](#practical-rule)
+- [Agent Execution Discipline](#agent-execution-discipline)
 - [Standards and `AGENTS.md`](#standards-and-agentsmd)
   - [`AGENTS.md` Strategy](#agentsmd-strategy)
   - [What a repo `AGENTS.md` must contain](#what-a-repo-agentsmd-must-contain)
@@ -721,6 +722,80 @@ This is the framework's intended balance:
 
 - maximum autonomy inside approved boundaries
 - explicit human control at approval, acceptance, and merge boundaries
+
+---
+
+## Agent Execution Discipline
+
+The framework expects agents to behave with disciplined scope awareness and verification habits. These rules reduce wasted work, prevent out-of-scope edits, and keep branch footprints minimal.
+
+### Verify scope before acting
+
+Before editing files, running linters, or applying auto-fixes, determine what the current branch actually changes.
+
+```bash
+# Show exactly which files differ between this branch and the base branch
+git diff <base-branch> --stat
+```
+
+Rules:
+
+- if a file does not appear in that diff, it is out of scope for edits
+- if running the full test suite shows a failure in an unmodified file, the branch likely changed a shared dependency (fixture, import, config) that the test relies on; treat the failure as in-scope until proven otherwise
+- for stacked branches, scope formatting, linting, and fixes to the current slice only; do not auto-fix parent-slice files unless the user explicitly asks to change that lower branch
+
+### Integration branch invariant
+
+The framework assumes the integration branch is always green. There are no pre-existing test failures on the base branch.
+
+Rules:
+
+- do not dismiss a failure as "pre-existing" or "unrelated" without proving the branch did not cause it
+- if the base branch has a known exception, the repo `AGENTS.md` must document it explicitly; otherwise assume green
+
+### Concurrent work awareness
+
+Developers may edit files while an agent is working. This is normal.
+
+Rules:
+
+- do not treat concurrent developer edits as corruption, agent failure, or a reason to improvise a recovery plan
+- if a file changes unexpectedly, ask whether the developer changed it
+- verify assumptions before acting on them
+
+### Command shape discipline
+
+Approval friction is real. Reusing the same command shapes across a session reduces interruptions.
+
+Guidelines:
+
+- prefer a small, stable set of command wrappers
+- batch related work into fewer commands when possible
+- if a command must be rerun with a slightly different target, keep the wrapper and argument order the same
+- do not vary wrappers casually just because a command is technically equivalent
+
+### Edit documents in place
+
+When creating or updating durable docs, preserve continuity.
+
+Rules:
+
+- edit documents in place; do not delete and recreate a document as a shortcut because it loses useful continuity and costs more context than a targeted edit
+- if a document needs to be recreated as a variant, copy it first and edit the copy; delete the original only when the user explicitly asks for deletion
+- once an item is resolved, mark it as `Implemented`, `Done`, `Rejected`, or `Deferred`; do not keep arguing the resolved decision
+- remove obsolete recommendations after implementation, or rewrite them as completed actions
+
+### Database and environment safety
+
+Treat shared state as sensitive by default.
+
+Rules:
+
+- never drop, recreate, truncate, or bulk-delete database state as a troubleshooting shortcut
+- never run destructive reset or rebuild commands because an error message is confusing
+- never assume a failing command means the database or environment is corrupt
+- if a destructive action might be needed, stop and ask the user; any command that could destroy shared state must be given to the user for manual execution
+- prefer logs, configuration checks, connection checks, and read-only queries before any recovery step
 
 ---
 
