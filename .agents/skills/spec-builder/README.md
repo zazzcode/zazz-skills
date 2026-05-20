@@ -23,8 +23,13 @@ single-lane stack of branches
 
 The skill conducts an interactive dialogue, captures decisions and acceptance criteria,
 and produces a self-contained SPEC. The SPEC includes the execution sequence,
-definition of done, halt conditions, run-log protocol, and paste-ready implementation
+definition of done, halt conditions, run-log protocol, and a paste-ready implementation
 prompt. There is no separate PLAN document.
+
+**The paste-ready implementation prompt is the key output.** When implementation begins,
+a fresh agent reads the SPEC (or the prompt section directly) and executes from it
+without any additional human briefing. The SPEC must be complete enough that the agent
+can start immediately and the run log is the only state it needs to maintain.
 
 The skill writes SPECs. It does **not** implement product code.
 

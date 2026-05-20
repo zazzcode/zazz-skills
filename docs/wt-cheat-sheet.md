@@ -1,25 +1,23 @@
-# `qb-mono-wt` Worktree and Worktrunk Cheat Sheet
+# Worktree and Worktrunk Cheat Sheet
 
-Fast reference for working in:
+Fast reference for working in a Zazz bare-repo plus sibling-worktree layout.
 
-- `~/Victory/Dev/qb-mono-wt/.bare`
-- `~/Victory/Dev/qb-mono-wt/dev`
-- sibling feature and PR worktrees under `~/Victory/Dev/qb-mono-wt/`
+Replace `<repo-container>` with your actual container directory path and `<integration-branch>` with your repo's integration branch (commonly `dev` or `main`).
 
 ## Layout
 
 ```text
-qb-mono-wt/
+<repo-container>/
 ├── .bare/
-├── dev/
-├── mw-shippers-master-rport-1/
+├── <integration-branch>/
+├── my-feature/
 └── <other-worktrees>/
 ```
 
 ## The Main Idea
 
 - `.bare` is the shared Git repo backend.
-- `dev` is the integration worktree.
+- `<integration-branch>` is the integration worktree.
 - each feature branch or PR gets its own sibling worktree directory.
 - do not edit the checked-in `.gitignore` for machine-local files.
 - use `.bare/info/exclude` for local-only ignore rules.
@@ -29,7 +27,7 @@ qb-mono-wt/
 From the repo container:
 
 ```bash
-cd ~/Victory/Dev/qb-mono-wt
+cd <repo-container>
 wt -C .bare <command>
 ```
 
@@ -50,7 +48,7 @@ wt -C .bare list
 Switch to the integration worktree:
 
 ```bash
-wt -C .bare switch dev
+wt -C .bare switch <integration-branch>
 ```
 
 Switch back to the default/integration worktree:
@@ -62,13 +60,13 @@ wt -C .bare switch ^
 Switch to an existing branch worktree:
 
 ```bash
-wt -C .bare switch mw-shippers-master-rport-1
+wt -C .bare switch my-feature
 ```
 
-Create a new branch and worktree from `dev`:
+Create a new branch and worktree from `<integration-branch>`:
 
 ```bash
-wt -C .bare switch --create my-new-branch --base dev
+wt -C .bare switch --create my-new-branch --base <integration-branch>
 ```
 
 Remove a finished worktree:
@@ -83,21 +81,21 @@ Force-remove a worktree with local junk left in it:
 wt -C .bare remove my-new-branch -D
 ```
 
-## Keep `dev` Current
+## Keep the Integration Branch Current
 
-Update the integration worktree from GitHub:
-
-```bash
-git -C ~/Victory/Dev/qb-mono-wt/dev pull origin dev
-```
-
-Then create new worktrees from updated `dev`:
+Update the integration worktree from remote:
 
 ```bash
-wt -C ~/Victory/Dev/qb-mono-wt/.bare switch --create another-branch --base dev
+git -C <repo-container>/<integration-branch> pull origin <integration-branch>
 ```
 
-Use this flow before starting a new branch if you want the new worktree based on the latest `origin/dev`.
+Then create new worktrees from the updated integration branch:
+
+```bash
+wt -C <repo-container>/.bare switch --create another-branch --base <integration-branch>
+```
+
+Use this flow before starting a new branch if you want the new worktree based on the latest remote state.
 
 ## Review A PR
 
@@ -128,14 +126,14 @@ wt -C .bare list
 From the repo container:
 
 ```bash
-cd ~/Victory/Dev/qb-mono-wt
-wt -C .bare switch --create my-feature --base dev
+cd <repo-container>
+wt -C .bare switch --create my-feature --base <integration-branch>
 ```
 
 Then work inside the new sibling directory:
 
 ```bash
-cd ~/Victory/Dev/qb-mono-wt/my-feature
+cd <repo-container>/my-feature
 ```
 
 When ready to push:
@@ -146,18 +144,23 @@ git push -u origin my-feature
 
 ## Stacked Branches
 
-A stacked branch series is a chain where each branch's PR targets the prior branch instead of `dev`. Each branch lives in its own sibling worktree. Example chain:
+> **Prefer `gh-stack` for stacks of 2–3 dependent layers** (e.g., a `-struct` branch and a `-svc` branch).
+> It handles rebase, PR linking, and squash-merge recovery automatically, replacing the manual workflow below.
+> See [Stacking with `gh-stack`](#stacking-with-gh-stack-inside-a-single-worktree) and the `gh-stack` skill.
+> Use the manual workflow only when `gh-stack` is not installed or the stack has special constraints.
+
+A stacked branch series is a chain where each branch's PR targets the prior branch instead of `<integration-branch>`. Example chain:
 
 ```text
-dev → mw-shippers-master-rport-1 → mw-shippers-master-rport-2 → mw-shippers-master-rport-3
+<integration-branch> → feature-rpt-1 → feature-rpt-2 → feature-rpt-3
 ```
 
 PR `-2` merges into `-1`, PR `-3` merges into `-2`, and so on. The topmost branch contains the cumulative content of the whole stack and is where end-to-end testing happens.
 
-Create the next branch in a stack from the current one (not from `dev`):
+Create the next branch in a stack from the current one (not from `<integration-branch>`):
 
 ```bash
-wt -C .bare switch --create mw-shippers-master-rport-3 --base mw-shippers-master-rport-2
+wt -C .bare switch --create feature-rpt-3 --base feature-rpt-2
 ```
 
 ### Verify the tip contains every parent's changes
@@ -165,20 +168,20 @@ wt -C .bare switch --create mw-shippers-master-rport-3 --base mw-shippers-master
 After any parent in the stack is rebased and force-pushed, the topmost branch needs to be rebased onto the new parent. To prove the tip is current with every parent — even after rebases rewrite SHAs — use `git cherry`:
 
 ```bash
-git cherry -v HEAD origin/mw-shippers-master-rport-1
-git cherry -v HEAD origin/mw-shippers-master-rport-2
+git cherry -v HEAD origin/feature-rpt-1
+git cherry -v HEAD origin/feature-rpt-2
 ```
 
 Empty output means every parent commit is present (by ancestry or by patch-equivalence). Any line starting with `+` is a real gap that needs investigation.
 
 `git cherry` compares patch-ids (the hash of the diff), so it survives rebases. `git log <parent>..HEAD` only checks ancestry and gives false positives after a parent rebase.
 
-One-liner to check every parent in a stack:
+One-liner to check every parent in a two-deep stack:
 
 ```bash
-for p in 1 2; do
-  out=$(git cherry HEAD origin/mw-shippers-master-rport-$p)
-  [ -z "$out" ] && echo "-$p: contained" || printf -- "-%s: MISSING:\n%s\n" "$p" "$out"
+for branch in feature-rpt-1 feature-rpt-2; do
+  out=$(git cherry HEAD origin/$branch)
+  [ -z "$out" ] && echo "$branch: contained" || printf "%s: MISSING:\n%s\n" "$branch" "$out"
 done
 ```
 
@@ -188,14 +191,14 @@ When a parent in the stack gets rebased and force-pushed, fetch with explicit re
 
 ```bash
 git fetch origin \
-  '+refs/heads/mw-shippers-master-rport-2:refs/remotes/origin/mw-shippers-master-rport-2' \
-  '+refs/heads/mw-shippers-master-rport-3:refs/remotes/origin/mw-shippers-master-rport-3'
+  '+refs/heads/feature-rpt-2:refs/remotes/origin/feature-rpt-2' \
+  '+refs/heads/feature-rpt-3:refs/remotes/origin/feature-rpt-3'
 ```
 
 Then rebase the current branch onto the new parent:
 
 ```bash
-git rebase origin/mw-shippers-master-rport-2
+git rebase origin/feature-rpt-2
 ```
 
 Patch-equivalent commits (changes already absorbed into the new parent) are skipped automatically. The branch's own unique commits are replayed on top.
@@ -205,10 +208,10 @@ Patch-equivalent commits (changes already absorbed into the new parent) are skip
 After a rebase, push with `--force-with-lease` pinned to the verified remote SHA. Plain `--force-with-lease` can fail with "stale info" if remote-tracking refs are not fresh, and falling back to plain `--force` discards that safety check.
 
 ```bash
-git ls-remote origin refs/heads/mw-shippers-master-rport-3
+git ls-remote origin refs/heads/feature-rpt-3
 # copy the SHA, then:
-git push --force-with-lease=mw-shippers-master-rport-3:<expected-remote-sha> \
-  origin mw-shippers-master-rport-3
+git push --force-with-lease=feature-rpt-3:<expected-remote-sha> \
+  origin feature-rpt-3
 ```
 
 ### Inspect divergence
@@ -216,29 +219,29 @@ git push --force-with-lease=mw-shippers-master-rport-3:<expected-remote-sha> \
 When `git cherry` reports a `+` line and you want to see exactly how a commit differs across two branches, use `git range-diff`:
 
 ```bash
-git range-diff origin/mw-shippers-master-rport-2...HEAD
+git range-diff origin/feature-rpt-2...HEAD
 ```
 
 It aligns commits by patch-id and shows the deltas.
 
 ### Stacking with `gh-stack` inside a single worktree
 
-For deliverables that split into 2–3 dependent layers (e.g., a `-struct` branch and a `-svc` branch), keep the entire stack in one worktree and use `gh-stack` to manage branches and PRs. This avoids the manual rebase workflow above and lets `gh-stack` handle rebase, PR linking, and squash-merge recovery automatically.
+For deliverables that split into 2–3 dependent layers, keep the entire stack in one worktree and use `gh-stack` to manage branches and PRs. This avoids the manual rebase workflow above and lets `gh-stack` handle rebase, PR linking, and squash-merge recovery automatically.
 
-Create the worktree from `dev` using the bottom branch name, then initialize the stack:
+Create the worktree from `<integration-branch>` using the bottom branch name, then initialize the stack:
 
 ```bash
-cd ~/Victory/Dev/qb-mono-wt
-wt -C .bare switch --create mw-invoice-register-rpt-struct --base dev
-cd ~/Victory/Dev/qb-mono-wt/mw-invoice-register-rpt-struct
-gh stack init --base dev mw-invoice-register-rpt-struct mw-invoice-register-rpt-svc
+cd <repo-container>
+wt -C .bare switch --create my-feature-struct --base <integration-branch>
+cd <repo-container>/my-feature-struct
+gh stack init --base <integration-branch> my-feature-struct my-feature-svc
 ```
 
 All branches share the same working directory. Switch between them with `gh stack` navigation:
 
 ```bash
-gh stack bottom          # bottom branch (closest to dev)
-gh stack top             # top branch (furthest from dev)
+gh stack bottom          # bottom branch (closest to integration)
+gh stack top             # top branch (furthest from integration)
 gh stack up / down       # move one layer
 ```
 
@@ -267,14 +270,14 @@ gh stack rebase --upstack
 gh stack push
 ```
 
-For full command reference and agent rules (non-interactive use, JSON output, conflict handling), see the `gh-stack` skill and `qb-mono-gh-stack-agent-guide.md`.
+For full command reference and agent rules (non-interactive use, JSON output, conflict handling), see the `gh-stack` skill.
 
 ## `wt` vs `git worktree`
 
 Use Worktrunk for this repo layout when you want the local setup to come across automatically:
 
 ```bash
-wt -C .bare switch --create my-feature --base dev
+wt -C .bare switch --create my-feature --base <integration-branch>
 ```
 
 Avoid using plain `git worktree add` for normal day-to-day branch creation in this setup, because the local Worktrunk hook does not run there.
@@ -285,10 +288,7 @@ Worktrunk's `copy-ignored` hook copies machine-local files (`.env`, `.claude/set
 
 ### Automated venv hygiene via Worktrunk
 
-This repo's local Worktrunk project config
-(`~/Victory/Dev/qb-mono-wt/dev/.config/wt.toml`) is already set up so every new
-worktree gets a fresh backend virtualenv automatically. Agents and developers
-normally should not need to change this configuration.
+Add a local Worktrunk project config at `<integration-worktree>/.config/wt.toml` (kept untracked via `.bare/info/exclude`) so every new worktree gets a fresh virtualenv automatically:
 
 ```toml
 pre-start = "/opt/homebrew/bin/wt step copy-ignored"
@@ -314,6 +314,8 @@ Operational note:
 - once approved, PR review worktrees created with `wt -C .bare switch pr:<number>` should not require any extra venv repair work
 - if approval is missing, Worktrunk may create the worktree but stop before the venv rebuild finishes
 
+Adapt the `post-start` commands to your repo's actual package manager and virtual environment tooling.
+
 ### Manual fallback (if hook is not yet configured)
 
 ```bash
@@ -324,22 +326,18 @@ rm -rf .venv
 uv sync --all-groups
 ```
 
-See `venv-stale-shebang-alert.md` and `stacked-worktrees-agent-guide.md` §"Running tests" for the full diagnosis.
-
----
-
 ## Local-Only Ignore Rules
 
 Repo-wide local excludes:
 
 ```bash
-~/Victory/Dev/qb-mono-wt/.bare/info/exclude
+<repo-container>/.bare/info/exclude
 ```
 
 Per-worktree local excludes:
 
 ```bash
-~/Victory/Dev/qb-mono-wt/.bare/worktrees/<worktree-name>/info/exclude
+<repo-container>/.bare/worktrees/<worktree-name>/info/exclude
 ```
 
 Check why something is ignored:
@@ -350,26 +348,13 @@ git check-ignore -v <path>
 
 ## Local Worktrunk Hook
 
-This setup uses a local-only Worktrunk project config at:
+Keep a local-only Worktrunk project config at:
 
 ```bash
-~/Victory/Dev/qb-mono-wt/dev/.config/wt.toml
+<integration-worktree>/.config/wt.toml
 ```
 
-It is kept untracked via `.bare/info/exclude`.
-
-Current hooks:
-
-```toml
-pre-start = "/opt/homebrew/bin/wt step copy-ignored"
-post-start = [
-  "rm -rf {{ worktree_path }}/backend/.venv",
-  "cd {{ worktree_path }}/backend && uv sync --all-groups",
-]
-
-[step.copy-ignored]
-exclude = ["backend/.venv/"]
-```
+Keep it untracked via `.bare/info/exclude`.
 
 What it does:
 
@@ -381,8 +366,8 @@ If Worktrunk asks for approval for the hook, approve it for this repo and let it
 
 ## Good Habits
 
-- keep `dev` clean
-- do feature work in sibling worktrees, not in `dev`
+- keep the integration branch clean
+- do feature work in sibling worktrees, not in the integration worktree
 - use flat branch names like `my-feature`, not `feature/my-feature`
 - use `.bare/info/exclude` for local-only notes, env files, and machine-specific config
 - use `wt -C .bare list` often so you can see what worktrees already exist

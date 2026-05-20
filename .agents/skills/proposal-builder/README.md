@@ -46,7 +46,6 @@ Use this skill when:
 1. **Live dialogue** — one or more humans discuss with the skill in an agent session.
 2. **Transcript mode** — paste meeting transcript text and ask the skill to draft/update the proposal.
 3. **Transcript + Q&A mode** — start from transcript extraction, then run a focused follow-up question/answer session to close gaps.
-4. **Zoom live facilitation (experimental)** — when integration exists, the agent listens to live discussion and asks clarifying questions in Zoom chat.
 
 ---
 
@@ -66,25 +65,6 @@ Use this when you’ve already had a proposal discussion call:
 5. Regenerate/refine the proposal.
 
 This gives you faster convergence and avoids rehashing the full conversation.
-
----
-
-## Future Capability: Zoom Listening
-
-Future direction (not required for current workflow):
-- subscribe to live meeting audio/transcript stream (e.g., Zoom transcript feed)
-- continuously capture arguments, decisions, and unresolved questions
-- proactively prompt participants with missing decision questions
-- produce rolling proposal updates during/after the call
-
-Current practical approach is transcript ingestion + interactive follow-up.
-
-### Zoom Chat Facilitation Pattern
-When live integration exists, the proposal workflow should:
-- ask one focused question at a time in chat
-- tag question intent (scope/value/alternative/risk/decision)
-- summarize unresolved items every few questions
-- convert participant responses into proposal updates
 
 ---
 

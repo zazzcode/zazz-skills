@@ -30,11 +30,20 @@ Use this skill when:
 
 ## Specializations
 
-This base skill can be extended with:
-- `qa-backend` for API, schema, auth, and backend-heavy work
-- `qa-frontend` for UI, accessibility, and frontend-heavy work
+The `qa` skill is the base. Two specialization skills extend it for domain-specific checks:
 
-For mixed deliverables, the agent may use the base QA skill plus one or both specializations.
+| Skill | Extends | Focus |
+| ----- | ------- | ----- |
+| `qa-backend` | `qa` | API routes, schema migrations, auth checks, backend-heavy work |
+| `qa-frontend` | `qa` | UI flows, accessibility, visual regression, frontend-heavy work |
+
+**How to compose them:**
+- For backend-only deliverables: `Use qa and qa-backend.`
+- For frontend-only deliverables: `Use qa and qa-frontend.`
+- For full-stack deliverables: `Use qa and qa-backend and qa-frontend.`
+- For non-domain-specific deliverables (refactors, scripts, docs): `Use qa.` alone is sufficient.
+
+The base `qa` skill runs in all cases. Specializations add domain-specific checklists on top of the base verification pass.
 
 ## Example Prompts
 

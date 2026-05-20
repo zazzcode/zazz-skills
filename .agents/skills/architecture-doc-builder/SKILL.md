@@ -25,6 +25,9 @@ Before starting the dialogue:
 1. Identify whether you are creating a new architecture document, evolving an existing one, or converting a proposal
    or transcript into a draft.
 1. Find the standards index and any existing architecture documents that should shape the discussion.
+1. Remind yourself of the two hard rules before producing any output:
+   - **No target completion dates.** Dates live only in the feature document. Do not add them to the architecture document, even as references.
+   - **Mirror the feature document's milestone list exactly.** Same names, same order, no additions or renames. If a milestone needs changing, update the feature document first.
 1. Then begin the dialogue and keep the conversation at architecture scope rather than implementation-task scope.
 
 ## Mission

@@ -93,9 +93,10 @@ zazz-methodology.md    primary methodology philosophy and document model
 
 | Skill | Purpose |
 | ----- | ------- |
-| `qa` | Runs verification against requirements, standards, and evidence. |
-| `qa-frontend` | Frontend-focused QA specialization. |
-| `qa-backend` | Backend-focused QA specialization. |
+| `qa` | Runs verification against requirements, standards, and evidence. Base skill; used alone or composed with specializations. |
+| `qa-backend` | Backend-focused QA specialization (API, schema, auth). Extends `qa`. |
+| `qa-frontend` | Frontend-focused QA specialization (UI, accessibility). Extends `qa`. |
+| `debug` | Guides structured root-cause investigation for bugs and broken environments. Produces a confirmed cause and handoff for spec-builder. |
 
 ### Delivery and infrastructure skills
 
@@ -107,9 +108,18 @@ zazz-methodology.md    primary methodology philosophy and document model
 | `zazz-board-api` | Companion utility skill for Zazz Board integration. |
 | `jira-api` | Draft companion utility for Jira-backed repos. |
 
+### Onboarding and standards skills
+
+| Skill | Purpose |
+| ----- | ------- |
+| `zazz-init` | Walks a team through first-time Zazz adoption; produces a complete, placeholder-free `AGENTS.md`, `project.md`, and index skeletons. |
+| `standards-builder` | Creates and maintains coding and architecture standards and the `standards/index.yaml` for selective agent loading. |
+
 ## Getting Started
 
-If you are adopting the methodology in another repo:
+**Quickest path:** use the `zazz-init` skill. It will interview you, infer what it can from the codebase, and produce a working `AGENTS.md`, `project.md`, and index skeletons with no placeholders. It ends by pointing you to the next steps.
+
+**Manual path:**
 
 1. Read [zazz-methodology.md](zazz-methodology.md).
 2. Read [docs/worktree-setup.md](docs/worktree-setup.md) because the methodology requires the worktree operating model.
@@ -167,6 +177,35 @@ rsync -avc --delete /path/to/zazz-skills/docs/ /path/to/consumer-repo/docs/
 ```
 
 ## Changelog
+
+### 2026-05-20 — Coverage, clarity, and adoption improvements
+
+**Added `debug` skill.**
+Structured investigation workflow for bugs and broken environments. Guides hypothesis formation, evidence gathering, reproduction, and root-cause confirmation. Produces a handoff summary for `spec-builder`. Does not implement fixes. Closes the gap between "something is broken" and "here is the scoped deliverable to fix it."
+
+**Added `standards-builder` skill.**
+Guided workflow for creating and maintaining the standards that agents load selectively via `standards/index.yaml`. Covers bootstrapping a new standards directory, adding individual standards, updating stale ones, and restructuring the index for better selective loading. Previously, standards creation had no agent-assisted workflow.
+
+**Added `zazz-init` skill.**
+First-time adoption skill. Walks a team through producing a complete, placeholder-free `AGENTS.md`, `project.md`, and index skeletons for a new or existing repo. Closes the blank-page problem for teams adopting Zazz without an existing reference implementation.
+
+**Genericized `docs/wt-cheat-sheet.md`.**
+Removed hardcoded project-specific paths (`qb-mono-wt`, `~/Victory/Dev/`, `mw-shippers-master-rport-*`). All examples now use `<repo-container>` and `<integration-branch>` placeholders. Added a callout at the top of the Stacked Branches section recommending `gh-stack` for 2–3 layer stacks before presenting the manual rebase workflow.
+
+**Added native `git worktree` path to `worktree` skill.**
+The worktree skill now documents equivalent bare-repo setup commands using plain `git worktree` for teams that do not use Worktrunk, along with the limitations of the native path (no ignored-file copying, no PR shortcut, no post-create hooks).
+
+**Clarified `qa` specialization model.**
+The `qa/README.md` now leads with a table showing the three-skill composition model (`qa`, `qa-backend`, `qa-frontend`) and explicit guidance on which combination to use for backend-only, frontend-only, full-stack, and non-domain-specific deliverables.
+
+**Elevated paste-ready implementation prompt in `spec-builder` README.**
+Added a paragraph immediately after the SPEC description calling out the paste-ready implementation prompt as the key output: a fresh implementing agent should be able to start from the SPEC without additional human briefing.
+
+**Moved "no dates" and "mirror milestone list" rules to the architecture-doc-builder startup sequence.**
+These constraints previously appeared only in the quality bar section. They now appear as explicit reminders in step 6 of the startup sequence so the agent surfaces them before producing any output.
+
+**Removed Zoom live facilitation from `proposal-builder` README.**
+The "Zoom live facilitation (experimental)" input mode and the "Future Capability: Zoom Listening" section were removed. Neither is implemented, and leaving aspirational placeholder features in a README creates false expectations.
 
 ### 2026-05-17 — Execution model simplification
 

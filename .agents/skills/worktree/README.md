@@ -24,6 +24,30 @@ It helps with:
 
 If a team wants to follow the methodology without Worktrunk, they can still do so with native `git worktree` commands. They just should not expect this skill to be the right tool for that environment.
 
+### Without Worktrunk — native `git worktree` equivalents
+
+The methodology's bare-repo + sibling-worktree layout can be set up with plain Git:
+
+```bash
+# Initial setup: create bare repo and integration worktree
+git clone --bare <remote-url> <repo-container>/.bare
+git -C <repo-container>/.bare worktree add ../<integration-branch> <integration-branch>
+
+# Create a new feature worktree
+git -C <repo-container>/.bare worktree add ../my-feature -b my-feature
+
+# List worktrees
+git -C <repo-container>/.bare worktree list
+
+# Remove a finished worktree
+git -C <repo-container>/.bare worktree remove my-feature
+```
+
+Limitations without Worktrunk:
+- local ignored files (`.env`, settings) are **not** automatically copied into new worktrees — you must copy them manually
+- PR review worktrees (`wt switch pr:123`) have no equivalent shortcut — fetch the branch manually and add a worktree for it
+- the project hook system (`wt.toml`) does not run — venv rebuilds and other post-create steps must be done manually
+
 ## When to Use It
 
 Use this skill when:
