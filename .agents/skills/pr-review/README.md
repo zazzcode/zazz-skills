@@ -146,13 +146,17 @@ Good PR review asks:
 
 - Do the tests prove the acceptance criteria?
 - Do they cover realistic field edge cases?
-- Could fewer parameterized or table-driven tests cover the same cases more clearly?
+- Could a shared setup, shared payload, parameterized test, or table-driven test cover the
+  same scenarios more clearly?
 - Is existing coverage already sufficient?
 - Are tests asserting observable behavior rather than private mechanics?
 - Would these tests fail for bugs the team actually cares about?
 
 Reviewers should flag both under-testing and test clutter. The goal is compact,
-meaningful coverage.
+meaningful coverage. Irrelevant permutations or coverage-padding tests should be treated
+as review noise unless they prove a real requirement, defect, boundary, or risk. This
+includes unreasonable precondition tests that do not reflect the public contract, such as
+testing an update path without the record ID required to address the record.
 
 ## Improving The Skill
 

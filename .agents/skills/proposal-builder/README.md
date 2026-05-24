@@ -151,6 +151,9 @@ A proposal document with:
 
 Naming follows methodology conventions:
 - Proposal document: `proposals/{proposal-slug}.md`
+- External proposal document: Google Docs, SharePoint, Confluence, or another declared
+  shared document system, with a stable pointer kept under `proposals/{proposal-slug}.md`
+  so agents can discover the approved proposal from repo context
 
 ---
 

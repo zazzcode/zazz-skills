@@ -110,7 +110,8 @@ High-value tests usually:
 - fail for a bug a reviewer would care about
 - assert observable behavior at a stable boundary
 - reuse existing fixtures/helpers and mirror nearby patterns
-- consolidate related edge cases with a table or parameterized matrix
+- consolidate related edge cases with a shared setup, shared payload, table, or
+  parameterized matrix when that preserves the same behavior coverage with less noise
 - cover realistic field boundaries such as invalid, empty, maximum/minimum, unauthorized,
   cross-tenant, missing-data, ordering, time-zone/date, idempotency, or concurrency cases
   when those risks apply
@@ -123,9 +124,13 @@ Low-value tests to flag:
 - snapshots or golden files that create churn without clear human-readable assertions
 - unrealistic edge-case permutations that cannot occur through supported inputs or
   repo-declared data flows
+- unreasonable precondition tests, such as checking update behavior without the target
+  record ID when the public update route requires that ID to address the record
 - broad coverage-padding tests that do not map to a meaningful behavior or risk
 - excessive layer duplication where one integration/contract test would cover the same
   behavior more honestly
+- many single-scenario tests that could be consolidated into fewer tests with equivalent
+  coverage and clearer intent
 
 Recommended review wording:
 
@@ -135,6 +140,9 @@ Recommended review wording:
   protect the AC and be less brittle."
 - "The case matrix is useful, but the setup repeats the same fixture world four times;
   table-driving it would reduce PR noise while preserving coverage."
+- "These ten tests appear to exercise the same behavior boundary with slightly different
+  payloads. Consider consolidating them into a smaller table or shared-payload test if it
+  preserves the same coverage."
 
 ## Agentic Slop And Redundancy
 

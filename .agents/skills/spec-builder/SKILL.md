@@ -30,9 +30,12 @@ definition of done, and the agent-implementation prompt all live in the specific
 Progress tracking, OQ resolutions, deviations, QA findings, and manual evidence
 locations are recorded in a run log when the effort needs one. The run log is
 append-only execution history and follows the repo's declared
-policy: by default a locally ignored Markdown file under `<DOCS_ROOT>/implementation/`,
+policy: by default a locally ignored Markdown file under `<DOCS_ROOT>/execution/`,
 or a committed file, Zazz Board note, external tracker entry, or combination when the
-repo defines that explicitly.
+repo defines that explicitly. Repos that do not use Zazz Board may rely exclusively on
+`<DOCS_ROOT>/execution/` for execution records. When the Owner uses Zazz Board, treat it
+as the centralized execution-record service for run logs, handoff notes, QA findings,
+and related execution information that must be shared across worktrees, agents, and sessions.
 
 A single-deliverable branch may have a small run log. A milestone branch with
 multiple deliverable specifications uses one shared run log with sections per
@@ -281,10 +284,13 @@ Use these as prompts, not a rigid questionnaire:
   in Zazz Board or the declared external tracker and include enough stable identifier context for agents and reviewers
   to find the artifact.
 - **Run log**: use the storage surface declared by the repo. When stored on disk, default
-  to `<DOCS_ROOT>/implementation/{slug}-run-log.md` or
-  `<DOCS_ROOT>/implementation/{milestone-or-lane-slug}-run-log.md`, usually excluded
+  to `<DOCS_ROOT>/execution/{slug}-run-log.md` or
+  `<DOCS_ROOT>/execution/{milestone-or-lane-slug}-run-log.md`, usually excluded
   from Git by repo-local or bare-repo exclude rules. External Zazz Board notes or tracker
-  records are also valid when declared. Milestone branches use sections per specification.
+  records are also valid when declared. If the repo does not use Zazz Board, the execution
+  directory may be the exclusive record surface. If the repo does use Zazz Board, use it as
+  the shared execution-record surface when multiple agents need the same run log or handoff
+  context across worktrees and sessions. Milestone branches use sections per specification.
 - **Stacked review lane**: one worktree contains the stacked branches managed with `gh-stack`. Do not create stacked
   worktrees. A worktree normally has one deliverable, but a stacked lane may contain multiple deliverables/specifications
   when those deliverables are intentionally stacked for review.

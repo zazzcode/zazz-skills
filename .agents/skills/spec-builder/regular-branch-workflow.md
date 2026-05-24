@@ -20,6 +20,9 @@ deliverables live during implementation and review.
   specifications are not committed in Git.
 - Run log path/location: follow the repo's declared policy; use an ignored local file,
   committed support artifact, Zazz Board note, external tracker entry, or combination.
+  Repos that do not use Zazz Board may rely exclusively on `<DOCS_ROOT>/execution/`.
+  When the Owner uses Zazz Board, prefer it for execution records that need to be shared
+  across worktrees, agents, and sessions.
 - The integration branch worktree (e.g. `dev/`, `main/`) is read-only except for sync.
   Never write specifications or implementation files into it — always work from your feature
   worktree.

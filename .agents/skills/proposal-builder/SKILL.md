@@ -26,7 +26,9 @@ The proposal is exploratory and non-authoritative. It informs decisions before c
 
 Primary artifact:
 
-- `<DOCS_ROOT>/proposals/{proposal-slug}.md`
+- `<DOCS_ROOT>/proposals/{proposal-slug}.md`, or an external proposal document plus a
+  stable Git-tracked pointer when the repo declares Google Docs, SharePoint, or another
+  shared document system as the proposal collaboration surface
 
 Supporting output:
 
@@ -44,7 +46,9 @@ Help answer:
 5. What recommendation should we make, and what must be true to proceed?
 
 ## Methodology Alignment
-- Proposal artifact: a proposal document under `<DOCS_ROOT>/proposals/` (optional, strongly recommended)
+- Proposal artifact: a proposal document under `<DOCS_ROOT>/proposals/` by default, or an
+  externally hosted proposal with a stable pointer under `<DOCS_ROOT>/proposals/` when
+  repo policy allows external proposal storage for stakeholder collaboration
 - Proposal scope can be:
   - **feature-scoped** (requirements/journey evolution)
   - **deliverable-scoped** (implementation options for a concrete increment)
@@ -257,6 +261,10 @@ Use methodology naming guidance:
 
 - Proposal document:
   - `<DOCS_ROOT>/proposals/{proposal-slug}.md`
+- External proposal document:
+  - Google Docs, SharePoint, Confluence, or another repo-declared document surface
+  - keep a stable pointer under `<DOCS_ROOT>/proposals/{proposal-slug}.md` with title,
+    URL, owner, status, and next-phase handoff context
 - If the proposal is tied to a feature or deliverable:
   - capture the feature key, deliverable code, or both inside the document title, metadata, and handoff section
 - Keep proposal documents in `proposals/` rather than mixing them into `features/` or `deliverables/`

@@ -47,7 +47,7 @@ The methodology is also intentionally **git-native**. Durable planning and produ
   - [Example `standards/index.yaml`](#example-standardsindexyaml)
 - [Deliverables and Worktrees](#deliverables-and-worktrees)
   - [Acceptance Criteria and TDD](#acceptance-criteria-and-tdd)
-  - [Default methodology position: durable docs in Git, execution artifacts declared per repo](#default-methodology-position-durable-docs-in-git-execution-artifacts-declared-per-repo)
+  - [Default methodology position: durable docs in Git, execution contracts and records declared per repo](#default-methodology-position-durable-docs-in-git-execution-contracts-and-records-declared-per-repo)
   - [Required: isolated worktree execution](#required-isolated-worktree-execution)
   - [Stacked branches inside one worktree](#stacked-branches-inside-one-worktree)
   - [Durable knowledge must be promoted](#durable-knowledge-must-be-promoted)
@@ -92,7 +92,7 @@ This repository is the canonical source of truth for the methodology document an
 | **Git-native model** | Durable docs are version-controlled in Git, reviewed through branches and PRs, and executed through the methodology's required worktree model |
 | **Docs root** | The repo's policy resolves the repo-relative directory that contains methodology markdown documents, usually documented in `AGENTS.md` |
 | **Top-level durable doc** | `project.md` captures the project purpose, value proposition, and major established capabilities |
-| **Tracked docs** | `project.md`, `standards/`, `features/`, `architecture/`, and `proposals/` are the durable, continuously maintained documents and should be tracked in Git |
+| **Durable docs** | `project.md`, `standards/`, `features/`, and `architecture/` are durable, continuously maintained documents and should be tracked in Git. Proposals are Git-native by default, but may live in an external document system when repo policy declares a stable pointer strategy |
 | **Specification storage** | Every deliverable has a deliverable specification; when stored on disk, those files live under `<DOCS_ROOT>/specifications/`. When not committed in Git, specification documents may be ignored locally, mirrored externally, or stored in an application such as Zazz Board, according to repo policy |
 | **Specification model** | Feature requirements document for capability over time plus deliverable specification for one increment |
 | **Verification model** | TDD and explicit acceptance criteria are core mechanisms for proving the software was built correctly and delivers the intended functionality |
@@ -138,7 +138,7 @@ This document sometimes uses skill names as shorthand for the agents operating w
 ## Core Principles
 
 1. **Acceptance criteria and TDD are central, not optional.** Value is clarified through explicit success criteria, then validated through tests and review evidence. If work cannot be described in verifiable terms, it is not ready.
-2. **Durable knowledge lives in tracked docs.** `project.md`, `proposals/`, `features/`, and `standards/` are shared repository knowledge. They preserve product understanding, active decisions, and engineering rules over time.
+2. **Durable knowledge lives in declared durable surfaces.** `project.md`, `features/`, `architecture/`, and `standards/` are shared repository knowledge and should be tracked in Git. Proposals are durable decision artifacts, but may be Git-tracked documents or externally hosted shared documents when the repo keeps stable links in Git.
 3. **Project context comes before execution slices.** Start from `project.md`, then use proposals and feature requirements documents to clarify why and how the product should evolve before breaking work into deliverables whenever the work is part of an enduring capability.
 4. **Execution contracts are per increment.** A deliverable specification defines one bounded slice of work. It is the executable contract that contains both intent and implementation guidance, replacing the old specification + plan split. It is not the permanent home for product narrative.
 5. **Git primitives are part of the methodology.** Use branches, worktrees, PRs, review comments, and final PR approval as standard collaboration mechanisms for both code and durable docs.
@@ -146,7 +146,7 @@ This document sometimes uses skill names as shorthand for the agents operating w
 7. **Launch-and-leave execution is a design goal.** Once the approved context exists, planning, implementation, verification, and PR packaging should require minimal supervision until a real decision or approval boundary is reached.
 8. **Agents load only the context they need.** `index.yaml` files exist to help agents decide what to read instead of loading every standard or feature requirements document into context.
 9. **PR merge authority stays with an authorized human.** Agents may create draft PRs, update PR bodies, and provide verification evidence, but they must never approve or merge PRs on their own.
-10. **Use isolated execution contexts.** Active deliverable execution happens in worktrees so implementation state, branch history, and transient execution artifacts stay isolated from the integration branch and from unrelated work.
+10. **Use isolated execution contexts.** Active deliverable execution happens in worktrees so implementation state, branch history, execution contracts, and mutable execution records stay isolated from the integration branch and from unrelated work.
 11. **Durable knowledge moves upstream.** When a deliverable changes the product, update `project.md`, the relevant feature requirements document, and any impacted standards so the long-lived docs reflect the shipped system.
 
 ---
@@ -158,11 +158,11 @@ Zazz is designed to work with native Git collaboration primitives instead of inv
 Methodology expectations:
 
 - keep durable docs in the repository so branches, commits, PR comments, and merge history become part of the durable document audit trail
-- use **draft PRs** to share in-progress proposals, feature requirements document revisions, and standards updates that are still being shaped
+- use **draft PRs** to share in-progress proposal pointers, proposal markdown files, feature requirements document revisions, and standards updates that are still being shaped
 - use **final PR review** to approve and merge durable docs once they are ready to become shared project truth
 - treat PR approval and merge as human-controlled gates; agents may prepare and verify PRs but must not merge them
 - treat worktrees as the required isolation and recovery mechanism for active deliverable execution; if an execution path proves wrong, the worktree can be abandoned without polluting the main line of work
-- treat Git history as the durable change log for `project.md`, proposals, feature requirements documents, and standards
+- treat Git history as the durable change log for `project.md`, proposal pointers or proposal markdown files, feature requirements documents, and standards
 - remember that GitHub is only a common example; GitLab, Bitbucket, Forgejo, and other Git-based review systems fit the same methodology model
 
 Required review pattern for durable docs:
@@ -203,7 +203,7 @@ Examples:
 - `Methodology docs root: .zazz`
 - `Methodology docs root: docs`
 - `Methodology docs root: packages/platform-docs`
-- `Methodology docs root comes from <ENV_VAR>, which resolves to a repo-relative path such as docs or .zazz`
+- `Methodology docs root comes from ZAZZ_DOCS_ROOT, which resolves to a repo-relative path such as docs or .zazz`
 
 When the application spans multiple repos, point the relevant repo or shared package at the directory that contains the methodology docs. The important contract is that the path is repo-relative and stable for that repo.
 
@@ -252,19 +252,20 @@ Not every layer is required for every change. Bugs, chores, and small maintenanc
 
 The document framework is opinionated about the directory shape under the declared docs root.
 
-Each document type in the methodology is expected to justify its existence through the problem it solves. The methodology does not introduce artifacts just to create ceremony. Each artifact exists because it addresses a different coordination need: project context, solution exploration, durable capability definition, implementation guidance, or bounded execution.
+Each document type in the methodology is expected to justify its existence through the problem it solves. The methodology does not introduce artifacts just to create ceremony. Each artifact exists because it addresses a different coordination need: project context, solution exploration, durable capability definition, technical design, implementation rules, bounded execution contracts, or active execution records.
 
-Required long-lived artifacts:
+Default durable artifacts:
 
 - `project.md`
-- `proposals/`
 - `standards/`
 - `features/`
 - `architecture/`
+- `proposals/` or Git-tracked proposal pointers when proposals are externally hosted
 
 Execution artifacts:
 
 - `specifications/` when the repo keeps local deliverable specification files on disk
+- `execution/` when the repo keeps local mutable execution records on disk
 - optional external tracking or storage systems such as Zazz Board when the project chooses to use them
 
 Recommended layout:
@@ -287,8 +288,10 @@ Recommended layout:
 ├── architecture/
 │   ├── index.yaml
 │   └── role-based-access-control-architecture.md
-└── specifications/                  <- optional local execution artifacts
+├── specifications/                  <- optional local execution contracts
 │   └── role-management-ui.md
+└── execution/                       <- optional local mutable execution records
+    └── role-management-ui-run-log.md
 ```
 
 `project.md` is intentionally at the top of the docs root, not under `features/` or `proposals/`.
@@ -296,35 +299,38 @@ Recommended layout:
 Recommended responsibilities:
 
 - `project.md` captures the software project's value proposition, business need, constraints, and major established capabilities
-- `proposals/` contains durable exploratory documents that help the team work through uncertain solutions
+- `proposals/` contains durable exploratory documents or stable pointers to externally hosted proposals
 - `features/` contains long-lived feature requirements documents plus `features/index.yaml`
 - `architecture/` contains architecture documents paired with feature requirements documents, plus `architecture/index.yaml`
 - `standards/` contains implementation rules plus `standards/index.yaml`
-- `specifications/` is the on-disk home for deliverable specification files when the repo keeps execution artifacts locally
-- `implementation/` is the default local home for mutable execution artifacts such as run logs when the repo keeps them on disk
+- `specifications/` is the on-disk home for deliverable specification files when the repo keeps execution contracts locally
+- `execution/` is the default local home for mutable execution records such as run logs when the repo keeps them on disk
 
 ### Specification storage modes
 
 The document framework supports four common ways teams handle deliverable specification files on disk and in tooling:
 
-1. **Local ignored specifications** - `<DOCS_ROOT>/specifications/` exists in the repo or worktree, is usually ignored, and deliverable specification docs are treated as local execution artifacts.
-2. **Committed specifications** - deliverable specification docs are kept under `<DOCS_ROOT>/specifications/` and tracked in Git because the team intentionally wants a Git-native audit trail for execution artifacts.
+1. **Local ignored specifications** - `<DOCS_ROOT>/specifications/` exists in the repo or worktree, is usually ignored, and deliverable specification docs are treated as local execution contracts.
+2. **Committed specifications** - deliverable specification docs are kept under `<DOCS_ROOT>/specifications/` and tracked in Git because the team intentionally wants a Git-native audit trail for execution contracts.
 3. **Externally mirrored specifications** - the repo still has a declared specification storage policy, but the team also mirrors, tracks, or stores deliverable specifications in an external system such as the Zazz Board application.
 4. **External-only specifications** - deliverable specifications live in an external system such as the Zazz Board application, `<DOCS_ROOT>/specifications/` may be absent, and `AGENTS.md` declares where agents should read or update the execution contract.
 
 The methodology's general guideline is:
 
-- keep `project.md`, `proposals/`, `features/`, `architecture/`, and `standards/` tracked in Git or another Git-based service because they are durable, continuously maintained documents
+- keep `project.md`, `features/`, `architecture/`, and `standards/` tracked in Git or another Git-based service because they are durable, continuously maintained documents
+- keep proposals Git-native by default under `<DOCS_ROOT>/proposals/`, but allow externally hosted proposal documents when better stakeholder access, screenshots, diagrams, or rich review workflows make Google Docs, SharePoint, or another shared document system the right surface
 - keep the specification storage policy explicit in the repo's `AGENTS.md`
 - allow deliverable specification files under `<DOCS_ROOT>/specifications/` to be ignored locally, committed intentionally, mirrored externally, or absent on disk when the repo stores specifications in an application such as Zazz Board
-- keep mutable execution files such as run logs under `<DOCS_ROOT>/implementation/` by default when stored on disk, and usually exclude that directory from Git with repo-local or bare-repo exclude rules
+- keep mutable execution files such as run logs, handoff notes, QA findings, and recovery notes under `<DOCS_ROOT>/execution/` by default when stored on disk, and usually exclude that directory from Git with repo-local or bare-repo exclude rules
+- allow `<DOCS_ROOT>/execution/` to be the repo's exclusive execution-record surface when the team does not use Zazz Board or another external tracker
+- use Zazz Board or another declared tracker as the centralized execution-record surface when multiple agents need to share run logs, handoff documents, QA findings, and related execution information across worktrees and sessions
 - treat external systems such as Zazz Board as optional integrations, not methodology requirements
 
 If a team adopts one deliverable specification file-layout mode on disk, do not mix modes inside a single repo:
 
 1. **Flat local files** — `{slug}.md` under `specifications/`
 2. **Tracker-key subdirectories** — `specifications/{id}/{slug}.md`, where `{id}` may be a Zazz Board deliverable code or a Jira issue key
-3. **No durable on-disk specification files** - the repo treats execution artifacts as external or ephemeral and documents that policy explicitly in `AGENTS.md`
+3. **No durable on-disk specification files** - the repo treats specification files as external or ephemeral and documents that policy explicitly in `AGENTS.md`
 
 This specification file-layout choice is related to, but not identical to, the repo's broader work-tracking system.
 A repo may also use an external tracker for PR-facing links or issue management, such as:
@@ -352,19 +358,23 @@ Each repo declares the storage surface in `AGENTS.md` or the deliverable specifi
 When stored on disk, the default path is:
 
 ```text
-<DOCS_ROOT>/implementation/<slug>-run-log.md
+<DOCS_ROOT>/execution/<slug>-run-log.md
 ```
 
 For milestone or stacked efforts, use a shared file such as:
 
 ```text
-<DOCS_ROOT>/implementation/<milestone-or-lane-slug>-run-log.md
+<DOCS_ROOT>/execution/<milestone-or-lane-slug>-run-log.md
 ```
 
-The default expectation is that `<DOCS_ROOT>/implementation/` is local mutable execution
+The default expectation is that `<DOCS_ROOT>/execution/` is local mutable execution
 state and is not committed to Git unless the repo explicitly chooses committed execution
 history. Exclude it with `.git/info/exclude`, the shared bare-repo exclude file used by
 the worktree setup, or another repo-declared local exclude mechanism.
+
+A repo may use `<DOCS_ROOT>/execution/` as its only execution-record surface. That is a
+complete methodology-compatible mode when the team is not using Zazz Board or another
+external tracker.
 
 Allowed storage surfaces include:
 
@@ -373,6 +383,11 @@ Allowed storage surfaces include:
 - Zazz Board note or attachment
 - external tracker entry
 - another repo-declared execution record
+
+When the Deliverable Owner uses Zazz Board, the board can be the centralized
+execution-record service for run logs, handoff documents, QA findings, and related
+execution information. This is especially useful when multiple agents, worktrees, or
+sessions need to coordinate against the same active delivery history.
 
 One run log may cover one deliverable, a milestone branch with multiple
 deliverables, or a stacked review lane. Multi-deliverable logs should use sections per
@@ -391,7 +406,7 @@ The run log should include:
 
 QA agents must append their findings to the same run log when one is used.
 Weak tests, missing realistic edge cases, or a bad test contract should be logged there
-and routed to the coordinator/Deliverable Owner for rework or specification revision.
+and routed to the Deliverable Owner for rework or specification revision.
 This keeps execution state visible to the manager agent and prevents QA findings from
 being lost in terminal output or a one-off review comment.
 
@@ -400,9 +415,10 @@ Naming conventions:
 | Artifact | Convention | Example |
 | ------- | ---------- | ------- |
 | **Project document** | `project.md` at docs root | `project.md` |
-| **Run log** | `<DOCS_ROOT>/implementation/{slug}-run-log.md` when stored locally | `implementation/m2-reporting-api-run-log.md` |
+| **Run log** | `<DOCS_ROOT>/execution/{slug}-run-log.md` when stored locally | `execution/m2-reporting-api-run-log.md` |
+| **Handoff document** | `<DOCS_ROOT>/execution/{slug}-handoff.md` when stored locally, or Zazz Board/external tracker when centralized sharing is needed | `execution/m2-reporting-api-handoff.md` |
 | **Docs root** | repo-relative path resolved by repo policy and documented in `AGENTS.md` | `.zazz`, `docs` |
-| **Proposal** | `proposals/{name}.md` | `role-management-options.md` |
+| **Proposal** | `proposals/{name}.md` for Git-native proposals or Git-tracked external proposal pointers | `role-management-options.md` |
 | **Feature requirements document** | `features/{feature-key}.md` | `role-based-access-control.md` |
 | **Features index** | `features/index.yaml` | `features/index.yaml` |
 | **Standards index** | `standards/index.yaml` | `standards/index.yaml` |
@@ -464,9 +480,16 @@ A strong `project.md` should usually include:
 
 Proposal documents are the methodology's exploratory, pre-commitment decision artifacts.
 
-They live under:
+They live under the repo's declared proposal surface. The default Git-native surface is:
 
 - `<DOCS_ROOT>/proposals/`
+
+Repos may instead declare an external proposal document surface such as Google Docs,
+SharePoint, Confluence, or another shared cloud document system. This is appropriate
+when proposals need rich images, screenshots, diagrams, inline stakeholder comments, or
+review access for non-software-development staff. In that mode, keep a stable pointer in
+Git, usually under `<DOCS_ROOT>/proposals/`, so agents and reviewers can discover the
+proposal from repo context.
 
 Use a proposal when a team still needs to evaluate why to proceed, which approach to choose, what tradeoffs are acceptable, or what risks and constraints must be understood before feature definition or execution commitment.
 
@@ -482,17 +505,32 @@ Proposals exist to solve uncertainty before the team commits to a direction. The
 
 Their value is that they keep exploration out of documents that need to be more durable or more authoritative. A proposal absorbs uncertain thinking so the later feature requirements document or specification can be clearer and more decisive.
 
-Proposal docs are durable and are expected to be tracked in Git. They sit beside feature requirements documents in the hierarchy, not underneath them. Their job is to help the team work through options before the team decides to author or revise a feature requirements document or specification.
+Proposal docs are durable decision artifacts. They are Git-native by default and usually
+tracked under `<DOCS_ROOT>/proposals/`, but they may live in an external document system
+when that better serves stakeholder collaboration. When the proposal itself is external,
+the repo should track a small pointer document or index entry with the proposal title,
+stable URL, owner, status, and relationship to relevant feature requirements documents,
+architecture documents, or deliverable specifications.
+For simple cases, the checked-in pointer may be only a short Markdown file containing
+the shared-document URL and minimal routing metadata.
 
 Not every feature requirements document needs a proposal. Use one when it improves decision quality; skip it when the direction is already clear.
 
-The recommended collaboration pattern is:
+The recommended Git-native collaboration pattern is:
 
 1. draft the proposal in `<DOCS_ROOT>/proposals/`
 2. open a **draft PR** to share it while the proposal is still being discussed
 3. refine the proposal through comments, commits, and stakeholder feedback
 4. finalize and merge the PR once the proposal is approved
 5. use the approved proposal as input to the next authoring session, typically with an agent running `feature-doc-builder`, `spec-builder`, or both
+
+The recommended external-document collaboration pattern is:
+
+1. draft the proposal in the declared shared document system
+2. store a stable pointer in Git, such as `<DOCS_ROOT>/proposals/{proposal-slug}.md`
+3. use the external document's native comments, images, screenshots, diagrams, and review flow for stakeholder collaboration
+4. update the checked-in pointer when the proposal URL, title, owner, status, or decision outcome changes
+5. use the approved proposal URL and pointer document as input to the next authoring session, typically with an agent running `feature-doc-builder`, `spec-builder`, or both
 
 Proposal docs do not replace feature requirements documents or specifications. They help a team decide what should move forward and on what basis.
 
@@ -838,75 +876,17 @@ This is the methodology's intended balance:
 
 ## Agent Execution Discipline
 
-The methodology expects agents to behave with disciplined scope awareness and verification habits. These rules reduce wasted work, prevent out-of-scope edits, and keep branch footprints minimal.
+The methodology expects agents to behave with disciplined scope awareness,
+verification habits, and respect for human-owned approval boundaries.
 
-### Verify scope before acting
+The detailed, reusable execution playbook lives in:
 
-Before editing files, running linters, or applying auto-fixes, determine what the current branch actually changes.
+- [docs/agent-execution-discipline.md](docs/agent-execution-discipline.md)
 
-```bash
-# Show exactly which files differ between this branch and the base branch
-git diff <base-branch> --stat
-```
-
-Rules:
-
-- if a file does not appear in that diff, it is out of scope for edits
-- if running the full test suite shows a failure in an unmodified file, the branch likely changed a shared dependency (fixture, import, config) that the test relies on; treat the failure as in-scope until proven otherwise
-- for stacked branches, scope formatting, linting, and fixes to the current slice only; do not auto-fix parent-slice files unless the user explicitly asks to change that lower branch
-
-### Integration branch invariant
-
-The methodology assumes the integration branch is always green. There are no pre-existing test failures on the base branch.
-
-Rules:
-
-- do not dismiss a failure as "pre-existing" or "unrelated" without proving the branch did not cause it
-- if the base branch has a known exception, the repo `AGENTS.md` must document it explicitly; otherwise assume green
-
-### Concurrent work awareness
-
-Developers may edit files while an agent is working. This is normal.
-
-Rules:
-
-- do not treat concurrent developer edits as corruption, agent failure, or a reason to improvise a recovery plan
-- if a file changes unexpectedly, ask whether the developer changed it
-- verify assumptions before acting on them
-
-### Command shape discipline
-
-Approval friction is real. Reusing the same command shapes across a session reduces interruptions.
-
-Guidelines:
-
-- prefer a small, stable set of command wrappers
-- batch related work into fewer commands when possible
-- if a command must be rerun with a slightly different target, keep the wrapper and argument order the same
-- do not vary wrappers casually just because a command is technically equivalent
-
-### Edit documents in place
-
-When creating or updating durable docs, preserve continuity.
-
-Rules:
-
-- edit documents in place; do not delete and recreate a document as a shortcut because it loses useful continuity and costs more context than a targeted edit
-- if a document needs to be recreated as a variant, copy it first and edit the copy; delete the original only when the user explicitly asks for deletion
-- once an item is resolved, mark it as `Implemented`, `Done`, `Rejected`, or `Deferred`; do not keep arguing the resolved decision
-- remove obsolete recommendations after implementation, or rewrite them as completed actions
-
-### Database and environment safety
-
-Treat shared state as sensitive by default.
-
-Rules:
-
-- never drop, recreate, truncate, or bulk-delete database state as a troubleshooting shortcut
-- never run destructive reset or rebuild commands because an error message is confusing
-- never assume a failing command means the database or environment is corrupt
-- if a destructive action might be needed, stop and ask the user; any command that could destroy shared state must be given to the user for manual execution
-- prefer logs, configuration checks, connection checks, and read-only queries before any recovery step
+Repos should reference that document from `AGENTS.md` and declare only repo-specific
+overrides such as integration branch, command wrappers, execution-record location,
+tracking system, known integration-branch health exceptions, and project-specific
+forbidden edit zones.
 
 ---
 
@@ -924,7 +904,7 @@ Their value is that they turn implementation expectations into explicit shared r
 
 Use this distinction:
 
-- `project.md`, `proposals/`, `features/` (feature requirements documents), and `deliverable specifications` describe what the software should do and why
+- `project.md`, proposals or proposal pointers, feature requirements documents, architecture documents, and deliverable specifications describe what the software should do and why
 - `standards/` describes how the software should be built
 
 The key contract is:
@@ -963,9 +943,12 @@ At minimum, a repo-level `AGENTS.md` must tell agents:
 - that the standards index is the discovery surface for selective context loading
 - where `<DOCS_ROOT>/features/index.yaml` lives when feature context matters
 - where `<DOCS_ROOT>/architecture/index.yaml` lives when architecture context matters
+- whether proposals are Git-native under `<DOCS_ROOT>/proposals/` or externally hosted with Git-tracked pointers
 - whether `<DOCS_ROOT>/specifications/` is local/untracked, committed, or backed by Zazz Board in that repo
+- where mutable execution records live, usually `<DOCS_ROOT>/execution/` or a declared external surface
 - what work-tracking system the repo uses for deliverables, tickets, and PR context
 - the repo's worktree / branch policy
+- the default agent execution discipline document and any repo-specific overrides
 
 The standards index is mandatory. The features index is expected in repos that use feature requirements documents. The architecture index is expected in repos that maintain project-level or feature-level architecture documents.
 
@@ -1076,27 +1059,17 @@ They work together with standards:
 - acceptance criteria and TDD prove the deliverable does the right thing
 - standards help ensure it is built the right way
 
-### Default methodology position: durable docs in Git, execution artifacts declared per repo
+### Default methodology position: durable docs in Git, execution contracts and records declared per repo
 
-In practice, deliverable specification docs are transient execution artifacts, not long-lived product-definition docs. They change frequently, can be highly agent-specific, and tend to clutter the shared repository when every in-flight deliverable specification is committed.
+In practice, deliverable specification docs are execution contracts, not long-lived product-definition docs. They can change frequently while a deliverable is active and may be local, committed, mirrored, or external depending on repo policy.
 
-So the methodology default is:
+The storage rules are defined in [Opinionated Docs Layout](#opinionated-docs-layout). The important distinction is:
 
-- keep `project.md`, `standards/`, `proposals/`, `features/`, and `architecture/` tracked in Git or another Git-based service
-- declare in `AGENTS.md` whether `<DOCS_ROOT>/specifications/` is ignored locally, committed, externally mirrored, or absent on disk in that repo
-- use local deliverable specification files as execution working copies when they are helpful
-- use an external system such as Zazz Board only when that repo chooses to integrate one
+- `project.md`, proposals or proposal pointers, feature requirements documents, architecture documents, and standards are shared durable knowledge
+- deliverable specifications are bounded execution contracts
+- run logs, handoff notes, QA findings, and recovery notes are mutable execution records
 
-Examples of acceptable mechanisms:
-
-- `.git/info/exclude`
-- an equivalent worktree-local exclude file in a shared-bare/worktree setup
-- committed deliverable specification docs under `<DOCS_ROOT>/specifications/`
-- an external system such as Zazz Board for deliverable metadata, files, diagrams, task state, or related execution assets
-
-The important idea is not the exact Git plumbing. The important idea is that `project.md`, proposals, feature requirements documents, architecture documents, and standards are **shared durable knowledge**, while deliverable specifications are usually **transient execution docs**.
-
-Teams may choose local ignored specifications, committed specifications, external mirroring, or external-only specification storage in an application such as Zazz Board. The methodology allows these modes, but the repo must declare the policy clearly so agents do not guess.
+Each repo must declare the policy clearly in `AGENTS.md` so agents do not guess from repo shape alone.
 
 ### Required: isolated worktree execution
 
@@ -1116,21 +1089,7 @@ A deliverable and a deliverable specification stay one-to-one: each deliverable 
 
 The worktree relationship is different. A worktree usually contains one active deliverable, but a worktree may contain multiple related deliverables when the team intentionally uses a stacked-branch workflow inside that worktree. In that case, each deliverable still has its own branch and its own deliverable specification, but the branches are managed as one ordered stack from the same worktree lane.
 
-A worktree is one working directory with one index and one checked-out branch at a time. In a stack, the checked-out branch changes as the builder moves through the stack, while the lane's filesystem, dependency installs, scratch output, IDE state, and build cache stay in one place.
-
 If the team wants multiple versions or competing implementations, model them as separate deliverables. Competing approaches should not be treated as a stack inside one deliverable. Each alternative gets its own identity, its own execution contract as needed, and its own dedicated worktree unless the team is explicitly stacking dependent deliverables for review sequencing.
-
-Use worktree-safe branch names:
-
-- `feature/rbac` is not an acceptable Zazz branch name
-- `docs/reorg-mw1` is not an acceptable Zazz branch name
-- use `feature-rbac` or `docs-reorg-mw1` instead
-
-Branch names such as `feature/rbac` are valid Git refs, but they imply nested path segments when reused as worktree directory names. Because the required Zazz setup standardizes on sibling worktrees under one container directory, flat names are preferred:
-
-- `feature-rbac`
-- `docs-reorg-mw1`
-- `deliverable-zazz-142-role-management-ui`
 
 Worktrees also provide a clean rollback boundary for human review. If a deliverable implementation goes down the wrong path, fails review, or reveals that the contract itself needs revision, the worktree can be abandoned and the team can return to the governing docs:
 
@@ -1139,6 +1098,8 @@ Worktrees also provide a clean rollback boundary for human review. If a delivera
 - revisit the deliverable specification if the execution contract is wrong or incomplete
 
 This is one of the practical benefits of the methodology's git-native design: incorrect execution paths can be discarded cleanly without confusing the durable project history or forcing a bad implementation to keep moving forward.
+
+Detailed branch naming, worktree layout, and operational recovery guidance lives in [docs/worktree-setup.md](docs/worktree-setup.md).
 
 ### Stacked branches inside one worktree
 
@@ -1187,7 +1148,7 @@ Document flow:
 | Stage | Artifact | Purpose |
 | ----- | -------- | ------- |
 | **Project context** | `project.md` | Top-level durable description of the software project, its value proposition, and major established capabilities |
-| **Proposal** | `proposals/{name}.md` | Optional. Explore whether or how to proceed before feature definition or execution commitment; use a draft PR to collaborate while the proposal is still in progress |
+| **Proposal** | `proposals/{name}.md` or external proposal with Git-tracked pointer | Optional. Explore whether or how to proceed before feature definition or execution commitment; use a draft PR for Git-native proposals or the external document's review flow when stakeholders collaborate there |
 | **Feature definition** | `features/{feature-key}.md` | Long-lived feature requirements document: why, what is live, system-level intent, milestone roadmap, future direction, and feature-level success criteria |
 | **Architecture** | `architecture/{feature-key}-architecture.md` | Optional but recommended for long-lived features. Paired with a feature requirements document; defines system design, module placement, per-milestone diagrams, and technical open questions |
 | **Deliverable specification** | `specifications/{slug}.md` | Required execution contract for one deliverable, including explicit acceptance criteria and verification expectations |
@@ -1197,21 +1158,51 @@ Document flow:
 Execution relationship:
 
 ```mermaid
-flowchart LR
-    PJ["project.md"] --> P["Proposal\n(optional)"]
-    PJ --> FB["Agent running\nfeature-doc-builder"]
-    P --> FB
-    P --> SB["Agent running\nspec-builder"]
-    FB --> F["Feature requirements document\n(optional for bugs/chores)"]
-    F --> M["Milestones live inside the feature requirements document"]
-    M --> SM["Owner/team select one milestone to advance"]
+flowchart TB
+    subgraph Context["Durable context"]
+        PJ["project.md"]
+        P["Proposal<br/>(optional)"]
+        F["Feature requirements document<br/>(optional for bugs/chores)"]
+        A["Architecture document<br/>(optional, paired with feature)"]
+        ST["Standards"]
+    end
+
+    subgraph Planning["Milestone and deliverable shaping"]
+        M["Milestones live inside<br/>the feature requirements document"]
+        SM["Owner/team selects<br/>one milestone to advance"]
+        SB["Agent running<br/>spec-builder"]
+        DS["Deliverable specification"]
+    end
+
+    subgraph Execution["Execution and verification"]
+        W["Agent executes from<br/>the deliverable specification"]
+        QA["Agent running qa"]
+        PR["Agent running pr-builder<br/>(optional)"]
+    end
+
+    subgraph Review["Human review and promotion"]
+        G["Owner UAT + PR review"]
+        U["Merge + update durable docs"]
+    end
+
+    PJ --> P
+    PJ --> F
+    P --> F
+    F --> A
+    F --> M
+    M --> SM
     SM --> SB
-    SB --> DS["Deliverable specification"]
-    DS --> W["Agent executes\ndirectly from the deliverable specification"]
-    W --> QA["Agent running\nqa"]
-    QA --> PR["Agent running\npr-builder\n(optional)"]
-    PR --> G["Owner UAT + PR review"]
-    G --> U["Merge + update project.md /\nfeature requirements / standards"]
+    P --> SB
+    SB --> DS
+    DS --> W
+    W --> QA
+    QA --> PR
+    PR --> G
+    G --> U
+    U -. "promote durable knowledge" .-> PJ
+    U -. "when feature behavior changes" .-> F
+    U -. "when design changes" .-> A
+    U -. "when standards change" .-> ST
 ```
 
 Notes:
@@ -1323,6 +1314,7 @@ It provides:
 - live operational visibility while agents execute
 - task graphs, readiness checks, and dependency views
 - shared-state coordination such as file locking
+- centralized run logs, handoff documents, QA findings, and execution notes that can be shared across worktrees, agents, and sessions
 - explicit human control points for review, rework, and successor deliverables
 
 [zazz-board](https://github.com/zazzcode/zazz-board) dogfoods the methodology: the app is built using the same methodology docs, skills, and delivery model it provides to other repos.

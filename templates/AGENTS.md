@@ -28,6 +28,7 @@ For a real in-use example, see the reference implementation:
    - tracking system / issue-management declaration
    - shared-file coordination policy
    - worktree / branch policy
+   - agent execution discipline reference and repo-specific overrides
 5. Add only repo-specific information that an agent actually needs during execution, planning, QA, or review.
 
 ## What Must Be In a Real `AGENTS.md`
@@ -38,10 +39,12 @@ The following are required for repos using the Zazz methodology:
 - the path to `<DOCS_ROOT>/standards/index.yaml`
 - instructions to read the standards index first and load only relevant standards
 - the path to `<DOCS_ROOT>/features/index.yaml` when the repo uses feature requirements documents
+- the repo's proposal storage policy, including whether proposal bodies live under `<DOCS_ROOT>/proposals/` or in an external document system with Git-tracked pointers
 - the repo's policy for `<DOCS_ROOT>/deliverables/`
 - the repo's work-tracking system for deliverables / tickets / PR context
 - the repo's shared-file coordination policy for execution
 - worktree / branch workflow expectations
+- the default agent execution discipline document and any repo-specific overrides
 
 Without those pieces, agents will tend to either miss important project rules or overload their context with unnecessary docs.
 
@@ -93,7 +96,7 @@ Rules:
 
 - The docs root is a repo-relative path, not an absolute path.
 - Methodology docs live under `<DOCS_ROOT>/`.
-- `project.md`, `proposals/`, `features/`, and `standards/` live under that same root.
+- `project.md`, proposal files or proposal pointers, `features/`, and `standards/` live under that same root.
 - Do not hardcode `.zazz` if this repo uses another docs root.
 - If this repo resolves the docs root from an environment variable, document that rule explicitly here.
 - If the repo is a monorepo, set this to the monorepo-level docs location that governs the project as a whole.
@@ -232,62 +235,26 @@ If the repo has no special worktree policy, replace this section with the actual
 
 ## Agent Execution Discipline
 
-These rules reduce wasted work, prevent out-of-scope edits, and keep branch footprints minimal.
-They are methodology-level expectations; repos may add project-specific rules here.
+This repo follows the default Zazz execution discipline:
 
-### Verify scope before acting
+- `docs/agent-execution-discipline.md` from the vendored Zazz methodology docs, or the repo's declared equivalent path
 
-Before editing files, running linters, or applying auto-fixes, determine what the current branch actually changes.
+Repo-specific overrides:
 
-```bash
-# Show exactly which files differ between this branch and the base branch
-git diff <base-branch> --stat
-```
+- Integration branch: `<ADD_INTEGRATION_BRANCH>`
+- Execution records: `<ADD_EXECUTION_RECORD_POLICY>`
+- Stack policy: `<ADD_STACK_POLICY_OR_N/A>`
+- Known integration-branch health exceptions: `<ADD_EXCEPTIONS_OR_NONE>`
 
-- If a file does not appear in that diff, it is out of scope for edits.
-- If running the full test suite shows a failure in an unmodified file, the branch likely changed a shared dependency (fixture, import, config) that the test relies on; treat the failure as in-scope until proven otherwise.
-- For stacked branches, scope formatting, linting, and fixes to the current slice only; do not auto-fix parent-slice files unless the user explicitly asks to change that lower branch.
-
-### Integration branch invariant
-
-The methodology assumes the integration branch is always green. There are no pre-existing test failures on the base branch.
-
-- Do not dismiss a failure as "pre-existing" or "unrelated" without proving the branch did not cause it.
-- If the base branch has a known exception, document it here explicitly; otherwise assume green.
-
-### Concurrent work awareness
-
-Developers may edit files while an agent is working. This is normal.
-
-- Do not treat concurrent developer edits as corruption, agent failure, or a reason to improvise a recovery plan.
-- If a file changes unexpectedly, ask whether the developer changed it.
-- Verify assumptions before acting on them.
-
-### Command shape discipline
-
-Approval friction is real. Reusing the same command shapes across a session reduces interruptions.
-
-- Prefer a small, stable set of command wrappers.
-- Batch related work into fewer commands when possible.
-- If a command must be rerun with a slightly different target, keep the wrapper and argument order the same.
-- Do not vary wrappers casually just because a command is technically equivalent.
-
-Declare the repo's preferred command wrappers here:
+Preferred command wrappers:
 
 ```bash
 # Example:
-scripts/withenv .env just ...
-scripts/withenv .env uv run pytest ...
+<ENV_WRAPPER> <TEST_COMMAND> ...
+<ENV_WRAPPER> <LINT_COMMAND> ...
 ```
 
-### Database and environment safety
-
-Treat shared state as sensitive by default.
-
-- Never drop, recreate, truncate, or bulk-delete database state as a troubleshooting shortcut.
-- Never run destructive reset or rebuild commands because an error message is confusing.
-- If a destructive action might be needed, stop and ask the user; any command that could destroy shared state must be given to the user for manual execution.
-- Prefer logs, configuration checks, connection checks, and read-only queries before any recovery step.
+Replace the examples with the commands maintainers actually expect agents to use.
 
 ## Project-Specific Constraints
 
@@ -304,6 +271,7 @@ This is the right place for repo-specific instructions that should not live in t
 
 ## Quick Links
 
+- Agent execution discipline: `docs/agent-execution-discipline.md`
 - Standards index: `<DOCS_ROOT>/standards/index.yaml`
 - Features index: `<DOCS_ROOT>/features/index.yaml`
 - Deliverables dir: `<DOCS_ROOT>/deliverables/`
@@ -317,6 +285,7 @@ Before you commit a real repo `AGENTS.md`, verify that:
 - the worktree / branch rules are accurate
 - standards and features sections reflect the repo's actual document model
 - tracking and shared-file coordination policies are explicit and accurate
+- agent execution discipline link and repo-specific overrides are accurate
 - command examples still work
 - the file is still lean and does not duplicate whole standards documents
 - the file helps an agent discover docs instead of duplicating them

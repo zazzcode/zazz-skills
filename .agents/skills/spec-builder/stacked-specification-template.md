@@ -25,7 +25,8 @@
 **Milestone:** {{ milestone-name-or-N/A }}
 **Deliverable(s):** {{ deliverable-name-list }}
 **Specification storage:** {{ <DOCS_ROOT>/specifications/<slug>.md | Zazz Board record | external tracker record }}
-**Run log:** {{ `<DOCS_ROOT>/implementation/<lane-slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}
+**Run log:** {{ `<DOCS_ROOT>/execution/<lane-slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}
+**Execution record sharing:** {{ local ignored file | Zazz Board centralized record | external tracker record }}
 **Integration branch:** `{{ integration-branch }}` (confirmed with Owner)
 **Merge policy:** PR review required for every PR in the stack
 
@@ -226,7 +227,7 @@ Integration branch:
 {{ integration-branch }}
 
 Read the specification end to end, then read the run log or external execution record:
-{{ `<DOCS_ROOT>/implementation/<lane-slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}
+{{ `<DOCS_ROOT>/execution/<lane-slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}
 
 Use gh-stack. Keep all stack commands non-interactive. Open draft PRs first, run
 author-side automated review, address feedback, then mark ready for formal review.

@@ -1,79 +1,70 @@
 # Zazz Methodology & Skills
 
-Zazz is a **methodology** that includes a document framework, skills, and tooling. This repository is the canonical source for the methodology document and all shared skills.
-
 Zazz is an opinionated, spec-driven methodology for collaborative software delivery by builders and AI agents.
-It exists to help teams build the right software, build it correctly, build it efficiently, and keep it maintainable as the system evolves.
+It combines a document framework, reusable skills, and delivery conventions so teams can preserve product intent while agents execute bounded work safely.
 
-A deliverable specification is the methodology's core execution contract. It replaces the old specification + plan split and contains both intent and implementation guidance for one bounded increment.
-
-Use Zazz when you want more than ad hoc agent prompting.
-The methodology gives teams durable product context, bounded execution contracts, explicit verification, and isolated worktree-based execution so they can move faster without losing clarity, quality, or control.
-
-Its opinionated structure is the point.
-Zazz draws hard lines between durable product knowledge and transient execution artifacts, expects clear acceptance criteria and verification, and uses worktrees as the default isolation model so builders and AI agents can collaborate safely.
-
-The reference implementation is [zazz-board](https://github.com/zazzcode/zazz-board), but methodology and skill changes should land here first.
+This repository is the canonical source for the Zazz methodology document and shared skills.
+The reference implementation is [zazz-board](https://github.com/zazzcode/zazz-board), but methodology and skill changes should land here first before propagating outward.
 
 ## Quick Links
 
 - [Methodology overview](zazz-methodology.md)
 - [AGENTS.md example template](templates/AGENTS.md)
 - [Worktree setup guide](docs/worktree-setup.md)
+- [Agent execution discipline](docs/agent-execution-discipline.md)
 - [Worktrunk cheat sheet](docs/wt-cheat-sheet.md)
 - [GH-stack guide](docs/using-gh-stack.md)
 - [Human-in-the-loop PR review strategy](docs/human-in-loop-pr-review-strategy.md)
 - [Reference implementation: zazz-board](https://github.com/zazzcode/zazz-board)
 
-## Why Use Zazz
-
-Zazz is designed for teams that want agent-assisted delivery to be reliable, reviewable, and maintainable rather than clever-but-chaotic.
+## Why Zazz
 
 - Keep long-lived product knowledge in durable docs instead of letting it disappear into chats, tickets, or transient execution notes.
-- Break work into bounded deliverables with explicit acceptance criteria so implementation and QA can converge on a clear contract.
+- Break work into bounded deliverables with explicit acceptance criteria and verification evidence.
 - Give agents enough approved context to operate with meaningful autonomy while preserving human approval, review, and merge gates.
 - Use worktrees as the default execution boundary so active efforts stay isolated, recoverable, and easier to coordinate.
 - Preserve the "why" behind the system while still moving quickly on the "what are we building right now?" question.
 
-## Methodology Position
+## Core Positions
 
-Zazz is intentionally opinionated about why different artifacts exist and where they belong.
+Zazz is intentionally opinionated about artifact boundaries and execution workflow:
 
-- Durable, continuously maintained documents such as `project.md`, proposals, feature requirements documents, and standards belong in Git or another Git-based service.
-- Methodology docs live under the repo's resolved docs root, commonly `docs/` or `.zazz/`, as declared by repo policy in `AGENTS.md` and optionally resolved through an environment variable when that repo chooses.
-- Feature requirements documents live under `<DOCS_ROOT>/features/`.
-- Architecture documents live under `<DOCS_ROOT>/architecture/` and may be project-level or feature-level.
-- Deliverable specifications live under `<DOCS_ROOT>/specifications/` when they are committed to the repo. Because that directory already names the artifact type, filenames do not need a `SPEC` suffix.
-- Deliverable specifications may also be stored in Zazz Board or another explicitly declared tracking system when they are not committed in Git.
+- Durable product knowledge belongs in Git or another Git-based review system.
+- Deliverable specifications are the core execution contracts. They replace the old specification + plan split and contain intent, acceptance criteria, implementation guidance, test plan, halt conditions, and the agent implementation prompt.
+- Mutable execution records, such as run logs and handoff notes, live under `<DOCS_ROOT>/execution/` or in a declared external system.
 - Zazz Board is a valid integration pattern, not a methodology requirement.
-- Worktrees are a required part of the methodology because they provide the isolation, recoverability, and execution boundaries the methodology depends on.
-- The normal operating rule is one active deliverable per worktree.
-- The supported exception is a GH-stack lane: one worktree can contain multiple stacked branches, and therefore one or more deliverables, when ordered PRs make the work easier to review.
+- Worktrees are required because they provide the isolation, recoverability, and execution boundaries the methodology depends on.
+- The normal operating rule is one active deliverable per worktree. The supported exception is a GH-stack lane, where one worktree can contain multiple stacked branches when ordered PRs make review easier.
 - Worktrunk is encouraged when a team wants a friendlier workflow on top of `git worktree`, but native Git remains the base capability.
 - PRs are draft-first by default. Agents use `pr-builder` to package draft PRs, author-side automated review runs before formal review, and the Deliverable Owner controls the transition from draft to ready for review.
 
 ## Document Model
 
-The document framework is intentionally project-first:
+The document framework is project-first. Each repo declares its docs root in `AGENTS.md`,
+commonly `docs/` or `.zazz/`. Repos that resolve the docs root from an environment
+variable should use `ZAZZ_DOCS_ROOT`, and its value must be a repo-relative path such as
+`docs`, `.zazz`, or `packages/platform-docs`.
 
 ```text
 <DOCS_ROOT>/
 ├── project.md
+├── standards/
 ├── proposals/
 ├── features/
 ├── architecture/
 ├── specifications/
-└── standards/
+└── execution/
 ```
 
 Each document type exists to solve a different coordination problem:
 
 - `project.md` provides top-level durable orientation for the software project.
-- proposals under `<DOCS_ROOT>/proposals/` provide a durable place to work through uncertainty before committing to a direction.
-- feature requirements documents under `<DOCS_ROOT>/features/` provide a long-lived home for capability intent and milestone evolution.
-- architecture documents under `<DOCS_ROOT>/architecture/` describe project-level or feature-level technical shape.
-- deliverable specifications under `<DOCS_ROOT>/specifications/`, Zazz Board, or another declared tracker provide bounded execution contracts for one increment of work.
-- standards under `<DOCS_ROOT>/standards/` define how the software should be built.
+- `standards/` defines how the software should be built.
+- `proposals/` provides a durable place to work through uncertainty before committing to a direction.
+- `features/` contains long-lived feature requirements documents for capability intent and milestone evolution.
+- `architecture/` contains project-level or feature-level technical design.
+- `specifications/` contains local deliverable specifications when the repo keeps them on disk.
+- `execution/` contains local mutable execution records such as run logs, handoff notes, QA findings, and recovery notes.
 
 For the full methodology model, read [zazz-methodology.md](zazz-methodology.md).
 
@@ -116,14 +107,58 @@ zazz-methodology.md    primary methodology philosophy and document model
 | `zazz-board-api` | Companion utility skill for Zazz Board integration. |
 | `jira-api` | Draft companion utility for Jira-backed repos. |
 
+## Setup and Prerequisites
+
+Before adopting Zazz in a repo, make sure the team has the supporting tools and repo
+entry points the methodology expects:
+
+- **Git**: required. Zazz uses branches, worktrees, commits, diffs, and PRs as core collaboration primitives. Install it through the normal path for your platform, such as Apple Command Line Tools on macOS, a Linux package manager, Git for Windows, or the downloads linked from [git-scm.com](https://git-scm.com/downloads).
+- **Git hosting and PR tooling**: required for normal team use. GitHub is common, but the methodology also works with GitLab, Bitbucket, Forgejo, or another Git-based review system.
+- **GitHub CLI (`gh`)**: recommended when the repo uses GitHub, draft PR automation, or `gh-stack`. Install from [cli.github.com](https://cli.github.com/) and run `gh auth login` before expecting agents to create or inspect PRs.
+- **Worktrunk**: recommended for routine worktree management and required by the bundled `worktree` skill. Native `git worktree` remains the base capability. Install from [worktrunk.dev](https://worktrunk.dev/).
+- **`gh-stack`**: optional, but recommended when the team wants stacked PR lanes. Install the GitHub CLI extension from [github/gh-stack](https://github.com/github/gh-stack); command reference lives at [github.github.com/gh-stack](https://github.github.com/gh-stack/reference/cli/).
+- **Agent runtime**: required. Use Codex, Claude, Cursor, Warp, or another agent environment that can read repo instructions and load skills.
+- **Project runtime/toolchain**: required for real execution. Install the repo's normal language runtimes, package managers, test tools, database services, and local environment helpers before asking agents to implement or verify work.
+- **Node.js**: required when using the bundled `zazz-board-api` CLI helper, because `zazzctl` is a Node-based script.
+- **External tracker or service**: optional. Zazz Board can centralize specifications, run logs, handoff notes, QA findings, file locks, and task state, but repos may also operate entirely from Git plus `<DOCS_ROOT>/execution/`.
+
+Common setup commands:
+
+```bash
+gh auth login
+gh extension install github/gh-stack
+```
+
+Recommended repo-local setup:
+
+```text
+repo/
+├── AGENTS.md
+├── .agents/
+│   └── skills/
+└── <DOCS_ROOT>/
+    ├── project.md
+    ├── standards/
+    ├── features/
+    ├── architecture/
+    ├── specifications/
+    └── execution/
+```
+
+Use `.agents/skills/` as the canonical repo-local skill location when vendoring Zazz
+skills into a project. Runtime-specific files such as `CLAUDE.md`, `.claude/`, or
+`.codex/` can either point agents at `.agents/skills/` or copy/sync selected skills
+into the runtime's native skill directory.
+
 ## Getting Started
 
 If you are adopting the methodology in another repo:
 
 1. Read [zazz-methodology.md](zazz-methodology.md).
 2. Review [templates/AGENTS.md](templates/AGENTS.md) because `AGENTS.md` declares repo-specific settings such as docs root, tracking system, branch policy, and review workflow.
-3. Read [docs/worktree-setup.md](docs/worktree-setup.md) because the methodology requires the worktree operating model.
-4. Copy the skills you want from `.agents/skills/` into your agent runtime or repo.
+3. Install the supporting tools your workflow needs: Git, Worktrunk, `gh`, `gh-stack`, and any project-specific build/test tools.
+4. Read [docs/worktree-setup.md](docs/worktree-setup.md) because the methodology requires the worktree operating model.
+5. Copy or sync the skills you want from `.agents/skills/` into the repo or your agent runtime.
 
 ## Installing Skills
 
@@ -133,35 +168,26 @@ Common installation patterns:
 
 - copy them into a runtime skill directory such as `$CODEX_HOME/skills/`
 - vendor them into another repo's `.agents/skills/`
+- point runtime-specific instructions such as `CLAUDE.md`, `.claude/`, or `.codex/` at the repo's `.agents/skills/` directory when the runtime supports that pattern
 - sync this repo into downstream methodology consumers
 
 Historical naming note:
 
 - `feature-doc-builder` remains the skill name for compatibility, but the methodology's canonical artifact term is **feature requirements document**
 
-## Git and Execution Artifacts
+## Artifact Storage
 
-Zazz Board is the reference implementation, but it is optional in the methodology.
+Git remains the durable home for `project.md`, proposal markdown files or proposal
+pointers, feature requirements documents, architecture documents, standards,
+methodology docs, and skill source.
 
-Git remains the durable home for:
+Repos choose and document their execution-artifact policy in `AGENTS.md`:
 
-- `project.md`
-- proposals
-- feature requirements documents
-- standards
-- methodology and skill source
-
-Deliverable specifications live under `<DOCS_ROOT>/specifications/` when they are kept on disk, and a repo may choose to:
-
-- commit them intentionally for a Git-native audit trail
-- store or track them in an external system such as Zazz Board
-- use a combination of committed docs and external records when repo policy defines that explicitly
-
-External systems such as Zazz Board may hold or reference:
-
-- deliverable specifications
-- execution diagrams and related working assets
-- task and execution state
+- Proposals live under `<DOCS_ROOT>/proposals/` by default, but may live in Google Docs, SharePoint, or another shared document system when rich images, screenshots, diagrams, comments, or non-engineering stakeholder review make that the better collaboration surface. In that case, keep a stable Git-tracked pointer under `<DOCS_ROOT>/proposals/`.
+- Deliverable specifications live under `<DOCS_ROOT>/specifications/` when kept on disk. They may be committed, ignored locally, mirrored externally, or stored only in a declared tracker.
+- Mutable execution records live under `<DOCS_ROOT>/execution/` when kept on disk. This directory usually stays out of Git and holds run logs, handoff notes, QA findings, recovery notes, and related active-work records.
+- Teams that do not use Zazz Board can rely exclusively on `<DOCS_ROOT>/execution/` for local execution records.
+- Teams that use Zazz Board may use it as the centralized execution-record service so multiple agents can share specifications, run logs, handoff documents, QA findings, task state, and related information across worktrees and sessions.
 
 ## Propagation
 
@@ -176,6 +202,12 @@ rsync -avc --delete /path/to/zazz-skills/docs/ /path/to/consumer-repo/docs/
 ```
 
 ## Changelog
+
+### 2026-05-24 — Execution artifact location refresh
+
+Renamed the default local mutable execution artifact directory from `<DOCS_ROOT>/implementation/` to
+`<DOCS_ROOT>/execution/`, and clarified that Zazz Board can serve as the centralized execution-record surface for
+run logs, handoff documents, QA findings, and related information shared across worktrees, agents, and sessions.
 
 ### 2026-05-23 — Methodology and skill alignment refresh
 

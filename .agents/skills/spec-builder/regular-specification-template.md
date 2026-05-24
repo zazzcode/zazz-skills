@@ -35,7 +35,7 @@
 **Integration branch:** `{{ integration-branch }}` (e.g. `dev`, `main`, `master` — confirmed with Owner)
 **Merge policy:** PR review required — agents commit/push feature branches only
 **Drafted:** {{ YYYY-MM-DD }}
-**Shared run log:** {{ `<DOCS_ROOT>/implementation/<slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }} ({{ section-name }} section).
+**Shared run log:** {{ `<DOCS_ROOT>/execution/<slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }} ({{ section-name }} section).
 
 ---
 
@@ -336,11 +336,18 @@ Resolve these before code is written. Log each answer in the run log.
 
 This specification uses the shared run log:
 
-{{ `<DOCS_ROOT>/implementation/<slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}
+{{ `<DOCS_ROOT>/execution/<slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}
 
-When stored on disk, the run log should normally live under `<DOCS_ROOT>/implementation/`
+When stored on disk, the run log should normally live under `<DOCS_ROOT>/execution/`
 and remain untracked via repo-local or bare-repo exclude rules unless the repo explicitly
 chooses committed execution history.
+
+Repos that do not use Zazz Board may rely exclusively on `<DOCS_ROOT>/execution/` for
+run logs, handoff notes, QA findings, and related execution records.
+
+When the Owner uses Zazz Board, the run log, handoff notes, QA findings, and related
+execution information may live there instead so multiple agents can share the same
+record across worktrees and sessions.
 
 The agent appends entries; it does not rewrite prior entries.
 
@@ -375,7 +382,7 @@ You are starting fresh in the worktree at {{ absolute-worktree-path }}.
 Your task is to implement {{ deliverable-name }}.
 
 Specification: {{ specification path or external record }}
-Shared run log: {{ `<DOCS_ROOT>/implementation/<slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}
+Shared run log: {{ `<DOCS_ROOT>/execution/<slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}
 
 Read the specification end to end before doing anything else. Then read the shared run log in
 full. If this specification is part of a milestone branch, read prior specification sections and their
@@ -402,7 +409,7 @@ After your own DoD checklist is green, dispatch a fresh sub-agent:
 
   "You are verifying {{ deliverable-name }} in {{ absolute-worktree-path }}. Read the
   specification at {{ specification path or external record }} and the shared run log at
-  {{ `<DOCS_ROOT>/implementation/<slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}. Follow the
+  {{ `<DOCS_ROOT>/execution/<slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}. Follow the
   Implementation Rules. For each AC, independently verify it by running the
   cited test or command. Cross-check deviations and QA findings logged in the run log against the code.
   Verify the specification slice matches its scope using the scope command named in the specification. Do

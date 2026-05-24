@@ -68,6 +68,9 @@ manual evidence, recovery notes, or verifier output.
 
 The run log is not inherently a committed Git document. Store it according to the repo's declared policy: ignored local
 file, committed support artifact, Zazz Board note, external tracker entry, or a combination.
+Repos that do not use Zazz Board may use `<DOCS_ROOT>/execution/` as the exclusive execution-record surface.
+When Zazz Board is the declared surface, it acts as the centralized execution record for run logs, handoff notes, QA
+findings, and related information that multiple agents need across worktrees and sessions.
 
 ## Review Topologies
 
