@@ -234,9 +234,11 @@ Instead:
 - Keep reviewer focus high: what changed, why it matters, where to pay attention, and how to validate.
 - Reviewer instructions should include:
   - a checklist-style reviewer notes section rather than loose prose when the template allows it
-   - how to validate the acceptance criteria using specification guidance when available
+  - what the human reviewer should inspect, test, or confirm
+  - how to validate the acceptance criteria using specification guidance when available
   - which automated tests were run and what they cover
   - whether the relevant automated tests passed
+  - which standards, guidelines, or repo-specific review rules were already checked by agents or automation
   - what still needs manual, functional, or UAT confirmation
   - additional verification guidance only when the change introduces review-relevant concerns beyond the baseline acceptance and UAT checks
   - what scope boundary the reviewer should confirm
@@ -278,11 +280,15 @@ Include:
 5. Any commands, feature flags, test data, or environment notes required
 6. Automated tests that were run and the coverage they provide
 7. Whether the relevant automated tests passed, failed, or remain incomplete
-8. Manual validation still expected from the reviewer, especially for user-facing behavior, regressions, or high-risk flows
-9. Some level of user acceptance testing when the change affects user-facing behavior or requires human confirmation beyond automated coverage
-10. Additional domain-specific verification only when it materially helps review for this PR, such as API checks, data inspection, or operational validation
-11. A short review-focus checklist that asks the reviewer to confirm:
+8. A prompt for the reviewer to validate test quality: whether the tests prove the right
+   behavior, cover realistic edge cases, and avoid low-value coverage padding
+9. Standards, guidelines, or repo-specific review rules already checked by agents or automation
+10. Manual validation still expected from the reviewer, especially for user-facing behavior, regressions, or high-risk flows
+11. Some level of user acceptance testing when the change affects user-facing behavior or requires human confirmation beyond automated coverage
+12. Additional domain-specific verification only when it materially helps review for this PR, such as API checks, data inspection, or operational validation
+13. A short review-focus checklist that asks the reviewer to confirm:
    - the implementation satisfies the linked deliverable, specification, or ticket
+   - the tests meaningfully prove the behavior rather than only passing
    - the code stays within the intended scope
    - the touched areas look reasonable from a code-quality and maintainability standpoint
 

@@ -78,6 +78,8 @@ The skill should produce:
 - a reviewer-notes checklist that a human can quickly work through in the PR
 - reviewer instructions for validating acceptance criteria, grounded in the specification or tracker record when available
 - explicit automated test confirmation so reviewers know what was already proven and whether the relevant suites passed
+- a prompt for reviewers to judge whether the tests are meaningful, not just passing
+- a concise list of standards, guidelines, or repo-specific review rules already checked by agents or automation
 - manual testing and UAT guidance for what still needs human confirmation
 - additional domain-specific verification steps only when they materially help the reviewer validate the change
 - a short reminder that reviewers should confirm scope and do a cursory code-quality inspection

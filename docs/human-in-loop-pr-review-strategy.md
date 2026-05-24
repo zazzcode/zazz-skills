@@ -6,47 +6,46 @@ Agentic development moves the bottleneck from code production to review. An agen
 produce a plausible 100-file pull request faster than a human can understand whether the
 change is correct, safe, maintainable, and worth merging.
 
-This strategy was not developed in isolation. It incorporates patterns from public
-agentic-development and generated-code review guidance. Warp Terminal is the strongest
-process analogue: it separates specification, automated review, human approval, and
-change-category routing. Additional public sources inform the supporting guardrails for
-AI-assisted review, generated-code accountability, maintainer protection, objective
-checks, and evidence requirements.
+This strategy incorporates public agentic-development and generated-code review guidance.
+Warp Terminal is the strongest process analogue: specification, automated review, human
+approval, and change-category routing. Other sources inform guardrails for AI-assisted
+review, generated-code accountability, maintainer protection, objective checks, and
+evidence.
 
-The Zazz strategy is:
+The recommended Zazz strategy is:
 
 1. Define intent before implementation.
 2. Package every PR with evidence and reviewer guidance.
-3. Use agents to grade PRs against the governing contract and repo standards.
+3. Use agents to grade PRs against the implementation contract and repo standards.
 4. Decompose broad agent output before formal human review.
 5. Route review depth by change category, blast radius, and risk.
 6. Preserve human approval and merge authority.
 
-Humans remain the gatekeepers. Agents make that possible by preparing the work, checking
-it against standards, surfacing risk, and reducing the amount of cold diff archaeology a
-human reviewer must perform.
+Humans remain the gatekeepers. Agents prepare the work, check standards, surface risk,
+and reduce cold diff archaeology.
 
-Core rules:
+Recommended guardrails:
 
 - No formal human review without clear intent, evidence, and reviewer guidance.
 - `pr-builder` packages PR context; `pr-review` grades the PR against the governing
   specification, tracker contract, evidence, and repo standards.
 - Bugs and simple tasks can take a fast path when the tracker item is a sufficient
-  intent contract.
+  implementation contract.
 - New features and broad deliverables require the specification itself to receive human
   review before implementation starts.
-- Broad agent-generated diffs must pass a decomposition gate before review.
+- The approved specification should define the initial review shape: one PR, multiple
+  deliverables, or a bounded stack of PRs.
+- Broad agent-generated diffs should pass a decomposition gate before review.
 - A stack is useful when it creates coherent review units. It is not useful when it turns
   one unreviewable PR into dozens of tiny PRs.
 - A clean agent review means "ready for human attention," not "ready to merge."
-- Humans approve, request changes, reject, merge, and own final product risk.
+- Humans approve, reject, merge, and own final product risk.
 
 ## The Core Problem
 
-Traditional review guidance assumes humans are the limiting factor on both sides: humans
-write code, humans review code, and PR size is constrained by human effort. Agentic
-development breaks that balance. Generating code is cheap; building justified confidence
-is still expensive.
+Traditional review guidance assumes humans constrain both code production and review.
+Agentic development breaks that balance: generating code is cheap; building justified
+confidence is still expensive.
 
 The failure modes are predictable:
 
@@ -59,17 +58,24 @@ The failure modes are predictable:
   implementation diff.
 - Human reviewers become the cleanup crew for unshaped agent throughput.
 
-The strategy is not "make every PR tiny." The strategy is to make every review unit
-honest: a human should be able to understand the intent, inspect the important parts of
-the diff, trust the evidence, and make a real approval decision.
+The strategy is not "make every PR tiny." It is to make every review unit honest: a human
+can understand the intent, inspect the important diff, trust the evidence, and make a
+real approval decision.
+
+AI is part of the review process. With concrete standards, specifications, and evidence
+requirements, review agents handle detailed checks: standards conformance, routine code
+quality, test relevance, generated-artifact consistency, and review shape. Humans focus
+on the gate: spec alignment, evidence credibility, functional behavior, and merge
+judgment.
 
 ## Review Inputs
 
 Every review needs three inputs.
 
-### Intent Contract
+### Implementation Contract
 
-The intent contract is the source of truth for what the PR is trying to do.
+The implementation contract defines what the PR is expected to do and how the agent
+should approach the work.
 
 Use:
 
@@ -85,13 +91,24 @@ implementation, broad refactor, data model change, architecture change, or cross
 redesign, stop and route the work through feature, architecture, or deliverable
 specification before implementation continues.
 
+For feature and deliverable work, the specification is more than scope. It should usually
+include implementation strategy, acceptance criteria, test expectations, and agent
+execution guidance. Its milestones, architecture notes, migration steps, rollout plan,
+test plan, execution sequence, and risk boundaries should define the review shape before
+work starts:
+
+- small enough for one PR
+- too large and should be split into multiple deliverables
+- one deliverable that should be implemented as a bounded stack of PRs
+
+Decomposition is a reviewed design decision, not cleanup after an oversized agent diff.
+
 ### Repo Standards
 
 Repo-specific review policy belongs under `<DOCS_ROOT>/standards/`, indexed by
 `<DOCS_ROOT>/standards/index.yaml`.
 
-Standards should be discoverable by path, language, service, domain, or activity. Common
-tags include:
+Standards should be discoverable by path, language, service, domain, or activity:
 
 - `frontend`
 - `browser-client`
@@ -106,8 +123,7 @@ tags include:
 - `generated`
 - `testing`
 
-The quality of agent review depends on the quality of the standards. A standard such as
-"write good tests" gives an agent nothing concrete to grade. Useful standards name:
+Agent review is only as concrete as the standards it can load. Useful standards name:
 
 - expected implementation patterns
 - forbidden shortcuts
@@ -118,8 +134,7 @@ The quality of agent review depends on the quality of the standards. A standard 
 - generated-file and mechanical-change rules
 - test quality expectations
 
-Standards should capture the kinds of project-specific expectations a principal engineer
-or senior engineer would otherwise repeat in PR comments. Examples:
+Standards should capture project-specific senior-review expectations:
 
 - which API return codes to use for validation failures, missing resources, auth failures,
   conflicts, rate limits, and unexpected errors
@@ -134,8 +149,6 @@ or senior engineer would otherwise repeat in PR comments. Examples:
 
 ### Evidence
 
-Evidence explains what was proven and what still needs human judgment.
-
 Evidence can include:
 
 - test commands and results
@@ -148,22 +161,23 @@ Evidence can include:
 - rollback or monitoring notes
 - explicit explanation for missing automated coverage
 
-Evidence must match the risk. A screenshot may support a UI claim; it does not prove API
+Evidence should match the risk. A screenshot may support a UI claim; it does not prove API
 contract compatibility. A unit test may prove a helper; it does not prove a workflow.
 
 ## Agent-Assisted Review
 
-AI review is required reviewer-assist infrastructure for agentic development. It is not a
-replacement for human approval.
+AI-assisted review is required infrastructure for this strategy, not a replacement for
+human approval. Without agent review, human reviewers remain responsible for manually
+absorbing agent-generated volume, which is the bottleneck this strategy is meant to
+solve.
 
-During draft PR cleanup, the review agent should catch the issues a senior reviewer would
-otherwise spend time repeating: wrong API status code, inconsistent error shape,
-incorrect database access pattern, unsafe SQL construction, missing transaction handling,
-weak regression test, unnecessary abstraction, or deviation from local architecture.
-That only works when those expectations are documented as standards the agent can load.
+During draft cleanup, the review agent can catch repeated senior-review issues: wrong
+API status code, inconsistent error shape, incorrect database access, unsafe SQL, missing
+transaction handling, weak regression tests, unnecessary abstraction, or local
+architecture drift. This requires loadable standards.
 
-The `pr-review` skill should run before formal human review and may run again when a
-human reviewer wants a second pass. It should load:
+`pr-review` should normally run before formal human review and may run again on reviewer
+request. It loads:
 
 1. `AGENTS.md` to resolve the docs root and repo workflow.
 2. The governing specification, feature document, architecture document, or tracker item.
@@ -171,7 +185,7 @@ human reviewer wants a second pass. It should load:
 4. The PR evidence.
 5. Relevant standards selected from `<DOCS_ROOT>/standards/index.yaml`.
 
-The review agent should produce structured output:
+It produces:
 
 - **Detected facts**: changed files, touched APIs, migrations, generated artifacts,
   tests added, commands run, missing evidence.
@@ -185,7 +199,7 @@ The review agent should produce structured output:
 - **Human attention map**: files, concepts, and decisions that deserve the deepest human
   review.
 
-The review agent should look especially for:
+It checks especially for:
 
 - scope drift
 - unrelated edits
@@ -199,27 +213,24 @@ The review agent should look especially for:
 - hidden data, auth, security, or operational risk
 - broad diffs without a decomposition rationale
 
-The agent may recommend readiness. It must not approve, mark ready on behalf of the
-owner, merge, or override a human reviewer.
+It may recommend readiness. It must not approve, mark ready, merge, or override a human.
 
 ## Decomposition Gate
 
-The decomposition gate is the heart of the strategy. When an agent creates a broad diff,
-the first question is not "can a reviewer power through this?" The first question is
-"what review units would let humans make honest decisions?"
+The decomposition gate asks what review units let humans make honest decisions.
 
-A broad PR should remain draft until it has:
+A broad PR should normally remain draft until it has:
 
-- a governing intent contract
+- a governing implementation contract
 - an evidence map
 - an agent review report
 - a decomposition rationale
 - a reviewer guide by file group, risk area, or stack branch
 
-Use these signals to decide whether the work should stay whole, become a stack, split
-into independent PRs, or return to planning:
+Use these signals to decide whether work stays whole, becomes a stack, splits into
+independent PRs, or returns to planning:
 
-- number of concepts a reviewer must hold at once
+- number of concepts a reviewer needs to hold at once
 - number of architectural layers touched
 - whether foundation work is mixed with consumers
 - whether generated or mechanical files obscure semantic changes
@@ -260,13 +271,12 @@ Examples:
 - formatting-only or lint-only changes
 - generated snapshot updates with focused behavior tests
 
-In those cases, human review should focus on the source contract, generation command,
-integration impact, and whether any semantic changes are mixed into the mechanical diff.
+In those cases, review the source contract, generation command, integration impact, and
+whether semantic changes are mixed into the mechanical diff.
 
 ## Stacked PRs
 
-Stacked PRs are one decomposition tool. They are useful when ordered review makes the
-work easier to understand and safer to merge.
+Stacked PRs are useful when ordered review improves comprehension and merge safety.
 
 Use stacked PRs when:
 
@@ -286,8 +296,8 @@ Avoid stacked PRs when:
 - decomposition would create a swarm of tiny PRs with more coordination cost than review
   value
 
-Every PR in a stack needs human sign-off before merge. Stacking reduces context load; it
-does not remove the human gate.
+Every PR in a stack should receive human sign-off. Stacking reduces context load; it does not
+remove the human gate.
 
 For command-level stack workflow, use the `gh-stack` skill and
 [docs/using-gh-stack.md](using-gh-stack.md).
@@ -297,7 +307,7 @@ For command-level stack workflow, use the `gh-stack` skill and
 ### Simple Bugs And Tasks
 
 Use this path for narrow bugs, dependency bumps, generated refreshes, small configuration
-changes, and simple tasks where the tracker item is a sufficient intent contract.
+changes, and simple tasks where the tracker item is a sufficient implementation contract.
 
 ```mermaid
 flowchart TB
@@ -346,9 +356,9 @@ flowchart TB
 
 ### Before Draft PR
 
-The author or agent should complete:
+The author or agent should aim to complete:
 
-- implementation from the approved intent contract
+- implementation from the approved implementation contract
 - self-review of the diff
 - removal of unrelated edits
 - local or CI-equivalent checks where practical
@@ -362,6 +372,9 @@ Draft PRs are for shaping and cleanup before formal review.
 Expected automation and agent support:
 
 - `pr-builder` creates or refreshes title, body, evidence, risk, and reviewer guide.
+- The PR body includes explicit reviewer instructions: what the human should inspect,
+  what to test manually, which acceptance criteria are already covered by automated or
+  agent validation, and which standards or guidelines were checked.
 - Objective checks run early.
 - `pr-review` runs as an author-side senior-engineer hygiene pass against the governing
   contract, evidence, and repo standards.
@@ -371,12 +384,13 @@ The author should address critical and important findings before requesting revi
 
 ### Ready For Review
 
-Before requesting human review, the PR should have:
+Before requesting human review, the PR should generally have:
 
 - passing required checks or a documented failure reason
 - no unresolved critical agent findings
 - evidence section completed
 - clear reviewer guidance
+- checklist-style human verification instructions in the PR body
 - recommended review tier and rationale
 - stack map and parent assumptions when stacked
 - decomposition rationale for broad diffs
@@ -480,7 +494,7 @@ Each repo should map these categories to concrete standards, CODEOWNERS, and lab
 ## Testing And Regression Policy
 
 Testing prevents agent-generated code from becoming review theater. A PR should prove
-that the intent contract is satisfied.
+that the implementation contract is satisfied.
 
 Agent-generated tests often fail by being too busy rather than too sparse: many cases,
 low signal, and conditions that do not map to real requirements or risk. Review should
@@ -548,7 +562,8 @@ Human reviewers should focus on:
 - Does it preserve system contracts?
 - Does it follow repo standards?
 - Does it fit local architecture and ownership boundaries?
-- Are tests meaningful and edge cases realistic?
+- Do the tests prove the right behavior, or do they merely pass?
+- Are edge cases realistic and tied to requirements, defects, or risk?
 - Are failure modes and rollback clear?
 - Are there security, data, privacy, or operational risks?
 - Is the PR reviewable as submitted?
@@ -566,34 +581,36 @@ Humans should not spend review time on:
 
 ## Metrics
 
-Track these per team and per service:
+Track only measures that help tune the process:
 
-- PRs opened per week by workflow type
-- median and 75th percentile review turnaround by risk tier
-- percentage of PRs converted into stacks during draft review
-- percentage of broad PRs returned to planning or decomposition
-- time to first review
-- time from review requested to merge
-- number of human review rounds
-- number of agent findings fixed before human review
-- number of risk-tier escalations and overrides
-- post-merge defects by PR size and risk tier
-- revert rate
-- percentage of PRs with complete evidence
-- percentage of bug fixes with regression tests
-- percentage of `pr-review` findings later judged false positive or missed risk
+- **Review wait time**: how long PRs sit after review is requested.
+- **Review completion time**: how long PRs take from review request to merge or close.
+- **Review rounds**: how often PRs need another human pass before approval.
+- **Draft cleanup value**: how many meaningful `pr-review` findings are fixed before
+  human review starts.
+- **Large PR handling**: how often broad PRs are split, stacked, approved as large
+  exceptions, or returned to planning.
+- **Evidence readiness**: how often PRs reach review with clear tests, screenshots,
+  commands, or documented evidence gaps.
+- **Bug-fix protection**: how often bug fixes include a regression test or documented
+  exception.
+- **Escalations**: how often the proposed review tier changes after agent or human
+  review.
+- **Post-merge problems**: defects, incidents, or reverts connected to reviewed PRs.
+- **Agent review quality**: recurring false positives, missed risks, or standards gaps
+  found in `pr-review` output.
 
-Do not set a formal first-response SLA before the pilot. Measure first, then set
-realistic targets for standard and critical PRs.
+Do not start with hard service-level targets. First collect enough examples to see where
+review actually slows down, where agents help, and where the standards need improvement.
 
-The goal is not simply faster merges. The goal is fewer overloaded reviews, fewer risky
-rubber-stamps, and better signal for where human attention is needed.
+The goal is not reporting for its own sake. The goal is fewer overloaded reviews, fewer
+risky rubber-stamps, and better signal for where human attention is needed.
 
 ## Rollout Plan
 
 ### Phase 1: Baseline PR Shape
 
-- Update PR templates with intent contract, risk tier, evidence, provenance/trust notes,
+- Update PR templates with implementation contract, risk tier, evidence, provenance/trust notes,
   and reviewer guide fields.
 - Define initial critical-path categories in standards, CODEOWNERS, or both.
 - Start measuring review time, review rounds, draft-stage findings, stack usage, and bug
