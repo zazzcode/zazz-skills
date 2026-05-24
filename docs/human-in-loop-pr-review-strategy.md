@@ -6,15 +6,9 @@ Agentic development moves the bottleneck from code production to review. An agen
 produce a plausible 100-file pull request faster than a human can understand whether the
 change is correct, safe, maintainable, and worth merging.
 
-This strategy incorporates public agentic-development and generated-code review guidance.
-Warp Terminal is the strongest process analogue: specification, automated review, human
-approval, and change-category routing. Other sources inform guardrails for AI-assisted
-review, generated-code accountability, maintainer protection, objective checks, and
-evidence.
-
 The recommended Zazz strategy is:
 
-1. Define intent, decomposition, and review shape before implementation.
+1. Require a documented implementation contract before implementation.
 2. Package every PR with evidence and reviewer guidance.
 3. Use agents to grade PRs against the implementation contract and repo standards.
 4. Verify that broad agent output follows the approved decomposition before formal human
@@ -25,23 +19,24 @@ The recommended Zazz strategy is:
 Humans remain the gatekeepers. Agents prepare the work, check standards, surface risk,
 and reduce cold diff archaeology.
 
-Recommended guardrails:
+Core guardrails:
 
-- No formal human review without clear intent, evidence, and reviewer guidance.
+- No implementation should begin from an ad hoc request alone. The work should start from
+  a documented implementation contract: a merged approved specification, approved feature
+  or architecture document, detailed bug report, or defined tracker task.
+- No formal human review without a clear implementation contract, evidence, and reviewer
+  guidance.
 - `pr-builder` packages PR context; `pr-review` grades the PR against the governing
-  specification, tracker contract, evidence, and repo standards.
-- Bugs and simple tasks can take a fast path when the tracker item is a sufficient
-  implementation contract.
-- New features and broad deliverables require the specification itself to receive human
-  review before implementation starts.
-- The approved specification must define the review shape before work starts: one PR,
-  multiple deliverables, or a bounded stack of PRs.
+  implementation contract, evidence, and repo standards.
+- Bugs and simple tasks can take a fast path when the tracking-system record is a
+  sufficient implementation contract.
+- New features and broad deliverables require the specification itself to be reviewed,
+  approved, merged, and used to define the review shape before implementation starts.
 - Broad agent-generated diffs should pass a decomposition gate that verifies the
   implementation followed the approved review shape. If no review shape was approved, the
-  work returns to specification before formal review.
+  work returns to specification update and approval before formal review.
 - A stack is useful when it creates coherent review units. It is not useful when it turns
   one unreviewable PR into dozens of tiny PRs.
-- A clean agent review means "ready for human attention," not "ready to merge."
 - Humans approve, reject, merge, and own final product risk.
 
 ## The Core Problem
@@ -56,20 +51,18 @@ The failure modes are predictable:
 - Generated or mechanical files hide semantic behavior changes.
 - Agent-generated tests are numerous but shallow, mock-heavy, or tied to private
   implementation details.
-- Reviewers cannot tell whether the PR follows the approved intent.
+- Reviewers cannot tell whether the PR follows the approved implementation contract.
 - Architecture, data, security, migration, or rollback risk is buried inside a broad
   implementation diff.
 - Human reviewers become the cleanup crew for unshaped agent throughput.
 
 The strategy is not "make every PR tiny." It is to make every review unit honest: a human
-can understand the intent, inspect the important diff, trust the evidence, and make a
-real approval decision.
+can understand the documented contract, inspect the important diff, trust the evidence,
+and make a real approval decision.
 
-AI is part of the review process. With concrete standards, specifications, and evidence
-requirements, review agents handle detailed checks: standards conformance, routine code
-quality, test relevance, generated-artifact consistency, and review shape. Humans focus
-on the gate: spec alignment, evidence credibility, functional behavior, and merge
-judgment.
+AI review is part of the process, not approval authority. With concrete standards,
+contracts, and evidence requirements, review agents handle detailed checks while humans
+focus on spec alignment, evidence credibility, functional behavior, and merge judgment.
 
 ## Review Inputs
 
@@ -82,12 +75,19 @@ should approach the work.
 
 Use:
 
-- an approved deliverable specification for feature, architecture, refactor, or
-  multi-layer work
+- a merged, approved deliverable specification for feature, architecture, refactor, or
+  multi-layer work. In normal Zazz workflow, approval means the specification PR was
+  reviewed, approved, and merged into the codebase before implementation begins.
 - an approved feature or architecture document when the PR implements a slice of a larger
   direction
-- a tracker item for narrow bugs or simple tasks, when it states the broken behavior or
-  requested change and the pass criteria
+- a detailed bug report in a tracking system for narrow bugs, when it states the broken
+  behavior, expected behavior, reproduction or diagnostic evidence, and pass criteria
+- a defined task in a tracking system for simple tasks, when it states the requested
+  change, constraints, pass criteria, and validation evidence
+
+The contract can be lightweight, but it cannot be absent. "Build the thing from this
+prompt" is not an implementation contract unless the prompt has first been captured as an
+approved tracking-system record or specification with enough detail to review against.
 
 If a narrow bug turns into a feature defect, missed feature behavior, incomplete feature
 implementation, broad refactor, data model change, architecture change, or cross-service
@@ -104,11 +104,14 @@ work starts:
 - too large and should be split into multiple deliverables
 - one deliverable that should be implemented as a bounded stack of PRs
 
-For this class of work, decomposition and stacking are specification-time decisions. A
-human-approved specification should name each deliverable or stack branch, its purpose,
+For this class of work, decomposition and stacking are specification-time decisions. The
+merged approved specification should name each deliverable or stack branch, its purpose,
 its acceptance criteria, its evidence expectations, and any ordering assumptions. The
-implementation may discover that the approved plan is wrong, but that is a signal to
-return to specification review rather than silently reshaping the work after coding has
+implementation may discover small clarifications, corrected details, or validation notes.
+Those can be captured as a specification changelog in the implementation PR when they do
+not change scope, acceptance criteria, risk, or review shape. If implementation reveals
+that the approved plan is materially wrong, the correct outcome is to update and
+re-approve the specification rather than silently reshaping the work after coding has
 started.
 
 ### Repo Standards
@@ -154,6 +157,8 @@ Standards should capture project-specific senior-review expectations:
 - browser-client state, accessibility, destructive-action, and loading/error handling
   patterns
 - dependency, generated-code, and feature-flag rules
+- recommended subject-matter experts, module owners, or designated engineers for areas
+  where specialized review is useful
 
 ### Evidence
 
@@ -172,23 +177,30 @@ Evidence can include:
 Evidence should match the risk. A screenshot may support a UI claim; it does not prove API
 contract compatibility. A unit test may prove a helper; it does not prove a workflow.
 
+## Operating Model
+
+The useful lesson from Warp and adjacent open-source agentic projects is the operating
+shape: explicit contract, objective checks, structured automated review, and human-owned
+approval. Zazz applies that shape without depending on any one review agent.
+
+Implementation PRs should normally open as drafts, run objective checks early, receive an
+author-side `pr-review`, and carry clear reviewer guidance before formal human review.
+Advisory labels for risk, evidence, generated artifacts, size, and review shape are useful
+inputs, but the source of truth is the approved implementation contract.
+
+Generated work is welcome only when the human submitter can explain, defend, test, and
+maintain it. A PR that is large, unclear, unverified, duplicative, or mostly agent
+busywork can be returned to draft, routed back to specification, deprioritized, or
+rejected even if it passes CI.
+
 ## Agent-Assisted Review
 
-AI-assisted review is required infrastructure for this strategy, not a replacement for
-human approval. Without agent review, human reviewers remain responsible for manually
-absorbing agent-generated volume, which is the bottleneck this strategy is meant to
-solve.
-
-During draft cleanup, the review agent can catch repeated senior-review issues: wrong
-API status code, inconsistent error shape, incorrect database access, unsafe SQL, missing
-transaction handling, weak regression tests, unnecessary abstraction, or local
-architecture drift. This requires loadable standards.
-
 `pr-review` should normally run before formal human review and may run again on reviewer
-request. It loads:
+request. It needs:
 
 1. `AGENTS.md` to resolve the docs root and repo workflow.
-2. The governing specification, feature document, architecture document, or tracker item.
+2. The governing specification, feature document, architecture document, bug report, or
+   tracker task.
 3. The PR diff.
 4. The PR evidence.
 5. Relevant standards selected from `<DOCS_ROOT>/standards/index.yaml`.
@@ -197,31 +209,31 @@ It produces:
 
 - **Detected facts**: changed files, touched APIs, migrations, generated artifacts,
   tests added, commands run, missing evidence.
-- **Contract grading**: whether the PR satisfies the specification, acceptance criteria,
-  or tracker contract.
+- **Contract grading**: whether the PR satisfies the governing implementation contract.
 - **Standards grading**: which standards apply and whether the PR follows them.
-- **Risk inference**: why the facts affect review depth.
-- **Reviewability assessment**: whether the PR can be reviewed as submitted.
-- **Recommendation**: keep whole, request evidence, request rework, escalate, or return
-  to specification when the approved review shape no longer fits.
+- **Scope check**: unrelated edits, hidden behavior changes, and whether the diff still
+  matches the approved review unit.
+- **Test quality assessment**: whether tests prove behavior, use the right layer, and
+  avoid mock-only or implementation-confirming assertions.
+- **Operational assessment**: deployment, migration, rollback, observability,
+  performance, security, and data-handling concerns.
+- **Risk and reviewability assessment**: why the facts affect review depth and whether
+  the PR can be reviewed as submitted.
+- **Recommendation**: keep whole, request evidence, request rework, escalate, request
+  specialist review, or return to specification when the approved review shape no longer
+  fits.
 - **Human attention map**: files, concepts, and decisions that deserve the deepest human
   review.
+- **Findings by severity**: critical, important, suggestion, and nit, with facts
+  separated from inference.
 
-It checks especially for:
+It should catch repeated senior-review issues before humans spend time on them: wrong API
+status codes, inconsistent error shapes, unsafe SQL, missing transaction handling, weak
+regression tests, unnecessary abstractions, duplicated local patterns, generated tests
+that only confirm the implementation, and hidden data/auth/security/operational risk.
 
-- scope drift
-- unrelated edits
-- weak or duplicate tests
-- generated tests that only confirm the implementation
-- irrelevant test cases added to inflate coverage without proving a real requirement or
-  risk
-- unnecessary abstraction
-- duplicated local patterns
-- missing edge cases
-- hidden data, auth, security, or operational risk
-- broad diffs without an approved decomposition rationale
-
-It may recommend readiness. It must not approve, mark ready, merge, or override a human.
+The agent may recommend readiness, but it must not approve, mark ready, merge, or
+override a human.
 
 ## Decomposition Gate
 
@@ -234,15 +246,11 @@ A broad PR should normally remain draft until it has:
 
 - a governing implementation contract
 - an approved decomposition, stack, or large-exception plan when the work is broad
-- an evidence map
-- an agent review report
-- a decomposition rationale that links back to the approved specification
+- evidence, an agent review report, and a decomposition rationale linked to the approved
+  specification
 - a reviewer guide by file group, risk area, or stack branch
 
-Use these signals during specification review to decide whether work stays whole, becomes
-a stack, splits into multiple deliverables, or qualifies as a large exception. Use them
-during PR review to verify that the implemented review unit still matches the approved
-plan:
+Use these signals during specification review and PR review:
 
 - number of concepts a reviewer needs to hold at once
 - number of architectural layers touched
@@ -253,7 +261,8 @@ plan:
 - whether a human reviewer can understand the change without trusting the generator
 
 If implementation reveals that the approved review shape is wrong, the correct outcome is
-return-to-specification, not an unapproved split, stack, or large exception.
+to update and re-approve the merged specification, not an unapproved split, stack, or
+large exception.
 
 ## Decomposition Strategy
 
@@ -261,24 +270,17 @@ Decompose by review concern, not by file count. For features and deliverables, t
 decomposition should be captured and approved in the specification before implementation
 starts.
 
-Recommended order:
+Prefer this order:
 
-1. **Separate mechanical from semantic work.** Formatting, generated clients, lockfiles,
-   codemods, generated migrations, and other deterministic output should not obscure
-   behavior changes.
-2. **Separate foundation from consumers.** Schema, API contracts, shared types, feature
-   flags, and service abstractions should be reviewed before broad caller or UI changes.
-3. **Separate risk boundaries.** Security, auth, permissions, migrations, billing,
-   irreversible operations, and background jobs need explicit review focus.
-4. **Separate refactors from behavior changes.** Broad refactors discovered during
-   implementation usually signal that the deliverable needs re-planning or a separate
-   preparatory PR.
-5. **Use vertical slices when independently meaningful.** A vertical slice works when it
-   has its own acceptance criteria, evidence, and product value.
-6. **Use horizontal slices when layer risk differs.** Migration, repository, service, API,
-   and UI layers often need different reviewers and evidence.
-7. **Cap stack complexity.** A stack should normally be a handful of PRs with a clear
-   order and review story. If honest decomposition creates dozens of PRs, the deliverable
+1. Separate mechanical from semantic work.
+2. Separate foundation from consumers.
+3. Separate risk boundaries such as security, auth, migrations, billing, and background
+   jobs.
+4. Separate refactors from behavior changes.
+5. Use vertical slices when they have independent acceptance criteria, evidence, and
+   product value.
+6. Use horizontal slices when layer risk differs.
+7. Cap stack complexity. If honest decomposition creates dozens of PRs, the deliverable
    is too large and should become multiple deliverables.
 
 A broad generated PR may stay whole only when the reviewer can validate it objectively.
@@ -299,23 +301,32 @@ Stacked PRs are useful when ordered review improves comprehension and merge safe
 features and deliverables, the stack should be named and approved in the specification
 before implementation starts.
 
+The normal case is one deliverable, one worktree, one branch, and one PR. Use a stack
+only when one deliverable or dependent deliverable sequence is easier to review as
+ordered PRs. In a stack, PR 1 targets the integration branch, PR 2 targets PR 1's branch,
+and so on; each PR should show only its own incremental diff.
+
 Use stacked PRs when:
 
 - one deliverable crosses natural layers such as schema, service, API, UI, and rollout
+- the single-PR diff would exceed the team's review budget
+- the approved specification can name the stack slices before implementation starts
+- the work can be split by stable boundaries such as migration, domain model, service
+  behavior, API, UI, documentation, or rollout wiring
 - foundation decisions need early human feedback
 - each branch has a clear purpose, evidence story, and review boundary
-- each branch can be reviewed without understanding all later branches in full detail
 - the team has a merge procedure for dependent PRs
+- the stack can stay shallow, usually three or four PRs
 
 Avoid stacked PRs when:
 
 - the change is already reviewable as one PR
+- the stack would exceed four or five PRs without a clear reason
 - each PR only makes sense as "part 1 of a function"
 - the stack exists only so the agent can continue coding before the design is settled
 - CI or branch protection cannot handle dependent PRs
 - the lower branch is volatile enough to invalidate upper branches repeatedly
-- decomposition would create a swarm of tiny PRs with more coordination cost than review
-  value
+- the work would be clearer as separate deliverables
 
 Every PR in a stack should receive human sign-off. Stacking reduces context load; it does not
 remove the human gate.
@@ -323,16 +334,47 @@ remove the human gate.
 For command-level stack workflow, use the `gh-stack` skill and
 [docs/using-gh-stack.md](using-gh-stack.md).
 
+### Stacked PR Process
+
+1. The Deliverable Owner approves a specification that says this deliverable will use a
+   stack.
+2. The specification defines the stack map: slice names, dependency order, acceptance
+   criteria covered by each slice, expected reviewers, evidence expectations, and merge
+   order.
+3. The builder or agent creates one isolated worktree lane for the stack, then creates one
+   branch per stack slice using flat branch names that are safe for the Zazz worktree
+   layout.
+4. The first branch targets the integration branch. Each later branch is based on the
+   previous slice's branch.
+5. Each branch gets its own draft PR. Every PR body links the specification and includes
+   the stack map, parent assumptions, local evidence, and files requiring human attention.
+6. `pr-review` runs on each PR and checks whether the slice still matches the overall
+   specification and approved stack map.
+7. Human reviewers review bottom-up for the full stack, while upper PRs can still receive
+   early review before lower PRs merge.
+8. Approved slices merge bottom-up. If an early slice changes materially, upper slices
+   are restacked and rechecked.
+9. When the stack lands, durable knowledge is promoted back into the feature document,
+   architecture document, `project.md`, or standards where applicable.
+
+Worktrunk-style worktree isolation and native `git worktree` usage provide local
+separation. GH-stack manages the dependent branches and PRs inside that isolated lane.
+
 ## Review Workflow
 
 ### Simple Bugs And Tasks
 
 Use this path for narrow bugs, dependency bumps, generated refreshes, small configuration
-changes, and simple tasks where the tracker item is a sufficient implementation contract.
+changes, and simple tasks where the tracking-system record is a sufficient implementation
+contract. A bug report is sufficient only when it states the observed behavior, expected
+behavior, reproduction or diagnostic evidence, pass criteria, evidence expectations, and
+regression-test expectation clearly enough that implementation does not require product
+or architecture judgment. A task is sufficient only when it defines the requested change,
+constraints, pass criteria, and validation evidence.
 
 ```mermaid
 flowchart TB
-    A["Bug, simple task, bump, or generated refresh"] --> B["Confirm tracker item has behavior and pass criteria"]
+    A["Bug, simple task, bump, or generated refresh"] --> B["Confirm tracking record is a sufficient contract"]
     B --> C{"Scope still narrow?"}
     C -- "No" --> S["Route to specification or architecture review"]
     C -- "Yes" --> D["Implement in isolated worktree"]
@@ -354,18 +396,21 @@ flowchart TB
 
 Use this path when the work changes product behavior, crosses system layers, carries
 architecture or data risk, or needs explicit acceptance criteria before implementation.
+The key gate is a specification PR that has been reviewed, approved, and merged into the
+codebase, not a label. Once merged, the specification defines the implementation
+contract, review shape, evidence expectations, and any recommended reviewer expertise.
 
 ```mermaid
 flowchart TB
-    A["Proposal, feature need, or scoped deliverable"] --> B["Draft specification"]
-    B --> C["Human review of scope, acceptance criteria, risks, execution guidance, and review shape"]
+    A["Proposal, feature need, or broad task"] --> B["Draft specification"]
+    B --> C["Human review of scope, criteria, risks, guidance, and review shape"]
     C --> D{"Specification approved?"}
     D -- "No" --> B
     D -- "Yes" --> E["Approved plan: one PR, multiple deliverables, or bounded stack"]
     E --> F["Implement approved review unit in isolated worktree"]
     F --> G["Open draft implementation PR"]
-    G --> H["pr-builder packages intent, evidence, risk, and reviewer guide"]
-    H --> I["pr-review grades specification, standards, evidence, reviewability, and plan conformance"]
+    G --> H["pr-builder packages contract, evidence, risk, and reviewer guide"]
+    H --> I["pr-review grades specification, standards, evidence, reviewability, and plan fit"]
     I --> J{"Matches approved review shape?"}
     J -- "No" --> B
     J -- "Yes" --> K{"Needs evidence or rework?"}
@@ -380,32 +425,32 @@ flowchart TB
 
 The plan-conformance check is not a late opportunity to invent a split or stack. It
 confirms that implementation followed the decomposition approved during specification. If
-the PR needs a different shape, the work returns to the specification step for human
-approval before formal review continues.
+the PR needs a different shape, the specification is updated and re-approved before
+formal review continues.
 
 ## Draft, Ready, And Merge Expectations
-
-### Before Draft PR
-
-The author or agent should aim to complete:
-
-- implementation from the approved implementation contract
-- self-review of the diff
-- removal of unrelated edits
-- local or CI-equivalent checks where practical
-- test evidence or explanation for missing evidence
-- implementation of the approved stack or decomposition plan if the work is broad
 
 ### Draft PR
 
 Draft PRs are for shaping and cleanup before formal review.
 
-Expected automation and agent support:
+Before requesting review, the author or agent should complete the implementation from the
+approved contract, self-review the diff, remove unrelated edits, run practical checks, and
+provide test evidence or an explanation for missing evidence.
+
+Expected automation and agent support during draft:
 
 - `pr-builder` creates or refreshes title, body, evidence, risk, and reviewer guide.
 - The PR body includes explicit reviewer instructions: what the human should inspect,
   what to test manually, which acceptance criteria are already covered by automated or
   agent validation, and which standards or guidelines were checked.
+- If the implementation updates the merged specification with non-material
+  clarifications, the PR body includes a short specification changelog that explains what
+  changed and why it does not alter scope, acceptance criteria, risk, or review shape.
+- Advisory risk labels are added from path ownership, change type, complexity, churn,
+  evidence gaps, generated artifacts, and proposed review shape.
+- Template validation checks that the implementation contract, evidence, provenance/trust
+  notes, reviewer guide, and stack map are present when required.
 - Objective checks run early.
 - `pr-review` runs as an author-side senior-engineer hygiene pass against the governing
   contract, evidence, and repo standards.
@@ -420,8 +465,9 @@ Before requesting human review, the PR should generally have:
 
 - passing required checks or a documented failure reason
 - no unresolved critical agent findings
-- evidence section completed
-- clear reviewer guidance
+- complete evidence and reviewer guidance
+- completed specification changelog when the implementation PR includes non-material spec
+  updates
 - checklist-style human verification instructions in the PR body
 - recommended review tier and rationale
 - stack map and parent assumptions when the approved plan uses a stack
@@ -464,6 +510,11 @@ Requirements:
 - evidence section complete
 - one human approval
 
+Recommended when useful:
+
+- designated engineer or module owner review for areas with specialized context, recent
+  churn, unclear ownership, or non-obvious local patterns
+
 ### Critical Tier
 
 Changes where failure can cause production incidents, data loss, security exposure,
@@ -475,6 +526,10 @@ Requirements:
 - `pr-review` first pass
 - stronger evidence and regression coverage
 - additional reviewer or domain lead when blast radius is high
+
+Critical-tier routing should prefer the most relevant subject-matter expert when one is
+known. That reviewer may be a CODEOWNER, module owner, service owner, feature owner, or
+engineer with deep context in the affected functionality.
 
 ### Large Exception
 
@@ -509,19 +564,39 @@ Assign risk from a combination of:
   back.
 - **Evidence quality**: whether tests and runtime evidence match the introduced risk.
 
+Cyclomatic complexity is useful as a review-depth signal. A small PR that changes a
+high-complexity decision function can deserve more scrutiny than a larger mechanical PR.
+The same applies to changes with many branches, permissions, retries, asynchronous
+states, or cross-service side effects.
+
+Automation can add advisory labels such as `risk/critical-path`,
+`risk/high-complexity`, `risk/high-churn`, `risk/public-contract`, `risk/migration`,
+`shape/large-exception`, `shape/stack`, `evidence/missing`, or
+`generated/mechanical`. Agents, linters, static analysis, ownership rules, or CI checks
+can apply these labels to route review and tell human reviewers what deserves attention:
+where the risk is, what evidence is missing, which files may be mechanical, and whether
+the PR needs a particular review shape. These labels inform human judgment; they are not
+merge authority.
+
 Default critical-path categories:
 
 - authentication and authorization
 - sensitive data and privacy
-- external contracts
-- persistence and migrations
-- infrastructure and deployment
+- external contracts such as APIs, schemas, SDKs, and webhooks
+- persistence, migrations, data backfills, and transaction behavior
+- infrastructure, deployment, runtime configuration, and feature flags
 - shared libraries and platform packages
-- money, compliance, or customer commitments
-- browser-client critical paths
-- service critical paths
+- money, compliance, audit, or customer commitments
+- browser-client critical paths such as auth, checkout, destructive actions, offline
+  behavior, telemetry, privacy, and accessibility-critical flows
+- service critical paths such as queues, retries, idempotency, rate limits, timeouts,
+  circuit breakers, and failure handling
 
 Each repo should map these categories to concrete standards, CODEOWNERS, and labels.
+
+That mapping is only the starting point. A reviewer or Deliverable Owner should be able
+to raise or lower the tier when the actual change is safer or riskier than the default,
+and the override should be visible so the team can tune the heuristics.
 
 ## Testing And Regression Policy
 
@@ -554,7 +629,7 @@ For API defects, prefer automated API-level regression tests over manual request
 screenshots. Manual API tools can provide evidence, but future regression prevention
 requires an automated check when practical.
 
-For bugs and simple tasks, the tracker item should include:
+For bugs and simple tasks, the tracking-system record should include:
 
 - observed behavior
 - expected behavior
@@ -575,7 +650,8 @@ reviewed, or tested the change.
 Instead, disclose information that changes review depth, evidence expectations, or trust
 boundaries:
 
-- implementation source: approved specification, issue/tracker contract, or ad hoc prompt
+- implementation source: approved specification, detailed bug report, defined tracker
+  task, or ad hoc prompt
 - whether the author reviewed the final diff and accepts responsibility
 - copied external snippets or generated code from outside the repo
 - agent-generated tests and whether their assertions were reviewed
@@ -586,6 +662,10 @@ boundaries:
 Review should be based on risk, evidence, and ownership, not on whether a human or agent
 typed the first draft.
 
+An ad hoc prompt is provenance, not authority. If a PR began from a prompt, the prompt
+must be reconciled back to an approved specification, detailed bug report, or defined
+tracker task before formal review.
+
 ## Human Reviewer Expectations
 
 Human reviewers should focus on:
@@ -594,6 +674,8 @@ Human reviewers should focus on:
 - Does it preserve system contracts?
 - Does it follow repo standards?
 - Does it fit local architecture and ownership boundaries?
+- Does this PR need a subject-matter expert or designated engineer because it touches a
+  specialized module, ownerless area, critical workflow, or recently fragile code?
 - Do the tests prove the right behavior, or do they merely pass?
 - Are edge cases realistic and tied to requirements, defects, or risk?
 - Are failure modes and rollback clear?
@@ -615,19 +697,23 @@ Humans should not spend review time on:
 
 Track only measures that help tune the process:
 
+- **Workflow type**: guided agent session, autonomous agent run, manual follow-up edit,
+  or mixed.
 - **Review wait time**: how long PRs sit after review is requested.
 - **Review completion time**: how long PRs take from review request to merge or close.
 - **Review rounds**: how often PRs need another human pass before approval.
 - **Draft cleanup value**: how many meaningful `pr-review` findings are fixed before
   human review starts.
 - **Large PR handling**: how often broad PRs follow the approved review shape, are
-  approved as large exceptions, or return to specification.
+  approved as large exceptions, or require specification update and re-approval.
 - **Evidence readiness**: how often PRs reach review with clear tests, screenshots,
   commands, or documented evidence gaps.
 - **Bug-fix protection**: how often bug fixes include a regression test or documented
   exception.
 - **Escalations**: how often the proposed review tier changes after agent or human
   review.
+- **Risk-tier overrides**: how often humans raise or lower the agent-recommended tier,
+  and why.
 - **Post-merge problems**: defects, incidents, or reverts connected to reviewed PRs.
 - **Agent review quality**: recurring false positives, missed risks, or standards gaps
   found in `pr-review` output.
@@ -640,53 +726,18 @@ risky rubber-stamps, and better signal for where human attention is needed.
 
 ## Rollout Plan
 
-### Phase 1: Baseline Specification And PR Shape
-
-- Update specification templates so features and deliverables require an approved review
-  shape: one PR, multiple deliverables, bounded stack, or large exception.
-- Update PR templates with implementation contract, risk tier, evidence, provenance/trust notes,
-  and reviewer guide fields.
-- Define initial critical-path categories in standards, CODEOWNERS, or both.
-- Start measuring review time, review rounds, draft-stage findings, stack usage, and bug
-  regression coverage.
-
-### Phase 2: Standards And Agent Review
-
-- Create or improve `<DOCS_ROOT>/standards/index.yaml`.
-- Add standards for architecture, testing, service boundaries, security, generated
-  artifacts, and risk-tier heuristics.
-- Add author-side `pr-review` for draft PRs.
-- Require no unresolved critical agent findings before human review.
-- Track false positives and false negatives from `pr-review`.
-
-### Phase 3: Decomposition Gate
-
-- Require decomposition rationale in feature and deliverable specifications before
-  implementation starts.
-- Add PR template fields for file-group review maps and stack maps.
-- Require PRs to show conformance to the approved review shape before formal review.
-- Pilot return-to-specification for PRs that are too broad, incorrectly split, or stacked
-  without prior approval.
-
-### Phase 4: Risk-Tiered Routing
-
-- Route automated, standard, critical, and large-exception PRs differently.
-- Require explicit human owners for critical paths.
-- Define minimum human review expectations after checks and `pr-review` pass.
-
-### Phase 5: Stack Pilot
-
-- Use GH-stack for dependent PR branches when the approved specification calls for a stack.
-- Require each stack branch to have its own purpose, evidence, and review boundary.
-- Add cleanup and merge procedures so stacks do not become long-lived branch chains.
-
-### Phase 6: Continuous Calibration
-
-- Review false positives and false negatives from `pr-review`.
-- Sample automated-tier approvals for quality and missed risk.
-- Adjust critical-path definitions.
-- Tune standards and review-shape guidance based on defect and review data.
-- Set realistic first-response targets only after observing pilot data.
+1. **Baseline specification and PR shape**: update spec and PR templates, add advisory
+   labels, define initial critical paths, and start measuring review flow.
+2. **Standards and agent review**: create or improve `<DOCS_ROOT>/standards/index.yaml`,
+   add author-side `pr-review`, and track false positives and missed risks.
+3. **Decomposition gate**: require approved review shape and decomposition rationale,
+   then pilot specification update and re-approval when PRs drift from the plan.
+4. **Risk-tiered routing**: route automated, standard, critical, and large-exception PRs
+   differently and define minimum human review expectations for each.
+5. **Stack pilot**: use GH-stack and isolated worktree lanes when the approved
+   specification calls for a stack.
+6. **Continuous calibration**: sample outcomes, tune standards and critical-path
+   definitions, and set first-response targets only after observing pilot data.
 
 ## Open Decisions
 
@@ -696,43 +747,41 @@ risky rubber-stamps, and better signal for where human attention is needed.
 - What is the minimum human review expectation for automated-tier PRs after checks and
   `pr-review` pass?
 - What is the normal maximum stack size before a deliverable should be split?
+- Which advisory labels should be automated first: risk, evidence, generated artifacts,
+  review shape, size, churn, or complexity?
+- Which stack merge procedure should be the default when a lower branch changes after
+  upper PRs have already received review?
 - After piloting the process, what first-response targets are realistic for standard and
   critical PRs?
 
 ## Reference Patterns
 
-These external patterns are included only where they directly shape a review rule in this
-document:
-
-Warp is the primary process analogue. The other sources provide supporting guardrails.
-
-- Warp separates specification, automated review, and human approval, and treats PRs
-  differently by category and blast radius. Zazz applies the same shape: bugs and simple
-  tasks can be fast-tracked from a strong tracker item, while new features require the
-  specification to be reviewed before implementation begins.
-- OpenHands demonstrates a triggerable automated PR review pass that posts feedback to
-  GitHub and can be customized with repo-specific review guidance. Zazz adopts that as an
-  author-side reviewer, not as approval authority.
-- Coder requires disclosure, human-owned PRs, manual verification, and evidence for
-  primarily AI-authored contributions. Zazz applies this as the minimum bar before an
-  agent-generated PR consumes human reviewer time.
-- LLVM and the Linux kernel frame generated contributions as acceptable only when the
-  human submitter understands and can defend the work. Zazz adopts their maintainer
-  protection principle: generated work may receive extra scrutiny, lower priority, or
-  rejection when it is too large, unclear, unverified, or extractive.
-- GitHub's AI-generated code review guidance reinforces practical checks: run tests and
-  static analysis first, verify intent and architecture fit, scrutinize dependencies and
-  licensing, and use AI review only as a pre-human assistive pass.
-- Trunk shows how objective code-quality checks can annotate PRs before human review.
-  Zazz treats those checks as early gates, not substitutes for product review.
+Warp is the primary process analogue: specification, automated review, human approval,
+and change-category routing. OpenHands and Trunk inform automated pre-review. Worktrunk
+and GH-stack inform isolated worktree and stacked-PR operations. Coder, LLVM, Linux,
+Hugging Face Transformers, and verl inform generated-code accountability and maintainer
+protection. Google, GitHub, and Microsoft reinforce small focused changes, clear reviewer
+context, evidence, and fast but careful review loops.
 
 Sources:
 
 - Warp interactive code review docs: https://docs.warp.dev/agent-platform/local-agents/interactive-code-review
 - Warp GitHub Actions agent docs: https://docs.warp.dev/agent-platform/cloud-agents/integrations/github-actions
+- Warp contributing guide: https://github.com/warpdotdev/warp/blob/master/CONTRIBUTING.md
 - OpenHands PR review docs: https://docs.openhands.dev/sdk/guides/github-workflows/pr-review
+- Worktrunk repository: https://github.com/max-sixty/worktrunk
+- Worktrunk skill docs: https://github.com/max-sixty/worktrunk/blob/c8aa1848a3ba023ac42232d3341b9c040abd046d/skills/worktrunk/SKILL.md
 - Coder AI Contribution Guidelines: https://coder.com/docs/about/contributing/AI_CONTRIBUTING
+- Hugging Face Transformers agent policy: https://github.com/huggingface/transformers/blob/main/.ai/AGENTS.md
+- verl agent policy: https://github.com/verl-project/verl/blob/main/AGENTS.md
 - LLVM AI Tool Use Policy: https://llvm.org/docs/AIToolPolicy.html
 - Linux Kernel Guidelines for Tool-Generated Content: https://docs.kernel.org/process/generated-content.html
 - GitHub guide to reviewing AI-generated code: https://docs.github.com/en/copilot/tutorials/review-ai-generated-code
+- Google small CL guidance: https://google.github.io/eng-practices/review/developer/small-cls.html
+- Google review speed guidance: https://google.github.io/eng-practices/review/reviewer/speed.html
+- GitHub guidance on helping reviewers: https://github.com/github/docs/blob/main/content/pull-requests/collaborating-with-pull-requests/getting-started/helping-others-review-your-changes.md
+- Microsoft pull request guidance: https://github.com/microsoft/code-with-engineering-playbook/blob/main/docs/code-reviews/pull-requests.md
+- GitHub `gh stack`: https://github.com/github/gh-stack
+- GitHub `gh stack` overview: https://github.github.com/gh-stack/introduction/overview/
 - Trunk GitHub Action: https://github.com/trunk-io/trunk-action
+- Trunk Codex integration guidance: https://github.com/trunk-io/docs/blob/main/code-quality/overview/ide-integration/openai-codex-support.md
