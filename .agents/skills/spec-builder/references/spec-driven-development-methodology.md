@@ -21,6 +21,12 @@ single-lane stack of branches
 A worktree usually has one active deliverable. The supported exception is a stacked branch lane: one worktree can hold
 multiple dependent deliverables or review branches when those branches are intentionally stacked with `gh-stack`.
 
+For features and deliverables, decomposition is part of specification approval. The
+specification defines whether the work is one PR, one milestone PR, sibling PRs, a
+bounded stacked review lane, or a large exception before implementation starts. PR-time
+review verifies conformance to that approved shape; it does not invent a new split or
+stack after coding is already underway.
+
 ## Document Locations
 
 When specifications are committed to Git, store them under:
@@ -48,6 +54,7 @@ feature-level, such as `<DOCS_ROOT>/architecture/{feature-key}-architecture.md`.
 A deliverable specification is the executable contract for one deliverable. It captures:
 
 - capability and scope
+- approved review shape and decomposition rationale
 - required reading
 - invariants
 - decisions and rationale
@@ -82,6 +89,9 @@ Use the simplest topology that matches the intended review artifact:
 - Stacked review lane: multiple dependent branches inside one worktree managed by `gh-stack`.
 
 Do not force one worktree per deliverable as a universal rule. Do keep one deliverable per specification.
+Do choose and record the review shape in the specification before implementation starts.
+If implementation reveals the shape is wrong, revise the specification with Owner
+sign-off before continuing.
 
 ## Stacked Branches
 
@@ -95,6 +105,9 @@ Stacked branches are useful when:
 - related deliverables are easier to comprehend as dependent PRs
 
 Avoid stacking when sibling PRs or one milestone PR would be clearer.
+
+Stacking is a specification-time choice. Do not retrofit an oversized implementation
+into a stack during cleanup unless the specification is revised and approved first.
 
 Do not enforce universal file-count, line-count, or branch-count caps. Instead, optimize for human reviewability:
 focused purpose, clear dependency, concrete acceptance criteria, and a PR body that explains what to review.
@@ -116,5 +129,6 @@ For stacked branches, this applies to every PR in the stack.
 
 ## Revision Rule
 
-If implementation changes the contract, revise the specification with owner sign-off. Do not hide contract changes only
-in commits, PR comments, or run-log entries.
+If implementation changes the contract or the approved review shape, revise the
+specification with owner sign-off. Do not hide contract changes only in commits, PR
+comments, or run-log entries.

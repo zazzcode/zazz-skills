@@ -14,10 +14,11 @@ evidence.
 
 The recommended Zazz strategy is:
 
-1. Define intent before implementation.
+1. Define intent, decomposition, and review shape before implementation.
 2. Package every PR with evidence and reviewer guidance.
 3. Use agents to grade PRs against the implementation contract and repo standards.
-4. Decompose broad agent output before formal human review.
+4. Verify that broad agent output follows the approved decomposition before formal human
+   review.
 5. Route review depth by change category, blast radius, and risk.
 6. Preserve human approval and merge authority.
 
@@ -33,9 +34,11 @@ Recommended guardrails:
   implementation contract.
 - New features and broad deliverables require the specification itself to receive human
   review before implementation starts.
-- The approved specification should define the initial review shape: one PR, multiple
-  deliverables, or a bounded stack of PRs.
-- Broad agent-generated diffs should pass a decomposition gate before review.
+- The approved specification must define the review shape before work starts: one PR,
+  multiple deliverables, or a bounded stack of PRs.
+- Broad agent-generated diffs should pass a decomposition gate that verifies the
+  implementation followed the approved review shape. If no review shape was approved, the
+  work returns to specification before formal review.
 - A stack is useful when it creates coherent review units. It is not useful when it turns
   one unreviewable PR into dozens of tiny PRs.
 - A clean agent review means "ready for human attention," not "ready to merge."
@@ -101,7 +104,12 @@ work starts:
 - too large and should be split into multiple deliverables
 - one deliverable that should be implemented as a bounded stack of PRs
 
-Decomposition is a reviewed design decision, not cleanup after an oversized agent diff.
+For this class of work, decomposition and stacking are specification-time decisions. A
+human-approved specification should name each deliverable or stack branch, its purpose,
+its acceptance criteria, its evidence expectations, and any ordering assumptions. The
+implementation may discover that the approved plan is wrong, but that is a signal to
+return to specification review rather than silently reshaping the work after coding has
+started.
 
 ### Repo Standards
 
@@ -194,8 +202,8 @@ It produces:
 - **Standards grading**: which standards apply and whether the PR follows them.
 - **Risk inference**: why the facts affect review depth.
 - **Reviewability assessment**: whether the PR can be reviewed as submitted.
-- **Recommendation**: keep whole, split, stack, escalate, request evidence, or return to
-  planning.
+- **Recommendation**: keep whole, request evidence, request rework, escalate, or return
+  to specification when the approved review shape no longer fits.
 - **Human attention map**: files, concepts, and decisions that deserve the deepest human
   review.
 
@@ -211,24 +219,30 @@ It checks especially for:
 - duplicated local patterns
 - missing edge cases
 - hidden data, auth, security, or operational risk
-- broad diffs without a decomposition rationale
+- broad diffs without an approved decomposition rationale
 
 It may recommend readiness. It must not approve, mark ready, merge, or override a human.
 
 ## Decomposition Gate
 
-The decomposition gate asks what review units let humans make honest decisions.
+The decomposition gate verifies that the implementation follows the review shape approved
+in the specification. For features and deliverables, it should not be the first time the
+team decides whether work stays whole, splits into multiple deliverables, or becomes a
+stack.
 
 A broad PR should normally remain draft until it has:
 
 - a governing implementation contract
+- an approved decomposition, stack, or large-exception plan when the work is broad
 - an evidence map
 - an agent review report
-- a decomposition rationale
+- a decomposition rationale that links back to the approved specification
 - a reviewer guide by file group, risk area, or stack branch
 
-Use these signals to decide whether work stays whole, becomes a stack, splits into
-independent PRs, or returns to planning:
+Use these signals during specification review to decide whether work stays whole, becomes
+a stack, splits into multiple deliverables, or qualifies as a large exception. Use them
+during PR review to verify that the implemented review unit still matches the approved
+plan:
 
 - number of concepts a reviewer needs to hold at once
 - number of architectural layers touched
@@ -238,9 +252,14 @@ independent PRs, or returns to planning:
 - whether each proposed review unit has its own acceptance criteria and evidence
 - whether a human reviewer can understand the change without trusting the generator
 
+If implementation reveals that the approved review shape is wrong, the correct outcome is
+return-to-specification, not an unapproved split, stack, or large exception.
+
 ## Decomposition Strategy
 
-Decompose by review concern, not by file count.
+Decompose by review concern, not by file count. For features and deliverables, this
+decomposition should be captured and approved in the specification before implementation
+starts.
 
 Recommended order:
 
@@ -276,7 +295,9 @@ whether semantic changes are mixed into the mechanical diff.
 
 ## Stacked PRs
 
-Stacked PRs are useful when ordered review improves comprehension and merge safety.
+Stacked PRs are useful when ordered review improves comprehension and merge safety. For
+features and deliverables, the stack should be named and approved in the specification
+before implementation starts.
 
 Use stacked PRs when:
 
@@ -318,13 +339,15 @@ flowchart TB
     D --> E["Open draft PR with evidence"]
     E --> F["pr-builder packages PR"]
     F --> G["pr-review grades contract, standards, evidence, and reviewability"]
-    G --> H{"Findings, weak evidence, or decomposition needed?"}
-    H -- "Yes" --> D
-    H -- "No" --> I["Request human review"]
-    I --> J["Human reviews risk, diff, evidence, and agent report"]
-    J --> K{"Approved?"}
-    K -- "Changes requested" --> D
-    K -- "Yes" --> L["Human-controlled merge"]
+    G --> H{"Scope expanded or decomposition needed?"}
+    H -- "Yes" --> S
+    H -- "No" --> I{"Findings or weak evidence?"}
+    I -- "Yes" --> D
+    I -- "No" --> J["Request human review"]
+    J --> K["Human reviews risk, diff, evidence, and agent report"]
+    K --> L{"Approved?"}
+    L -- "Changes requested" --> D
+    L -- "Yes" --> M["Human-controlled merge"]
 ```
 
 ### Features And Deliverables
@@ -335,22 +358,30 @@ architecture or data risk, or needs explicit acceptance criteria before implemen
 ```mermaid
 flowchart TB
     A["Proposal, feature need, or scoped deliverable"] --> B["Draft specification"]
-    B --> C["Human review of scope, acceptance criteria, risks, and execution guidance"]
+    B --> C["Human review of scope, acceptance criteria, risks, execution guidance, and review shape"]
     C --> D{"Specification approved?"}
     D -- "No" --> B
-    D -- "Yes" --> E["Implement in isolated worktree"]
-    E --> F["Open draft implementation PR"]
-    F --> G["pr-builder packages intent, evidence, risk, and reviewer guide"]
-    G --> H["pr-review grades specification, standards, evidence, and reviewability"]
-    H --> I{"Needs split, stack, evidence, or rework?"}
-    I -- "Yes" --> E
-    I -- "No" --> J["Request human review"]
-    J --> K["Human reviews behavior, design, risk, evidence, and agent report"]
-    K --> L{"Approved?"}
-    L -- "Changes requested" --> E
-    L -- "Yes" --> M["Human-controlled merge"]
-    M --> N["Promote durable knowledge to docs or standards"]
+    D -- "Yes" --> E["Approved plan: one PR, multiple deliverables, or bounded stack"]
+    E --> F["Implement approved review unit in isolated worktree"]
+    F --> G["Open draft implementation PR"]
+    G --> H["pr-builder packages intent, evidence, risk, and reviewer guide"]
+    H --> I["pr-review grades specification, standards, evidence, reviewability, and plan conformance"]
+    I --> J{"Matches approved review shape?"}
+    J -- "No" --> B
+    J -- "Yes" --> K{"Needs evidence or rework?"}
+    K -- "Yes" --> F
+    K -- "No" --> L["Request human review"]
+    L --> M["Human reviews behavior, design, risk, evidence, and agent report"]
+    M --> N{"Approved?"}
+    N -- "Changes requested" --> F
+    N -- "Yes" --> O["Human-controlled merge"]
+    O --> P["Promote durable knowledge to docs or standards"]
 ```
+
+The plan-conformance check is not a late opportunity to invent a split or stack. It
+confirms that implementation followed the decomposition approved during specification. If
+the PR needs a different shape, the work returns to the specification step for human
+approval before formal review continues.
 
 ## Draft, Ready, And Merge Expectations
 
@@ -363,7 +394,7 @@ The author or agent should aim to complete:
 - removal of unrelated edits
 - local or CI-equivalent checks where practical
 - test evidence or explanation for missing evidence
-- initial stack or decomposition plan if the diff is broad
+- implementation of the approved stack or decomposition plan if the work is broad
 
 ### Draft PR
 
@@ -378,7 +409,8 @@ Expected automation and agent support:
 - Objective checks run early.
 - `pr-review` runs as an author-side senior-engineer hygiene pass against the governing
   contract, evidence, and repo standards.
-- Missing context, evidence, standards coverage, or decomposition rationale is flagged.
+- Missing context, evidence, standards coverage, or approved decomposition rationale is
+  flagged.
 
 The author should address critical and important findings before requesting review.
 
@@ -392,8 +424,8 @@ Before requesting human review, the PR should generally have:
 - clear reviewer guidance
 - checklist-style human verification instructions in the PR body
 - recommended review tier and rationale
-- stack map and parent assumptions when stacked
-- decomposition rationale for broad diffs
+- stack map and parent assumptions when the approved plan uses a stack
+- decomposition rationale for broad diffs, tied back to the approved specification
 
 ### Before Merge
 
@@ -588,8 +620,8 @@ Track only measures that help tune the process:
 - **Review rounds**: how often PRs need another human pass before approval.
 - **Draft cleanup value**: how many meaningful `pr-review` findings are fixed before
   human review starts.
-- **Large PR handling**: how often broad PRs are split, stacked, approved as large
-  exceptions, or returned to planning.
+- **Large PR handling**: how often broad PRs follow the approved review shape, are
+  approved as large exceptions, or return to specification.
 - **Evidence readiness**: how often PRs reach review with clear tests, screenshots,
   commands, or documented evidence gaps.
 - **Bug-fix protection**: how often bug fixes include a regression test or documented
@@ -608,8 +640,10 @@ risky rubber-stamps, and better signal for where human attention is needed.
 
 ## Rollout Plan
 
-### Phase 1: Baseline PR Shape
+### Phase 1: Baseline Specification And PR Shape
 
+- Update specification templates so features and deliverables require an approved review
+  shape: one PR, multiple deliverables, bounded stack, or large exception.
 - Update PR templates with implementation contract, risk tier, evidence, provenance/trust notes,
   and reviewer guide fields.
 - Define initial critical-path categories in standards, CODEOWNERS, or both.
@@ -627,10 +661,12 @@ risky rubber-stamps, and better signal for where human attention is needed.
 
 ### Phase 3: Decomposition Gate
 
-- Require decomposition rationale for broad agent-generated diffs.
+- Require decomposition rationale in feature and deliverable specifications before
+  implementation starts.
 - Add PR template fields for file-group review maps and stack maps.
-- Require split, stack, or large-exception rationale before formal review.
-- Pilot return-to-planning for PRs that are too broad to review honestly.
+- Require PRs to show conformance to the approved review shape before formal review.
+- Pilot return-to-specification for PRs that are too broad, incorrectly split, or stacked
+  without prior approval.
 
 ### Phase 4: Risk-Tiered Routing
 
@@ -640,7 +676,7 @@ risky rubber-stamps, and better signal for where human attention is needed.
 
 ### Phase 5: Stack Pilot
 
-- Use GH-stack for dependent PR branches where a stack improves reviewability.
+- Use GH-stack for dependent PR branches when the approved specification calls for a stack.
 - Require each stack branch to have its own purpose, evidence, and review boundary.
 - Add cleanup and merge procedures so stacks do not become long-lived branch chains.
 

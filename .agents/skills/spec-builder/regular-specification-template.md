@@ -20,6 +20,9 @@
   The specification is test/AC-driven:
     define acceptance criteria and test plan before execution sequence.
 
+  The specification also defines the approved review shape before implementation:
+    one PR, one milestone PR, sibling PRs, stacked PRs, or a large exception.
+
   Replace every `{{ ... }}` placeholder. Resolve every `<!-- TBD: ... -->`
   marker. Delete this template comment block when filling in for a real deliverable.
 -->
@@ -32,6 +35,8 @@
 **Deliverable:** {{ deliverable-name }}
 **Delivery topology:** {{ single-deliverable branch | milestone branch | sibling branch }}
 **Review artifact:** {{ one PR for this specification | one milestone PR with sibling specifications | separate sibling PR }}
+**Approved review shape:** {{ one PR | milestone PR | sibling PRs | large exception }}
+**Decomposition rationale:** {{ why this review shape is correct; alternatives rejected }}
 **Integration branch:** `{{ integration-branch }}` (e.g. `dev`, `main`, `master` — confirmed with Owner)
 **Merge policy:** PR review required — agents commit/push feature branches only
 **Drafted:** {{ YYYY-MM-DD }}
@@ -105,6 +110,20 @@ These are load-bearing and must hold verbatim. Restate them in the PR body when 
 ---
 
 ## 3. Scope
+
+### Approved Review Shape
+
+This specification is approved for {{ one PR | one milestone PR | sibling PRs | large exception }}.
+Implementation must follow this review shape. If implementation surfaces a need to split,
+stack, combine, or treat the work as a large exception differently than described here,
+stop and revise the specification with Owner sign-off before continuing.
+
+**Rationale.** {{ Explain why this review unit is honest for human review. Name rejected
+alternatives, such as stacked PRs, sibling PRs, one milestone PR, or a large exception. }}
+
+**Review units owned by this specification.**
+
+- {{ one PR / milestone slice / sibling PR name }} — {{ purpose, acceptance boundary, evidence boundary }}
 
 ### Strict Scope Constraint
 
@@ -188,6 +207,7 @@ specifications in the same milestone branch.
 Hard constraints:
 
 - Scope in §3.
+- Approved review shape in §3.
 - Invariants in §2.
 - Public contracts / user-visible behavior: {{ list }}.
 - Standards in §1.d.
@@ -224,7 +244,7 @@ The agent must stop and surface to the Owner if any of these occur:
 5. Implementation surfaces a need to modify outside the strict scope.
 6. A standard not prescribed in §1.d matches the file list via standards-index lookup.
 7. Reference data or required local service is unavailable.
-8. A needed deviation changes scope, public contract, ACs, review topology, or an
+8. A needed deviation changes scope, public contract, ACs, approved review topology, or an
    invariant.
 
 ---
@@ -317,6 +337,7 @@ deviations.
 - [ ] Manual verification complete: {{ command/path or N/A }}.
 - [ ] `{{ format/check command }}` exits 0.
 - [ ] Scope verification lists exactly the files in §3 for this specification slice.
+- [ ] PR shape matches the approved review shape in §3.
 - [ ] All AC1–ACn verified, with evidence cited.
 - [ ] Run-log section for this specification is up to date when a run log is used.
 - [ ] Verifier sub-agent dispatched and returned all-pass.
@@ -399,10 +420,11 @@ ORDER OF WORK
 1. Read the specification, run log, required docs, standards, and code references.
 2. Resolve OQs.
 3. Review ACs (§6) and Test Plan (§7); start with the TDD entry point in §8.
-4. Execute the specification's phases.
-5. Run verification and complete the DoD (§9).
-6. Dispatch a verifier sub-agent.
-7. Prepare PR-ready output. Do not merge to `{{ integration-branch }}`; integration happens through human PR review.
+4. Confirm the implementation still matches the approved review shape in §3.
+5. Execute the specification's phases.
+6. Run verification and complete the DoD (§9).
+7. Dispatch a verifier sub-agent.
+8. Prepare PR-ready output. Do not merge to `{{ integration-branch }}`; integration happens through human PR review.
 
 VERIFIER SUB-AGENT
 After your own DoD checklist is green, dispatch a fresh sub-agent:

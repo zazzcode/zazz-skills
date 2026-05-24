@@ -21,9 +21,10 @@ single-lane stack of branches
 ```
 
 The skill conducts an interactive dialogue, captures decisions and acceptance criteria,
-and produces a self-contained specification. The specification includes the execution sequence,
-definition of done, halt conditions, run-log protocol, and paste-ready implementation
-prompt. There is no separate plan document.
+and produces a self-contained specification. The specification includes the approved
+review shape and decomposition rationale, execution sequence, definition of done, halt
+conditions, run-log protocol, and paste-ready implementation prompt. There is no
+separate plan document.
 
 The skill writes deliverable specifications. It does **not** implement product code.
 
@@ -64,6 +65,11 @@ artifact.
 
 Do not create stacked worktrees. Stacks are branches inside one worktree.
 
+For features and deliverables, this topology decision is made during specification. The
+approved specification must say whether the work will be reviewed as one PR, one
+milestone PR, sibling PRs, stacked PRs, or a large exception. If implementation later
+needs a different shape, revise the specification with Owner sign-off before continuing.
+
 ## How to invoke
 
 Invoke the skill by name, for example `/spec-builder` or `@.agents/skills/spec-builder/SKILL.md`. Then
@@ -79,6 +85,8 @@ State these up front when you know them:
 - **Milestone / effort slug** — when multiple specifications share one run log or PR.
 - **Review artifact** — one PR for the whole milestone, separate sibling PRs, or
   stacked PRs.
+- **Decomposition rationale** — why that review shape is correct and which alternatives
+  were rejected.
 
 The skill will ask follow-ups on scope boundaries, decisions, acceptance criteria,
 run-log shape, and review boundaries.
@@ -112,7 +120,8 @@ deliverable is done.
 ## What you should have ready
 
 - A rough sketch of the deliverable or milestone and why it is needed.
-- The intended review shape: one PR, sibling PRs, or stacked PRs.
+- The intended review shape: one PR, one milestone PR, sibling PRs, stacked PRs, or a
+  large exception.
 - Any constraints that already exist: legacy compatibility, performance targets,
   coordination with other work in flight.
 - Known source documents: feature docs, architecture docs, standards, prior specifications.

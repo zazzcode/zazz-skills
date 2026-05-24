@@ -1,10 +1,15 @@
 # Stacked Branch Workflow (spec-builder)
 
-Use this workflow only when the review artifact needs multiple dependent PRs.
+Use this workflow only when the specification-time review decision is that the artifact
+needs multiple dependent PRs.
 
 Stacked work is implemented as **multiple branches inside one lane worktree** using
 `gh-stack`. Do not create stacked worktrees; that topology is too difficult to manage
 after even two worktrees.
+
+Do not use this workflow as PR-time cleanup for an oversized implementation. If coding
+has already started and a stack now seems necessary, revise the specification with Owner
+sign-off before continuing.
 
 Agents may push stack branches and create/update PRs when instructed, but they never
 merge directly to `dev`. Lower branches reach `dev` only after human PR review and the
@@ -49,7 +54,8 @@ The `stacked-specification-template.md` enforces these. Fill the template; don't
 section list.
 
 1. **Stacked-branch model section** — why branches are stacked, the rebase rule,
-   single-lane topology, and why separate PR review is needed.
+   single-lane topology, why separate PR review is needed, and which alternatives were
+   rejected.
 2. **End-to-end execution flow** — sequence diagram + slice-ownership diagram showing
    where the seam falls.
 3. **Per-branch scope, decisions, ACs** — one section per branch. Each branch numbers

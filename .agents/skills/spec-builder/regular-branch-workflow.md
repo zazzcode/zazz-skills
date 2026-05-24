@@ -9,6 +9,11 @@ Use this workflow for every non-stacked topology:
 The stable rule is one deliverable per specification. The flexible part is where those
 deliverables live during implementation and review.
 
+For features and deliverables, the specification must approve the review shape before
+implementation starts. Use this workflow to document one PR, one milestone PR, sibling
+PRs, or a large exception; if a stack is the right shape, switch to the stacked workflow
+before drafting implementation guidance.
+
 ## Naming and location
 
 - Specification path: `<DOCS_ROOT>/specifications/<slug>.md` when committed in Git.
@@ -34,16 +39,18 @@ deliverables live during implementation and review.
    - one deliverable / one specification / one PR;
    - multiple deliverables / multiple specifications / one PR;
    - multiple sibling branches / separate PRs.
-3. Resolve the specification path under `<DOCS_ROOT>/specifications/`, or the Zazz
+3. Record the decomposition rationale: why this review shape is approved and why the
+   alternatives were rejected.
+4. Resolve the specification path under `<DOCS_ROOT>/specifications/`, or the Zazz
    Board/external tracking location when the repo does not commit specifications.
-4. Resolve the run-log path/location. Reuse the milestone/effort run log when multiple specifications
+5. Resolve the run-log path/location. Reuse the milestone/effort run log when multiple specifications
    share one branch or one review artifact.
-5. Copy `regular-specification-template.md` to the specification path. Fill placeholders interactively
+6. Copy `regular-specification-template.md` to the specification path. Fill placeholders interactively
    with the Owner.
-6. Read this skill's bundled `references/spec-driven-development-methodology.md`.
-7. Read `docs/standards/index.yaml` from the active worktree when present; load standards whose
+7. Read this skill's bundled `references/spec-driven-development-methodology.md`.
+8. Read `docs/standards/index.yaml` from the active worktree when present; load standards whose
    `applies_to` matches files this specification will affect.
-8. Iterate to Owner approval.
+9. Iterate to Owner approval.
 
 ## Output
 

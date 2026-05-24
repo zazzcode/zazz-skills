@@ -12,6 +12,9 @@
 
   Do not enforce a universal stack-size cap. Keep each PR reviewable on its own terms:
   clear dependency, focused purpose, concrete acceptance criteria, and human sign-off.
+
+  Stacked review is an approved specification-time decomposition choice. Do not use this
+  template to retrofit a stack around an oversized implementation after coding starts.
 -->
 
 # {{ Deliverable Name }} — Stacked Deliverable Specification
@@ -29,6 +32,8 @@
 **Execution record sharing:** {{ local ignored file | Zazz Board centralized record | external tracker record }}
 **Integration branch:** `{{ integration-branch }}` (confirmed with Owner)
 **Merge policy:** PR review required for every PR in the stack
+**Approved review shape:** bounded stacked review lane
+**Decomposition rationale:** {{ why stacked PRs are clearer than one PR, one milestone PR, or sibling PRs }}
 
 ---
 
@@ -38,6 +43,11 @@
 
 {{ Explain why dependent PRs are clearer than one milestone PR or sibling PRs. Name the
 dependency or review boundary. }}
+
+This stack is approved before implementation starts. If implementation surfaces a need
+to add branches, remove branches, split into sibling PRs, collapse into one PR, or treat
+the work as a large exception, stop and revise this specification with Owner sign-off
+before continuing.
 
 ### Worktree Topology
 
@@ -89,8 +99,9 @@ shape, schema, data shape, events, files, or behavior. This is the load-bearing 
 
 ### Contract Change Rule
 
-If an upper branch needs a contract change from a lower branch, stop and revise this
-specification with Owner sign-off before continuing.
+If an upper branch needs a contract change from a lower branch, or if any branch needs a
+different review shape than this approved stack, stop and revise this specification with
+Owner sign-off before continuing.
 
 ---
 
@@ -192,6 +203,8 @@ contract. Every PR in the stack requires human sign-off before merge.
 - Agents must not merge directly to `{{ integration-branch }}`.
 - Open draft PRs first, run author-side automated review, address feedback, then mark
   ready for formal review.
+- Follow the approved stack shape in §0. Do not add, remove, split, or collapse stack
+  branches without specification revision and Owner sign-off.
 - Run applicable standards lookup before code changes.
 - Keep each branch's commits scoped to that branch's ownership.
 - Halt on unresolved open questions, repeated test failure, scope drift, missing
@@ -207,6 +220,7 @@ contract. Every PR in the stack requires human sign-off before merge.
 - [ ] Lower-branch ACs verified.
 - [ ] Upper-branch ACs verified.
 - [ ] No-drift verification passed.
+- [ ] Stack shape still matches the approved decomposition in §0.
 - [ ] Applicable standards verified.
 - [ ] Draft PRs created and author-side automated review addressed.
 - [ ] Formal PR review ready.
@@ -228,6 +242,9 @@ Integration branch:
 
 Read the specification end to end, then read the run log or external execution record:
 {{ `<DOCS_ROOT>/execution/<lane-slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}
+
+Before writing code, confirm the stack still matches the approved review shape in §0.
+If it does not, stop and ask for a specification revision.
 
 Use gh-stack. Keep all stack commands non-interactive. Open draft PRs first, run
 author-side automated review, address feedback, then mark ready for formal review.

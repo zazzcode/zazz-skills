@@ -23,7 +23,7 @@ single-lane stack of branches
 ```
 
 The deliverable specification is the complete contract for its deliverable — intent, decisions, scope,
-acceptance criteria, test plan, execution sequence, code skeletons, halt conditions,
+approved review shape, acceptance criteria, test plan, execution sequence, code skeletons, halt conditions,
 definition of done, and the agent-implementation prompt all live in the specification itself.
 **There is no separate plan document.**
 
@@ -91,8 +91,10 @@ template):
    patterns to mirror, and orientation sections. Cited by section number; never
    restated verbatim.
 3. **Invariants** — load-bearing constraints stated verbatim, restated in PR bodies.
-4. **Scope** — file list (path + new/modified + reason), strict scope constraint
-   naming the allowed directory, and explicit out-of-scope list.
+4. **Scope and review shape** — file list (path + new/modified + reason), strict scope
+   constraint naming the allowed directory, explicit out-of-scope list, and the
+   human-approved decomposition/review plan: one PR, one milestone PR, sibling PRs,
+   stacked PRs, or a large exception.
 5. **Decisions** — each with "why this over the alternative" rationale. 3-8 typical.
 6. **Agent implementation rules** — shared behavior for implementation: branch/PR
    integration rule, commit/push guidance, scope verification topology, autonomy
@@ -155,6 +157,13 @@ You do **not** implement product code in this skill.
 
 The Owner may specify a delivery topology at invocation. If they do not, infer the
 simplest topology and confirm it.
+
+For features and deliverables, decomposition and stacking are specification-time
+decisions. The specification must define the review shape before implementation starts:
+one PR, multiple deliverables in one milestone PR, sibling PRs, a bounded stacked review
+lane, or a large exception. If implementation later shows the approved shape is wrong,
+the implementor must stop and route the change back through specification revision with
+Owner sign-off rather than inventing a split or stack after coding has started.
 
 Use these topologies:
 
@@ -233,6 +242,9 @@ Before presenting a near-final specification, the spec-builder agent must be abl
   or stacked review lane.
 - **Review artifact** — one PR for this specification, one milestone PR with multiple specifications,
   separate sibling PRs, or stacked PRs.
+- **Decomposition rationale** — why this review shape is correct, what alternatives were
+  rejected, and which review units, stack branches, or sibling specifications are owned
+  by this specification.
 - **Integration branch** — the branch all PRs target (e.g. `dev`, `main`, `master`).
   Confirmed with the Owner; never assumed.
 - **Merge policy** — whether agents may merge directly or all integration requires human
@@ -261,8 +273,10 @@ Use these as prompts, not a rigid questionnaire:
 - "What is your integration branch — the branch all feature PRs target? (e.g. `dev`,
   `main`, `master`, `trunk`)"
 - "Must all changes reach that branch through PR review, or may agents merge directly?"
-- "What is the review artifact: one PR for the whole milestone, separate sibling PRs,
-  or stacked PRs?"
+- "What is the approved review shape: one PR, one milestone PR, separate sibling PRs,
+  stacked PRs, or a large exception?"
+- "What decomposition rationale should the specification record — why this shape over
+  the alternatives?"
 - "Is this one deliverable/specification, or are there multiple deliverables inside the
   milestone?"
 - "What must be true for you to call this deliverable done?"
@@ -298,6 +312,9 @@ Use these as prompts, not a rigid questionnaire:
   applicable standards; the implementing agent verifies via its own index lookup.
 - **Branch scope discipline**: the specification is scoped to the diff between its branch and
   the integration branch (`{{ integration-branch }}`, confirmed during intake).
+- **Approved review shape discipline**: specifications define decomposition and stacking
+  before implementation. A PR must show conformance to the approved review shape; a
+  needed topology change is a specification revision, not a late implementation choice.
 - **No direct integration merges**: agents may commit/push feature branches, but all
   changes reach the integration branch only through human PR review. Do not write specification
   prompts that tell agents to merge to the integration branch directly.
@@ -549,6 +566,8 @@ A deliverable specification is complete when:
 - **Prescriptive Execution Sequence** with phase order and code skeletons.
 - **ACs before execution** — acceptance criteria and test plan are defined before the
   execution sequence.
+- **Review shape before execution** — the specification records the approved
+  decomposition/review plan and rationale before implementation starts.
 - **Agent Implementation Rules** centralized in one section and referenced by the
   appendix prompt.
 - **Halt Conditions** explicit and non-negotiable.
@@ -583,13 +602,18 @@ one combined branch. Good reasons include:
 - You want parallelism in review. Multiple regular PRs from sibling worktrees give the
   same parallelism without the stack-rebase overhead.
 
+Stacked review must be approved in the specification before implementation starts. Do
+not convert an oversized or drifting implementation into a stack during PR cleanup
+without revising the specification and getting Owner sign-off.
+
 ### Stack reviewability
 
 Do not enforce a universal branch-count or changed-file limit. Instead, make each PR in
 the stack comprehensible on its own terms: clear dependency, focused purpose, concrete
 acceptance criteria, and a PR body that explains what the human reviewer should evaluate.
-If the stack shape makes the review harder to understand, split, flatten, or convert it
-to sibling branches or a milestone branch.
+If the stack shape makes the review harder to understand during specification review,
+split, flatten, or convert it to sibling branches or a milestone branch before
+implementation starts.
 
 ### How stacked work runs (single lane, with upstack propagation)
 
