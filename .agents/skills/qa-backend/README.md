@@ -45,4 +45,4 @@ In addition to the base QA output, this skill should add:
 ## Notes
 
 - This is a specialization, not a replacement for `qa`.
-- It works best when the SPEC clearly describes backend behavior and expected test coverage.
+- It works best when the deliverable specification clearly describes backend behavior and expected test coverage.

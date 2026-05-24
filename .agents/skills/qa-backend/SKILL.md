@@ -10,7 +10,7 @@ description: Run backend-focused QA on top of the base qa skill for deliverables
 Before performing backend QA:
 1. Read `.agents/skills/qa/SKILL.md` and treat it as the governing base contract.
 2. Use `AGENTS.md` as the source of truth for repo-specific settings such as docs root, tracking system, project-code conventions, and QA workflow rules. Read it if that context is not already available, then load the standards index and the backend-relevant standards for this deliverable.
-3. Read the SPEC, PLAN, task context, and changed backend surfaces before judging behavior.
+3. Read the deliverable specification, task context, and changed backend surfaces before judging behavior.
 4. Then execute the backend-specific QA pass without weakening the base QA loop.
 
 ## Overview
@@ -23,7 +23,7 @@ This specialization adds backend checks; it does not replace the base QA loop.
 ## Specialization Focus Areas
 
 ### 1) API Contract Validation
-- Validate routes against SPEC-defined behavior and status semantics.
+- Validate routes against specification-defined behavior and status semantics.
 - Validate happy-path, edge-case, and negative-path behavior.
 - Validate request validation and error response structure.
 
@@ -33,12 +33,12 @@ This specialization adds backend checks; it does not replace the base QA loop.
 - Validate input-handling and obvious security-risk paths.
 
 ### 3) Data Integrity + Persistence
-- Validate schema and data mutations match SPEC intent.
+- Validate schema and data mutations match specification intent.
 - Validate transactional integrity/idempotency where applicable.
 - Validate migration/seed/runtime data assumptions impacted by the change.
 
 ### 4) Backend Performance/Operational Quality
-- Validate performance thresholds defined by SPEC.
+- Validate performance thresholds defined by the specification.
 - Validate error handling and observability behaviors expected by standards.
 - Validate no regressions in critical service flows.
 

@@ -10,7 +10,7 @@ description: Run frontend-focused QA on top of the base qa skill for deliverable
 Before performing frontend QA:
 1. Read `.agents/skills/qa/SKILL.md` and treat it as the governing base contract.
 2. Use `AGENTS.md` as the source of truth for repo-specific settings such as docs root, tracking system, project-code conventions, and QA workflow rules. Read it if that context is not already available, then load the standards index and the frontend-relevant standards for this deliverable.
-3. Read the SPEC, PLAN, task context, and changed UI surfaces before judging behavior.
+3. Read the deliverable specification, task context, and changed UI surfaces before judging behavior.
 4. Then execute the frontend-specific QA pass without weakening the base QA loop.
 
 ## Overview
@@ -23,7 +23,7 @@ This specialization adds frontend checks; it does not replace the base QA loop.
 ## Specialization Focus Areas
 
 ### 1) UI/UX Behavior Validation
-- Validate core user journeys against the deliverable SPEC.
+- Validate core user journeys against the deliverable specification.
 - Validate loading, empty, error, and success states.
 - Validate interactive behavior (forms, modals, navigation, drag/drop where applicable).
 - Validate responsiveness for required breakpoints/viewports.

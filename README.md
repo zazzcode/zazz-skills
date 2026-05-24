@@ -104,6 +104,7 @@ zazz-methodology.md    primary methodology philosophy and document model
 | `qa` | Runs verification against requirements, standards, and evidence. |
 | `qa-frontend` | Frontend-focused QA specialization. |
 | `qa-backend` | Backend-focused QA specialization. |
+| `pr-review` | Reviews PRs or local diffs for correctness, evidence quality, low-value tests, agentic slop, redundancy, and scope drift. |
 
 ### Delivery and infrastructure skills
 

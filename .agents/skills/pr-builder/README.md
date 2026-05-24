@@ -5,9 +5,10 @@ review workflow.
 
 ## What It Does
 
-The PR Builder skill packages implementation work for draft PR creation and later review.
-It is primarily agent-facing: implementation agents and QA agents use it to create or refresh PR content from the diff,
-governing work item, specification, stack context, and verification evidence.
+The PR Builder skill drafts or updates the PR title and body for draft PR creation and
+later review. It is primarily a PR-document skill: implementation agents, QA agents, or
+the PR author use it to turn the diff, governing work item, specification, stack context,
+and verification evidence into clear reviewer-facing PR content.
 
 It helps produce:
 - a clear PR title
@@ -22,13 +23,14 @@ It helps produce:
 - stack map and parent assumptions for GH-stack PRs
 - risks or rollout notes only when they matter to review of the current PR
 
-This skill does not approve, merge, or mark pull requests ready on behalf of the Deliverable Owner.
+This skill does not review the code itself, approve, merge, or mark pull requests ready
+on behalf of the Deliverable Owner.
 
 ## When to Use It
 
 Use this skill when:
 - an implementation agent needs to open or refresh a draft PR
-- author-side automated review needs a clear PR package to review
+- author-side or reviewer-side review needs a clear PR package to review
 - an agent running the `qa` skill needs to prepare the PR package from completed verification evidence
 - the repo has PR templates or review conventions
 - you need a stronger draft or reviewer-facing summary of the work

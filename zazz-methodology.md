@@ -97,7 +97,7 @@ This repository is the canonical source of truth for the methodology document an
 | **Specification model** | Feature requirements document for capability over time plus deliverable specification for one increment |
 | **Verification model** | TDD and explicit acceptance criteria are core mechanisms for proving the software was built correctly and delivers the intended functionality |
 | **Execution flow** | `project.md` -> proposal (optional) -> feature requirements document (optional but recommended for long-lived features) -> architecture document (optional, paired with feature) -> deliverable specification (required, contains implementation guidance including prescriptive execution sequence) -> agent executes directly -> build/validate loop -> PR/UAT gate |
-| **Skills** | `proposal-builder`, `feature-doc-builder`, `architecture-doc-builder`, `spec-builder`, `qa`, optional `pr-builder`, optional companion utility skills such as `zazz-board-api`, `gh-stack`, and draft `jira-api` |
+| **Skills** | `proposal-builder`, `feature-doc-builder`, `architecture-doc-builder`, `spec-builder`, `qa`, optional `pr-review`, optional `pr-builder`, optional companion utility skills such as `zazz-board-api`, `gh-stack`, and draft `jira-api` |
 | **Skill modes** | Some skills are interactive and human-in-the-loop; others are designed for mostly autonomous execution once inputs are approved |
 | **Autonomy value** | Approved context should let agents converge on a verified solution with minimal supervision, improving delivery efficiency without dropping quality |
 | **Organization value** | The methodology gives teams an opinionated structure for defining what the product does, why it exists, and how it can evolve over time |
@@ -301,6 +301,7 @@ Recommended responsibilities:
 - `architecture/` contains architecture documents paired with feature requirements documents, plus `architecture/index.yaml`
 - `standards/` contains implementation rules plus `standards/index.yaml`
 - `specifications/` is the on-disk home for deliverable specification files when the repo keeps execution artifacts locally
+- `implementation/` is the default local home for mutable execution artifacts such as run logs when the repo keeps them on disk
 
 ### Specification storage modes
 
@@ -316,6 +317,7 @@ The methodology's general guideline is:
 - keep `project.md`, `proposals/`, `features/`, `architecture/`, and `standards/` tracked in Git or another Git-based service because they are durable, continuously maintained documents
 - keep the specification storage policy explicit in the repo's `AGENTS.md`
 - allow deliverable specification files under `<DOCS_ROOT>/specifications/` to be ignored locally, committed intentionally, mirrored externally, or absent on disk when the repo stores specifications in an application such as Zazz Board
+- keep mutable execution files such as run logs under `<DOCS_ROOT>/implementation/` by default when stored on disk, and usually exclude that directory from Git with repo-local or bare-repo exclude rules
 - treat external systems such as Zazz Board as optional integrations, not methodology requirements
 
 If a team adopts one deliverable specification file-layout mode on disk, do not mix modes inside a single repo:
@@ -337,11 +339,68 @@ That broader tracking declaration belongs in the repo's `AGENTS.md`.
 It tells skills how PRs, QA artifacts, and deliverable references should be anchored.
 Live integration with those systems, when present, belongs in companion utility skills rather than in the methodology doc itself.
 
+### Run logs
+
+A run log is the append-only execution record for a deliverable or delivery effort.
+
+The run log is not the durable product-definition source. It is the recovery
+and coordination surface for active execution: manager agents, implementation agents, QA
+subagents, and reviewers can inspect it to understand what happened, what was verified,
+what failed, and what changed with Owner approval.
+
+Each repo declares the storage surface in `AGENTS.md` or the deliverable specification.
+When stored on disk, the default path is:
+
+```text
+<DOCS_ROOT>/implementation/<slug>-run-log.md
+```
+
+For milestone or stacked efforts, use a shared file such as:
+
+```text
+<DOCS_ROOT>/implementation/<milestone-or-lane-slug>-run-log.md
+```
+
+The default expectation is that `<DOCS_ROOT>/implementation/` is local mutable execution
+state and is not committed to Git unless the repo explicitly chooses committed execution
+history. Exclude it with `.git/info/exclude`, the shared bare-repo exclude file used by
+the worktree setup, or another repo-declared local exclude mechanism.
+
+Allowed storage surfaces include:
+
+- ignored local file in the active worktree
+- committed support artifact when the team wants execution history in Git
+- Zazz Board note or attachment
+- external tracker entry
+- another repo-declared execution record
+
+One run log may cover one deliverable, a milestone branch with multiple
+deliverables, or a stacked review lane. Multi-deliverable logs should use sections per
+deliverable/specification or per stack branch.
+
+The run log should include:
+
+- open-question resolutions
+- standards verification
+- phase completions and verifying command results
+- deviations from the specification and Owner decisions
+- manual evidence locations
+- QA findings, including weak-test or test-contract findings
+- rework task references and re-verification outcomes
+- verifier/QA subagent summaries
+
+QA agents must append their findings to the same run log when one is used.
+Weak tests, missing realistic edge cases, or a bad test contract should be logged there
+and routed to the coordinator/Deliverable Owner for rework or specification revision.
+This keeps execution state visible to the manager agent and prevents QA findings from
+being lost in terminal output or a one-off review comment.
+
 Naming conventions:
 
 | Artifact | Convention | Example |
 | ------- | ---------- | ------- |
 | **Project document** | `project.md` at docs root | `project.md` |
+| **Run log** | `<DOCS_ROOT>/implementation/{slug}-run-log.md` when stored locally | `implementation/m2-reporting-api-run-log.md` |
 | **Docs root** | repo-relative path resolved by repo policy and documented in `AGENTS.md` | `.zazz`, `docs` |
 | **Proposal** | `proposals/{name}.md` | `role-management-options.md` |
 | **Feature requirements document** | `features/{feature-key}.md` | `role-based-access-control.md` |
@@ -728,7 +787,7 @@ Not every skill should behave the same way in human collaboration.
 | Mode | Skills | Expected operating style |
 | ---- | ------ | ------------------------ |
 | **Interactive / human-in-the-loop** | `proposal-builder`, `feature-doc-builder`, `architecture-doc-builder`, `spec-builder`, often `pr-builder` | These skills are expected to facilitate dialogue, ask follow-up questions, iterate drafts with humans, and help shape the artifact through conversation |
-| **Autonomous execution** | `qa`, `qa-frontend`, `qa-backend` | These skills are expected to run mostly independently once approved inputs exist, escalating only when they hit a real decision gate, ambiguity, or approval boundary |
+| **Autonomous execution** | `qa`, `qa-frontend`, `qa-backend`, `pr-review` | These skills are expected to run mostly independently once approved inputs exist, escalating only when they hit a real decision gate, ambiguity, or approval boundary |
 | **Companion utility** | `zazz-board-api`, `gh-stack`, draft `jira-api` | These skills are not human-facing workflows on their own; they support other skills with tracker/API capability, stacked PR workflows, or authoritative external context when available |
 
 "Launch-and-leave" is a good informal description for the autonomous execution class, and it is a real methodology value proposition. The expectation is not zero human interaction. The expectation is minimal interruption once the skill has the approved context it needs.
@@ -1132,7 +1191,7 @@ Document flow:
 | **Feature definition** | `features/{feature-key}.md` | Long-lived feature requirements document: why, what is live, system-level intent, milestone roadmap, future direction, and feature-level success criteria |
 | **Architecture** | `architecture/{feature-key}-architecture.md` | Optional but recommended for long-lived features. Paired with a feature requirements document; defines system design, module placement, per-milestone diagrams, and technical open questions |
 | **Deliverable specification** | `specifications/{slug}.md` | Required execution contract for one deliverable, including explicit acceptance criteria and verification expectations |
-| **Build / validate** | code, tests, QA evidence | Agent implements directly from the deliverable specification with TDD where applicable; agent running `qa` verifies against acceptance criteria and evidence until convergence |
+| **Build / validate** | code, tests, run log, QA evidence | Agent implements directly from the deliverable specification with TDD where applicable; implementation and QA append progress/findings to the same run log; agent running `qa` verifies against acceptance criteria and evidence until convergence |
 | **Review package** | PR title/body, manual test plan | Reviewer-facing packaging of what changed and how to validate it |
 
 Execution relationship:

@@ -27,21 +27,23 @@ acceptance criteria, test plan, execution sequence, code skeletons, halt conditi
 definition of done, and the agent-implementation prompt all live in the specification itself.
 **There is no separate plan document.**
 
-Progress tracking, OQ resolutions, deviations, and manual evidence locations are recorded
-in a run log when the effort needs one. The run log is append-only execution history and
-follows the repo's declared policy: local ignored file, committed file, Zazz Board note,
-external tracker entry, or a combination the repo defines explicitly.
+Progress tracking, OQ resolutions, deviations, QA findings, and manual evidence
+locations are recorded in a run log when the effort needs one. The run log is
+append-only execution history and follows the repo's declared
+policy: by default a locally ignored Markdown file under `<DOCS_ROOT>/implementation/`,
+or a committed file, Zazz Board note, external tracker entry, or combination when the
+repo defines that explicitly.
 
-A single-deliverable branch may have a small run log. A milestone branch with multiple
-deliverable specifications uses one shared run log with sections per specification. A
-stacked lane uses one shared run log when lower-branch decisions or deviations can affect
-upper branches.
+A single-deliverable branch may have a small run log. A milestone branch with
+multiple deliverable specifications uses one shared run log with sections per
+specification. A stacked lane uses one shared run log when lower-branch
+decisions, QA findings, or deviations can affect upper branches.
 
 This is a deliberate departure from earlier convention. The earlier convention split
 specification intent from a separate execution plan; experience showed that split adds
-friction for walk-away execution and that the run log handles progress tracking more
-cleanly. The branch or stack PR is the reviewable artifact; the deliverable specifications
-are the executable contracts inside that artifact.
+friction for walk-away execution and that the run log handles progress
+tracking more cleanly. The branch or stack PR is the reviewable artifact; the deliverable
+specifications are the executable contracts inside that artifact.
 The current operating model is still being refined. If it surfaces problems, revise it.
 Until then, this is the default.
 
@@ -95,9 +97,10 @@ template):
    conditions.
 7. **Acceptance criteria** — numbered, testable, each citing the verifying test or
    command.
-8. **Test plan** — concrete test names, what each asserts, reference data sources
-   named (existing fixtures, locked baselines, etc.). The test plan implements the ACs;
-   it must be defined before the execution sequence.
+8. **Test plan** — concrete, high-signal test names, what each asserts, reference data
+   sources named (existing fixtures, locked baselines, etc.). The test plan implements
+   the ACs with the smallest meaningful set of tests; it must be defined before the
+   execution sequence.
 9. **TDD entry point + Prescriptive Execution Sequence** — a first failing test, then
    phase-by-phase implementation order with code skeletons for non-test files. The
    sequence is derived from the ACs and test plan.
@@ -105,8 +108,8 @@ template):
     self-marked by the agent.
 11. **Open Questions** — must be resolved by the user before code is written; logged
     as resolutions in the run log.
-12. **Run Log Protocol** — pointer to the run log when used, including storage policy,
-    append rules, sections, and session-start protocol.
+12. **Run Log Protocol** — pointer to the run log when used,
+    including storage policy, append rules, sections, and session-start protocol.
 13. **Appendix — Agent Implementation Prompt** — paste-ready bootstrap for the
     implementing agent session.
 
@@ -115,24 +118,28 @@ genuinely N/A for a deliverable (rare), state so explicitly rather than omitting
 
 ### What the run log contains
 
-One run log per delivery effort when the effort needs a mutable execution record. A
-single-specification branch may have one section. A milestone branch may contain multiple
-deliverables/specifications and uses sections per specification. A stacked lane uses
-sections per branch/specification when needed.
+One run log per delivery effort when the effort needs a mutable execution
+record. A single-specification branch may have one section. A milestone branch may
+contain multiple deliverables/specifications and uses sections per specification. A
+stacked lane uses sections per branch/specification when needed.
 
 - **Standards verification** — agent confirms the specification's standards prescription matches
   a fresh `docs/standards/index.yaml` lookup.
 - **OQ Resolutions** — verbatim user answers, timestamped.
 - **Phase Completions** — commit SHAs, verifying-command outcomes.
+- **QA Findings & Rework** — QA pass/fail summaries, weak-test findings, specification-gap
+  findings, rework task references, and re-verification outcomes.
 - **Deviations** — every departure from the specification body, with reason and user-confirmation
   status.
 - **Manual Evidence Locations** — paths to baselines, smoke outputs, screenshots, query
   outputs.
 - **Issues & Recoveries** — load-bearing failed attempts only (not every red test).
-- **Verifier sub-agent report** — pasted PASS/FAIL summary from the final verification.
+- **Verifier / QA sub-agent report** — pasted PASS/FAIL summary from final or phase-level
+  verification.
 
-The run log is the recovery surface for walk-away execution. A fresh agent loaded with
-specification + run log + `git log` can pick up cleanly from any phase.
+The run log is the recovery surface for walk-away execution. A fresh agent
+loaded with specification + run log + `git log` can pick up cleanly from any
+phase.
 
 ## Role
 
@@ -227,8 +234,8 @@ Before presenting a near-final specification, the spec-builder agent must be abl
   Confirmed with the Owner; never assumed.
 - **Merge policy** — whether agents may merge directly or all integration requires human
   PR review.
-- **Run-log shape** — run-log path/location and whether it is single-specification, shared milestone, or
-  stacked-lane.
+- **Run-log shape** — run-log path/location and whether it is
+  single-specification, shared milestone, or stacked-lane.
 - **Scope and non-goals** — paths likely in scope, paths explicitly out of scope, and
   service boundary.
 - **Public/user-visible contracts** — APIs, CLI behavior, schemas, filenames,
@@ -273,8 +280,11 @@ Use these as prompts, not a rigid questionnaire:
 - **External specification storage**: when the repo policy says specifications are not committed, store or link them
   in Zazz Board or the declared external tracker and include enough stable identifier context for agents and reviewers
   to find the artifact.
-- **Run log**: use the storage surface declared by the repo: ignored local file, committed support artifact, Zazz Board
-  note, external tracker entry, or a combination. Milestone branches use sections per specification.
+- **Run log**: use the storage surface declared by the repo. When stored on disk, default
+  to `<DOCS_ROOT>/implementation/{slug}-run-log.md` or
+  `<DOCS_ROOT>/implementation/{milestone-or-lane-slug}-run-log.md`, usually excluded
+  from Git by repo-local or bare-repo exclude rules. External Zazz Board notes or tracker
+  records are also valid when declared. Milestone branches use sections per specification.
 - **Stacked review lane**: one worktree contains the stacked branches managed with `gh-stack`. Do not create stacked
   worktrees. A worktree normally has one deliverable, but a stacked lane may contain multiple deliverables/specifications
   when those deliverables are intentionally stacked for review.
@@ -318,6 +328,70 @@ Tests need concrete reference data. The specification must name where it comes f
 - **Locked fixtures already present in the repo** → cite the path; reuse don't
   re-create when prior locked fixtures exist for the area you're touching.
 
+### Test plan value bar — fewer tests, stronger signals
+
+The specification should prevent test sprawl. Do not reward agents for adding many
+shallow tests that mostly exercise mocks, implementation details, or duplicated
+branches. The test plan is a review contract, not a quota.
+
+Tests are part of the deliverable contract. The specification defines the required test
+intent, reference data, realistic edge cases, and verifying commands before
+implementation starts. Implementers may adapt exact test names or local helper mechanics
+to match the repo, but they must not weaken, delete, rewrite, or move the specified test
+coverage just to make implementation pass. Any material change to test intent, covered
+edge cases, reference data, or verification layer requires Owner sign-off and a
+specification revision.
+
+Every proposed automated test must answer:
+
+1. Which AC, invariant, public contract, regression, realistic edge case, or risk does
+   this test prove?
+2. Would this test fail for a meaningful bug a reviewer cares about?
+3. Is this behavior already covered by an equal or stronger test nearby?
+4. Does the test assert observable behavior or a stable boundary, rather than private
+   mechanics that may change during refactor?
+5. Is its setup proportional to the risk it covers?
+
+Edge cases are mandatory when the field risk is real, but they should be selected from
+actual boundaries users, data, integrations, permissions, time, concurrency, migration
+history, or prior bugs can hit. Do not invent fanciful edge cases just to grow the test
+list.
+
+Prefer:
+
+- one integrated contract or behavior test over several mock-heavy tests that only
+  confirm collaborators were called
+- table-driven case matrices when several realistic edge cases share one behavior
+  boundary
+- compact boundary matrices that cover representative invalid, empty, maximum/minimum,
+  unauthorized, cross-tenant, missing-data, ordering, time-zone/date, idempotency, and
+  concurrency cases when those risks apply
+- focused regression tests for bugs with a known failure mode
+- reusing existing fixtures and helpers instead of inventing parallel test worlds
+- manual verification only for human-judgment surfaces such as visual fit, copy tone,
+  or UAT flows that automation cannot reliably judge
+
+Avoid specifying:
+
+- tests whose only assertion is that a function was invoked
+- duplicate happy-path tests across adjacent layers unless each layer owns a distinct
+  public contract
+- snapshot churn or golden files that reviewers cannot interpret
+- tests coupled to temporary helper names, exact private call order, or incidental data
+  shape
+- unrealistic edge-case permutations that cannot occur through supported inputs or
+  repo-declared data flows
+- broad "coverage padding" tests added only to make a PR look safer
+
+When a test is intentionally omitted because nearby coverage is already sufficient,
+say so briefly in the Test Plan. That gives implementers permission to keep the PR
+clean and gives reviewers a concrete rationale.
+
+If QA later finds that the specified tests are low-signal, missing realistic edge cases,
+or testing the wrong boundary, that is a specification quality issue. QA should route the
+finding back through the coordinator/Owner for test-plan clarification or specification
+revision before the implementer proceeds.
+
 ### Acceptance criteria and test plan come before execution
 
 The specification is test/AC-driven. Define what proves the deliverable first, then
@@ -327,9 +401,10 @@ Order of thought:
 
 1. What capability must be true?
 2. What acceptance criteria prove it?
-3. What tests or manual checks verify each AC?
-4. What TDD entry point should fail first?
-5. What execution sequence gets from red to green safely?
+3. What realistic edge cases and boundary conditions could break this in the field?
+4. What compact tests or manual checks verify each AC and those edge cases?
+5. What TDD entry point should fail first?
+6. What execution sequence gets from red to green safely?
 
 Do not write an execution sequence first and retrofit ACs afterward.
 
@@ -461,6 +536,9 @@ A deliverable specification is complete when:
 - Bounded **scope** + explicit **non-goals** + strict scope constraint naming the
   allowed directory.
 - Numbered, TDD-grade **ACs** with reference-data sources named.
+- **Test plan** is high-signal and proportional: every test maps to an AC, invariant,
+  public contract, realistic edge case, regression, or named risk, and duplicate/low-value
+  tests are explicitly avoided.
 - **Decisions** with "why this over the alternative" rationale.
 - **Prescriptive Execution Sequence** with phase order and code skeletons.
 - **ACs before execution** — acceptance criteria and test plan are defined before the

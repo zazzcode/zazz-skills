@@ -26,8 +26,9 @@ Before drafting or updating PR content:
 
 ## Mission
 
-Create a clear pull request title and body, optimized first for opening a useful draft PR that can support author-side
-agent review and cleanup before the Deliverable Owner marks it ready for formal review.
+Create a clear pull request title and body, optimized first for opening a useful draft PR
+that can support `pr-review`, human review, and cleanup before the Deliverable Owner
+marks it ready for formal review.
 
 The PR package should accurately explain:
 
@@ -41,17 +42,19 @@ The PR package should accurately explain:
 - what review-relevant risks or constraints remain
 - for stacked PRs, where this PR sits in the stack and what parent assumptions it relies on
 
-This skill packages work for review. It is an agent-consumption skill for creating and maintaining PR descriptions,
-especially draft PR descriptions used by the human-in-the-loop review workflow. It can be used by an implementation
-agent before author-side review or by an agent running the `qa` skill after verification work converges.
+This skill packages work for review. It is a PR-document skill for creating and
+maintaining PR descriptions, especially draft PR descriptions used by the
+human-in-the-loop review workflow. It can be used by an implementation agent before
+`pr-review` or by an agent running the `qa` skill after verification work converges.
 
-It does not replace implementation, QA judgment, Deliverable Owner judgment, approval, or merge authority. It may help
-create or refine PR content, but it must never approve, mark ready on behalf of the owner, or merge a PR.
+It does not review code, replace implementation, QA judgment, Deliverable Owner
+judgment, approval, or merge authority. It may help create or refine PR content, but it
+must never approve, mark ready on behalf of the owner, or merge a PR.
 
 ## Use This Skill When
 
 - the user or another agent asks to create, draft, update, or polish a PR
-- an implementation agent needs a draft PR package before author-side automated review
+- an implementation agent needs a draft PR package before `pr-review` or human review
 - an agent running the `qa` skill has completed verification and needs a high-quality PR description
 - a deliverable needs consistent reviewer-facing evidence
 - the repo has templates or conventions that should be applied reliably

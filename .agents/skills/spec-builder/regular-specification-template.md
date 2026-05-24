@@ -35,7 +35,7 @@
 **Integration branch:** `{{ integration-branch }}` (e.g. `dev`, `main`, `master` — confirmed with Owner)
 **Merge policy:** PR review required — agents commit/push feature branches only
 **Drafted:** {{ YYYY-MM-DD }}
-**Shared run log:** {{ run-log path, Zazz Board note, external tracker record, or N/A }} ({{ section-name }} section).
+**Shared run log:** {{ `<DOCS_ROOT>/implementation/<slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }} ({{ section-name }} section).
 
 ---
 
@@ -209,7 +209,8 @@ deviations require Owner sign-off and specification revision.
 ### Run Log
 
 Maintain the run log at {{ run-log path, Zazz Board note, external tracker record, or N/A }}. Append entries after OQ
-resolutions, phase completions, deviations, manual evidence, and load-bearing issues.
+resolutions, phase completions, deviations, manual evidence, QA findings, rework
+references, and load-bearing issues.
 
 ### Halt Conditions
 
@@ -239,14 +240,29 @@ The agent must stop and surface to the Owner if any of these occur:
 
 ## 7. Test Plan
 
+Test value rule: every automated test below must prove an AC, invariant, public
+contract, realistic edge case, regression, or named risk. Prefer compact matrices that
+cover multiple realistic edge cases at the same behavior boundary. Do not add duplicate,
+mock-only, unrealistic permutation, or coverage-padding tests. If nearby coverage already
+proves an AC or edge case, cite it here instead of adding a new test.
+
+Test contract rule: this section defines the required test intent, reference data,
+realistic edge cases, and verification layer before implementation starts. Implementers
+may adapt local mechanics, but they must not weaken or rewrite this coverage to make the
+implementation pass. Material changes require Owner sign-off and specification revision.
+
 Reference data sources:
 
 - {{ source }} — {{ how used }}.
 
 Automated tests:
 
-- `test_{{ name }}` — verifies {{ AC# }} by asserting {{ behavior }}.
-- `test_{{ name }}` — verifies {{ AC# }} by asserting {{ behavior }}.
+- `test_{{ name }}` — verifies {{ AC# / invariant / contract / regression }} plus edge cases {{ case list }} by asserting {{ observable behavior }}.
+- `test_{{ name }}` — verifies {{ AC# / invariant / contract / regression }} plus edge cases {{ case list }} by asserting {{ observable behavior }}.
+
+Existing coverage intentionally reused:
+
+- {{ existing test path/name, or N/A }} — already proves {{ AC# / behavior }}; no new test required because {{ rationale }}.
 
 Manual verification:
 
@@ -320,7 +336,11 @@ Resolve these before code is written. Log each answer in the run log.
 
 This specification uses the shared run log:
 
-{{ run-log path, Zazz Board note, external tracker record, or N/A }}
+{{ `<DOCS_ROOT>/implementation/<slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}
+
+When stored on disk, the run log should normally live under `<DOCS_ROOT>/implementation/`
+and remain untracked via repo-local or bare-repo exclude rules unless the repo explicitly
+chooses committed execution history.
 
 The agent appends entries; it does not rewrite prior entries.
 
@@ -331,6 +351,7 @@ Required sections for this specification:
 - Phase Completions
 - Deviations
 - Manual Evidence Locations
+- QA Findings & Rework
 - Issues & Recoveries
 - Verifier Sub-Agent Report
 
@@ -354,15 +375,15 @@ You are starting fresh in the worktree at {{ absolute-worktree-path }}.
 Your task is to implement {{ deliverable-name }}.
 
 Specification: {{ specification path or external record }}
-Shared run log: {{ run-log path, Zazz Board note, external tracker record, or N/A }}
+Shared run log: {{ `<DOCS_ROOT>/implementation/<slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}
 
 Read the specification end to end before doing anything else. Then read the shared run log in
 full. If this specification is part of a milestone branch, read prior specification sections and their
-run-log sections because earlier decisions and deviations may affect this work.
+run-log sections because earlier decisions, QA findings, and deviations may affect this work.
 
 NON-NEGOTIABLE RULES
 1. Follow the specification's Agent Implementation Rules.
-2. Resolve every Open Question before writing code; log answers in the run
+2. Resolve every Open Question before writing code; log answers in the implementation
    log.
 3. Verify standards via docs/standards/index.yaml before writing code.
 4. Tests and verification are not optional. Every AC must have evidence.
@@ -381,9 +402,9 @@ After your own DoD checklist is green, dispatch a fresh sub-agent:
 
   "You are verifying {{ deliverable-name }} in {{ absolute-worktree-path }}. Read the
   specification at {{ specification path or external record }} and the shared run log at
-  {{ run-log path, Zazz Board note, external tracker record, or N/A }}. Follow the
+  {{ `<DOCS_ROOT>/implementation/<slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}. Follow the
   Implementation Rules. For each AC, independently verify it by running the
-  cited test or command. Cross-check deviations logged in the run log against the code.
+  cited test or command. Cross-check deviations and QA findings logged in the run log against the code.
   Verify the specification slice matches its scope using the scope command named in the specification. Do
   not modify code or the run log. Return PASS/FAIL per AC with evidence."
 

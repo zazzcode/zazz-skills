@@ -25,7 +25,7 @@
 **Milestone:** {{ milestone-name-or-N/A }}
 **Deliverable(s):** {{ deliverable-name-list }}
 **Specification storage:** {{ <DOCS_ROOT>/specifications/<slug>.md | Zazz Board record | external tracker record }}
-**Run log:** {{ run-log path, Zazz Board note, external tracker record, or N/A }}
+**Run log:** {{ `<DOCS_ROOT>/implementation/<lane-slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}
 **Integration branch:** `{{ integration-branch }}` (confirmed with Owner)
 **Merge policy:** PR review required for every PR in the stack
 
@@ -110,6 +110,22 @@ specification with Owner sign-off before continuing.
 - **AC1** — {{ testable criterion }}. Verified by: {{ test/command/evidence }}.
 - **AC2** — {{ testable criterion }}. Verified by: {{ test/command/evidence }}.
 
+### Test Plan
+
+Test value rule: every automated test must prove an AC, invariant, public contract,
+realistic edge case, regression, or named risk. Prefer compact matrices that cover
+multiple realistic edge cases at the same behavior boundary. Reuse existing coverage
+when it already proves the behavior; do not add duplicate, mock-only, unrealistic
+permutation, or coverage-padding tests.
+
+Test contract rule: this section defines required test intent, reference data, realistic
+edge cases, and verification layer before implementation starts. Implementers may adapt
+local mechanics, but they must not weaken or rewrite this coverage to make implementation
+pass. Material changes require Owner sign-off and specification revision.
+
+- `test_{{ name }}` — verifies {{ AC# / contract / regression }} plus edge cases {{ case list }} by asserting {{ observable behavior }}.
+- Existing coverage reused: {{ existing test path/name, or N/A }} — {{ rationale }}.
+
 ### Execution Sequence
 
 1. {{ first failing test or verification entry point }}
@@ -138,6 +154,22 @@ specification with Owner sign-off before continuing.
   and `git diff origin/{{ integration-branch }}...HEAD -- {{ lower owned paths }}` after
   the lower PR lands.
 
+### Test Plan
+
+Test value rule: every automated test must prove an AC, invariant, public contract,
+realistic edge case, regression, or named risk. Prefer compact matrices that cover
+multiple realistic edge cases at the same behavior boundary. Reuse existing coverage
+when it already proves the behavior; do not add duplicate, mock-only, unrealistic
+permutation, or coverage-padding tests.
+
+Test contract rule: this section defines required test intent, reference data, realistic
+edge cases, and verification layer before implementation starts. Implementers may adapt
+local mechanics, but they must not weaken or rewrite this coverage to make implementation
+pass. Material changes require Owner sign-off and specification revision.
+
+- `test_{{ name }}` — verifies {{ AC# / contract / regression }} plus edge cases {{ case list }} by asserting {{ observable behavior }}.
+- Existing coverage reused: {{ existing test path/name, or N/A }} — {{ rationale }}.
+
 ### Execution Sequence
 
 1. {{ first failing test or verification entry point }}
@@ -163,7 +195,7 @@ contract. Every PR in the stack requires human sign-off before merge.
 - Keep each branch's commits scoped to that branch's ownership.
 - Halt on unresolved open questions, repeated test failure, scope drift, missing
   reference data, or contract changes.
-- Update the run log or external record after each phase when a run log is used.
+- Update the run log or external record after each phase and QA pass when a run log is used.
 
 ---
 
@@ -194,7 +226,7 @@ Integration branch:
 {{ integration-branch }}
 
 Read the specification end to end, then read the run log or external execution record:
-{{ run-log path, Zazz Board note, external tracker record, or N/A }}
+{{ `<DOCS_ROOT>/implementation/<lane-slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}
 
 Use gh-stack. Keep all stack commands non-interactive. Open draft PRs first, run
 author-side automated review, address feedback, then mark ready for formal review.

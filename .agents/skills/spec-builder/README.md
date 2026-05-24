@@ -97,8 +97,11 @@ deliverable is done.
   `<DOCS_ROOT>/specifications/<milestone>-spec-<n>-<slug>.md` or another
   Owner-approved consistent naming pattern under `specifications/`.
 - **Run log**:
-  repo-declared storage: ignored local file, committed support artifact, Zazz Board note,
-  external tracker entry, or a combination.
+  default local path: `<DOCS_ROOT>/implementation/<slug>-run-log.md`; for milestones or
+  stacks, use `<DOCS_ROOT>/implementation/<milestone-or-lane-slug>-run-log.md`. This
+  directory is usually excluded from Git by repo-local or bare-repo exclude rules unless
+  the repo explicitly chooses committed execution history. Zazz Board notes and external
+  tracker records are also valid when declared.
 - **Externally stored specification**:
   Zazz Board or the repo-declared tracking system, with a stable identifier linked from
   the PR and implementation prompt.
