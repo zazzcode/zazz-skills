@@ -37,15 +37,17 @@ Required conventions:
 - the container directory is not itself the active development checkout
 - `.bare/` is the shared Git directory
 - each active worktree is a sibling directory under the container
-- one active deliverable or document effort maps to one worktree
-- one branch maps to one worktree
+- one active deliverable or document effort maps to one worktree in the normal case
+- one branch maps to one worktree in the normal case; stacked branch lanes are the deliberate exception
 - do not use `/` in branch names
 - use flat branch names so the branch name can map directly to a sibling worktree directory
 - merges happen through PRs, not by locally merging feature branches into the integration worktree
 
-For deliverable execution, the rule is strict: one active deliverable equals one worktree. If multiple agents work tasks from the same deliverable, they still coordinate inside that single deliverable worktree rather than creating separate worktrees for the same deliverable.
+For deliverable execution, the default rule is one active deliverable equals one worktree. If multiple agents work tasks from the same deliverable, they still coordinate inside that single deliverable worktree rather than creating separate worktrees for the same deliverable.
 
-If the team wants multiple versions or competing implementations, model them as separate deliverables. Each deliverable gets its own worktree.
+A single worktree may host a deliberate stacked branch lane when related review branches need to share one filesystem, dependency install, scratch space, and build cache. In that case, the worktree has one checked-out branch at a time, and the stack tool moves the same working directory through the ordered branch stack.
+
+If the team wants multiple versions or competing implementations, model them as separate deliverables. Each alternative gets its own worktree unless the team is explicitly stacking dependent deliverables for review sequencing.
 
 ## Why This Pattern
 
@@ -184,9 +186,9 @@ git worktree add ../proposal-role-management-options -b proposal-role-management
 Within each worktree:
 
 - the repo's `AGENTS.md` should declare the docs root, commonly `docs/` or `.zazz/`
-- when the repo keeps deliverable files on disk, they belong under `<DOCS_ROOT>/deliverables/`
-- local ignored deliverable files are a valid first-class methodology mode, not a workaround
-- some repos intentionally commit deliverable files for a Git-native audit trail
+- when the repo keeps deliverable specification files on disk, they belong under `<DOCS_ROOT>/specifications/`
+- local ignored specification files are a valid first-class methodology mode, not a workaround
+- some repos intentionally commit specification files for a Git-native audit trail
 - some repos also mirror, track, or store execution artifacts in an external system such as Zazz Board
 - worktree-local excludes are preferred over committed `.gitignore` rules when the team wants deliverable execution artifacts to stay local
 
@@ -200,7 +202,7 @@ Canonical example exclusion:
 
 | Path | Reason |
 | ---- | ------ |
-| `<DOCS_ROOT>/deliverables/` | Local deliverable working files should not pollute shared Git history when the repo uses ignored local deliverables |
+| `<DOCS_ROOT>/specifications/` | Local deliverable specification files should not pollute shared Git history when the repo uses ignored local specifications |
 
 Why `info/exclude` instead of `.gitignore`:
 
@@ -299,7 +301,7 @@ If a session of work:
 
 - goes down the wrong path
 - fails owner review
-- reveals that the proposal, feature requirements document, SPEC, or PLAN is wrong
+- reveals that the proposal, feature requirements document, or deliverable specification is wrong
 
 then the worktree can be abandoned and the team can return to the governing documents, revise the contract, and start a new worktree for the corrected approach.
 

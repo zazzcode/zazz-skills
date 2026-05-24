@@ -281,7 +281,7 @@ Avoid using plain `git worktree add` for normal day-to-day branch creation in th
 
 ## Venv hygiene when creating worktrees
 
-Worktrunk's `copy-ignored` hook copies machine-local files (`.env`, `.claude/settings.local.json`, etc.) into new worktrees. If `.venv/` is also copied, its shebangs will point at the source worktree and break imports.
+Worktrunk's `copy-ignored` hook copies machine-local files (`.env`, `.agents/settings.local.json`, etc.) into new worktrees. If `.venv/` is also copied, its shebangs will point at the source worktree and break imports.
 
 ### Automated venv hygiene via Worktrunk
 
@@ -374,7 +374,7 @@ exclude = ["backend/.venv/"]
 What it does:
 
 - when a new worktree is created with Worktrunk, ignored local files are copied into it
-- this includes files like `.env`, `backend/.env`, `frontend/.env.local`, `.claude/settings.local.json`, and ignored local skill files or folders
+- this includes files like `.env`, `backend/.env`, `frontend/.env.local`, `.agents/settings.local.json`, and ignored local skill files or folders
 - this applies to `wt`-created worktrees, not plain `git worktree add`
 
 If Worktrunk asks for approval for the hook, approve it for this repo and let it remember the commands.

@@ -3,47 +3,50 @@
 Use this workflow for every non-stacked topology:
 
 - single-deliverable branch
-- milestone branch with multiple deliverables/SPECs in one branch
-- sibling branches where each branch has its own SPEC or small SPEC group
+- milestone branch with multiple deliverables/specifications in one branch
+- sibling branches where each branch has its own specification or small specification group
 
-The stable rule is one deliverable per SPEC. The flexible part is where those
+The stable rule is one deliverable per specification. The flexible part is where those
 deliverables live during implementation and review.
 
 ## Naming and location
 
-- SPEC path: `<active-worktree>/docs/implementation/<slug>-SPEC.md`.
+- Specification path: `<DOCS_ROOT>/specifications/<slug>.md` when committed in Git.
 - For milestone branches, use a consistent ordered naming pattern, for example:
-  - `docs/implementation/m2-spec-1-service-layer-foundation.md`
-  - `docs/implementation/m2-spec-2-cli-refactor.md`
-  - `docs/implementation/m2-spec-3-http-route.md`
-- Run log path: `<active-worktree>/docs/implementation/<effort-slug>-RUN-LOG.md`.
+  - `<DOCS_ROOT>/specifications/m2-spec-1-service-layer-foundation.md`
+  - `<DOCS_ROOT>/specifications/m2-spec-2-cli-refactor.md`
+  - `<DOCS_ROOT>/specifications/m2-spec-3-http-route.md`
+- External specification storage: Zazz Board or the repo-declared tracking system when
+  specifications are not committed in Git.
+- Run log path/location: follow the repo's declared policy; use an ignored local file,
+  committed support artifact, Zazz Board note, external tracker entry, or combination.
 - The integration branch worktree (e.g. `dev/`, `main/`) is read-only except for sync.
-  Never write SPECs or implementation files into it — always work from your feature
+  Never write specifications or implementation files into it — always work from your feature
   worktree.
 
 ## Workflow
 
 1. Confirm the active worktree and intended review artifact.
 2. Confirm whether this is:
-   - one deliverable / one SPEC / one PR;
-   - multiple deliverables / multiple SPECs / one PR;
+   - one deliverable / one specification / one PR;
+   - multiple deliverables / multiple specifications / one PR;
    - multiple sibling branches / separate PRs.
-3. Resolve the SPEC path under `<worktree>/docs/implementation/` using the deliverable
-   slug and any milestone prefix.
-4. Resolve the run-log path. Reuse the milestone/effort run log when multiple SPECs
+3. Resolve the specification path under `<DOCS_ROOT>/specifications/`, or the Zazz
+   Board/external tracking location when the repo does not commit specifications.
+4. Resolve the run-log path/location. Reuse the milestone/effort run log when multiple specifications
    share one branch or one review artifact.
-5. Copy `regular-SPEC-TEMPLATE.md` to the SPEC path. Fill placeholders interactively
+5. Copy `regular-specification-template.md` to the specification path. Fill placeholders interactively
    with the Owner.
 6. Read this skill's bundled `references/spec-driven-development-methodology.md`.
 7. Read `docs/standards/index.yaml` from the active worktree when present; load standards whose
-   `applies_to` matches files this SPEC will affect.
+   `applies_to` matches files this specification will affect.
 8. Iterate to Owner approval.
 
 ## Output
 
-- One SPEC file for the deliverable.
-- A run-log path referenced by the SPEC.
-- No PLAN file.
+- One specification file or external specification record for the deliverable.
+- A run-log path/location referenced by the specification when a run log is used.
+- No separate plan file.
 
-For milestone branches, repeat this workflow once per deliverable/SPEC while preserving
+For milestone branches, repeat this workflow once per deliverable/specification while preserving
 one shared run log and one intended PR review artifact.

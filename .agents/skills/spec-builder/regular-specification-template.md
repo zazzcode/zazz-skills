@@ -1,41 +1,41 @@
 <!--
-  TEMPLATE — Regular / Non-Stacked SPEC (spec-builder skill)
+  TEMPLATE — Regular / Non-Stacked Deliverable Specification (spec-builder skill)
 
   Copy this file to:
-    <active-worktree>/docs/implementation/<slug>-SPEC.md
+    <DOCS_ROOT>/specifications/<slug>.md
 
-  For milestone branches with multiple deliverables/SPECs, use a consistent ordered
+  For milestone branches with multiple deliverables/specifications, use a consistent ordered
   pattern such as:
-    docs/implementation/m2-spec-1-service-layer-foundation.md
+    <DOCS_ROOT>/specifications/m2-spec-1-service-layer-foundation.md
 
   Stable rule:
-    one deliverable = one SPEC
+    one deliverable = one deliverable specification
 
   Flexible delivery topology:
     a worktree / branch / PR may contain one deliverable, multiple deliverables, or a
-    single-lane stack of branches. This template is for non-stacked SPECs.
+    single-lane stack of branches. This template is for non-stacked specifications.
 
-  This SPEC is the implementation contract. There is no separate PLAN.
+  This deliverable specification is the implementation contract. There is no separate plan.
 
-  The SPEC is test/AC-driven:
+  The specification is test/AC-driven:
     define acceptance criteria and test plan before execution sequence.
 
   Replace every `{{ ... }}` placeholder. Resolve every `<!-- TBD: ... -->`
   marker. Delete this template comment block when filling in for a real deliverable.
 -->
 
-# {{ Deliverable Name }} — SPEC
+# {{ Deliverable Name }} — Deliverable Specification
 
 **Worktree / branch:** `{{ worktree-name }}`
 **Feature:** {{ feature-name }}
 **Milestone:** {{ milestone-name-or-N/A }}
 **Deliverable:** {{ deliverable-name }}
 **Delivery topology:** {{ single-deliverable branch | milestone branch | sibling branch }}
-**Review artifact:** {{ one PR for this SPEC | one milestone PR with sibling SPECs | separate sibling PR }}
+**Review artifact:** {{ one PR for this specification | one milestone PR with sibling specifications | separate sibling PR }}
 **Integration branch:** `{{ integration-branch }}` (e.g. `dev`, `main`, `master` — confirmed with Owner)
 **Merge policy:** PR review required — agents commit/push feature branches only
 **Drafted:** {{ YYYY-MM-DD }}
-**Shared run log:** `docs/implementation/{{ effort-slug }}-RUN-LOG.md` ({{ section-name }} section).
+**Shared run log:** {{ run-log path, Zazz Board note, external tracker record, or N/A }} ({{ section-name }} section).
 
 ---
 
@@ -50,24 +50,24 @@
 Read these before opening an editor. Required reading is section-pinned context, not a
 license to load the whole repo.
 
-### 1.a This SPEC
+### 1.a This Specification
 
-Read this SPEC end to end first.
+Read this specification end to end first.
 
 ### 1.b Feature / Milestone Context
 
 - `{{ docs/features/path.md }}` — read {{ section numbers }}.
 - `{{ docs/architecture/path.md }}` — read {{ section numbers }}.
 
-### 1.c Prior SPECs In This Delivery Effort
+### 1.c Prior Specifications In This Delivery Effort
 
-<!-- Use when this SPEC follows another SPEC in the same milestone branch. Otherwise say N/A. -->
+<!-- Use when this specification follows another specification in the same milestone branch. Otherwise say N/A. -->
 
-- `{{ docs/implementation/prior-spec.md }}` — read {{ sections }}.
+- `{{ <DOCS_ROOT>/specifications/prior-spec.md }}` — read {{ sections }}.
 
 ### 1.d Standards
 
-Per `docs/standards/index.yaml`, the following standards apply to this SPEC's scope:
+Per `docs/standards/index.yaml`, the following standards apply to this specification's scope:
 
 | Standard | What it governs here |
 | --- | --- |
@@ -84,7 +84,7 @@ it to the Owner before proceeding.
 
 ### 1.f Project Orientation
 
-- `{{ orientation path, e.g. AGENTS.md / CLAUDE.md / repo-specific orientation }}` —
+- `{{ orientation path, e.g. AGENTS.md / repo-specific orientation }}` —
   branch scope discipline, command-shape discipline, local verification, and safety
   rules.
 
@@ -108,7 +108,7 @@ These are load-bearing and must hold verbatim. Restate them in the PR body when 
 
 ### Strict Scope Constraint
 
-{{ Every file modification in this SPEC lives under ... }} If implementation surfaces a
+{{ Every file modification in this specification lives under ... }} If implementation surfaces a
 need to modify outside this scope, stop and surface to the Owner.
 
 ### In Scope
@@ -144,7 +144,7 @@ Each decision answers "why this over the obvious alternative?"
 
 ## 5. Agent Implementation Rules
 
-These rules apply throughout implementation. SPEC-specific halt conditions may add to
+These rules apply throughout implementation. Specification-specific halt conditions may add to
 this list but should not duplicate it.
 
 ### Team Integration
@@ -163,25 +163,25 @@ scripts/withenv ../.env just {{ recipe }}
 just format
 ```
 
-Adjust only when the SPEC names a different service or command convention.
+Adjust only when the specification names a different service or command convention.
 
 ### Commit And Push
 
-Default to one coherent green commit per SPEC after the SPEC's DoD and verifier pass.
+Default to one coherent green commit per specification after the specification's DoD and verifier pass.
 Waypoint commits are allowed only at coherent green recovery points. Do not commit red
 tests, half-applied refactors, or local-only evidence artifacts as product commits.
 
-Push after the SPEC is complete and committed, or at an explicit handoff/backup point.
+Push after the specification is complete and committed, or at an explicit handoff/backup point.
 Do not push after every phase by default.
 
 ### Scope Verification
 
-For a single-SPEC branch, `git diff {{ integration-branch }} --stat` should list
-exactly the files in §3 unless the Owner approved a SPEC revision.
+For a single-specification branch, `git diff {{ integration-branch }} --stat` should list
+exactly the files in §3 unless the Owner approved a specification revision.
 
-For a milestone branch with multiple SPECs, verify this SPEC's slice with its commit(s),
+For a milestone branch with multiple specifications, verify this specification's slice with its commit(s),
 path list, or an Owner-approved slice-diff base. The full branch diff may include other
-SPECs in the same milestone branch.
+specifications in the same milestone branch.
 
 ### Autonomy Boundaries
 
@@ -204,11 +204,11 @@ Adaptive guidance:
 
 The agent may adapt guidance when verified local evidence supports it, provided hard
 constraints still hold. Meaningful deviations go in the run log. Contract-changing
-deviations require Owner sign-off and SPEC revision.
+deviations require Owner sign-off and specification revision.
 
 ### Run Log
 
-Maintain `docs/implementation/{{ effort-slug }}-RUN-LOG.md`. Append entries after OQ
+Maintain the run log at {{ run-log path, Zazz Board note, external tracker record, or N/A }}. Append entries after OQ
 resolutions, phase completions, deviations, manual evidence, and load-bearing issues.
 
 ### Halt Conditions
@@ -233,7 +233,7 @@ The agent must stop and surface to the Owner if any of these occur:
 - **AC1** — {{ title }}. {{ what must be true }}. Verified by: {{ test or command }}.
 - **AC2** — {{ title }}. {{ what must be true }}. Verified by: {{ test or command }}.
 - **AC3** — Type / lint / formatting clean. Verified by: `{{ command }}`.
-- **AC4** — Scope clean. Verified by: {{ `git diff {{ integration-branch }} --stat` for a single-SPEC branch, or SPEC-slice diff / commit inspection for a milestone branch }}.
+- **AC4** — Scope clean. Verified by: {{ `git diff {{ integration-branch }} --stat` for a single-specification branch, or specification-slice diff / commit inspection for a milestone branch }}.
 
 ---
 
@@ -300,11 +300,11 @@ deviations.
 - [ ] Scoped tests green: `{{ command }}`.
 - [ ] Manual verification complete: {{ command/path or N/A }}.
 - [ ] `{{ format/check command }}` exits 0.
-- [ ] Scope verification lists exactly the files in §3 for this SPEC slice.
+- [ ] Scope verification lists exactly the files in §3 for this specification slice.
 - [ ] All AC1–ACn verified, with evidence cited.
-- [ ] `{{ effort-slug }}-RUN-LOG.md` section for this SPEC is up to date.
+- [ ] Run-log section for this specification is up to date when a run log is used.
 - [ ] Verifier sub-agent dispatched and returned all-pass.
-- [ ] PR draft body links this SPEC and lists each AC's verification.
+- [ ] PR draft body links this specification and lists each AC's verification.
 
 ---
 
@@ -318,13 +318,13 @@ Resolve these before code is written. Log each answer in the run log.
 
 ## 11. Run Log Protocol
 
-This SPEC uses the shared run log:
+This specification uses the shared run log:
 
-`docs/implementation/{{ effort-slug }}-RUN-LOG.md`
+{{ run-log path, Zazz Board note, external tracker record, or N/A }}
 
 The agent appends entries; it does not rewrite prior entries.
 
-Required sections for this SPEC:
+Required sections for this specification:
 
 - Standards Verification
 - OQ Resolutions
@@ -336,8 +336,8 @@ Required sections for this SPEC:
 
 Session start protocol:
 
-1. Read this SPEC end to end.
-2. Read the entire run log, including prior SPEC sections when this is a milestone
+1. Read this specification end to end.
+2. Read the entire run log, including prior specification sections when this is a milestone
    branch.
 3. Confirm the next phase based on the most recent Phase Completion entry.
 4. Resolve open questions with the Owner before writing code.
@@ -353,25 +353,25 @@ Paste this into a fresh implementation session:
 You are starting fresh in the worktree at {{ absolute-worktree-path }}.
 Your task is to implement {{ deliverable-name }}.
 
-THE SPEC IS AT: {{ spec-path }}
-THE SHARED RUN LOG IS AT: docs/implementation/{{ effort-slug }}-RUN-LOG.md
+Specification: {{ specification path or external record }}
+Shared run log: {{ run-log path, Zazz Board note, external tracker record, or N/A }}
 
-Read the SPEC end to end before doing anything else. Then read the shared run log in
-full. If this SPEC is part of a milestone branch, read prior SPEC sections and their
+Read the specification end to end before doing anything else. Then read the shared run log in
+full. If this specification is part of a milestone branch, read prior specification sections and their
 run-log sections because earlier decisions and deviations may affect this work.
 
 NON-NEGOTIABLE RULES
-1. Follow SPEC §5 Agent Implementation Rules.
-2. Resolve every Open Question in SPEC §10 before writing code; log answers in the run
+1. Follow the specification's Agent Implementation Rules.
+2. Resolve every Open Question before writing code; log answers in the run
    log.
 3. Verify standards via docs/standards/index.yaml before writing code.
-4. Tests and verification are not optional. Every AC in SPEC §6 must have evidence.
+4. Tests and verification are not optional. Every AC must have evidence.
 
 ORDER OF WORK
-1. Read the SPEC, run log, required docs, standards, and code references.
+1. Read the specification, run log, required docs, standards, and code references.
 2. Resolve OQs.
 3. Review ACs (§6) and Test Plan (§7); start with the TDD entry point in §8.
-4. Execute phases in SPEC §8.
+4. Execute the specification's phases.
 5. Run verification and complete the DoD (§9).
 6. Dispatch a verifier sub-agent.
 7. Prepare PR-ready output. Do not merge to `{{ integration-branch }}`; integration happens through human PR review.
@@ -380,11 +380,11 @@ VERIFIER SUB-AGENT
 After your own DoD checklist is green, dispatch a fresh sub-agent:
 
   "You are verifying {{ deliverable-name }} in {{ absolute-worktree-path }}. Read the
-  SPEC at {{ spec-path }} and the shared run log at
-  docs/implementation/{{ effort-slug }}-RUN-LOG.md. Follow SPEC §5 Agent
-  Implementation Rules. For each AC in SPEC §6, independently verify it by running the
+  specification at {{ specification path or external record }} and the shared run log at
+  {{ run-log path, Zazz Board note, external tracker record, or N/A }}. Follow the
+  Implementation Rules. For each AC, independently verify it by running the
   cited test or command. Cross-check deviations logged in the run log against the code.
-  Verify the SPEC slice matches SPEC §3 using the scope command named in the SPEC. Do
+  Verify the specification slice matches its scope using the scope command named in the specification. Do
   not modify code or the run log. Return PASS/FAIL per AC with evidence."
 
 Only declare done after the verifier reports all-pass.
@@ -392,4 +392,4 @@ Only declare done after the verifier reports all-pass.
 
 ---
 
-*End of SPEC. Implementation proceeds from this SPEC and the run log; no separate PLAN is created.*
+*End of specification. Implementation proceeds from this specification and the run log; no separate plan is created.*

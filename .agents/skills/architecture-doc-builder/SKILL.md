@@ -3,25 +3,21 @@ name: architecture-doc-builder
 description: >-
   Help a user create, draft, refine, or update a long-lived architecture document for a feature or subsystem; use when
   the user wants to define or improve system design, module placement, per-milestone sequence diagrams, data model
-  vision, and technical open questions. Paired with a feature document — does not replace feature-doc-builder.
+  vision, and technical open questions. Can be project-level or paired with a feature requirements document; does
+  not replace feature-doc-builder.
 ---
 
 # Architecture Doc Builder Skill
-
-## Required Repo Extension Check
-
-Before doing anything else, check for `.claude/skill-extensions/architecture-doc-builder/EXTENSION.md`. If it exists,
-read it immediately after this `SKILL.md` and apply it as repo-specific guidance that augments this skill.
 
 ## Startup Sequence
 
 Before starting the dialogue:
 
-1. Check for the repo extension file above and read it if present.
 1. Use `AGENTS.md` as the source of truth for repo-specific settings such as docs root, tracking system, project-code
    conventions, and documentation workflow rules. Read it if that context is not already available.
-1. Locate the paired feature document. An architecture document is always paired with a feature document; if no feature
-   document exists yet, stop and recommend `feature-doc-builder` first.
+1. Determine whether the architecture document is project-level or feature-level. For a feature-level architecture
+   document, locate the paired feature requirements document; if no feature requirements document exists yet, stop and
+   recommend `feature-doc-builder` first.
 1. Identify whether you are creating a new architecture document, evolving an existing one, or converting a proposal
    or transcript into a draft.
 1. Find the standards index and any existing architecture documents that should shape the discussion.
@@ -42,7 +38,7 @@ The architecture document should help answer:
 - which technical decisions still need to be made
 
 This skill is for architecture definition and evolution. It is not an implementation-planning skill and it does not
-replace deliverable SPEC authoring or feature-level product definition.
+replace deliverable specification authoring or feature-level product definition.
 
 It should help the lead developer or architect articulate technical decisions and per-milestone system shape that
 later inform deliverable design and acceptance.
@@ -59,7 +55,7 @@ Secondary audiences for the resulting architecture document:
 
 - developers onboarding to the project
 - the development team designing deliverables
-- future agents that need technical context before creating deliverable specs
+- future agents that need technical context before creating deliverable specifications
 
 ## Docs Root Convention
 
@@ -70,7 +66,8 @@ Use the repo docs root declared in `AGENTS.md` as the base for methodology docs.
 
 Primary artifact:
 
-- `<DOCS_ROOT>/architecture/{feature-key}-architecture.md`
+- Project-level architecture: `<DOCS_ROOT>/architecture/project-architecture.md`
+- Feature-level architecture: `<DOCS_ROOT>/architecture/{feature-key}-architecture.md`
 
 Supporting discovery artifact:
 
@@ -88,7 +85,7 @@ Supporting discovery artifact:
 - capture data model vision for future milestones
 - record technical open questions and trade-offs
 - ingest proposals or design transcripts and turn them into an architecture document draft
-- produce handoff guidance for later deliverable specs
+- produce handoff guidance for later deliverable specifications
 
 ### This skill does not
 
@@ -97,7 +94,7 @@ Supporting discovery artifact:
   catalog at concept level)
 - replace `proposal-builder` when the team is still deciding whether or how to proceed
 - implement the feature
-- restate content already in the feature document
+- restate content already in the project or feature requirements document
 
 Artifact boundaries:
 
@@ -108,15 +105,21 @@ Artifact boundaries:
 
 ## Pairing With the Feature Document
 
-Architecture documents and feature documents are paired by name. If the feature document is
-`<DOCS_ROOT>/features/reporting-feature.md`, the architecture document is `<DOCS_ROOT>/architecture/reporting-architecture.md`. They
-cross-reference each other.
+Feature-level architecture documents and feature requirements documents are paired by name. If the feature requirements
+document is `<DOCS_ROOT>/features/reporting.md`, the feature-level architecture document is
+`<DOCS_ROOT>/architecture/reporting-architecture.md`. They cross-reference each other.
 
-**The architecture document is subservient to the feature document.** The feature document is the canonical source of
-truth for the milestone list (names, order, target completion dates, capability statements, and deliverable lists).
-The architecture document mirrors that list structurally but does not redefine it.
+Project-level architecture documents also live under `<DOCS_ROOT>/architecture/`, but they are paired with `project.md`
+instead of a single feature requirements document. Use a project-level architecture document for cross-cutting system
+shape: major services, modules, data stores, runtime boundaries, integration patterns, and decisions that affect many
+features.
 
-The feature document owns:
+**Feature-level architecture documents are subservient to the feature requirements document.** The feature
+requirements document is the canonical source of truth for the milestone list (names, order, target completion dates,
+capability statements, and deliverable lists). The architecture document mirrors that list structurally but does not
+redefine it.
+
+For feature-level architecture, the feature document owns:
 
 - purpose and value
 - **milestone list — names, order, target completion dates, capability statements, deliverables**
@@ -135,17 +138,17 @@ The architecture document owns:
 
 ### Mirror rule
 
-When drafting or updating the architecture document:
+When drafting or updating a feature-level architecture document:
 
-1. Read the paired feature document's milestone overview table and milestone detail headings first.
+1. Read the paired feature requirements document's milestone overview table and milestone detail headings first.
 1. Use exactly the same milestone names, in the same order, in the architecture document.
 1. Do **not** introduce a milestone that does not appear in the feature document.
 1. Do **not** rename or reorder milestones in the architecture document.
 1. Do **not** record target completion dates in the architecture document — those live only in the feature document.
    The architecture document may reference dates by pointing to the feature document, but does not duplicate them.
 1. If the architecture work reveals that a milestone needs to be added, split, merged, or renamed, stop and propose
-   that change in the feature document first. Update the feature document, then mirror the change in the architecture
-   document.
+   that change in the feature requirements document first. Update the feature requirements document, then mirror the
+   change in the architecture document.
 
 ### Milestones must be major sections, not interleaved
 
@@ -157,8 +160,11 @@ across all milestones (architecture summary, final module placement, cross-cutti
 dedicated sections before or after the per-milestone sections. The result is that a reader can read one milestone's
 section start-to-finish without encountering content about other milestones.
 
-Avoid duplicating content. Cross-reference the feature document for the "why", milestone definitions, and dates; the
-architecture document should describe the "how" at each milestone.
+Avoid duplicating content. Cross-reference the feature requirements document for the "why", milestone definitions,
+and dates; the architecture document should describe the "how" at each milestone.
+
+For project-level architecture, use `project.md` and any relevant standards as the durable product/system context.
+Do not invent a feature milestone model when the architecture scope is project-wide.
 
 ## Interaction Modes
 
@@ -188,7 +194,7 @@ When the user already has an architecture document:
 ### Mode D: Development mode
 
 If the user says "development mode" or equivalent, the focus is on improving this skill itself. In development mode,
-you may edit `.claude/skills/architecture-doc-builder/SKILL.md`. Outside development mode, this file is read-only.
+you may edit `.agents/skills/architecture-doc-builder/SKILL.md`. Outside development mode, this file is read-only.
 
 ## Human-Facing Usage Guidance
 
@@ -211,7 +217,7 @@ This skill should feel like a structured system-design conversation, not an impl
 
 ```text
 Use architecture-doc-builder.
-We have a feature document at docs/features/reporting-feature.md.
+We have a feature document at docs/features/reporting.md.
 Help me draft the paired architecture document that defines module placement, per-milestone system diagrams,
 sequence diagrams for each use case, and the data model vision for the final milestone.
 ```
@@ -234,18 +240,27 @@ Please draft the architecture document from that proposal, with per-milestone sy
 ask follow-up questions where the proposal is ambiguous.
 ```
 
+#### Example 4: Project-level architecture document
+
+```text
+Use architecture-doc-builder.
+Help me draft the project-level architecture document at docs/architecture/project-architecture.md so it captures
+the major services, runtime boundaries, data stores, integration patterns, and cross-cutting technical decisions.
+```
+
 ### Prompt structure that works well
 
 The best starting prompts usually include:
 
-- the feature key (must match the paired feature document)
-- a pointer to the paired feature document
+- the architecture scope: project-level or feature-level
+- for feature-level architecture, the feature key and a pointer to the paired feature document
 - whether this is a new architecture document, an update, or a proposal-conversion
 - a request for iterative dialogue and drafting
 
 ## Dialogue Principles
 
-- Always read the paired feature document first.
+- For feature-level architecture, always read the paired feature document first. For project-level architecture, read
+  `project.md` and the relevant standards first.
 - Verify before asserting. If the document will name a module path, a function, or a route URL, check it in the
   codebase rather than guessing.
 - Keep the discussion at architecture level, not implementation-task level.
@@ -254,7 +269,7 @@ The best starting prompts usually include:
 - Do not produce cumulative diagrams that try to show every milestone at once unless explicitly used as a top-level
   summary.
 - Push back when the conversation collapses into deliverable-task or code-style detail that belongs in standards or
-  SPECs.
+  deliverable specifications.
 - Use proposals as evidence, not truth. Surface inferred assumptions and ask for confirmation.
 
 ### No padding
@@ -276,10 +291,10 @@ padding and should have been left out. Prefer a short, dense document over a lon
 
 Before drafting a serious architecture document, elicit or infer:
 
-1. feature key (must match the paired feature document)
-1. paired feature document path
-1. milestone list (from the feature document)
-1. current state of the codebase relevant to the feature
+1. architecture scope: project-level or feature-level
+1. for feature-level architecture, feature key and paired feature document path
+1. for feature-level architecture, milestone list from the feature document
+1. current state of the codebase relevant to the architecture scope
 1. module placement plan
 1. per-milestone use cases that need sequence diagrams
 1. data model vision if a future milestone introduces persistence
@@ -293,20 +308,20 @@ Process:
 
 1. Read `<DOCS_ROOT>/architecture/index.yaml` if it exists to avoid duplicating or overlapping an existing
    architecture doc.
-1. Read `<DOCS_ROOT>/features/index.yaml` and load the paired feature document.
+1. For feature-level architecture, read `<DOCS_ROOT>/features/index.yaml` and load the paired feature document.
+1. For project-level architecture, read `<DOCS_ROOT>/project.md`.
 1. Read `<DOCS_ROOT>/standards/index.yaml` only as needed for system-level constraints that materially shape the
    technical shape of the feature.
 1. Reference standards where they affect module placement or per-milestone decisions, but do not restate detailed
    coding rules inside the architecture document.
 
-The architecture document should stay system-oriented. Detailed coding conventions remain in standards. Deliverable-
-level test and execution detail remains in SPECs and PLANs.
+The architecture document should stay system-oriented. Detailed coding conventions remain in standards. Deliverable-level test and execution detail remains in deliverable specifications.
 
 ## Architecture Document Content Requirements
 
 Each architecture document draft should usually include:
 
-1. Title and link to the paired feature document
+1. Title and scope, with link to `project.md` or the paired feature document
 1. Architecture summary
 1. Module placement (final layout — earlier milestones populate subsets)
 1. Cross-cutting concerns (permissions, errors, OpenAPI, logging, deployment, IAM)
@@ -396,7 +411,8 @@ Use this section order unless the user explicitly asks for a different structure
 
 Use methodology naming guidance:
 
-- Architecture document: `<DOCS_ROOT>/architecture/{feature-key}-architecture.md` — must match the paired feature document's key
+- Project-level architecture document: `<DOCS_ROOT>/architecture/project-architecture.md`
+- Feature-level architecture document: `<DOCS_ROOT>/architecture/{feature-key}-architecture.md` — must match the paired feature document's key
 - Architecture index: `<DOCS_ROOT>/architecture/index.yaml`
 
 Keep `architecture/` flat by default.
@@ -426,7 +442,7 @@ remaining future-milestone sections.
 When the architecture document is approved or a milestone is ready for execution, provide a handoff package for later
 spec work containing:
 
-1. feature key, feature document path, architecture document path
+1. architecture scope, architecture document path, and project or feature document path
 1. milestone being implemented
 1. module placement summary for that milestone
 1. relevant sequence diagrams
@@ -434,14 +450,15 @@ spec work containing:
 1. data model expectations
 1. open questions that affect implementation
 
-This handoff informs deliverable SPEC creation but does not replace `spec-builder`.
+This handoff informs deliverable specification creation but does not replace `spec-builder`.
 
 ## Quality Bar
 
 An architecture document draft is high quality when:
 
-1. it is clearly paired with a feature document and avoids duplicating its content
-1. the milestone list mirrors the feature document exactly — same names, same order, no extra or renamed milestones
+1. its scope is clear: project-level or feature-level
+1. feature-level architecture is clearly paired with a feature document and avoids duplicating its content
+1. feature-level milestone lists mirror the feature document exactly — same names, same order, no extra or renamed milestones
 1. no target completion dates appear in the architecture document; dates live only in the feature document
 1. module placement is explicit, with rationale
 1. each milestone has its own system diagram and use-case sequence diagrams

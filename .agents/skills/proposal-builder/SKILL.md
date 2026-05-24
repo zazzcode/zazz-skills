@@ -5,19 +5,13 @@ description: Help one or more stakeholders create, draft, refine, or update a pr
 
 # Proposal Builder Skill
 
-## Required Repo Extension Check
-
-Before doing anything else, check for `.agents/skill-extensions/proposal-builder/EXTENSION.md`.
-If it exists, read it immediately after this `SKILL.md` and apply it as repo-specific guidance that augments this skill.
-
 ## Startup Sequence
 
 Before starting the dialogue:
-1. Check for the repo extension file above and read it if present.
-2. Use `AGENTS.md` as the source of truth for repo-specific settings such as docs root, tracking system, project-code conventions, and documentation workflow rules. Read it if that context is not already available.
-3. Identify whether this is a live dialogue, multi-human facilitation, transcript ingestion, or another supported mode.
-4. Find the standards index for this repo and identify the standard files that could materially affect the proposal.
-5. Then begin the discussion and push for alternatives, tradeoffs, and a decision-ready recommendation.
+1. Use `AGENTS.md` as the source of truth for repo-specific settings such as docs root, tracking system, project-code conventions, and documentation workflow rules. Read it if that context is not already available.
+2. Identify whether this is a live dialogue, multi-human facilitation, transcript ingestion, or another supported mode.
+3. Find the standards index for this repo and identify the standard files that could materially affect the proposal.
+4. Then begin the discussion and push for alternatives, tradeoffs, and a decision-ready recommendation.
 
 ## Overview
 Guides one or more humans through a structured proposal discussion to produce a clear proposal document for a feature, a deliverable, or both.

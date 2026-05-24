@@ -22,7 +22,7 @@ Use this skill when:
 - you are defining a new long-lived feature
 - you need to update a feature document after a milestone shipped
 - you want to turn a workshop or transcript into a feature document
-- you need feature-level context before creating deliverable SPECs
+- you need feature-level context before creating deliverable specifications
 
 ## What It Produces
 
@@ -67,7 +67,7 @@ Please infer the feature intent, current state, milestones, and open questions, 
 1. Answer questions about purpose, current behavior, and future direction.
 1. Review the first draft.
 1. Refine milestone boundaries and success criteria.
-1. Approve the feature document and use it to inform later SPEC work.
+1. Approve the feature document and use it to inform later deliverable specification work.
 
 ## Notes
 

@@ -5,16 +5,10 @@ description: Help a user create, draft, refine, or update a long-lived feature d
 
 # Feature Doc Builder Skill
 
-## Required Repo Extension Check
-
-Before doing anything else, check for `.claude/skill-extensions/feature-doc-builder/EXTENSION.md`. If it exists, read
-it immediately after this `SKILL.md` and apply it as repo-specific guidance that augments this skill.
-
 ## Startup Sequence
 
 Before starting the dialogue:
 
-1. Check for the repo extension file above and read it if present.
 1. Use `AGENTS.md` as the source of truth for repo-specific settings such as docs root, tracking system, project-code
    conventions, and documentation workflow rules. Read it if that context is not already available.
 1. Identify whether you are creating a new feature document, evolving an existing one, or converting a transcript into
@@ -25,9 +19,9 @@ Before starting the dialogue:
 
 ## Mission
 
-Create or evolve a feature document that explains a long-lived application capability at the product and system level.
+Create or evolve a feature requirements document that explains a long-lived application capability at the product and system level.
 
-The feature document should help answer:
+The feature requirements document should help answer:
 
 - why this feature exists
 - what value it creates
@@ -36,7 +30,7 @@ The feature document should help answer:
 - how the work should be organized into milestones
 
 This skill is for feature definition and feature evolution. It is not an implementation-planning skill and it does not
-replace deliverable SPEC authoring.
+replace deliverable specification authoring.
 
 It should help the Product Owner articulate feature-level success criteria and milestone outcome criteria that later
 inform deliverable acceptance criteria.
@@ -49,11 +43,11 @@ Work primarily with:
 - project owner
 - stakeholders with domain context
 
-Secondary audiences for the resulting feature document:
+Secondary audiences for the resulting feature requirements document:
 
 - developers onboarding to the project
 - the development team reviewing feature intent and milestone breakdown
-- future agents that need product context before creating deliverable specs
+- future agents that need product context before creating deliverable specifications
 
 ## Docs Root Convention
 
@@ -64,7 +58,7 @@ Use the repo docs root declared in `AGENTS.md` as the base for methodology docs.
 
 Primary artifact:
 
-- `<DOCS_ROOT>/features/{feature-key}-feature.md`
+- `<DOCS_ROOT>/features/{feature-key}.md`
 
 Supporting discovery artifact:
 
@@ -80,7 +74,7 @@ Supporting discovery artifact:
 - decompose feature evolution into milestones
 - identify what is live, planned, proposed, or deferred
 - ingest transcripts or meeting notes and turn them into a feature document draft
-- produce handoff guidance for later deliverable specs
+- produce handoff guidance for later deliverable specifications
 
 ### This skill does not
 
@@ -185,7 +179,7 @@ The best starting prompts usually include:
 - Distinguish what is live, planned, proposed, and deferred.
 - Treat milestones as meaningful increments of user or system value.
 - Push back when the conversation collapses into low-level implementation detail that belongs in standards or
-  deliverable specs.
+  deliverable specifications.
 - Use transcripts as evidence, not truth. Surface inferred assumptions and ask for confirmation.
 
 ### No padding
@@ -229,7 +223,7 @@ Process:
    implementation rules inside the feature document.
 
 The feature document should stay product/system-oriented. Detailed coding conventions remain in standards.
-Deliverable-level test and execution detail remains in SPECs and PLANs.
+Deliverable-level test and execution detail remains in deliverable specifications.
 
 ## Feature Document Content Requirements
 
@@ -269,7 +263,7 @@ Every milestone must have **all three** of:
    that it could not do before?"
 1. **A deliverables list.** The concrete shippable units (backend service, route, UI page, migration, etc.) that
    together produce the milestone's capability. The list does not need to enumerate sub-tasks; that belongs in a
-   deliverable SPEC.
+   deliverable specification.
 
 When a milestone ships, replace its target date with the actual completion date and update the status accordingly
 (e.g. `Complete (2026-03-25)`).
@@ -277,7 +271,7 @@ When a milestone ships, replace its target date with the actual completion date 
 ### Feature document is the source of truth for milestones
 
 The milestone list — names, order, target dates, capability statements, deliverables — is owned by the feature
-document. Other documents (architecture, SPECs, PLANs) may reference these milestones but must not redefine them or
+document. Other documents (architecture documents and deliverable specifications) may reference these milestones but must not redefine them or
 introduce new ones. If a milestone needs to be added, removed, renamed, or rescoped, the change lands in the feature
 document first; downstream documents are then updated to mirror the new milestone list.
 
@@ -300,7 +294,7 @@ They answer questions like:
 - what should be true of the product when this feature is successful?
 - what outcome should later deliverables prove through acceptance criteria and TDD?
 
-Those feature-document-level success criteria should inform later SPEC acceptance criteria, but should not replace
+Those feature-document-level success criteria should inform later deliverable acceptance criteria, but should not replace
 deliverable-level testability requirements.
 
 ## Recommended Feature Document Sections
@@ -364,7 +358,7 @@ Use this section order unless the owner explicitly asks for a different structur
 
 Use methodology naming guidance:
 
-- Feature document: `<DOCS_ROOT>/features/{feature-key}-feature.md`
+- Feature requirements document: `<DOCS_ROOT>/features/{feature-key}.md`
 - Features index: `<DOCS_ROOT>/features/index.yaml`
 
 Keep `features/` flat by default. If a project later has a real need for multiple durable artifacts per feature, it may
@@ -391,8 +385,8 @@ When the user says:
 
 ## Feature Document -> Deliverable Handoff
 
-When the feature document is approved or a milestone is ready for execution, provide a handoff package for later spec
-work containing:
+When the feature document is approved or a milestone is ready for execution, provide a handoff package for later
+deliverable specification work containing:
 
 1. feature key and feature document path
 1. milestone being implemented
@@ -402,7 +396,7 @@ work containing:
 1. constraints and non-goals
 1. likely deliverable slices
 
-This handoff informs deliverable SPEC creation but does not replace `spec-builder`.
+This handoff informs deliverable specification creation but does not replace `spec-builder`.
 
 ## Quality Bar
 
@@ -419,7 +413,7 @@ A feature document draft is high quality when:
 
 ## Example Use Cases
 
-- define a new long-lived capability before any deliverable specs exist
+- define a new long-lived capability before any deliverable specifications exist
 - turn a stakeholder workshop transcript into a first feature document draft
 - update a feature document after milestone 1 ships
-- decompose a feature into milestone 1, 2, and 3 before creating individual deliverable specs
+- decompose a feature into milestone 1, 2, and 3 before creating individual deliverable specifications

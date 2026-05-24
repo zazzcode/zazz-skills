@@ -7,19 +7,13 @@ required_for: ["planner", "coordinator", "worker", "qa", "spec-builder"]
 
 # Zazz Board API (Agent Routes)
 
-## Required Repo Extension Check
-
-Before doing anything else, check for `.agents/skill-extensions/zazz-board-api/EXTENSION.md`.
-If it exists, read it immediately after this `SKILL.md` and apply it as repo-specific guidance that augments this skill.
-
 ## Startup Sequence
 
 Before making board/API calls:
-1. Check for the repo extension file above and read it if present.
-2. Use `AGENTS.md` as the source of truth for repo-specific settings such as docs root, tracking system, project-code conventions, and board workflow rules. Read it if that context is not already available.
-3. Confirm the environment variables, authentication source, and target project context.
-4. Prefer the CLI-first workflow this skill defines, and use OpenAPI as route truth or protocol fallback when needed.
-5. Then make only the board updates that are supported by the current role and task context.
+1. Use `AGENTS.md` as the source of truth for repo-specific settings such as docs root, tracking system, project-code conventions, and board workflow rules. Read it if that context is not already available.
+2. Confirm the environment variables, authentication source, and target project context.
+3. Prefer the CLI-first workflow this skill defines, and use OpenAPI as route truth or protocol fallback when needed.
+4. Then make only the board updates that are supported by the current role and task context.
 
 ## Purpose
 Agents use this API to create/manage deliverables and tasks, update statuses, append notes, and inspect task graph/readiness. Projects and users are pre-configured; agents do not create them.

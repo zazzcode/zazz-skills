@@ -231,7 +231,7 @@ Before cleanup actions, confirm:
 When a worktree effort goes wrong:
 
 1. Stop forcing the bad path forward.
-2. Return to the governing proposal, feature requirements document, SPEC, or PLAN.
+2. Return to the governing proposal, feature requirements document, or SPEC.
 3. Decide whether to repair the same worktree or abandon it.
 4. If abandoning, remove or archive the worktree intentionally and create a fresh sibling worktree for the corrected approach.
 

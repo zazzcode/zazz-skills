@@ -1,31 +1,25 @@
 ---
 name: qa
-description: Verify a deliverable against its SPEC, PLAN, acceptance criteria, tests, and project standards; use when the user wants rigorous QA evidence, actionable rework task content for failed criteria, and reviewer-ready verification after implementation converges.
+description: Verify a deliverable against its deliverable specification (SPEC), acceptance criteria, tests, and project standards; use when the user wants rigorous QA evidence, actionable rework task content for failed criteria, and reviewer-ready verification after implementation converges.
 ---
 
 # QA Skill
 
-## Required Repo Extension Check
-
-Before doing anything else, check for `.agents/skill-extensions/qa/EXTENSION.md`.
-If it exists, read it immediately after this `SKILL.md` and apply it as repo-specific guidance that augments this skill.
-
 ## Startup Sequence
 
 Before evaluating work:
-1. Check for the repo extension file above and read it if present.
-2. Use `AGENTS.md` as the source of truth for repo-specific settings such as docs root, tracking system, project-code conventions, and QA workflow rules. Read it if that context is not already available.
-3. Detect the repo's adoption level for this work: `skills-assisted` by default, or `service-assisted` when Zazz Board/API integration is actually in use.
-4. Read the SPEC, PLAN, task context, and standards that define verification expectations.
-5. Decide whether a specialization such as `qa-backend` or `qa-frontend` is also required for this scope.
-6. Then run the QA loop with a bug-finding mindset and produce evidence or rework content.
+1. Use `AGENTS.md` as the source of truth for repo-specific settings such as docs root, tracking system, project-code conventions, and QA workflow rules. Read it if that context is not already available.
+2. Detect the repo's adoption level for this work: `skills-assisted` by default, or `service-assisted` when Zazz Board/API integration is actually in use.
+3. Read the SPEC, task context, and standards that define verification expectations.
+4. Decide whether a specialization such as `qa-backend` or `qa-frontend` is also required for this scope.
+5. Then run the QA loop with a bug-finding mindset and produce evidence or rework content.
 
 ## Compatibility Levels
 
 This skill must work across the methodology's adoption levels:
 
 - **Process-only**: humans may verify manually without this skill.
-- **Skills-assisted**: verify from SPEC, PLAN, tests, and repo evidence without requiring Board/API task orchestration.
+- **Skills-assisted**: verify from SPEC, tests, and repo evidence without requiring Board/API task orchestration.
 - **Service-assisted**: perform the same verification while integrating with Zazz Board task and rework flow.
 
 Default to **skills-assisted** unless the repo clearly uses Zazz Board for this deliverable.
@@ -47,7 +41,7 @@ Primary outputs:
 QA (1-2 per deliverable)
 
 ## Context
-Fresh context for each evaluation. Each task evaluation and the final deliverable review start with cleared context. Inputs are SPEC, PLAN, task card, and code. No context accumulation across evaluations; standard context window suffices.
+Fresh context for each evaluation. Each task evaluation and the final deliverable review start with cleared context. Inputs are SPEC, task card, and code. No context accumulation across evaluations; standard context window suffices.
 
 ## Docs Root Convention
 Use the repo docs root declared in `AGENTS.md` as the base for methodology docs. Example paths in this skill may use `<DOCS_ROOT>/...` as shorthand.

@@ -3,20 +3,20 @@
 Use this when the repo does not provide a stronger PR template.
 Omit sections that do not add reviewer value.
 Keep this fallback template generic.
-Use repo templates or `.agents/skill-extensions/pr-builder/EXTENSION.md` when a team needs stricter or more specific review workflow requirements.
+Use repo templates or `AGENTS.md` when a team needs stricter or more specific review workflow requirements.
 
 ## Context
 - Primary work item:
-- SPEC:
-- PLAN:
+- Deliverable specification / tracker record:
 - Additional governing link(s):
-- PR status: Ready for review / Draft
+- PR status: Draft by default / Ready for review only after Deliverable Owner confirmation
 
 Put the most authoritative link first.
 Use the repo's actual system of record for this change, such as Zazz, Jira, Avaza, or another project tracker.
 Do not dump every related link into the PR.
 If the project uses a tracker but the final URL or ID is not yet available, leave a clear placeholder such as `TODO: add Avaza task URL`.
-If the PR is draft, make that obvious here and briefly state why.
+If the PR is draft, make that obvious here and briefly state what remains before the
+Deliverable Owner can mark it ready for formal review.
 
 ## Why
 Explain why this PR exists.
@@ -31,15 +31,32 @@ Do not turn this section into an implementation diary.
 
 Avoid file-by-file inventories unless a specific file or subsystem deserves reviewer attention.
 
+## Draft Readiness
+- Draft reason:
+- Author-side automated review:
+- Critical or important findings still open:
+- Evidence still missing:
+- Owner action needed before marking ready:
+
+Remove this section only when the Deliverable Owner has explicitly confirmed the PR is ready for formal review.
+
+## Stack Map (When Relevant)
+- Stack position:
+- Parent branch / PR:
+- Dependent branch(es) / PR(s):
+- Acceptance criteria owned by this PR:
+
+Remove this section when the PR is not part of a GH-stack.
+
 ## Reviewer Notes
 
 ### Acceptance Criteria Checklist
-Use the SPEC or PLAN as the source of truth when available.
+Use the deliverable specification, lightweight bug-fix specification, or tracker record as the source of truth when available.
 Group acceptance criteria into reviewable scenarios instead of restating every line item when that is clearer.
 If automated tests already prove a criterion reliably, cite that coverage and only ask for manual confirmation where it still adds value.
 
 - [ ] Acceptance criteria / scenario:
-  Source in SPEC / PLAN:
+  Source:
   Automated coverage already run:
   Automated tests passed:
   Manual confirmation still needed:

@@ -1,17 +1,16 @@
 # Spec Builder Skill — User Guide
 
-How to use the **spec-builder** skill in the qb-mono-wt repo to write deliverable
-specifications (SPECs).
+How to use the **spec-builder** skill to write deliverable specifications.
 
 ## What it does
 
-Helps you draft a SPEC for a bounded deliverable: a feature slice, bug fix, refactor,
-report migration slice, milestone slice, or other implementation unit.
+Helps you draft a deliverable specification for a bounded deliverable: a feature slice,
+bug fix, refactor, milestone slice, or other implementation unit.
 
 The stable rule is:
 
 ```text
-one deliverable = one SPEC
+one deliverable = one deliverable specification
 ```
 
 The flexible rule is delivery topology:
@@ -22,18 +21,18 @@ single-lane stack of branches
 ```
 
 The skill conducts an interactive dialogue, captures decisions and acceptance criteria,
-and produces a self-contained SPEC. The SPEC includes the execution sequence,
+and produces a self-contained specification. The specification includes the execution sequence,
 definition of done, halt conditions, run-log protocol, and paste-ready implementation
-prompt. There is no separate PLAN document.
+prompt. There is no separate plan document.
 
-The skill writes SPECs. It does **not** implement product code.
+The skill writes deliverable specifications. It does **not** implement product code.
 
 ## Team integration rule
 
 This is a team repository. Agents may commit to their feature branch and push their
-feature branch when the SPEC says to, but they must never merge directly to `dev`.
+feature branch when the specification says to, but they must never merge directly to `dev`.
 
-All integration to `dev` happens through human PR review. SPECs should use wording like
+All integration to `dev` happens through human PR review. Specifications should use wording like
 "submit a PR to `dev`", "after the PR lands", or "after the lower PR lands" rather than
 instructing an agent to merge.
 
@@ -41,20 +40,20 @@ instructing an agent to merge.
 
 - You have a bounded deliverable and want to capture scope, decisions, and ACs before
   implementation.
-- You are defining a milestone branch with multiple ordered deliverables/SPECs that
+- You are defining a milestone branch with multiple ordered deliverables/specifications that
   will be reviewed as one PR.
 - You are defining sibling deliverables that will be reviewed as separate PRs.
 - You are defining a stacked review lane where branches are stacked inside one lane
   worktree using `gh-stack`.
-- You are updating an existing SPEC after Owner-approved scope or contract changes.
+- You are updating an existing specification after Owner-approved scope or contract changes.
 
 ## Delivery topologies
 
 The skill should help choose the simplest topology that matches the intended review
 artifact.
 
-- **Single-deliverable branch** — one deliverable, one SPEC, one branch/PR.
-- **Milestone branch** — multiple deliverables/SPECs in one worktree and branch, one
+- **Single-deliverable branch** — one deliverable, one specification, one branch/PR.
+- **Milestone branch** — multiple deliverables/specifications in one worktree and branch, one
   shared run log, one PR. Use when the milestone is reviewed as a whole.
 - **Sibling branches** — multiple independently reviewable branches/PRs for one
   milestone. Use when deliverables do not depend on each other strongly enough to need
@@ -67,7 +66,7 @@ Do not create stacked worktrees. Stacks are branches inside one worktree.
 
 ## How to invoke
 
-In Claude Code: `/spec-builder` or `@.claude/skills/spec-builder/SKILL.md`. Then
+Invoke the skill by name, for example `/spec-builder` or `@.agents/skills/spec-builder/SKILL.md`. Then
 describe the deliverable or milestone.
 
 ## What to tell the skill at invocation
@@ -76,8 +75,8 @@ State these up front when you know them:
 
 - **Delivery topology** — single-deliverable branch, milestone branch, sibling
   branches, or stacked review lane.
-- **Deliverable slug** — kebab-case identifier used in SPEC filenames.
-- **Milestone / effort slug** — when multiple SPECs share one run log or PR.
+- **Deliverable slug** — kebab-case identifier used in specification filenames.
+- **Milestone / effort slug** — when multiple specifications share one run log or PR.
 - **Review artifact** — one PR for the whole milestone, separate sibling PRs, or
   stacked PRs.
 
@@ -87,21 +86,22 @@ run-log shape, and review boundaries.
 You do not need to arrive with every answer. If topology, deliverable boundaries,
 reference data, acceptance criteria, or test evidence are unclear, the skill should
 interview you in small batches and propose defaults for confirmation. It should not
-produce a final SPEC that leaves an implementation agent guessing about what proves the
+produce a final specification that leaves an implementation agent guessing about what proves the
 deliverable is done.
 
 ## Output paths
 
-- **Regular / non-stacked SPEC**:
-  `<worktree>/docs/implementation/<slug>-SPEC.md`
-- **Milestone branch SPECs**:
-  `<worktree>/docs/implementation/<milestone>-spec-<n>-<slug>.md` or another
-  Owner-approved consistent naming pattern.
+- **Committed specification**:
+  `<DOCS_ROOT>/specifications/<slug>.md`
+- **Milestone branch specifications**:
+  `<DOCS_ROOT>/specifications/<milestone>-spec-<n>-<slug>.md` or another
+  Owner-approved consistent naming pattern under `specifications/`.
 - **Run log**:
-  `<worktree>/docs/implementation/<effort-slug>-RUN-LOG.md`
-- **Stacked SPEC**:
-  `<container-root>/<slug>-stacked-SPEC.md`
-  (container root, shared across stacked branches in the lane).
+  repo-declared storage: ignored local file, committed support artifact, Zazz Board note,
+  external tracker entry, or a combination.
+- **Externally stored specification**:
+  Zazz Board or the repo-declared tracking system, with a stable identifier linked from
+  the PR and implementation prompt.
 
 ## What you should have ready
 
@@ -109,13 +109,13 @@ deliverable is done.
 - The intended review shape: one PR, sibling PRs, or stacked PRs.
 - Any constraints that already exist: legacy compatibility, performance targets,
   coordination with other work in flight.
-- Known source documents: feature docs, architecture docs, standards, prior SPECs.
+- Known source documents: feature docs, architecture docs, standards, prior specifications.
 
 ## After approval
 
-Implementation starts from the SPEC itself and the run log. A fresh implementing agent
-reads the SPEC, resolves open questions, maintains the run log, executes the phases,
+Implementation starts from the specification itself and the run log. A fresh implementing agent
+reads the specification, resolves open questions, maintains the run log, executes the phases,
 and dispatches a verifier when the definition of done is complete.
 
-Material contract changes during implementation require Owner sign-off and SPEC
+Material contract changes during implementation require Owner sign-off and specification
 revision; progress and evidence go in the run log.

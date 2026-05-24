@@ -25,7 +25,7 @@ Use this skill when:
 - you have a feature document and need its paired architecture document
 - a milestone shipped and the architecture document needs to be refreshed
 - you have a proposal that has been approved and needs to become a working architecture document
-- you need architecture-level context before creating deliverable SPECs
+- you need architecture-level context before creating deliverable specifications
 
 ## Pairing With Feature Doc Builder
 
@@ -56,7 +56,7 @@ You do not need to provide a full architecture document up front. A good startin
 
 ```text
 Use architecture-doc-builder.
-We have a feature document at docs/features/reporting-feature.md.
+We have a feature document at docs/features/reporting.md.
 Help me draft the paired architecture document with per-milestone system and sequence diagrams.
 ```
 
@@ -79,7 +79,7 @@ the proposal is ambiguous.
 1. Answer questions about module placement, per-milestone system shape, and use cases.
 1. Review the first draft.
 1. Refine per-milestone diagrams and cross-cutting decisions.
-1. Approve the architecture document and use it to inform later SPEC work.
+1. Approve the architecture document and use it to inform later deliverable specification work.
 
 ## Notes
 

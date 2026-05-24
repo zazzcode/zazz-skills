@@ -208,7 +208,7 @@ Install the agent skill from the local clone by copying:
 into the repo/worktree skill directory:
 
 ```bash
-.claude/skills/gh-stack
+.agents/skills/gh-stack
 ```
 
 ## Recommended report workflow

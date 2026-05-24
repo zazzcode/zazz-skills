@@ -148,12 +148,6 @@ Near-term dependency:
 
 - `AGENTS.md` template must explicitly support shared-file coordination declaration
 
-Near-term consumer skills:
-
-- planner
-- worker
-- coordinator
-
 Future dependency if external coordination grows:
 
 - dedicated integration skills or adapters for specific mechanisms
@@ -215,7 +209,6 @@ Suggested maturity path:
 
 - Should the methodology formally require a `Shared-file coordination` section in repo `AGENTS.md`?
 - Should the methodology add a draft `shared-file-coordination` skill to the roadmap now, without implementation?
-- Should `coordinator` also be updated later to consume the same policy model as `worker`?
 
 ## Open Questions
 
