@@ -59,6 +59,7 @@ Without those pieces, agents will tend to either miss important project rules or
 - Be explicit about shared-file coordination. If the repo uses Zazz Board locks, Switchman, harness-native coordination, or strict serialization, say so in one short section.
 - State defaults and exceptions. Example: deliverables are local/untracked by default unless the repo explicitly commits them.
 - Avoid stale reference text. If a section is not maintained, delete it rather than leaving misleading instructions.
+- For documentation cleanup, never remove sections, citations, workflows, diagrams, requirements, or named tools without first presenting a keep/remove/condense plan and receiving approval. Default to condensing over deleting.
 - Include only actionable commands. If you list test or dev commands, make sure they are the ones maintainers actually expect agents to run.
 
 Why this matters:

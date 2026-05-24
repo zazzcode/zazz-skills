@@ -179,19 +179,13 @@ contract compatibility. A unit test may prove a helper; it does not prove a work
 
 ## Operating Model
 
-The useful lesson from Warp and adjacent open-source agentic projects is the operating
-shape: explicit contract, objective checks, structured automated review, and human-owned
-approval. Zazz applies that shape without depending on any one review agent.
-
 Implementation PRs should normally open as drafts, run objective checks early, receive an
-author-side `pr-review`, and carry clear reviewer guidance before formal human review.
+author-side agent review, and carry clear reviewer guidance before formal human review.
 Advisory labels for risk, evidence, generated artifacts, size, and review shape are useful
 inputs, but the source of truth is the approved implementation contract.
 
-Generated work is welcome only when the human submitter can explain, defend, test, and
-maintain it. A PR that is large, unclear, unverified, duplicative, or mostly agent
-busywork can be returned to draft, routed back to specification, deprioritized, or
-rejected even if it passes CI.
+A PR that is large, unclear, or unverified can be returned to draft or routed back to
+specification even if it passes CI.
 
 ## Agent-Assisted Review
 
@@ -331,9 +325,6 @@ Avoid stacked PRs when:
 Every PR in a stack should receive human sign-off. Stacking reduces context load; it does not
 remove the human gate.
 
-For command-level stack workflow, use the `gh-stack` skill and
-[docs/using-gh-stack.md](using-gh-stack.md).
-
 ### Stacked PR Process
 
 1. The Deliverable Owner approves a specification that says this deliverable will use a
@@ -357,8 +348,8 @@ For command-level stack workflow, use the `gh-stack` skill and
 9. When the stack lands, durable knowledge is promoted back into the feature document,
    architecture document, `project.md`, or standards where applicable.
 
-Worktrunk-style worktree isolation and native `git worktree` usage provide local
-separation. GH-stack manages the dependent branches and PRs inside that isolated lane.
+Native worktrees provide local separation. GH-stack or an equivalent tool manages the
+dependent branches and PRs inside that isolated lane.
 
 ## Review Workflow
 
@@ -438,7 +429,7 @@ Before requesting review, the author or agent should complete the implementation
 approved contract, self-review the diff, remove unrelated edits, run practical checks, and
 provide test evidence or an explanation for missing evidence.
 
-Expected automation and agent support during draft:
+Expected automation and agent support:
 
 - `pr-builder` creates or refreshes title, body, evidence, risk, and reviewer guide.
 - The PR body includes explicit reviewer instructions: what the human should inspect,
@@ -456,8 +447,6 @@ Expected automation and agent support during draft:
   contract, evidence, and repo standards.
 - Missing context, evidence, standards coverage, or approved decomposition rationale is
   flagged.
-
-The author should address critical and important findings before requesting review.
 
 ### Ready For Review
 
@@ -756,12 +745,17 @@ risky rubber-stamps, and better signal for where human attention is needed.
 
 ## Reference Patterns
 
-Warp is the primary process analogue: specification, automated review, human approval,
-and change-category routing. OpenHands and Trunk inform automated pre-review. Worktrunk
-and GH-stack inform isolated worktree and stacked-PR operations. Coder, LLVM, Linux,
-Hugging Face Transformers, and verl inform generated-code accountability and maintainer
-protection. Google, GitHub, and Microsoft reinforce small focused changes, clear reviewer
-context, evidence, and fast but careful review loops.
+These references are included because they directly support the enterprise review model:
+contract-first implementation, automated pre-review, human approval, clear reviewer
+context, and stacked PR operations.
+
+- Warp agent and contribution workflows: specification, automated review, human approval,
+  issue/category routing, and interactive review of agent-generated diffs.
+- GitHub, Google, and Microsoft review guidance: small focused changes, clear reviewer
+  context, test evidence, and fast but careful review loops.
+- OpenHands and Trunk: automated pre-review, PR annotations, and objective code-quality
+  checks before humans review.
+- GH-stack: dependent PR workflows for reviewable implementation slices.
 
 Sources:
 
@@ -769,13 +763,6 @@ Sources:
 - Warp GitHub Actions agent docs: https://docs.warp.dev/agent-platform/cloud-agents/integrations/github-actions
 - Warp contributing guide: https://github.com/warpdotdev/warp/blob/master/CONTRIBUTING.md
 - OpenHands PR review docs: https://docs.openhands.dev/sdk/guides/github-workflows/pr-review
-- Worktrunk repository: https://github.com/max-sixty/worktrunk
-- Worktrunk skill docs: https://github.com/max-sixty/worktrunk/blob/c8aa1848a3ba023ac42232d3341b9c040abd046d/skills/worktrunk/SKILL.md
-- Coder AI Contribution Guidelines: https://coder.com/docs/about/contributing/AI_CONTRIBUTING
-- Hugging Face Transformers agent policy: https://github.com/huggingface/transformers/blob/main/.ai/AGENTS.md
-- verl agent policy: https://github.com/verl-project/verl/blob/main/AGENTS.md
-- LLVM AI Tool Use Policy: https://llvm.org/docs/AIToolPolicy.html
-- Linux Kernel Guidelines for Tool-Generated Content: https://docs.kernel.org/process/generated-content.html
 - GitHub guide to reviewing AI-generated code: https://docs.github.com/en/copilot/tutorials/review-ai-generated-code
 - Google small CL guidance: https://google.github.io/eng-practices/review/developer/small-cls.html
 - Google review speed guidance: https://google.github.io/eng-practices/review/reviewer/speed.html
@@ -784,4 +771,3 @@ Sources:
 - GitHub `gh stack`: https://github.com/github/gh-stack
 - GitHub `gh stack` overview: https://github.github.com/gh-stack/introduction/overview/
 - Trunk GitHub Action: https://github.com/trunk-io/trunk-action
-- Trunk Codex integration guidance: https://github.com/trunk-io/docs/blob/main/code-quality/overview/ide-integration/openai-codex-support.md
