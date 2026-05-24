@@ -6,6 +6,13 @@ Agentic development moves the bottleneck from code production to review. An agen
 produce a plausible 100-file pull request faster than a human can understand whether the
 change is correct, safe, maintainable, and worth merging.
 
+This strategy was not developed in isolation. It incorporates patterns from public
+agentic-development and generated-code review guidance. Warp Terminal is the strongest
+process analogue: it separates specification, automated review, human approval, and
+change-category routing. Additional public sources inform the supporting guardrails for
+AI-assisted review, generated-code accountability, maintainer protection, objective
+checks, and evidence requirements.
+
 The Zazz strategy is:
 
 1. Define intent before implementation.
