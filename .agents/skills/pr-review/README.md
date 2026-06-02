@@ -4,13 +4,19 @@ How to use and adapt the **pr-review** skill for Zazz methodology pull request r
 
 ## What It Does
 
-The PR Review skill reviews a pull request, branch, or local diff. It can be used by a
-PR author during draft cleanup or by a human reviewer evaluating someone else's PR. It is
-designed to find real issues first: correctness bugs, missing acceptance-criteria
-evidence, scope drift, weak tests, standards violations, security/data risks, and
-reviewability problems.
+The PR Review skill reviews a pull request, branch, or local diff along two independent
+axes using parallel sub-agents:
 
-It also looks for common agent-generated clutter:
+- **Standards axis** — does the code conform to documented coding standards, test patterns,
+  and architectural conventions?
+- **Spec axis** — does the code faithfully implement the originating specification, issue,
+  or stated intent?
+
+Reporting the axes separately prevents one from masking the other: code that follows every
+standard but implements the wrong thing is caught as a Spec failure. Code that does exactly
+what the issue asked but breaks the project's conventions is caught as a Standards failure.
+
+The skill also looks for common agent-generated clutter:
 
 - low-value or duplicate tests
 - mock-heavy tests that do not prove behavior
@@ -18,6 +24,7 @@ It also looks for common agent-generated clutter:
 - redundant helpers or parallel implementations
 - speculative abstractions
 - noisy comments, formatting churn, and broad unrelated rewrites
+- duplicated runtime computation across layers or seams
 
 Actor boundary:
 
@@ -26,6 +33,28 @@ Actor boundary:
   the author's own draft branch or on someone else's submitted PR.
 
 The skill does not approve, merge, mark a PR ready, or replace human judgment.
+
+## File Structure
+
+```text
+.agents/skills/pr-review/
+  SKILL.md              # Orchestrator: startup, pinning, dispatch, aggregation
+  README.md             # This file
+  shared-rules.md       # Diff scope, finding sizing, output format, boundaries
+  standards-axis.md     # Standards sub-agent brief
+  spec-axis.md          # Spec sub-agent brief
+```
+
+- **SKILL.md** orchestrates the review: reads repo context, pins the comparison base,
+  gathers governing context, determines spec availability, dispatches the two sub-agents
+  in parallel, and aggregates their findings.
+- **shared-rules.md** contains rules both sub-agents need: diff scope discipline, the
+  geological finding-sizing taxonomy, security/data/operations escalation, output format,
+  and boundaries.
+- **standards-axis.md** is the full brief for the Standards sub-agent: standards-driven
+  review, test quality, agentic slop, and redundant computation checks.
+- **spec-axis.md** is the full brief for the Spec sub-agent: methodology checks with
+  three tiers of behavior depending on spec availability.
 
 ## When To Use It
 
@@ -58,18 +87,31 @@ and call out any realistic edge cases the tests miss.
 
 ## How The Skill Chooses Context
 
-The skill should start small, then load more context only when the diff needs it.
-
-Recommended loading order:
+The orchestrator starts small, then loads more context only when the diff needs it.
 
 1. `AGENTS.md` for docs-root, integration branch, workflow, and review conventions.
 2. The review target: working tree diff, branch diff, PR, or stack branch.
-3. Governing context: deliverable specification, PR body, linked ticket, and ACs.
-4. `<DOCS_ROOT>/standards/index.yaml`.
-5. Only the standards selected by the index for the changed paths and activities.
-6. Optional domain-specific review notes, if the team has added them.
+3. **Pin the comparison base** — `git merge-base` against the fixed point, so both
+   sub-agents use an identical diff reference even if the integration branch advances.
+4. Governing context: deliverable specification, PR body, linked ticket, and ACs.
+5. **Determine spec availability** — full spec, lightweight spec, or no spec.
+6. `<DOCS_ROOT>/standards/index.yaml` — select only the standards matching the changed
+   paths and activities.
+7. Dispatch both sub-agents with their respective briefs.
 
 This keeps the skill generic while letting each repo provide its own standards.
+
+## Spec Availability Tiers
+
+The orchestrator classifies the spec situation before dispatching:
+
+- **Tier 1 — Full spec**: a deliverable specification, PRD, or detailed issue with
+  acceptance criteria. The Spec axis reviews with full methodology checks.
+- **Tier 2 — Lightweight spec**: a PR description, brief issue, or user-stated intent
+  only. The Spec axis reviews against it but flags findings as lower-confidence.
+- **Tier 3 — No spec**: nothing found. The Spec axis runs in reduced mode (checking for
+  obvious contradictions with the PR body) or is skipped entirely if there is no usable
+  context. Noted as residual review risk.
 
 ## Customizing Review Guidance
 
@@ -96,47 +138,8 @@ service, domain, or activity. A useful index entry normally answers:
 - which standards file to read
 - any special review notes or required evidence
 
-Keep standards concrete and repo-specific. The generic skill should describe how to
-review; standards describe what this repo expects.
-
-## Optional Domain References
-
-If a team wants more structured review prompts without bloating `SKILL.md`, add small
-reference files under the skill:
-
-```text
-.agents/skills/pr-review/
-  SKILL.md
-  README.md
-  references/
-    frontend.md
-    backend-services.md
-    database.md
-    async-jobs.md
-    auth-security.md
-    integrations.md
-    generated-artifacts.md
-    tests.md
-```
-
-These files should be generic attention checklists, not repo policy. For example,
-`references/database.md` can remind the reviewer to inspect migrations, rollback risk,
-transactions, indexes, and backfills. The repo's actual migration policy still belongs
-in `<DOCS_ROOT>/standards/`.
-
-Suggested domain mapping:
-
-- `frontend`, `browser-client`, `accessibility` -> `references/frontend.md`
-- `api`, `service`, `backend` -> `references/backend-services.md`
-- `database`, `migration`, `persistence` -> `references/database.md`
-- `job`, `queue`, `scheduler`, `async` -> `references/async-jobs.md`
-- `auth`, `security`, `permissions`, `tenant` -> `references/auth-security.md`
-- `integration`, `webhook`, `external-api` -> `references/integrations.md`
-- `generated`, `schema`, `lockfile`, `openapi` -> `references/generated-artifacts.md`
-- `testing`, `fixtures`, `coverage` -> `references/tests.md`
-
-Only load the reference files that match the changed surface. If the standards index
-already provides enough domain guidance, extra references may not be needed.
+Keep standards concrete and repo-specific. The generic skill describes how to review;
+standards describe what this repo expects.
 
 ## Test Review Philosophy
 
@@ -172,20 +175,32 @@ Good candidates for repo standards:
 
 Good candidates for the generic skill:
 
-- better review severity definitions
-- better progressive-loading rules
-- broader generic domain categories
-- clearer test-quality heuristics
-- better output formatting expectations
+- better review severity definitions → `shared-rules.md`
+- better progressive-loading or dispatch rules → `SKILL.md`
+- broader standards-review guidance → `standards-axis.md`
+- clearer test-quality heuristics → `standards-axis.md`
+- better spec-compliance checks → `spec-axis.md`
+- better output formatting expectations → `shared-rules.md`
 
-When adding generic guidance, keep `SKILL.md` concise. Move optional detail into
-reference files so future review agents can load only what they need.
+When adding generic guidance, keep each file focused on its axis. The orchestrator
+(`SKILL.md`) handles flow control; the axis briefs handle review substance.
 
 ## Output Expectations
 
-The review should lead with findings, ordered by severity. If there are no findings,
-it should say so directly and list any residual risk, such as standards not found or
-tests not run.
+The review leads with findings under two separate headings: **Standards Review** and
+**Spec Review**. Each axis reports independently — findings are not merged or reranked
+across axes.
 
-Findings should cite files and lines when possible, name the violated standard when one
-applies, explain why the issue matters, and suggest a concrete remediation.
+Each finding is a copy-paste-able PR-comment code block that **starts with its size tag**
+(`[boulder]` / `[rock]` / `[pebble]` / `[sand]`), then the `file:line` and a one-line
+problem statement, then why it matters (naming the violated standard or spec requirement)
+and a concrete remediation.
+
+Only `[boulder]` and `[rock]` block approval; `[pebble]` and `[sand]` are the author's
+discretion. Any blocking finding from *either* axis means the PR is not approvable.
+
+If both axes flag the same `file:line`, the aggregator notes the overlap as a signal that
+the issue is particularly important.
+
+The review ends with a summary: per-axis finding counts, a combined approval verdict, and
+any residual risk (standards not found, spec gaps, tests not run).
