@@ -35,7 +35,7 @@ Keep human-facing setup, update, and troubleshooting details in
 Load this file only when graph context is in scope:
 
 - changed-file count is greater than 10
-- user requested graph, blast-radius, impact, token-efficient, or tool-assisted review
+- user requested graph, blast-radius, impact, token-efficient review, or tool-assisted review
 - smaller PR touches shared APIs, auth, migrations, data paths, test infrastructure, or
   files with many callers/dependents
 

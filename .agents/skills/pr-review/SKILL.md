@@ -1,6 +1,6 @@
 ---
 name: pr-review
-description: Review a pull request, branch, or local diff along two independent axes — Standards (does the code follow documented coding standards?) and Spec (does the code match what was asked for?) — using parallel sub-agents; use when the user wants draft-PR self-review, reviewer-side PR feedback, standards-guided findings, or review readiness assessment.
+description: Perform a thorough pull request, branch, or local-diff review on behalf of the human user, especially for large or AI-generated PRs; reviews along two independent axes — Standards (documented coding standards, test patterns, architecture) and Spec (requested behavior, issue, or acceptance criteria) — using parallel sub-agents; use for draft-PR cleanup, reviewer-side feedback, standards-guided findings, token-conscious large-diff review, or review readiness assessment.
 ---
 
 # PR Review Skill
@@ -106,7 +106,7 @@ Use the changed-file count from step 3 as a cheap sizing gate before reading bro
 contents.
 
 `code-review-graph` is the preferred context accelerator for large PRs. Use it to reduce
-token usage and avoid reading broad file contents before the agent knows which files,
+token usage and avoid reading broad file contents before knowing which files,
 symbols, flows, and tests matter. If the changed file count is **greater than 10**, or
 the user explicitly asked for graph context, blast-radius analysis, token-efficient
 review, or graph tooling, read `code-review-graph.md` from this skill directory and
