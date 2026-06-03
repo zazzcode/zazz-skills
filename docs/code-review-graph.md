@@ -14,7 +14,7 @@ context during `pr-review`.
 The tool parses a codebase into a structural graph of files, functions, classes, imports,
 calls, inheritance, dependencies, and test relationships. It exposes that graph through a
 CLI, MCP tools, hooks, and companion skills so AI coding agents can ask targeted
-review-impact questions instead of reading broad swaths of a repository.
+review-impact questions instead of spending tokens reading broad swaths of a repository.
 
 For Zazz, treat it as advisory review context. It can help identify blast radius,
 impacted callers/dependents, affected flows, likely test gaps, and context-savings
@@ -25,11 +25,11 @@ standards, or human review judgment.
 
 Use `code-review-graph` as a utility behind the existing Zazz `pr-review` skill.
 
-The purpose is practical: help the agent perform a better review on behalf of the human
-user when a PR is too large or too agent-generated for efficient manual first-pass
-inspection. For 20, 40, or 60+ changed files, graph context should help the agent find
-where to look, what may be affected, and what tests may matter before it spends tokens
-reading broad file contents.
+The purpose is practical: help the agent perform a better and more token-efficient review
+on behalf of the human user when a PR is too large or too agent-generated for efficient
+manual first-pass inspection. For 20, 40, or 60+ changed files, graph context should help
+the agent find where to look, what may be affected, and what tests may matter before it
+spends tokens reading broad file contents.
 
 Default Zazz behavior:
 
@@ -173,8 +173,8 @@ uvx code-review-graph detect-changes --brief
 uvx code-review-graph update --brief
 ```
 
-The CLI is efficient because it is one auditable command, produces compact output, works
-before MCP tools appear after setup, and is easy to record as review evidence.
+The CLI is token-efficient because it is one auditable command, produces compact output,
+works before MCP tools appear after setup, and is easy to record as review evidence.
 
 Use MCP for targeted follow-up when available:
 

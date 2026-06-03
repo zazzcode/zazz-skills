@@ -107,8 +107,9 @@ The orchestrator starts small, then loads more context only when the diff needs 
 3. **Pin the comparison base** — `git merge-base` against the fixed point, so both
    sub-agents use an identical diff reference even if the integration branch advances.
 4. **Size the diff and prefer graph context for large reviews** — count changed files
-   from the pinned diff. If the count is greater than 10, or the user requested graph or
-   blast-radius review, load `code-review-graph.md` and follow its discovery/setup flow.
+   from the pinned diff. If the count is greater than 10, or the user requested graph,
+   blast-radius, or token-efficient review, load `code-review-graph.md` and follow its
+   discovery/setup flow.
 5. Governing context: deliverable specification, PR body, linked ticket, and ACs.
 6. **Determine spec availability** — full spec, lightweight spec, or no spec.
 7. `<DOCS_ROOT>/standards/index.yaml` — select only the standards matching the changed
@@ -121,14 +122,15 @@ This keeps the skill generic while letting each repo provide its own standards.
 
 The skill can optionally use
 [`code-review-graph`](https://github.com/tirth8205/code-review-graph) for graph-derived
-blast radius, impacted callers/dependents, affected flows, and test-coverage signals.
+blast radius, impacted callers/dependents, affected flows, test-coverage signals, and
+lower-token review context for large diffs.
 
 Sizing and context-loading boundary:
 
 - Do not load `code-review-graph.md` during ordinary reviews with 10 or fewer changed
   files unless graph context is requested.
 - Load `code-review-graph.md` for PRs with more than 10 changed files so the agent can
-  prefer graph-derived review context before reading broad file contents.
+  prefer compact graph-derived review context before reading broad file contents.
 - Keep the detailed agent workflow in `code-review-graph.md`.
 - Keep human install, setup, troubleshooting, and update checks in
   [`docs/code-review-graph.md`](../../../docs/code-review-graph.md).

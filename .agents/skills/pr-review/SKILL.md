@@ -105,10 +105,12 @@ if the integration branch advances between when the two sub-agents start. Captur
 Use the changed-file count from step 3 as a cheap sizing gate before reading broad file
 contents.
 
-`code-review-graph` is the preferred context accelerator for large PRs. If the changed
-file count is **greater than 10**, or the user explicitly asked for graph context,
-blast-radius analysis, or graph tooling, read `code-review-graph.md` from this skill
-directory and follow its discovery/setup guidance.
+`code-review-graph` is the preferred context accelerator for large PRs. Use it to reduce
+token usage and avoid reading broad file contents before the agent knows which files,
+symbols, flows, and tests matter. If the changed file count is **greater than 10**, or
+the user explicitly asked for graph context, blast-radius analysis, token-efficient
+review, or graph tooling, read `code-review-graph.md` from this skill directory and
+follow its discovery/setup guidance.
 
 If the changed file count is **10 or fewer** and the user did not ask for graph context,
 do not load the optional utility file. Record `Graph context: not requested - N changed

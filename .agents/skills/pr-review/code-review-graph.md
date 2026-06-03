@@ -1,8 +1,9 @@
 # Code-Review-Graph Optional Utility
 
 Use `code-review-graph` as an optional review accelerator for large or high-risk PRs. It
-can provide structural context, blast radius, impacted callers/dependents, affected
-flows, likely test gaps, and context-savings data.
+can reduce token usage by giving the agent compact structural context before it reads
+files, and can provide blast radius, impacted callers/dependents, affected flows, likely
+test gaps, and context-savings data.
 
 Load it to help the agent perform a stronger review on behalf of the human user before
 the human has to manually untangle a large or AI-generated PR.
@@ -34,7 +35,7 @@ Keep human-facing setup, update, and troubleshooting details in
 Load this file only when graph context is in scope:
 
 - changed-file count is greater than 10
-- user requested graph, blast-radius, impact, or tool-assisted review
+- user requested graph, blast-radius, impact, token-efficient, or tool-assisted review
 - smaller PR touches shared APIs, auth, migrations, data paths, test infrastructure, or
   files with many callers/dependents
 
@@ -49,9 +50,9 @@ Check access in this order:
 If neither CLI nor MCP access is available for a large review, prompt:
 
 ```text
-This review touches <N> changed files, so `code-review-graph` would likely make the
-review more efficient by adding blast-radius and graph-derived context without reading
-broad file contents. I do not see it installed/configured here.
+This review touches <N> changed files, so `code-review-graph` would likely reduce token
+usage and improve review quality by adding blast-radius and graph-derived context before
+I read broad file contents. I do not see it installed/configured here.
 
 Do you want me to configure minimal CLI/MCP access now, point me at an existing install,
 or continue without it for this review?
