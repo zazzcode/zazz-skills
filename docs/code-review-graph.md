@@ -1,0 +1,302 @@
+# Code Review Graph For Zazz PR Review
+
+This guide explains how Zazz methodology users should use
+[`code-review-graph`](https://github.com/tirth8205/code-review-graph) as optional graph
+context during `pr-review`.
+
+## Upstream Credit
+
+`code-review-graph` is an open-source project by its upstream maintainers:
+
+- GitHub: [github.com/tirth8205/code-review-graph](https://github.com/tirth8205/code-review-graph)
+- PyPI: [pypi.org/project/code-review-graph](https://pypi.org/project/code-review-graph/)
+
+The tool parses a codebase into a structural graph of files, functions, classes, imports,
+calls, inheritance, dependencies, and test relationships. It exposes that graph through a
+CLI, MCP tools, hooks, and companion skills so AI coding agents can ask targeted
+review-impact questions instead of reading broad swaths of a repository.
+
+For Zazz, treat it as advisory review context. It can help identify blast radius,
+impacted callers/dependents, affected flows, likely test gaps, and context-savings
+signals. It does not replace the pinned git diff, the governing spec or issue, repo
+standards, or human review judgment.
+
+## Zazz Policy
+
+Use `code-review-graph` as a utility behind the existing Zazz `pr-review` skill.
+
+Default Zazz behavior:
+
+- use the CLI for the first compact graph summary
+- optionally configure MCP for targeted follow-up questions
+- do not install upstream companion skills by default
+- do not install hooks by default
+- do not inject upstream graph-first instructions into repo rule files by default
+
+This keeps the Zazz skill directory small and avoids competing review workflows. When an
+upstream companion skill has a useful idea, summarize that behavior in
+`.agents/skills/pr-review/code-review-graph.md` instead of copying the upstream skill into
+this repo.
+
+## When To Use It
+
+Before `pr-review` reads broad file contents, size the pinned diff:
+
+```bash
+git diff $MERGE_BASE...HEAD --name-only | wc -l
+```
+
+Use this gate:
+
+- `0-10` changed files: skip graph context unless the user asks for graph or blast-radius
+  review.
+- `11+` changed files: recommend graph context. If the tool is unavailable, the agent
+  should ask whether to configure minimal CLI/MCP access, use an existing install, or
+  continue without graph context.
+
+Also consider graph context for smaller PRs that touch shared services, public APIs, data
+paths, auth, migrations, test infrastructure, or files with many callers/dependents.
+
+## Setup Tiers
+
+Choose the smallest setup that matches the workflow.
+
+### Tier 1: Review-Only CLI/MCP
+
+Recommended default for Zazz PR review:
+
+```bash
+uvx code-review-graph --version
+uvx code-review-graph install --no-skills --no-hooks --no-instructions
+uvx code-review-graph build
+```
+
+This uses `uvx` on demand, configures MCP access, builds the graph, and skips upstream
+skills, hooks, git hooks, and graph-first instruction injection. It is enough for the
+Zazz `pr-review` skill to use CLI output and optional MCP follow-up.
+
+Use a targeted platform only when needed:
+
+```bash
+uvx code-review-graph install --platform <name> --no-skills --no-hooks --no-instructions
+```
+
+Supported platform keys in the checked version are `codex`, `claude`, `claude-code`,
+`cursor`, `windsurf`, `zed`, `continue`, `opencode`, `antigravity`, `gemini-cli`, `qwen`,
+`kiro`, `qoder`, `copilot`, `copilot-cli`, and `all`. `warp` and `pi` were not listed by
+`code-review-graph install --help` in the checked version; use the CLI directly for those
+tools unless upstream adds platform support.
+
+### Tier 2: Persistent CLI
+
+Use this when a user wants a permanent `code-review-graph` command on `PATH`, or when
+they are considering hooks:
+
+```bash
+uv tool install code-review-graph
+code-review-graph --version
+code-review-graph install --no-skills --no-hooks --no-instructions
+code-review-graph build
+```
+
+`uv tool install` is preferred for an isolated persistent command. `pipx install
+code-review-graph` is the next best persistent option. `pip install code-review-graph`
+should be used only inside an intentional Python environment.
+
+### Tier 3: Hook Automation
+
+Hooks can keep the graph fresh during repeated work on large branches, but they are not
+part of default Zazz PR-review setup.
+
+Important upstream detail: generated hook scripts call `code-review-graph` directly, not
+`uvx code-review-graph`. If you want hooks, use a persistent install first:
+
+```bash
+uv tool install code-review-graph
+code-review-graph install --platform <name> --no-skills --no-instructions
+code-review-graph build
+```
+
+Use `--no-skills --no-instructions` so the team gets freshness automation without adding
+upstream skills or graph-first rule text. Target one platform; avoid `--platform all`
+unless the user explicitly wants every detected/supported tool configured.
+
+Preview hook-enabled setup before writing files:
+
+```bash
+code-review-graph install --platform <name> --dry-run --no-skills --no-instructions
+```
+
+Observed upstream hook behavior:
+
+- Claude/Qoder hooks update the graph after edit/write/bash activity and check status on
+  session start.
+- Codex hooks add similar update/status behavior in `~/.codex/hooks.json`.
+- Cursor hooks are user-level scripts for after-file-edit, session-start, and pre-commit
+  shell commands.
+- Gemini CLI hooks are workspace-level scripts under `.gemini/`.
+- OpenCode installs a user-level plugin that updates on file edits and reports
+  pre-commit analysis.
+- A repo git pre-commit hook may be added for Codex, Claude, and Qoder hook setup.
+
+Because hooks may touch both user-level and repo-level files, enable them only with
+explicit user consent.
+
+### Tier 4: Full Upstream Integration
+
+Full integration is opt-in and usually not needed for Zazz methodology repos:
+
+```bash
+uv tool install code-review-graph
+code-review-graph install --platform <name>
+code-review-graph build
+```
+
+This may install upstream companion skills, hooks, git hooks, MCP config, and graph-first
+instruction text. Use it only when the team explicitly wants `code-review-graph` to be a
+proactive development-environment feature rather than an optional Zazz review utility.
+
+## CLI And MCP
+
+`code-review-graph` provides both a CLI and MCP tools.
+
+For Zazz `pr-review`, prefer the CLI for the first graph pass:
+
+```bash
+uvx code-review-graph detect-changes --brief
+uvx code-review-graph update --brief
+```
+
+The CLI is efficient because it is one auditable command, produces compact output, works
+before MCP tools appear after setup, and is easy to record as review evidence.
+
+Use MCP for targeted follow-up when available:
+
+- `get_minimal_context_tool(task="review changes")`
+- `detect_changes_tool(detail_level="minimal")`
+- `get_review_context_tool(base="<fixed-point>")`
+- `get_impact_radius_tool(base="<fixed-point>")`
+- `get_affected_flows_tool(...)`
+- `query_graph_tool(pattern="callers_of", target="<function-or-class>")`
+- `query_graph_tool(pattern="tests_for", target="<function-or-class>")`
+
+Recommended review flow:
+
+1. Pin the comparison base and count changed files.
+2. For `11+` changed files, load `.agents/skills/pr-review/code-review-graph.md`.
+3. Prefer CLI output for the first compact graph summary.
+4. Use MCP for targeted follow-up if tools are visible.
+5. Pass a concise graph summary to both Standards and Spec review axes.
+
+If MCP tools do not appear after setup, restart the AI tool. For the current review, use
+CLI output and continue.
+
+## Daily Commands
+
+Run these from the repository being reviewed:
+
+```bash
+# Initial graph
+uvx code-review-graph build
+
+# Graph stats
+uvx code-review-graph status
+
+# Refresh graph and show compact risk panel
+uvx code-review-graph update --brief
+
+# Read-only risk panel using existing graph
+uvx code-review-graph detect-changes --brief
+
+# Optional watch mode
+uvx code-review-graph watch
+
+# Optional visualization
+uvx code-review-graph visualize
+```
+
+Use `detect-changes --brief` when watch mode or hooks keep the graph fresh. Use
+`update --brief` after a rebase, a large change set, or when the graph may be stale.
+
+For persistent installs, remove the `uvx` prefix.
+
+## Updates
+
+Check the current version:
+
+```bash
+uvx code-review-graph --version
+code-review-graph --version
+```
+
+Refresh `uvx` package resolution:
+
+```bash
+uvx --refresh code-review-graph --version
+```
+
+Upgrade persistent installs:
+
+```bash
+uv tool upgrade code-review-graph
+pipx upgrade code-review-graph
+pip install --upgrade code-review-graph
+```
+
+After upgrading, rerun the minimal install command if MCP configuration may have changed:
+
+```bash
+uvx code-review-graph install --no-skills --no-hooks --no-instructions
+```
+
+Only rerun hook-enabled or full integration commands if the team intentionally uses those
+extras.
+
+## Local Checkout
+
+Use the local checkout only when developing or testing `code-review-graph` itself:
+
+```bash
+cd /Users/michael/Dev/agent-tools/code-review-graph
+uv sync
+uv run code-review-graph --help
+uv run code-review-graph install --no-skills --no-hooks --no-instructions
+```
+
+For normal Zazz PR review, prefer the PyPI package through `uvx`.
+
+## Ignore, Privacy, And Troubleshooting
+
+The tool already ignores many common paths, including `.git`, `.code-review-graph`,
+`node_modules`, virtualenvs, build directories, lockfiles, and SQLite files. Add
+repo-specific ignores with `.code-review-graphignore`:
+
+```gitignore
+generated/**
+vendor/**
+*.generated.ts
+```
+
+Core graph and review workflows are local. The graph database lives under:
+
+```text
+.code-review-graph/graph.db
+```
+
+Optional semantic embeddings may send source snippets to the configured embedding
+provider. Use embeddings only when explicitly desired and allowed by the repo's data
+policy.
+
+Quick checks:
+
+```bash
+uvx code-review-graph --version
+uv tool list
+pipx list
+python -m pip show code-review-graph
+uvx code-review-graph update --brief
+uvx code-review-graph build
+```
+
+If MCP tools do not appear, rerun the minimal install command, restart the AI tool, and
+use CLI output for the current review.

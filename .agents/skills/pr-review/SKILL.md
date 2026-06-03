@@ -89,8 +89,27 @@ if the integration branch advances between when the two sub-agents start. Captur
 - **Diff command:** `git diff $MERGE_BASE...HEAD`
 - **Commit list:** `git log $MERGE_BASE..HEAD --oneline`
 - **Changed files:** `git diff $MERGE_BASE...HEAD --name-only`
+- **Changed file count:** `git diff $MERGE_BASE...HEAD --name-only | wc -l`
 
-### 4. Gather Governing Context
+### 4. Size The Review And Prefer Code-Review-Graph For Large Diffs
+
+Use the changed-file count from step 3 as a cheap sizing gate before reading broad file
+contents.
+
+`code-review-graph` is the preferred context accelerator for large PRs. If the changed
+file count is **greater than 10**, or the user explicitly asked for graph context,
+blast-radius analysis, or graph tooling, read `code-review-graph.md` from this skill
+directory and follow its discovery/setup guidance.
+
+If the changed file count is **10 or fewer** and the user did not ask for graph context,
+do not load the optional utility file. Record `Graph context: not requested - N changed
+files` in the preamble.
+
+When the optional helper is loaded, capture its concise graph summary so both review axes
+can use it. Do not block an ordinary review on this optional utility unless the user
+specifically requested it.
+
+### 5. Gather Governing Context
 
 Collect the inputs each sub-agent will need.
 
@@ -116,7 +135,7 @@ Collect the inputs each sub-agent will need.
    branch name or feature.
 6. The PR body and linked work item as a lightweight spec substitute.
 
-### 5. Determine Spec Availability
+### 6. Determine Spec Availability
 
 Classify the spec situation into one of three tiers:
 
@@ -136,7 +155,7 @@ intent only?"
 If they say there isn't one and the PR description is too thin to review against, skip the
 Spec axis and note it as residual risk.
 
-### 6. Preamble Confirmation
+### 7. Preamble Confirmation
 
 Before dispatching, present a short summary of what was discovered so the user can correct
 any misdetection. This is a single confirmation, not a multi-step interview:
@@ -147,6 +166,7 @@ any misdetection. This is a single confirmation, not a multi-step interview:
 - **Target**: <branch/PR> against `<integration-branch>` (merge base: `<short-sha>`)
 - **Standards**: <N standards matched from `<docs-root>/standards/index.yaml`> [or "none found — running with general judgment"]
 - **Spec**: <tier> — <spec source description> [or "none found — Spec axis will be skipped"]
+- **Graph context**: <not requested/unavailable/declined/available/recommended> [brief risk/blast-radius summary if used]
 - **Changed files**: <N files> across <services/areas>
 
 Proceed with review, or should I adjust anything?
@@ -161,7 +181,7 @@ the user passed a PR URL, the repo has AGENTS.md with standards, and the PR body
 spec), the preamble may be compressed to a single line: "Reviewing PR #123 against dev
 with 4 matched standards and the linked spec. Dispatching."
 
-### 7. Dispatch Sub-Agents
+### 8. Dispatch Sub-Agents
 
 Send a **single message with two `Agent` tool calls** so both axes run in parallel. Use
 `general-purpose` subagent type for both.
@@ -175,7 +195,9 @@ Read the following files from this skill's directory:
 **Standards sub-agent prompt — include:**
 
 - The pinned merge base, diff command, commit list, and changed-files list from step 3
-- The list of matched standards files and their contents from step 4
+- The optional code-review-graph summary from step 4, if available, especially blast
+  radius, impacted callers/dependents, and test signals
+- The list of matched standards files and their contents from step 5
 - The full text of `shared-rules.md`
 - The full text of `standards-axis.md`
 - Instruction: "You are the Standards axis reviewer. Review the diff using the shared
@@ -187,7 +209,9 @@ Read the following files from this skill's directory:
 **Spec sub-agent prompt — include:**
 
 - The pinned merge base, diff command, commit list, and changed-files list from step 3
-- The spec contents or path from step 4, with the tier classification from step 5
+- The optional code-review-graph summary from step 4, if available, especially blast
+  radius and affected flows that may change acceptance-criteria coverage
+- The spec contents or path from step 5, with the tier classification from step 6
 - The full text of `shared-rules.md`
 - The full text of `spec-axis.md`
 - Instruction: "You are the Spec axis reviewer. Review the diff using the shared rules
@@ -199,7 +223,7 @@ Read the following files from this skill's directory:
 If the Spec axis is being skipped (tier 3 with no usable context), send only the
 Standards sub-agent and note the skip in the aggregation.
 
-### 8. Aggregate
+### 9. Aggregate
 
 Present the two reports under separate headings. Do **not** merge or rerank findings
 across axes — the two axes are deliberately separate so the user sees them independently.
