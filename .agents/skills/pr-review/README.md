@@ -4,8 +4,13 @@ How to use and adapt the **pr-review** skill for Zazz methodology pull request r
 
 ## What It Does
 
-The PR Review skill reviews a pull request, branch, or local diff along two independent
-axes using parallel sub-agents:
+The PR Review skill helps an agent perform a serious PR review on behalf of the human
+user. It is meant to offload the first deep pass through a branch, especially when an
+AI-generated or agent-assisted PR touches enough files that a human would otherwise spend
+substantial time reconstructing intent, blast radius, and review risk.
+
+It reviews a pull request, branch, or local diff along two independent axes using parallel
+sub-agents:
 
 - **Standards axis** — does the code conform to documented coding standards, test patterns,
   and architectural conventions?
@@ -32,7 +37,10 @@ Actor boundary:
 - `pr-review` inspects the code, tests, evidence, and standards alignment. It may run on
   the author's own draft branch or on someone else's submitted PR.
 
-The skill does not approve, merge, mark a PR ready, or replace human judgment.
+The skill does not approve, merge, mark a PR ready, or replace human judgment. During
+author-side draft cleanup, it may produce a checklist of findings to fix and verification
+to rerun. `pr-builder` remains responsible for PR title/body updates from the final
+evidence.
 
 ## File Structure
 
@@ -65,6 +73,8 @@ Use this skill when:
 
 - an implementation branch is ready for author-side review
 - a draft PR needs cleanup before the Owner marks it ready
+- an AI-generated or agent-assisted PR has grown large enough that the human wants the
+  agent to understand it first
 - a human wants a second pass focused on risks and test quality
 - a stack branch needs review before submitting or after a rebase
 - a PR feels noisy and needs help separating real issues from agentic clutter
@@ -250,4 +260,6 @@ If both axes flag the same `file:line`, the aggregator notes the overlap as a si
 the issue is particularly important.
 
 The review ends with a summary: per-axis finding counts, a combined approval verdict, and
-any residual risk (standards not found, spec gaps, tests not run).
+any residual risk (standards not found, spec gaps, tests not run). For author-side draft
+reviews, it should also include a concise cleanup checklist: blocking items to fix before
+human review, optional cleanup worth doing, and verification to rerun after fixes.

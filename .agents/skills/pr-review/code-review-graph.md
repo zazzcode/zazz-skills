@@ -4,6 +4,9 @@ Use `code-review-graph` as an optional review accelerator for large or high-risk
 can provide structural context, blast radius, impacted callers/dependents, affected
 flows, likely test gaps, and context-savings data.
 
+Load it to help the agent perform a stronger review on behalf of the human user before
+the human has to manually untangle a large or AI-generated PR.
+
 Graph output is advisory. Do not let it replace the pinned git diff, standards matching,
 spec review, or human review judgment. Verify suspected issues against source, tests,
 standards, and spec before reporting findings.

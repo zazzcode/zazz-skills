@@ -7,7 +7,8 @@ description: Review a pull request, branch, or local diff along two independent 
 
 ## Mission
 
-Review a PR, branch, or local diff as an automated review pass along two independent axes:
+Review a PR, branch, or local diff on behalf of the human user as a thorough automated
+review pass along two independent axes:
 
 - **Standards** — does the code conform to documented coding standards, test patterns, and
   architectural conventions?
@@ -20,8 +21,14 @@ masking the other: code that follows every standard but implements the wrong thi
 Spec failure, not a pass. Code that does exactly what the issue asked but breaks the
 project's conventions is a Standards failure, not a pass.
 
-It can be used by the PR author during draft cleanup, or by a human reviewer evaluating
-someone else's PR.
+The goal is to offload the first serious review pass from the human user, especially for
+large or AI-generated PRs where manually understanding 20, 40, or 60+ changed files would
+be expensive. The agent should act as the user's reviewer: build enough context, identify
+real risks, separate blocking findings from noise, and give the user a review they can
+trust as a draft-PR readiness signal or as reviewer-side feedback.
+
+It can be used by the PR author during draft cleanup before the real PR is submitted for
+human eyes, or by a human reviewer evaluating someone else's PR.
 
 Actor boundary:
 
@@ -29,7 +36,9 @@ Actor boundary:
 - `pr-review` inspects the code, tests, evidence, and standards alignment. It may run on
   the author's own draft branch or on someone else's submitted PR.
 
-This skill does not approve, merge, mark a PR ready, or replace human judgment.
+This skill does not approve, merge, mark a PR ready, or replace human judgment. When it is
+used during draft cleanup, it may produce and maintain a concise cleanup checklist, but
+`pr-builder` remains responsible for turning final evidence into PR title/body content.
 
 ## Startup Sequence
 
@@ -259,6 +268,7 @@ Do not deduplicate across axes. Do not merge findings from different axes into o
 - **Standards axis**: N findings (X boulders, Y rocks, Z pebbles, W sand)
 - **Spec axis**: N findings (X boulders, Y rocks, Z pebbles, W sand) [or "skipped — no spec"]
 - **Verdict**: [Approvable | Not approvable — N blocking findings remain]
+- **Draft cleanup checklist**: [blocking items to fix before human review, if this is an author-side/draft review]
 - **Residual risk**: [anything not checked, tests not run, spec gaps, standards gaps]
 ```
 
@@ -270,3 +280,18 @@ Do not deduplicate across axes. Do not merge findings from different axes into o
 Run targeted tests or static checks only when they are necessary and reasonable for the
 review. If not run, state that clearly in the residual risk. Prefer running checks before
 dispatch so both sub-agents benefit from the results.
+
+#### Draft PR Cleanup Mode
+
+When the review is author-side or draft-PR cleanup, end with a short checklist the author
+or agent can work through before involving human reviewers:
+
+- blocking `[boulder]` and `[rock]` findings to fix
+- optional `[pebble]` findings worth cleaning up before review
+- verification to rerun after fixes
+- residual risks that should be disclosed in the PR
+
+If the user asks the agent to fix findings, keep this checklist current as items are
+resolved, rerun only the relevant checks or review slices, and hand final evidence to
+`pr-builder` for PR body/title updates when needed. Do not let cleanup mode weaken the
+approval rule: any open `[boulder]` or `[rock]` remains not approvable.

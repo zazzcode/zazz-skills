@@ -25,6 +25,12 @@ standards, or human review judgment.
 
 Use `code-review-graph` as a utility behind the existing Zazz `pr-review` skill.
 
+The purpose is practical: help the agent perform a better review on behalf of the human
+user when a PR is too large or too agent-generated for efficient manual first-pass
+inspection. For 20, 40, or 60+ changed files, graph context should help the agent find
+where to look, what may be affected, and what tests may matter before it spends tokens
+reading broad file contents.
+
 Default Zazz behavior:
 
 - use the CLI for the first compact graph summary
@@ -187,6 +193,8 @@ Recommended review flow:
 3. Prefer CLI output for the first compact graph summary.
 4. Use MCP for targeted follow-up if tools are visible.
 5. Pass a concise graph summary to both Standards and Spec review axes.
+6. For draft PR cleanup, include graph-informed risks and verification in the cleanup
+   checklist.
 
 If MCP tools do not appear after setup, restart the AI tool. For the current review, use
 CLI output and continue.
