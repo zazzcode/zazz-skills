@@ -97,7 +97,7 @@ This repository is the canonical source of truth for the methodology document an
 | **Specification model** | Feature requirements document for capability over time plus deliverable specification for one increment |
 | **Verification model** | TDD and explicit acceptance criteria are core mechanisms for proving the software was built correctly and delivers the intended functionality |
 | **Execution flow** | `project.md` -> proposal (optional) -> feature requirements document (optional but recommended for long-lived features) -> architecture document (optional, paired with feature) -> deliverable specification (required, contains implementation guidance including prescriptive execution sequence) -> agent executes directly -> build/validate loop -> PR/UAT gate |
-| **Skills** | `proposal-builder`, `feature-doc-builder`, `architecture-doc-builder`, `spec-builder`, `qa`, optional `pr-review`, optional `pr-builder`, optional companion utility skills such as `zazz-board-api`, `gh-stack`, and draft `jira-api` |
+| **Skills** | `proposal-builder`, `feature-doc-builder`, `architecture-doc-builder`, `spec-builder`, `qa-testing`, optional `pr-review`, optional `pr-builder`, optional companion utility skills such as `zazz-board-api`, `gh-stack`, and draft `jira-api` |
 | **Skill modes** | Some skills are interactive and human-in-the-loop; others are designed for mostly autonomous execution once inputs are approved |
 | **Autonomy value** | Approved context should let agents converge on a verified solution with minimal supervision, improving delivery efficiency without dropping quality |
 | **Organization value** | The methodology gives teams an opinionated structure for defining what the product does, why it exists, and how it can evolve over time |
@@ -117,7 +117,7 @@ The methodology distinguishes three different things that are easy to blur toget
 
 - **Human actors**: Product Owner, Project Owner, Deliverable Owner, stakeholders, and reviewers
 - **Agent actors**: the runtime AI agents that execute work or facilitate dialogue
-- **Skills**: the capability packages loaded into an agent's context, such as `feature-doc-builder`, `spec-builder`, or `qa`
+- **Skills**: the capability packages loaded into an agent's context, such as `feature-doc-builder`, `spec-builder`, or `qa-testing`
 
 The important model is:
 
@@ -738,7 +738,7 @@ Their value is that they give the team a durable place for:
 - risks, constraints, and open technical questions
 - diagrams that explain structure, flows, and dependencies
 
-This matters especially in agent-assisted delivery because agents can execute quickly once a deliverable specification is approved. The architecture document keeps that speed pointed at the right technical shape. It gives `spec-builder`, implementation agents, and `qa` a stable design source so each deliverable does not accidentally optimize for the nearest local pattern while drifting away from the intended system design.
+This matters especially in agent-assisted delivery because agents can execute quickly once a deliverable specification is approved. The architecture document keeps that speed pointed at the right technical shape. It gives `spec-builder`, implementation agents, and `qa-testing` a stable design source so each deliverable does not accidentally optimize for the nearest local pattern while drifting away from the intended system design.
 
 ### Project-level and feature-level architecture
 
@@ -825,7 +825,7 @@ Not every skill should behave the same way in human collaboration.
 | Mode | Skills | Expected operating style |
 | ---- | ------ | ------------------------ |
 | **Interactive / human-in-the-loop** | `proposal-builder`, `feature-doc-builder`, `architecture-doc-builder`, `spec-builder`, often `pr-builder` | These skills are expected to facilitate dialogue, ask follow-up questions, iterate drafts with humans, and help shape the artifact through conversation |
-| **Autonomous execution** | `qa`, `qa-frontend`, `qa-backend`, `pr-review` | These skills are expected to run mostly independently once approved inputs exist, escalating only when they hit a real decision gate, ambiguity, or approval boundary |
+| **Autonomous execution** | `qa-testing`, `pr-review` | These skills are expected to run mostly independently once approved inputs exist, escalating only when they hit a real decision gate, ambiguity, or approval boundary |
 | **Companion utility** | `zazz-board-api`, `gh-stack`, draft `jira-api` | These skills are not human-facing workflows on their own; they support other skills with tracker/API capability, stacked PR workflows, or authoritative external context when available |
 
 "Launch-and-leave" is a good informal description for the autonomous execution class, and it is a real methodology value proposition. The expectation is not zero human interaction. The expectation is minimal interruption once the skill has the approved context it needs.
@@ -1152,7 +1152,7 @@ Document flow:
 | **Feature definition** | `features/{feature-key}.md` | Long-lived feature requirements document: why, what is live, system-level intent, milestone roadmap, future direction, and feature-level success criteria |
 | **Architecture** | `architecture/{feature-key}-architecture.md` | Optional but recommended for long-lived features. Paired with a feature requirements document; defines system design, module placement, per-milestone diagrams, and technical open questions |
 | **Deliverable specification** | `specifications/{slug}.md` | Required execution contract for one deliverable, including explicit acceptance criteria and verification expectations |
-| **Build / validate** | code, tests, run log, QA evidence | Agent implements directly from the deliverable specification with TDD where applicable; implementation and QA append progress/findings to the same run log; agent running `qa` verifies against acceptance criteria and evidence until convergence |
+| **Build / validate** | code, tests, run log, QA evidence | Agent implements directly from the deliverable specification with TDD where applicable; implementation and QA append progress/findings to the same run log; agent running `qa-testing` verifies against acceptance criteria and evidence until convergence |
 | **Review package** | PR title/body, manual test plan | Reviewer-facing packaging of what changed and how to validate it |
 
 Execution relationship:
@@ -1176,7 +1176,7 @@ flowchart TB
 
     subgraph Execution["Execution and verification"]
         W["Agent executes from<br/>the deliverable specification"]
-        QA["Agent running qa"]
+        QA["Agent running qa-testing"]
         PR["Agent running pr-builder<br/>(optional)"]
     end
 

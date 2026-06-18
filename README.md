@@ -92,9 +92,7 @@ zazz-methodology.md    primary methodology philosophy and document model
 
 | Skill | Purpose |
 | ----- | ------- |
-| `qa` | Runs verification against requirements, standards, and evidence. |
-| `qa-frontend` | Frontend-focused QA specialization. |
-| `qa-backend` | Backend-focused QA specialization. |
+| `qa-testing` | Runs verification against requirements, standards, tests, frontend/backend behavior, API checks, and evidence quality. |
 | `pr-review` | Reviews PRs or local diffs for correctness, evidence quality, low-value tests, agentic slop, redundancy, and scope drift. |
 
 ### Delivery and infrastructure skills
@@ -106,6 +104,9 @@ zazz-methodology.md    primary methodology philosophy and document model
 | `worktree` | Sets up or manages the methodology's Zazz-style worktree model through the Worktrunk workflow used by the skill. |
 | `zazz-board-api` | Companion utility skill for Zazz Board integration. |
 | `jira-api` | Draft companion utility for Jira-backed repos. |
+| `conformance` | Applies one focused standards-alignment change against a named guide. |
+| `doc-check` | Runs repo-local formatting and linting checks for documentation changes. |
+| `sqlcmd` | Provides safe SQL Server diagnostic command guidance for repos that use `sqlcmd`. |
 
 ## Setup and Prerequisites
 
@@ -146,9 +147,8 @@ repo/
 ```
 
 Use `.agents/skills/` as the canonical repo-local skill location when vendoring Zazz
-skills into a project. Runtime-specific files such as `CLAUDE.md`, `.claude/`, or
-`.codex/` can either point agents at `.agents/skills/` or copy/sync selected skills
-into the runtime's native skill directory.
+skills into a project. Runtime-specific instruction files can either point agents at
+`.agents/skills/` or copy/sync selected skills into the runtime's native skill directory.
 
 ## Getting Started
 
@@ -168,7 +168,7 @@ Common installation patterns:
 
 - copy them into a runtime skill directory such as `$CODEX_HOME/skills/`
 - vendor them into another repo's `.agents/skills/`
-- point runtime-specific instructions such as `CLAUDE.md`, `.claude/`, or `.codex/` at the repo's `.agents/skills/` directory when the runtime supports that pattern
+- point runtime-specific instruction files at the repo's `.agents/skills/` directory when the runtime supports that pattern
 - sync this repo into downstream methodology consumers
 
 Historical naming note:

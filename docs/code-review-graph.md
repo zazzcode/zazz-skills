@@ -265,7 +265,7 @@ extras.
 Use the local checkout only when developing or testing `code-review-graph` itself:
 
 ```bash
-cd /Users/michael/Dev/agent-tools/code-review-graph
+cd /path/to/code-review-graph
 uv sync
 uv run code-review-graph --help
 uv run code-review-graph install --no-skills --no-hooks --no-instructions

@@ -15,7 +15,7 @@ pre-existing siblings also break), state clearly which part is in-scope (the new
 pre-existing pattern). Do not ask the PR author to fix code they did not touch — that belongs in a separate cleanup
 task.
 
-The integration branch is always green. Every PR targets the integration branch (`dev` in qb-mono), and CI blocks merge
+The integration branch is always green. Every PR targets the integration branch (`dev` in example repo), and CI blocks merge
 unless all tests pass — so the integration branch cannot carry a pre-existing test failure. If a test fails on the PR
 branch, this branch introduced it: either in the failing test directly, or via a change to a shared dependency
 (fixture, import, config, sproc) the test exercises. Do not dismiss a failure as "pre-existing" or "unrelated" without

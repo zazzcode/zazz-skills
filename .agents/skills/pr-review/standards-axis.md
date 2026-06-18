@@ -30,7 +30,7 @@ authoritative source for test patterns, anti-patterns, fixture conventions, and 
 standards first. The checklist below supplements them with general review heuristics; when a repo standard is more
 specific, the standard wins.
 
-When the repo's backend testing standard is present (`<DOCS_ROOT>/standards/python-testing.md` in qb-mono), cite its
+When the repo's backend testing standard is present (`<DOCS_ROOT>/standards/python-testing.md` in example repo), cite its
 named sections rather than paraphrasing — they give mechanical, greppable review hooks the generic checklist below
 cannot:
 
@@ -93,7 +93,7 @@ Recommended review wording:
 
 When the repository contains a code-structure standard in `docs/standards/` or `<ZAZZ_DOCS_ROOT>/standards/`, load it
 and treat it as the authoritative policy for file-size thresholds, contextual splitting, incrementally discoverable
-skills, agentic slop, and duplicated runtime work. In qb-mono, that standard is `docs/standards/code-structure.md`.
+skills, agentic slop, and duplicated runtime work. In example repo, that standard is `docs/standards/code-structure.md`.
 
 If no code-structure standard exists, use this fallback rubric and state that the missing standard is residual review
 risk. Flag patterns that often appear in agent-generated diffs and make the codebase worse:

@@ -1,18 +1,18 @@
-# `qb-mono-wt` Worktree and Worktrunk Cheat Sheet
+# `repo-wt` Worktree and Worktrunk Cheat Sheet
 
 Fast reference for working in:
 
-- `~/Victory/Dev/qb-mono-wt/.bare`
-- `~/Victory/Dev/qb-mono-wt/dev`
-- sibling feature and PR worktrees under `~/Victory/Dev/qb-mono-wt/`
+- `~/work/repo-wt/.bare`
+- `~/work/repo-wt/dev`
+- sibling feature and PR worktrees under `~/work/repo-wt/`
 
 ## Layout
 
 ```text
-qb-mono-wt/
+repo-wt/
 ├── .bare/
 ├── dev/
-├── mw-shippers-master-rport-1/
+├── feature-shippers-master-rport-1/
 └── <other-worktrees>/
 ```
 
@@ -29,7 +29,7 @@ qb-mono-wt/
 From the repo container:
 
 ```bash
-cd ~/Victory/Dev/qb-mono-wt
+cd ~/work/repo-wt
 wt -C .bare <command>
 ```
 
@@ -62,7 +62,7 @@ wt -C .bare switch ^
 Switch to an existing branch worktree:
 
 ```bash
-wt -C .bare switch mw-shippers-master-rport-1
+wt -C .bare switch feature-shippers-master-rport-1
 ```
 
 Create a new branch and worktree from `dev`:
@@ -88,13 +88,13 @@ wt -C .bare remove my-new-branch -D
 Update the integration worktree from GitHub:
 
 ```bash
-git -C ~/Victory/Dev/qb-mono-wt/dev pull origin dev
+git -C ~/work/repo-wt/dev pull origin dev
 ```
 
 Then create new worktrees from updated `dev`:
 
 ```bash
-wt -C ~/Victory/Dev/qb-mono-wt/.bare switch --create another-branch --base dev
+wt -C ~/work/repo-wt/.bare switch --create another-branch --base dev
 ```
 
 Use this flow before starting a new branch if you want the new worktree based on the latest `origin/dev`.
@@ -128,14 +128,14 @@ wt -C .bare list
 From the repo container:
 
 ```bash
-cd ~/Victory/Dev/qb-mono-wt
+cd ~/work/repo-wt
 wt -C .bare switch --create my-feature --base dev
 ```
 
 Then work inside the new sibling directory:
 
 ```bash
-cd ~/Victory/Dev/qb-mono-wt/my-feature
+cd ~/work/repo-wt/my-feature
 ```
 
 When ready to push:
@@ -149,7 +149,7 @@ git push -u origin my-feature
 A stacked branch series is a chain where each branch's PR targets the prior branch instead of `dev`. Each branch lives in its own sibling worktree. Example chain:
 
 ```text
-dev → mw-shippers-master-rport-1 → mw-shippers-master-rport-2 → mw-shippers-master-rport-3
+dev → feature-shippers-master-rport-1 → feature-shippers-master-rport-2 → feature-shippers-master-rport-3
 ```
 
 PR `-2` merges into `-1`, PR `-3` merges into `-2`, and so on. The topmost branch contains the cumulative content of the whole stack and is where end-to-end testing happens.
@@ -157,7 +157,7 @@ PR `-2` merges into `-1`, PR `-3` merges into `-2`, and so on. The topmost branc
 Create the next branch in a stack from the current one (not from `dev`):
 
 ```bash
-wt -C .bare switch --create mw-shippers-master-rport-3 --base mw-shippers-master-rport-2
+wt -C .bare switch --create feature-shippers-master-rport-3 --base feature-shippers-master-rport-2
 ```
 
 ### Verify the tip contains every parent's changes
@@ -165,8 +165,8 @@ wt -C .bare switch --create mw-shippers-master-rport-3 --base mw-shippers-master
 After any parent in the stack is rebased and force-pushed, the topmost branch needs to be rebased onto the new parent. To prove the tip is current with every parent — even after rebases rewrite SHAs — use `git cherry`:
 
 ```bash
-git cherry -v HEAD origin/mw-shippers-master-rport-1
-git cherry -v HEAD origin/mw-shippers-master-rport-2
+git cherry -v HEAD origin/feature-shippers-master-rport-1
+git cherry -v HEAD origin/feature-shippers-master-rport-2
 ```
 
 Empty output means every parent commit is present (by ancestry or by patch-equivalence). Any line starting with `+` is a real gap that needs investigation.
@@ -177,7 +177,7 @@ One-liner to check every parent in a stack:
 
 ```bash
 for p in 1 2; do
-  out=$(git cherry HEAD origin/mw-shippers-master-rport-$p)
+  out=$(git cherry HEAD origin/feature-shippers-master-rport-$p)
   [ -z "$out" ] && echo "-$p: contained" || printf -- "-%s: MISSING:\n%s\n" "$p" "$out"
 done
 ```
@@ -188,14 +188,14 @@ When a parent in the stack gets rebased and force-pushed, fetch with explicit re
 
 ```bash
 git fetch origin \
-  '+refs/heads/mw-shippers-master-rport-2:refs/remotes/origin/mw-shippers-master-rport-2' \
-  '+refs/heads/mw-shippers-master-rport-3:refs/remotes/origin/mw-shippers-master-rport-3'
+  '+refs/heads/feature-shippers-master-rport-2:refs/remotes/origin/feature-shippers-master-rport-2' \
+  '+refs/heads/feature-shippers-master-rport-3:refs/remotes/origin/feature-shippers-master-rport-3'
 ```
 
 Then rebase the current branch onto the new parent:
 
 ```bash
-git rebase origin/mw-shippers-master-rport-2
+git rebase origin/feature-shippers-master-rport-2
 ```
 
 Patch-equivalent commits (changes already absorbed into the new parent) are skipped automatically. The branch's own unique commits are replayed on top.
@@ -205,10 +205,10 @@ Patch-equivalent commits (changes already absorbed into the new parent) are skip
 After a rebase, push with `--force-with-lease` pinned to the verified remote SHA. Plain `--force-with-lease` can fail with "stale info" if remote-tracking refs are not fresh, and falling back to plain `--force` discards that safety check.
 
 ```bash
-git ls-remote origin refs/heads/mw-shippers-master-rport-3
+git ls-remote origin refs/heads/feature-shippers-master-rport-3
 # copy the SHA, then:
-git push --force-with-lease=mw-shippers-master-rport-3:<expected-remote-sha> \
-  origin mw-shippers-master-rport-3
+git push --force-with-lease=feature-shippers-master-rport-3:<expected-remote-sha> \
+  origin feature-shippers-master-rport-3
 ```
 
 ### Inspect divergence
@@ -216,7 +216,7 @@ git push --force-with-lease=mw-shippers-master-rport-3:<expected-remote-sha> \
 When `git cherry` reports a `+` line and you want to see exactly how a commit differs across two branches, use `git range-diff`:
 
 ```bash
-git range-diff origin/mw-shippers-master-rport-2...HEAD
+git range-diff origin/feature-shippers-master-rport-2...HEAD
 ```
 
 It aligns commits by patch-id and shows the deltas.
@@ -228,10 +228,10 @@ For deliverables that split into 2–3 dependent layers (e.g., a `-struct` branc
 Create the worktree from `dev` using the bottom branch name, then initialize the stack:
 
 ```bash
-cd ~/Victory/Dev/qb-mono-wt
-wt -C .bare switch --create mw-invoice-register-rpt-struct --base dev
-cd ~/Victory/Dev/qb-mono-wt/mw-invoice-register-rpt-struct
-gh stack init --base dev mw-invoice-register-rpt-struct mw-invoice-register-rpt-svc
+cd ~/work/repo-wt
+wt -C .bare switch --create feature-invoice-register-rpt-struct --base dev
+cd ~/work/repo-wt/feature-invoice-register-rpt-struct
+gh stack init --base dev feature-invoice-register-rpt-struct feature-invoice-register-rpt-svc
 ```
 
 All branches share the same working directory. Switch between them with `gh stack` navigation:
@@ -267,7 +267,7 @@ gh stack rebase --upstack
 gh stack push
 ```
 
-For full command reference and agent rules (non-interactive use, JSON output, conflict handling), see the `gh-stack` skill and `qb-mono-gh-stack-agent-guide.md`.
+For full command reference and agent rules (non-interactive use, JSON output, conflict handling), see the `gh-stack` skill and `gh-stack reference guide`.
 
 ## `wt` vs `git worktree`
 
@@ -286,7 +286,7 @@ Worktrunk's `copy-ignored` hook copies machine-local files (`.env`, `.agents/set
 ### Automated venv hygiene via Worktrunk
 
 This repo's local Worktrunk project config
-(`~/Victory/Dev/qb-mono-wt/dev/.config/wt.toml`) is already set up so every new
+(`~/work/repo-wt/dev/.config/wt.toml`) is already set up so every new
 worktree gets a fresh backend virtualenv automatically. Agents and developers
 normally should not need to change this configuration.
 
@@ -333,13 +333,13 @@ See `venv-stale-shebang-alert.md` and `stacked-worktrees-agent-guide.md` §"Runn
 Repo-wide local excludes:
 
 ```bash
-~/Victory/Dev/qb-mono-wt/.bare/info/exclude
+~/work/repo-wt/.bare/info/exclude
 ```
 
 Per-worktree local excludes:
 
 ```bash
-~/Victory/Dev/qb-mono-wt/.bare/worktrees/<worktree-name>/info/exclude
+~/work/repo-wt/.bare/worktrees/<worktree-name>/info/exclude
 ```
 
 Check why something is ignored:
@@ -353,7 +353,7 @@ git check-ignore -v <path>
 This setup uses a local-only Worktrunk project config at:
 
 ```bash
-~/Victory/Dev/qb-mono-wt/dev/.config/wt.toml
+~/work/repo-wt/dev/.config/wt.toml
 ```
 
 It is kept untracked via `.bare/info/exclude`.

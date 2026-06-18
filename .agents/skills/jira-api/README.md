@@ -15,7 +15,7 @@ That future skill will likely help with:
 
 It is expected to support both:
 - interactive, human-in-the-loop use
-- automation-driven agent use, such as informing an agent running the `qa` skill with Jira issue context
+- automation-driven agent use, such as informing an agent running the `qa-testing` skill with Jira issue context
 
 ## Planned Interface
 
@@ -37,7 +37,7 @@ If Jira information is needed right now, the agent should:
 
 That fallback applies whether the consumer is:
 - a human-facing workflow
-- or an automation-driven agent such as an agent running the `qa` skill
+- or an automation-driven agent such as an agent running the `qa-testing` skill
 
 ## Why This Exists Now
 

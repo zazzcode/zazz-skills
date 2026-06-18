@@ -45,7 +45,7 @@ The PR package should accurately explain:
 This skill packages work for review. It is a PR-document skill for creating and
 maintaining PR descriptions, especially draft PR descriptions used by the
 human-in-the-loop review workflow. It can be used by an implementation agent before
-`pr-review` or by an agent running the `qa` skill after verification work converges.
+`pr-review` or by an agent running the `qa-testing` skill after verification work converges.
 
 It does not review code, replace implementation, QA judgment, Deliverable Owner
 judgment, approval, or merge authority. It may help create or refine PR content, but it
@@ -55,7 +55,7 @@ must never approve, mark ready on behalf of the owner, or merge a PR.
 
 - the user or another agent asks to create, draft, update, or polish a PR
 - an implementation agent needs a draft PR package before `pr-review` or human review
-- an agent running the `qa` skill has completed verification and needs a high-quality PR description
+- an agent running the `qa-testing` skill has completed verification and needs a high-quality PR description
 - a deliverable needs consistent reviewer-facing evidence
 - the repo has templates or conventions that should be applied reliably
 
@@ -173,7 +173,7 @@ If the user does not have the answer or prefers not to provide it:
 4. Read the diff and identify the real user-facing or system-facing behavior change.
 5. Read supporting docs that define intent when present:
    - deliverable specification, lightweight bug-fix specification, or external specification record
-   - verification evidence, including evidence produced by an agent running the `qa` skill when available
+   - verification evidence, including evidence produced by an agent running the `qa-testing` skill when available
    - issue or ticket context supplied by the user
 6. Separate the PR content into:
    - context and links
@@ -292,7 +292,7 @@ Include:
    - the code stays within the intended scope
    - the touched areas look reasonable from a code-quality and maintainability standpoint
 
-If the validation was already performed by an agent running the `qa` skill or by a human QA process, reuse that evidence and compress it into reviewer-friendly instructions.
+If the validation was already performed by an agent running the `qa-testing` skill or by a human QA process, reuse that evidence and compress it into reviewer-friendly instructions.
 It is acceptable to group acceptance criteria into meaningful scenarios rather than restating every criterion verbatim, especially when automated tests already provide reliable coverage.
 Keep the fallback structure generic. Use repo templates and `AGENTS.md` to enforce more specific team workflows when present.
 Omit optional subsections entirely when they do not apply to the current PR.

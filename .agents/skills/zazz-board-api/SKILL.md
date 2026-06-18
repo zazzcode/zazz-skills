@@ -2,7 +2,7 @@
 name: "Zazz Board API"
 type: "rule"
 description: "CLI-first companion skill for service-assisted repos that use Zazz Board; use it to create and manage deliverables, tasks, relations, notes, statuses, and file locks through zazzctl, with live OpenAPI as the protocol validation and fallback surface."
-required_for: ["planner", "coordinator", "worker", "qa", "spec-builder"]
+required_for: ["planner", "coordinator", "worker", "qa-testing", "spec-builder"]
 ---
 
 # Zazz Board API (Agent Routes)
@@ -161,7 +161,7 @@ If a critical capability cannot be resolved, stop and surface the mismatch.
 ---
 
 ## Mandatory execution contract
-For coordinator/worker/qa agent runs, these behaviors are required:
+For coordinator/worker/qa-testing agent runs, these behaviors are required:
 - Use live API for all task/deliverable lifecycle updates.
 - Do not leave created tasks in ambiguous state.
 - Keep task graph relations explicit and verifiable.

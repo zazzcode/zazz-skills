@@ -5,9 +5,6 @@ description: >
   Use when the user wants to create, push, rebase, sync, navigate, or view stacks of
   dependent PRs. Triggers on tasks involving stacked diffs, dependent pull requests,
   branch chains, or incremental code review workflows.
-metadata:
-  author: github
-  version: "0.0.2"
 ---
 
 # gh-stack

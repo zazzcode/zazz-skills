@@ -491,7 +491,7 @@ halt conditions:
 5. Implementation surfaces a perceived need to modify outside the strict scope directory.
 6. A standard not prescribed in the specification matches the file list via the
    docs/standards/index.yaml lookup.
-7. Reference data unavailable (e.g. local test DB lacks the named QB/period combo).
+7. Reference data unavailable (e.g. local test DB lacks the named reference data/period combo).
 
 Tailor halt conditions to the specification. The list above is the minimum.
 

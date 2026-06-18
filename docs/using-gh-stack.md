@@ -4,7 +4,7 @@ This note captures the workflow assessment for using one git worktree as an agen
 
 ## Assessment
 
-Yes: a single long-lived worktree lane plus stacked branches is a viable workflow for a complex report deliverable. The worktree gives the agent a private filesystem, dependency install, IDE state, build cache, and scratch space. The stack gives GitHub two small reviewable PRs instead of one large report migration PR.
+Yes: a single long-lived worktree lane plus stacked branches is a viable workflow for a complex deliverable. The worktree gives the agent a private filesystem, dependency install, IDE state, build cache, and scratch space. The stack gives GitHub two small reviewable PRs instead of one large migration PR.
 
 The useful mental model is:
 
@@ -12,7 +12,7 @@ The useful mental model is:
 - **One stack inside that worktree = multiple review branches for the same deliverable.**
 - **One branch = one review unit, represented by commits, not by a remembered file list.**
 
-This is a better fit for the next report than two separate worktrees when the two branches are tightly related. The previous two-worktree model made it easy to isolate Branch 1 and Branch 2, but it was cumbersome when the Branch 2 work needed to react to Branch 1 changes. A single lane keeps the code physically in one place and lets `gh stack rebase --upstack` carry lower-branch updates forward.
+This is a better fit for the next slice than two separate worktrees when the two branches are tightly related. The previous two-worktree model made it easy to isolate Branch 1 and Branch 2, but it was cumbersome when the Branch 2 work needed to react to Branch 1 changes. A single lane keeps the code physically in one place and lets `gh stack rebase --upstack` carry lower-branch updates forward.
 
 ## Worktree versus branch
 
@@ -28,15 +28,15 @@ branch stack = multiple branches you move between inside that directory
 Example:
 
 ```bash
-cd /Users/michael/Victory/Dev/qb-mono-wt/dev
-git worktree add ../mw-next-report-lane -b mw-next-report-svc-1 dev
+cd /path/to/repo-wt/dev
+git worktree add ../feature-next-report-lane -b feature-next-report-svc-1 dev
 
-cd ../mw-next-report-lane
-# currently on mw-next-report-svc-1
+cd ../feature-next-report-lane
+# currently on feature-next-report-svc-1
 
-gh stack init --base dev --adopt mw-next-report-svc-1
-gh stack add mw-next-report-svc-2
-# same directory, now checked out to mw-next-report-svc-2
+gh stack init --base dev --adopt feature-next-report-svc-1
+gh stack add feature-next-report-svc-2
+# same directory, now checked out to feature-next-report-svc-2
 ```
 
 After that, `gh stack bottom`, `gh stack top`, `gh stack up`, and `gh stack down` are controlled branch checkouts inside the same worktree. Dependencies, scratch output, venvs, IDE indexing, and build artifacts stay in the same folder; the checked-out branch content changes as you move up and down the stack.
@@ -51,17 +51,17 @@ When Branch 2 is first created on top of Branch 1, it sees everything Branch 1 h
 
 ```text
 dev
-└── mw-next-report-svc-1
-    └── mw-next-report-svc-2
+└── feature-next-report-svc-1
+    └── feature-next-report-svc-2
 ```
 
 If you later switch back to Branch 1 and add a commit, Branch 2 does not automatically see that new commit:
 
 ```text
 dev
-└── mw-next-report-svc-1 -- new data-contract commit
+└── feature-next-report-svc-1 -- new data-contract commit
     \
-     mw-next-report-svc-2   # still based on the older Branch 1 tip
+     feature-next-report-svc-2   # still based on the older Branch 1 tip
 ```
 
 Rebase upward after Branch 1 changes:
@@ -69,8 +69,8 @@ Rebase upward after Branch 1 changes:
 ```bash
 gh stack bottom
 # edit Branch 1 files
-git add backend/database/sql_migrations/stored-procedure/R__dbo.qb2_ReportFoo.sql
-git add backend/src/data/sprocs/qb2_ReportFoo.py
+git add backend/database/sql_migrations/stored-procedure/R__dbo.app_FeatureFoo.sql
+git add backend/src/data/sprocs/app_FeatureFoo.py
 git commit -m "Update Report Foo data contract"
 
 gh stack rebase --upstack
@@ -81,8 +81,8 @@ After the upstack rebase, Branch 2 sees the new Branch 1 commit:
 
 ```text
 dev
-└── mw-next-report-svc-1 -- new data-contract commit
-    └── mw-next-report-svc-2
+└── feature-next-report-svc-1 -- new data-contract commit
+    └── feature-next-report-svc-2
 ```
 
 Rule:
@@ -101,8 +101,8 @@ Use `gh stack rebase --upstack` when you made a **local lower-branch change** an
 ```bash
 gh stack bottom
 # edit Branch 1 files
-git add backend/database/sql_migrations/stored-procedure/R__dbo.qb2_ReportFoo.sql
-git add backend/src/data/sprocs/qb2_ReportFoo.py
+git add backend/database/sql_migrations/stored-procedure/R__dbo.app_FeatureFoo.sql
+git add backend/src/data/sprocs/app_FeatureFoo.py
 git commit -m "Update Report Foo data contract"
 
 gh stack rebase --upstack
@@ -171,8 +171,8 @@ Example:
 
 ```bash
 gh stack down
-git add backend/database/sql_migrations/stored-procedure/R__dbo.qb2_ReportFoo.sql
-git add backend/src/data/sprocs/qb2_ReportFoo.py
+git add backend/database/sql_migrations/stored-procedure/R__dbo.app_FeatureFoo.sql
+git add backend/src/data/sprocs/app_FeatureFoo.py
 git commit -m "Add Report Foo data layer"
 
 gh stack rebase --upstack
@@ -186,7 +186,7 @@ If your working tree contains mixed changes, use `git add -p` or path-specific `
 The local clone is at:
 
 ```bash
-/Users/michael/Dev/gh-stack
+/path/to/gh-stack
 ```
 
 The extension can be installed from GitHub:
@@ -202,7 +202,7 @@ The README currently notes that GitHub stacked PR support is in private preview 
 Install the agent skill from the local clone by copying:
 
 ```bash
-/Users/michael/Dev/gh-stack/skills/gh-stack
+/path/to/gh-stack/skills/gh-stack
 ```
 
 into the repo/worktree skill directory:
@@ -216,16 +216,16 @@ into the repo/worktree skill directory:
 Create one lane worktree from `dev`. Run this from the existing `dev/` worktree:
 
 ```bash
-cd /Users/michael/Victory/Dev/qb-mono-wt/dev
-git worktree add ../mw-<report-slug>-lane -b mw-<report-slug>-svc-1 dev
-cd ../mw-<report-slug>-lane
+cd /path/to/repo-wt/dev
+git worktree add ../feature-<feature-slug>-lane -b feature-<feature-slug>-svc-1 dev
+cd ../feature-<feature-slug>-lane
 ```
 
 Initialize the stack using the current Branch 1 branch, then add Branch 2:
 
 ```bash
-gh stack init --base dev --adopt mw-<report-slug>-svc-1
-gh stack add mw-<report-slug>-svc-2
+gh stack init --base dev --adopt feature-<feature-slug>-svc-1
+gh stack add feature-<feature-slug>-svc-2
 ```
 
 Work bottom-up:
@@ -283,7 +283,7 @@ For agents, prefer non-interactive forms:
 
 Branch 1 owns the data contract:
 
-- `qb2_` stored procedure;
+- `app_` stored procedure;
 - `vw2_` / `fn2_` helper if needed;
 - Python binding;
 - return-code mapping;
@@ -306,8 +306,8 @@ These examples assume a two-branch report stack:
 
 ```text
 dev
-└── mw-next-report-svc-1   # Branch 1: data layer
-    └── mw-next-report-svc-2   # Branch 2: service/render/CLI
+└── feature-next-report-svc-1   # Branch 1: data layer
+    └── feature-next-report-svc-2   # Branch 2: service/render/CLI
 ```
 
 ### Scenario 1: clean bottom-up implementation
@@ -315,20 +315,20 @@ dev
 Use this when you know the Branch 1 work first, then build Branch 2 on top of it.
 
 ```bash
-cd /Users/michael/Victory/Dev/qb-mono-wt/mw-next-report-lane
+cd /path/to/repo-wt/feature-next-report-lane
 
 # Start at the bottom branch.
 gh stack bottom
 
 # Edit Branch 1 files:
-# - backend/database/sql_migrations/stored-procedure/R__dbo.qb2_ReportFoo.sql
-# - backend/src/data/sprocs/qb2_ReportFoo.py
-# - backend/tests/data/sprocs/test_qb2_ReportFoo.py
+# - backend/database/sql_migrations/stored-procedure/R__dbo.app_FeatureFoo.sql
+# - backend/src/data/sprocs/app_FeatureFoo.py
+# - backend/tests/data/sprocs/test_app_FeatureFoo.py
 
 git status --short
-git add backend/database/sql_migrations/stored-procedure/R__dbo.qb2_ReportFoo.sql
-git add backend/src/data/sprocs/qb2_ReportFoo.py
-git add backend/tests/data/sprocs/test_qb2_ReportFoo.py
+git add backend/database/sql_migrations/stored-procedure/R__dbo.app_FeatureFoo.sql
+git add backend/src/data/sprocs/app_FeatureFoo.py
+git add backend/tests/data/sprocs/test_app_FeatureFoo.py
 git commit -m "Add Report Foo data layer"
 
 # Move to the top branch.
@@ -363,8 +363,8 @@ git status --short
 ```
 
 ```text
- M backend/database/sql_migrations/stored-procedure/R__dbo.qb2_ReportFoo.sql
- M backend/src/data/sprocs/qb2_ReportFoo.py
+ M backend/database/sql_migrations/stored-procedure/R__dbo.app_FeatureFoo.sql
+ M backend/src/data/sprocs/app_FeatureFoo.py
  M backend/src/svc/reports/report_foo/service.py
  M backend/scripts/generate-report.py
 ```
@@ -373,8 +373,8 @@ Only the SQL and binding belong on Branch 1. Stage only those paths:
 
 ```bash
 gh stack bottom
-git add backend/database/sql_migrations/stored-procedure/R__dbo.qb2_ReportFoo.sql
-git add backend/src/data/sprocs/qb2_ReportFoo.py
+git add backend/database/sql_migrations/stored-procedure/R__dbo.app_FeatureFoo.sql
+git add backend/src/data/sprocs/app_FeatureFoo.py
 git commit -m "Add Report Foo stored procedure binding"
 ```
 
@@ -391,7 +391,7 @@ git commit -m "Wire Report Foo service into CLI"
 If one file contains both Branch 1 and Branch 2 edits, use patch staging:
 
 ```bash
-git add -p backend/src/data/sprocs/qb2_ReportFoo.py
+git add -p backend/src/data/sprocs/app_FeatureFoo.py
 git commit -m "Update Report Foo binding contract"
 ```
 
@@ -421,8 +421,8 @@ Then move down and change Branch 1:
 gh stack bottom
 
 # Edit the SP/binding contract.
-git add backend/database/sql_migrations/stored-procedure/R__dbo.qb2_ReportFoo.sql
-git add backend/src/data/sprocs/qb2_ReportFoo.py
+git add backend/database/sql_migrations/stored-procedure/R__dbo.app_FeatureFoo.sql
+git add backend/src/data/sprocs/app_FeatureFoo.py
 git commit -m "Add Report Foo adjustment columns"
 ```
 
@@ -465,8 +465,8 @@ Move to Branch 1 and commit only the data-layer files:
 
 ```bash
 gh stack bottom
-git add backend/database/sql_migrations/stored-procedure/R__dbo.qb2_ReportFoo.sql
-git add backend/src/data/sprocs/qb2_ReportFoo.py
+git add backend/database/sql_migrations/stored-procedure/R__dbo.app_FeatureFoo.sql
+git add backend/src/data/sprocs/app_FeatureFoo.py
 git commit -m "Add Report Foo data contract"
 ```
 
@@ -521,14 +521,14 @@ From Branch 2, compare against Branch 1 to see only the top PR's review diff:
 
 ```bash
 gh stack top
-git diff --stat mw-next-report-svc-1...HEAD
-git diff --name-only mw-next-report-svc-1...HEAD
+git diff --stat feature-next-report-svc-1...HEAD
+git diff --name-only feature-next-report-svc-1...HEAD
 ```
 
 For report migrations, Branch 2 should not modify Branch 1-owned files. A quick check:
 
 ```bash
-git diff --name-only mw-next-report-svc-1...HEAD -- \
+git diff --name-only feature-next-report-svc-1...HEAD -- \
   backend/database/sql_migrations/ \
   backend/src/data/sprocs/ \
   backend/tests/data/sprocs/

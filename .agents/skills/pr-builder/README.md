@@ -31,7 +31,7 @@ on behalf of the Deliverable Owner.
 Use this skill when:
 - an implementation agent needs to open or refresh a draft PR
 - author-side or reviewer-side review needs a clear PR package to review
-- an agent running the `qa` skill needs to prepare the PR package from completed verification evidence
+- an agent running the `qa-testing` skill needs to prepare the PR package from completed verification evidence
 - the repo has PR templates or review conventions
 - you need a stronger draft or reviewer-facing summary of the work
 - you want the PR to emphasize functional change rather than a file-by-file inventory

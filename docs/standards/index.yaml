@@ -1,0 +1,402 @@
+# docs/standards/index.yaml
+# Index of project standards. Agents consult this index to decide which
+# standard(s) to inject into context before performing a task.
+#
+# Fields:
+#   file        - document filename in this directory
+#   applies_to  - situations where the standard applies
+#   purpose     - concise description of decisions governed by the file
+standards:
+  # Unified standards (2026-05-25). Large standards are split by agent work context
+  # so a task loads the smallest relevant document set instead of one oversized guide.
+
+  - file: code-structure.md
+    applies_to:
+      paths:
+        - backend/src/
+        - backend/scripts/
+        - backend/tests/
+        - frontend/src/
+        - docs/standards/
+        - .agents/skills/
+      activities:
+        - creating or modifying authored source files, tests, scripts, standards docs, or agent skills
+        - splitting oversized files or agent guides
+        - reviewing code structure, module cohesion, duplicated logic, or redundant computation
+    purpose: >-
+      File-size thresholds, contextual splitting, module cohesion, incrementally discoverable skills and docs, anti-slop structure, and compute-once guidance.
+
+  - file: http-layer.md
+    applies_to:
+      paths:
+        - backend/src/http_api/
+      activities:
+        - creating or modifying HTTP endpoint files
+        - wiring blueprints or registering routes
+        - choosing endpoint file layout or decorator order
+    purpose: >-
+      HTTP route layout, endpoint file naming, shared component tiers, lookup endpoints, blueprints, and decorator order.
+
+  - file: http-layer-schemas-and-responses.md
+    applies_to:
+      paths: []
+      activities:
+        - defining request schemas, response schemas, or HTTP dataclasses
+        - mapping service-layer output to HTTP response payloads
+    purpose: >-
+      HTTP schema/dataclass naming, optional fields, domain types, response shapes, and response sourcing.
+
+  - file: http-layer-errors-and-auth.md
+    applies_to:
+      paths: []
+      activities:
+        - writing route-level error handling
+        - mapping exceptions to HTTP status codes
+        - adding @require_permissions to an endpoint
+    purpose: >-
+      HTTP status codes, error envelopes, authentication, authorization, permission names, and seed-data verification.
+
+  - file: http-layer-docs-and-tests.md
+    applies_to:
+      paths: []
+      activities:
+        - documenting OpenAPI responses
+        - writing HTTP route error-path tests
+        - iterating on endpoint tests
+    purpose: >-
+      OpenAPI documentation, /docs verification, HTTP error-path tests, and endpoint iteration patterns.
+
+  - file: database.md
+    applies_to:
+      paths:
+        - backend/database/sql_migrations/
+      activities:
+        - creating or modifying database objects
+        - naming database tables, columns, keys, constraints, or indexes
+    purpose: >-
+      relational database object naming, primary/foreign key naming, unique constraints, and index rules.
+
+  - file: database-sproc-shape.md
+    applies_to:
+      paths: []
+      activities:
+        - authoring or modifying stored procedure signatures or return rows
+    purpose: >-
+      Stored procedure parameter order, DbErrorMsg declarations, and structured result rows.
+
+  - file: database-sproc-errors.md
+    applies_to:
+      paths: []
+      activities:
+        - writing stored procedure lookup logic, rowcount handling, or catch-block error mapping
+        - resolving dbo.Error return codes in read/report stored procedures
+    purpose: >-
+      Stored procedure external-ID resolution, row-count checks, ErrorMessage text, error-code dispatch, and guarding against NULL return codes from a missing dbo.Error row.
+
+  - file: database-migrations-and-modernization.md
+    applies_to:
+      paths: []
+      activities:
+        - editing R__ or V__ migrations
+        - modernizing legacy database objects
+        - documenting database performance tuning
+    purpose: >-
+      Migration edit policy, repeatable migrations, sproc tombstones, modernization sequence, and performance tuning workflow.
+
+  - file: database-testing.md
+    applies_to:
+      paths:
+        - backend/database/sql_migrations/tests/
+      activities:
+        - writing tSQLt database tests
+        - reviewing database test naming or expectations
+    purpose: >-
+      tSQLt commentary, behavior references, KNOWNBUG tests, expectation naming, DropClass use, and test-file naming.
+
+  - file: service-layer.md
+    applies_to:
+      paths:
+        - backend/src/svc/
+      activities:
+        - writing or modifying service-layer business logic
+        - composing sproc wrappers from svc modules
+    purpose: >-
+      Service/data-layer boundary, composition over raw SQL, display-lookup carve-out, service error classes, and sproc exception translation.
+
+  - file: reports.md
+    applies_to:
+      paths:
+        - backend/src/svc/reports/
+        - backend/tests/svc/reports/
+        - backend/scripts/generate-report.py
+        - backend/src/http_api/v1/report/
+      activities:
+        - creating or migrating a report (service, document builder, renderer, CLI, or route)
+        - modifying report rendering, report fixtures, or convergence tests
+        - changing report execution timeouts or the report registry
+    purpose: >-
+      Report-specific rules only (general standards still apply): one-document architecture, legacy-parity contract (line order, ROUND_HALF_UP, byte-equal convergence), registry/style contract, report query timeouts, and PDF test determinism.
+
+  - file: service-layer-data-and-exceptions.md
+    applies_to:
+      paths: []
+      activities:
+        - defining service-layer dataclasses, domain exceptions, helper docstrings, or replace semantics
+    purpose: >-
+      Frozen dataclasses, result dataclasses, exception messages, helper docstrings, and replace-semantics naming.
+
+  - file: service-layer-modules-and-cli.md
+    applies_to:
+      paths:
+        - backend/scripts/
+      activities:
+        - authoring CLI scripts that call svc modules
+        - adding service subdirectories or lookup helpers
+    purpose: >-
+      Service module layout, lookup patterns, guide documentation, and thin Click wrappers over service calls.
+
+  - file: frontend.md
+    applies_to:
+      paths:
+        - frontend/src/
+      activities:
+        - building admin CRUD UIs
+        - writing custom React hooks
+        - writing RTK Query mutations
+    purpose: >-
+      Hook design, admin CRUD vertical slices, RTK Query mutation placement, cache invalidation, and response-schema tests.
+
+  - file: frontend-forms-ui.md
+    applies_to:
+      paths: []
+      activities:
+        - building frontend forms, modals, dropdowns, styling, permissions UI, Storybook stories, or frontend tests
+    purpose: >-
+      Form required markers, CloseModalButton, searchable dropdowns, option sets, JS/TS idioms, theme tokens, permissions, hygiene, Storybook, and tests.
+
+  - file: data-layer.md
+    applies_to:
+      paths:
+        - backend/src/data/sprocs/
+      activities:
+        - writing a new sproc Python wrapper
+        - modifying SprocArguments
+    purpose: >-
+      Data-layer wrapper purpose, directory layout, shared exceptions, service/data boundary, and SprocArguments shape.
+
+  - file: data-layer-exec-sproc.md
+    applies_to:
+      paths: []
+      activities:
+        - modifying exec_sproc signatures, callproc tuples, output parameters, ID coercion, or return-code dispatch
+    purpose: >-
+      exec_sproc signatures, alphabetical callproc tuples, ErrorMessage OUTPUT, ID coercion, and return-code chains.
+
+  - file: data-layer-results.md
+    applies_to:
+      paths: []
+      activities:
+        - modifying SprocReturnCode, row TypedDicts, result-column validation, or multiple result sets
+    purpose: >-
+      Return-code enum docs, result row TypedDicts, column validation, and compute-once multiple-result-set handling.
+
+  - file: data-layer-errors.md
+    applies_to:
+      paths: []
+      activities:
+        - modifying data-layer exception classes or sproc error disambiguation
+    purpose: >-
+      Wrapper-local errors, DatabaseErrorReturnCodeError handling, substring matching, and unexpected return codes.
+
+  - file: data-layer-templates.md
+    applies_to:
+      paths: []
+      activities:
+        - creating a data-layer wrapper from a canonical template
+    purpose: >-
+      Canonical wrapper templates for row-returning reads, row-returning writes, and writes without result sets.
+
+  - file: data-layer-utilities.md
+    applies_to:
+      paths: []
+      activities:
+        - editing data-layer shared utilities or preserving platform-quirk comments
+    purpose: >-
+      Platform-quirk comments, shared utility functions, and related data-layer references.
+
+  - file: docs-hygiene.md
+    applies_to:
+      paths:
+        - docs/standards/
+        - docs/architecture/
+        - docs/features/
+        - "**/*.md"
+      activities:
+        - authoring or editing standards docs and agent guides
+        - referencing MCP servers, tools, or database tables in guides
+    purpose: >-
+      Docs voice, Desired/Not-desired examples, MCP/tool naming, database-table query examples, cross-document links, cleanup clauses, and banned working-doc identifiers.
+
+  - file: docs-hygiene-reference-structure.md
+    applies_to:
+      paths: []
+      activities:
+        - adding citations to standards docs
+        - structuring a standards document
+        - reviewing exclusions from standards docs
+    purpose: >-
+      Standard-doc exclusions, citation formats, section ordering, and a worked well-formed section.
+
+  - file: spec-hygiene.md
+    applies_to:
+      paths:
+        - docs/specifications/
+      activities:
+        - authoring or revising a deliverable specification
+        - reviewing a specification document for path, link, or content-quality issues
+    purpose: >-
+      Specification path/link portability (repository-relative paths, link-don't-inline, annotating unmerged references) and the content-quality bar a spec review holds: testable acceptance criteria, proportional test plan, decisions with rationale, and explicit scope/exclusions.
+
+  - file: ci-workflows.md
+    applies_to:
+      paths:
+        - .github/workflows/
+      activities:
+        - authoring or modifying GitHub Actions workflows
+        - adding cache steps to PR-gated checks
+        - configuring deploy workflows
+    purpose: >-
+      Workflow triggers, minimum permissions, cache warmers, deploy triggers, and prek action usage.
+
+  - file: ci-llm-conformance-workflows.md
+    applies_to:
+      paths:
+        - .agents/skills/conformance/
+      activities:
+        - adding LLM-invoking workflows, workflow-scoped API keys, or conformance automation
+    purpose: >-
+      LLM workflow API keys, settings-first prompt layout, display_report, and incremental conformance workflow.
+
+  - file: pr-process.md
+    applies_to:
+      paths: []
+      activities:
+        - opening or titling a pull request
+        - scoping commits or PRs
+        - replacing legacy screens
+        - editing root direnv, .env, or yamlfmt configuration
+    purpose: >-
+      PR title scopes, one logical change per PR, legacy replacement evidence, no transitional cruft, CVE title format, and repo hygiene.
+
+  - file: security.md
+    applies_to:
+      paths:
+        - .github/workflows/
+        - frontend/package.json
+        - frontend/src/
+      activities:
+        - remediating a CVE
+        - reviewing workflow permissions or secret scoping
+        - auditing supply-chain dependencies
+    purpose: >-
+      Workflow-scoped secrets, minimum permissions, CVE PR titles, lodash ban, npm audit documentation, and security verification.
+
+  - file: python-testing.md
+    applies_to:
+      paths:
+        - backend/tests/**/*.py
+      activities:
+        - writing python unit tests, db integration tests, or service-layer happy-path integration tests
+    purpose: >-
+      Test purpose, layout, naming, display/data-shaping unit tests, happy-path integration tests, db marker discipline, and exact-message error assertions.
+
+  - file: python-testing-http-behavior.md
+    applies_to:
+      paths: []
+      activities:
+        - writing HTTP error-path tests
+        - adding migration-dependent tests
+        - reviewing behavior-vs-implementation test quality
+    purpose: >-
+      HTTP no-leak assertions, no skip-on-missing-migration commits, concrete behavior tests, test consolidation, and existence rationale.
+
+  - file: report-test-strategy.md
+    applies_to:
+      paths:
+        - backend/tests/svc/reports/
+        - backend/tests/data/sprocs/
+        - backend/database/sql_migrations/tests/
+      activities:
+        - choosing which cases a report's test battery runs and how many
+        - sizing or bounding a report's test-battery runtime
+        - deciding committed vs gated report tests
+        - separating functional report tests from load or latency testing
+    purpose: >-
+      Per-report-aggregate test-time budget, minimal data-coverage-driven input selection, no env-var gates, functional-vs-load/latency separation, and per-layer coverage ownership for report test batteries.
+
+  - file: logging-observability.md
+    applies_to:
+      paths:
+        - backend/src/http_api/app.py
+        - backend/src/http_api/util.py
+        - backend/src/settings.py
+        - backend/src/util.py
+        - backend/src/logging_config.py
+      activities:
+        - configuring logging or adding request/response structured-log context
+    purpose: >-
+      Logger acquisition, initialization order, reserved log-key namespaces, before_request context binding, and deploy context.
+
+  - file: logging-runtime-behavior.md
+    applies_to:
+      paths: []
+      activities:
+        - editing request completion logging, cold-start logging, header sanitization, local log rendering, route business events, or local profiling
+    purpose: >-
+      Request completed log line, Lambda cold-start signal, header sanitization, local rendering, route business-event logs, and Flask request profiling.
+
+  - file: deployment.md
+    applies_to:
+      paths:
+        - backend/serverless.yml
+        - backend/justfile
+        - backend/package.json
+        - backend/vendor/serverless-wsgi/
+      activities:
+        - modifying lambda packaging, serverless.yml, deployment artifact builds, or the Flask entrypoint name
+    purpose: >-
+      Vendored WSGI handler, serverless bundle artifact sequence, Flask entrypoint coupling, and Serverless/Terraform scope boundary.
+
+  - file: tooling-lint-format.md
+    applies_to:
+      paths:
+        - backend/pyproject.toml
+        - .yamlfmt.yaml
+      activities:
+        - editing mypy, ruff, yamlfmt, or sqlfluff configuration
+        - resolving import ordering or stub-package errors
+    purpose: >-
+      mypy stubs, yamlfmt placement, YAML EOF handling, ruff rule selection, banned imports, import block separation, and ruff hooks.
+
+  - file: tooling-hooks-and-formatters.md
+    applies_to:
+      paths:
+        - .pre-commit-config.yaml
+        - backend/.pre-commit-config.yaml
+        - frontend/.pre-commit-config.yaml
+      activities:
+        - adding or modifying pre-commit or prek hooks
+        - configuring markdown or TOML formatting
+    purpose: >-
+      prek filename, hook naming, pass_filenames discipline, pinned revs, mdformat, and taplo-format.
+
+  - file: settings.md
+    applies_to:
+      paths:
+        - backend/src/settings.py
+        - backend/src/util.py
+        - backend/tests/conftest.py
+      activities:
+        - adding configuration values, reading environment variables, modifying get_settings, or writing settings-dependent tests
+    purpose: >-
+      Settings dataclass, cached get_settings, lazy env reads, adding settings, and testing contract.
