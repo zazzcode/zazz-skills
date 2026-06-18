@@ -106,6 +106,7 @@ zazz-methodology.md    primary methodology philosophy and document model
 | `jira-api` | Draft companion utility for Jira-backed repos. |
 | `conformance` | Applies one focused standards-alignment change against a named guide. |
 | `doc-check` | Runs repo-local formatting and linting checks for documentation changes. |
+| `psql` | Provides safe PostgreSQL diagnostic and profiling command guidance for repos that use `psql`. |
 | `sqlcmd` | Provides safe SQL Server diagnostic command guidance for repos that use `sqlcmd`. |
 
 ## Setup and Prerequisites
