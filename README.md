@@ -1,6 +1,6 @@
 # Zazz Methodology & Skills
 
-Zazz is an opinionated, spec-driven methodology for teams that build software with human owners and AI agents. It gives projects a durable document model, reusable agent skills, and a delivery workflow that moves from product intent to verified draft PRs without losing the reason behind the work.
+Zazz is an opinionated, spec-driven methodology for teams that build software with human owners and AI agents. It gives projects a durable document model, reusable agent skills, and a delivery workflow that moves from product intent to review-ready pull requests without losing the reason behind the work.
 
 This repository is the canonical source for the Zazz methodology and shared skills. Downstream repos can vendor or sync these docs and skills, but methodology changes should land here first.
 
