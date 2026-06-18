@@ -143,6 +143,13 @@ Recommended adoption flow:
 
 ## Skill Inventory
 
+### Customizing skills
+
+These shared skills are baseline workflow implementations. Teams adopting Zazz can customize them for their technology
+stack, coding languages, architecture, review workflow, ticketing system, and PR tooling. Keep those customizations
+anchored to the repo's standards and local instructions so agents apply documented team rules instead of personal or
+tool-specific preferences.
+
 ### Interactive skills
 
 | Skill | Purpose |

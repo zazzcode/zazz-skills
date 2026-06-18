@@ -9,6 +9,10 @@ Apply one small, topically isolated change that brings a bounded part of a repo 
 
 Use standards as the authority. Conformance work can inspect legacy or existing code for drift, but it must not invent new rules. If the needed rule does not exist, recommend creating or updating a standard before applying broad cleanup.
 
+Stay language- and stack-agnostic. Do not assume any particular programming language, runtime, framework, package
+manager, architecture layer, or diagnostic toolchain. Discover the repo's standards, manifests, scripts, CI jobs, and
+local instructions, then use the diagnostics and test commands that apply to the bounded area.
+
 The intended operating model is relatively hands-off when the repo has strong deterministic gates and sufficient tests:
 run a localized pass on demand, apply a safe fix independently, verify it, run self-review, address self-review
 findings that stay within scope, and open a ready-for-review PR for human approval. Treat it like an automated
@@ -28,15 +32,16 @@ dependency-update PR: routine, bounded, evidence-backed, and easy for a reviewer
 1. Identify the governing standard and bounded code area. Prefer an explicit user-provided standard section plus path, package, service, module, or file list.
 2. If the user provides only a standard, inspect the standards index or guide metadata for `applies_to` paths and choose a conservative bounded area. If several areas are plausible, present the best 2-4 options.
 3. Read the named guide or standard. Extract required structure, naming conventions, test expectations, mocking rules, evidence requirements, forbidden shapes, halt conditions, and explicit path patterns.
-4. Discover relevant files inside the bounded area. Avoid expanding into unrelated packages, generated code, vendored dependencies, or broad formatting churn.
-5. Confirm the autonomy mode and safety envelope: existing tests, deterministic gates, expected behavior preservation, and whether the repo permits automated PR preparation for this kind of change.
-6. Check for overlapping in-flight work when the repo has PR or task metadata available. Avoid duplicating a conformance fix already underway.
-7. Identify candidate non-conformances with file locations, violated standard section, estimated change size, likely verification command, and risk.
-8. Select one PR-sized change. Prefer the smallest fix that clearly improves conformance without mixing unrelated cleanup.
-9. Apply only that change.
-10. Run the narrowest relevant formatter, linter, type check, doc check, or test command. Broaden only if the changed file is shared or the standard requires broader validation.
-11. Run self-review when the repo has an automated review workflow. Fix self-review findings that are within the same standard, bounded area, and risk envelope; leave wider findings as follow-up candidates.
-12. Summarize the change, the standard rule satisfied, verification results, self-review result, and remaining conformance candidates. If the user asked for PR preparation and repo policy allows it, package the result as a ready-for-review PR. Use draft only when repo policy requires draft-first PRs or evidence is incomplete.
+4. Discover the bounded area's language, framework, runtime, package manager, test runner, and diagnostic commands from repo files and instructions. Use neutral repo-local evidence instead of assuming a default stack.
+5. Discover relevant files inside the bounded area. Avoid expanding into unrelated packages, generated code, vendored dependencies, or broad formatting churn.
+6. Confirm the autonomy mode and safety envelope: existing tests, deterministic gates, expected behavior preservation, and whether the repo permits automated PR preparation for this kind of change.
+7. Check for overlapping in-flight work when the repo has PR or task metadata available. Avoid duplicating a conformance fix already underway.
+8. Identify candidate non-conformances with file locations, violated standard section, estimated change size, likely verification command, and risk.
+9. Select one PR-sized change. Prefer the smallest fix that clearly improves conformance without mixing unrelated cleanup.
+10. Apply only that change.
+11. Run the narrowest relevant formatter, linter, type check, doc check, or test command. Broaden only if the changed file is shared or the standard requires broader validation.
+12. Run self-review when the repo has an automated review workflow. Fix self-review findings that are within the same standard, bounded area, and risk envelope; leave wider findings as follow-up candidates.
+13. Summarize the change, the standard rule satisfied, verification results, self-review result, and remaining conformance candidates. If the user asked for PR preparation and repo policy allows it, package the result as a ready-for-review PR. Use draft only when repo policy requires draft-first PRs or evidence is incomplete.
 
 ## Selection Rules
 
