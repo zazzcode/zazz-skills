@@ -44,6 +44,97 @@ upstream companion skill has a useful idea, summarize that behavior in
 `.agents/skills/pr-review/code-review-graph.md` instead of copying the upstream skill into
 this repo.
 
+## Interpretation Rules
+
+Graph output is review triage, not review truth.
+
+Use graph output for:
+
+- changed-symbol inventory
+- caller and dependent hints
+- affected-flow hints
+- read-first ordering
+- context-size estimates
+- broad reviewability signals, such as cross-layer changes or shared-contract edits
+
+Verify before trusting:
+
+- stock risk scores
+- test-gap counts
+- affected-flow counts
+- token-savings percentages
+- any inferred approval or readiness signal
+
+Token savings reported by the tool may be a self-reported estimate rather than an
+independently measured review-session saving. Treat the number as directional unless the
+team has measured an A/B comparison for its workflow.
+
+Risk and test-gap numbers can be misleading when a PR is large but cohesive, touches test
+harnesses, changes generated files, or crosses API/event boundaries that static call
+graphs do not model.
+
+## Zazz Fork Plan
+
+The planned Zazz direction is a fork or wrapper that keeps the graph engine and context
+extraction, but replaces or overlays the scoring and reviewability model.
+
+The fork should optimize for Zazz review questions:
+
+- Is the PR cohesive around one feature, subsystem, or deliverable?
+- Does the change reach outside its declared theme?
+- Which sensitive standards govern the changed paths?
+- How far does the change reach through callers, dependents, and cross-boundary contracts?
+- How many review tiers are crossed, and would a stack or split improve human review?
+- Do the Standards and Spec axes agree that risk is low, or did either axis find blocking
+  issues?
+
+Prefer explainable scoring over a single opaque number. A useful Zazz score should
+combine:
+
+- **Feature cohesion:** concentrated changes inside one feature/subsystem reduce risk.
+- **External blast radius:** callers or dependents outside the theme increase risk.
+- **Standards sensitivity:** security, auth, migration, deployment, settings, logging,
+  and data-boundary standards raise review sensitivity.
+- **Review findings:** open Standards or Spec boulders/rocks raise risk more than file
+  count does.
+- **Stack span:** multiple substantial tiers increase review complexity, but this is a
+  split/stack advisory signal rather than a defect signal.
+
+Example output shape:
+
+```text
+Risk: LOW
+Reason: one cohesive feature theme, no external dependents, low-sensitivity standards, Standards and Spec axes clean.
+Reviewability: MEDIUM
+Reason: service and UI tiers both touched; keep whole if the cross-tier contract is best reviewed end to end, otherwise consider a two-branch stack.
+```
+
+The fork should also add theme-coherence checks. Classify changed files as:
+
+- **On theme:** part of the dominant feature or subsystem community.
+- **Shared infrastructure:** outside the theme but plausibly required by the theme and
+  used elsewhere.
+- **Off theme:** part of another feature/subsystem with no clear dependency reason.
+- **Governance-sensitive:** standards, skills, workflows, migrations, security, or
+  deployment files that may require separate scrutiny.
+
+Off-theme or governance-sensitive changes are prompts for review attention, not automatic
+rejection.
+
+Static call graphs often miss contracts that cross transport or generation boundaries. A
+Zazz fork should support configurable synthetic edges for:
+
+- HTTP routes and clients
+- OpenAPI operation IDs
+- generated API clients
+- queues and events
+- stored procedures and data wrappers
+- background jobs and schedulers
+- report or plugin registries
+
+For now, use the stock tool for context and token efficiency, treat scores as advisory,
+verify all findings in source, and record graph caveats in the review summary.
+
 ## When To Use It
 
 Before `pr-review` reads broad file contents, size the pinned diff:

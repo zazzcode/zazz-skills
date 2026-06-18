@@ -27,6 +27,7 @@ The methodology is intentionally Git-native. Durable docs, code, and review evid
 - [Worktrunk cheat sheet](docs/wt-cheat-sheet.md)
 - [GH-stack guide](docs/using-gh-stack.md)
 - [Human-in-the-loop PR review strategy](docs/human-in-loop-pr-review-strategy.md)
+- [Code review graph guidance](docs/code-review-graph.md)
 - [Reference implementation: zazz-board](https://github.com/zazzcode/zazz-board)
 
 ## Workflow

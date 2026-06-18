@@ -226,6 +226,13 @@ status codes, inconsistent error shapes, unsafe SQL, missing transaction handlin
 regression tests, unnecessary abstractions, duplicated local patterns, generated tests
 that only confirm the implementation, and hidden data/auth/security/operational risk.
 
+For large or high-risk PRs, graph-assisted context can reduce review archaeology before
+the review axes read source files. Zazz treats `code-review-graph` as advisory context for
+changed-symbol inventory, blast radius, and read-first ordering; its stock risk and
+test-gap signals are not approval criteria. See
+[Code Review Graph in Zazz](code-review-graph.md) for current usage guidance and the
+planned Zazz-specific fork direction.
+
 The agent may recommend readiness, but it must not approve, mark ready, merge, or
 override a human.
 

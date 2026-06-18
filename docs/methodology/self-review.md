@@ -26,6 +26,12 @@ Use `pr-review` when available. It separates two concerns:
 
 Keeping the axes separate prevents a clean implementation of the wrong thing from looking like a pass, and prevents correct behavior from hiding standards problems.
 
+## Graph-Assisted Review
+
+For large or high-risk diffs, `pr-review` may use `code-review-graph` as a context accelerator before the Standards and Spec axes inspect source. The graph helps identify changed symbols, likely blast radius, read-first files, and reviewability signals.
+
+Treat graph output as advisory. Stock risk scores, test-gap counts, affected-flow counts, and token-savings percentages are signals to investigate, not approval criteria. See [Code Review Graph in Zazz](../code-review-graph.md) for the methodology guidance and the planned Zazz-specific fork direction.
+
 ## Output
 
 Self-review should produce:
