@@ -2,7 +2,7 @@
 name: "Zazz Board API"
 type: "rule"
 description: "CLI-first companion skill for service-assisted repos that use Zazz Board; use it to create and manage deliverables, tasks, relations, notes, statuses, and file locks through zazzctl, with live OpenAPI as the protocol validation and fallback surface."
-required_for: ["planner", "coordinator", "worker", "qa-testing", "spec-builder"]
+required_for: ["qa-testing", "spec-builder", "pr-builder"]
 ---
 
 # Zazz Board API (Agent Routes)
@@ -37,7 +37,7 @@ All API requests (except `/openapi.json`, `/health`, `/`, `/db-test`, `/token-in
 - `ZAZZ_API_BASE_URL` (fallback: `http://localhost:3030`)
 - `ZAZZ_API_TOKEN` (required token source; fallback if unset: `660e8400-e29b-41d4-a716-446655440101`)
 - `ZAZZ_PROJECT_CODE` (fallback: `ZAZZ`)
-- `ZAZZCTL_PROFILE` (optional default profile: `generic`, `worker`, `planner`, `spec_builder`)
+- `ZAZZCTL_PROFILE` (optional CLI profile: `generic`, `worker`, `planner`, `spec_builder`; profile names are command permissions, not skill names)
 - `ZAZZCTL_ENV_FILE` (optional explicit env file path for CLI execution)
 - `ZAZZCTL_NO_ENV` (`1` disables env-file auto-loading)
 
@@ -57,11 +57,11 @@ CLI-first policy:
 - Do not handcraft ad-hoc `curl` for normal execution.
 - `curl` is allowed only for OpenAPI fetch/debugging when the CLI is missing a capability.
 
-Role profile usage:
-- Worker: `zazzctl --profile worker ...`
-- Planner: `zazzctl --profile planner ...`
-- Spec Builder: `zazzctl --profile spec_builder ...`
-- Generic (fallback): `zazzctl ...` or `zazzctl --profile generic ...`
+CLI profile usage:
+- Execution profile: `zazzctl --profile worker ...`
+- Planning profile: `zazzctl --profile planner ...`
+- Spec-builder profile: `zazzctl --profile spec_builder ...`
+- Generic fallback: `zazzctl ...` or `zazzctl --profile generic ...`
 
 ## Source-of-Truth Model
 
@@ -161,7 +161,7 @@ If a critical capability cannot be resolved, stop and surface the mismatch.
 ---
 
 ## Mandatory execution contract
-For coordinator/worker/qa-testing agent runs, these behaviors are required:
+For board-assisted planning, execution, or QA runs, these behaviors are required:
 - Use live API for all task/deliverable lifecycle updates.
 - Do not leave created tasks in ambiguous state.
 - Keep task graph relations explicit and verifiable.
@@ -180,7 +180,7 @@ Deliverable lifecycle (required):
 - Resolve project deliverable workflow from API/OpenAPI-capable endpoints.
 - Update deliverable status explicitly with status endpoints; do not assume implicit transitions.
 - Approve deliverable explicitly with approve endpoint when workflow requires it.
-- Planner start gate: when planning starts, set deliverable status to `PLANNING`.
+- Planning start gate: when planning starts, set deliverable status to `PLANNING`.
 - Spec-builder gate: after deliverable creation, set default status to `BACKLOG` and persist `specFilepath`.
 
 Dependency lifecycle (required):
@@ -192,15 +192,15 @@ Dependency lifecycle (required):
 - Unresolved dependencies should not be represented as blocked status unless a separate blocker exists.
 - Solo tasks are valid and visible without dependencies.
 
-File lock lifecycle (required for worker execution):
+File lock lifecycle (required for active execution):
 - Acquire required file locks before task claim: `POST /projects/{code}/deliverables/{delivId}/locks/acquire`.
 - On `409 FILE_LOCK_CONFLICT`, set task `isBlocked=true` and `blockedReason='FILE_LOCK'`, poll every 3 seconds, and retry.
 - While work is active, refresh lease with `POST /projects/{code}/deliverables/{delivId}/locks/heartbeat`.
 - On completion/handoff, release with `POST /projects/{code}/deliverables/{delivId}/locks/release`.
 
 Harness-aware exception:
-- If a worker harness guarantees strict disjoint file ownership, isolated subagent workspaces, and parent-controlled merge/serialization for overlaps, lock calls may be skipped for those internal subagents.
-- If any external worker/process can concurrently edit the same deliverable/files, lock calls remain mandatory.
+- If an agent harness guarantees strict disjoint file ownership, isolated subagent workspaces, and parent-controlled merge/serialization for overlaps, lock calls may be skipped for those internal subagents.
+- If any external agent/process can concurrently edit the same deliverable/files, lock calls remain mandatory.
 
 Verification lifecycle (required):
 - After creating/updating tasks, re-fetch deliverable task list and confirm task `id`, `phaseStep`, `status`, and blocker fields when used.

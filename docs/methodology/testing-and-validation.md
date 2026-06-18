@@ -1,0 +1,49 @@
+# Testing and Validation
+
+Testing and validation prove that the deliverable matches its specification and that the implementation is maintainable under the repo's standards.
+
+## Validation Model
+
+Validation has three layers:
+
+- Acceptance criteria: did the deliverable build the intended behavior?
+- Test quality: do the tests honestly prove the behavior and risks?
+- Standards conformance: does the implementation fit the repo's engineering conventions?
+
+Passing tests are not enough if the tests do not prove the acceptance criteria.
+
+## Test Planning
+
+The specification owns the test intent. Implementation may adapt mechanics, but it must not weaken the test contract without owner approval.
+
+Good test plans:
+
+- map each acceptance criterion to evidence
+- prefer behavior-level tests over mock-only plumbing tests
+- cover realistic edge cases and regressions
+- reuse existing fixtures and helpers
+- avoid duplicate or low-signal coverage
+- state when existing coverage is intentionally reused
+
+## QA Testing
+
+Use `qa-testing` when a deliverable is ready for independent verification. It verifies acceptance criteria, inspects test quality, runs relevant checks, and produces rework findings or reviewer-ready evidence.
+
+QA should create self-contained rework findings when work fails validation. Each finding should include reproduction steps, expected behavior, actual behavior, relevant files, and suggested verification after repair.
+
+## Evidence
+
+Useful evidence includes:
+
+- test command output
+- screenshots or browser checks for UI behavior
+- API request/response samples
+- logs or traces for operational behavior
+- performance measurements when thresholds exist
+- owner signoff for subjective UX or product requirements
+
+## Related Sections
+
+- [Specifications](./specifications.md)
+- [PR Creation](./pr-creation.md)
+- [Self-Review](./self-review.md)

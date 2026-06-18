@@ -28,7 +28,7 @@ This draft skill is intended for two future usage patterns:
 2. **Companion utility support** for automation-driven agents, including an agent running the `qa-testing` skill, that need authoritative Jira issue context to validate acceptance criteria, confirm scope, or anchor reviewer evidence.
 
 Today, both modes still rely on repo guidance and user-provided Jira context because live integration is not implemented yet.
-The important distinction is that this skill is not only for conversational lookup. It is also meant to inform downstream agents such as an agent running `qa-testing`, `pr-builder`, `planner`, or `worker`.
+The important distinction is that this skill is not only for conversational lookup. It is also meant to inform downstream agents such as an agent running `qa-testing`, `pr-builder`, `spec-builder`, or `pr-review`.
 
 ## Intended Future Role
 
@@ -40,7 +40,7 @@ Planned responsibilities may include:
 - retrieving issue URLs, statuses, assignees, and workflow metadata
 - resolving related parent/child issue context when review or planning depends on it
 - providing authoritative PR-facing Jira references for skills such as `pr-builder`
-- helping `spec-builder`, `planner`, `worker`, and an agent running `qa-testing` validate that work remains aligned with the governing Jira issue
+- helping `spec-builder`, `pr-builder`, `pr-review`, and an agent running `qa-testing` validate that work remains aligned with the governing Jira issue
 - informing automation-driven QA-agent flows with authoritative Jira acceptance criteria and issue metadata
 
 ## Intended Interface Direction

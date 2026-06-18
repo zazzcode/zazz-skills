@@ -23,7 +23,7 @@ Use this skill only when the repo is operating in **service-assisted** mode.
 That usually means:
 - the repo uses Zazz Board for execution state
 - deliverables or tasks need to be synchronized through the Board
-- another skill such as `spec-builder`, `planner`, `worker`, or `coordinator` needs Board capability
+- a workflow skill such as `spec-builder`, `qa-testing`, `pr-builder`, or `pr-review` needs Board capability
 
 Do not require this skill in ordinary skills-assisted repos that are just following the process and directory structure.
 
@@ -32,7 +32,6 @@ Do not require this skill in ordinary skills-assisted repos that are just follow
 The preferred interface is the CLI:
 
 - script: `.agents/skills/zazz-board-api/scripts/zazzctl.mjs`
-- worker wrapper: `.agents/skills/worker/scripts/zazzctl`
 
 The skill is intentionally CLI-first.
 
@@ -40,9 +39,9 @@ The skill is intentionally CLI-first.
 
 Typical indirect use:
 - `spec-builder` syncing a SPEC path to a board-backed deliverable
-- `worker` updating task status or locks
-- `coordinator` creating tasks or dependency edges
-- `planner` resolving service-assisted deliverable context
+- an implementation agent updating task status or locks
+- an agent creating tasks or dependency edges from an approved execution contract
+- `qa-testing` appending validation findings or evidence
 
 ## Human Operator Notes
 

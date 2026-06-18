@@ -39,28 +39,30 @@ export ZAZZ_PROJECT_CODE="ZAZZ"
 If the repo keeps these values in `.env`, `zazzctl` will pick them up automatically when run from that repo.
 
 Profiles:
-- `worker`: task/relation/lock/exec workflow; read-only deliverable ops
-- `planner`: deliverable planning updates and read checks
+- `worker`: execution task/relation/lock workflow; read-only deliverable ops
+- `planner`: planning updates and read checks
 - `spec_builder`: deliverable create/status/update for SPEC sync
 - `generic`: unrestricted adapter (use sparingly)
 
+The `worker` and `planner` names are CLI permission profiles, not methodology skill names.
+
 Examples:
 ```bash
-# Worker claim + lock protocol
+# Execution claim + lock protocol
 node .agents/skills/zazz-board-api/scripts/zazzctl.mjs --profile worker exec begin \
-  --deliverable-id 8 --task-id 25 --agent-name worker-1 --file api/src/routes/fileLocks.js
+  --deliverable-id 8 --task-id 25 --agent-name implementation-agent-1 --file src/routes/example.js
 
-# Planner sets planning status and plan path
+# Planning profile sets planning status and execution-contract path
 node .agents/skills/zazz-board-api/scripts/zazzctl.mjs --profile planner deliverable status \
   --deliverable-id 4 --status PLANNING
 node .agents/skills/zazz-board-api/scripts/zazzctl.mjs --profile planner deliverable update \
-  --deliverable-id 4 --json '{"planFilepath":"<DOCS_ROOT>/deliverables/ZAZZ-6/multiple-agent-tokens-feature-PLAN.md"}'
+  --deliverable-id 4 --json '{"specFilepath":"<DOCS_ROOT>/specifications/sample-feature.md"}'
 
 # Spec builder creates deliverable, sets BACKLOG, then saves SPEC filepath
 node .agents/skills/zazz-board-api/scripts/zazzctl.mjs --profile spec_builder deliverable create \
-  --name "multiple-agent-tokens-feature" --type FEATURE
+  --name "sample-feature" --type FEATURE
 node .agents/skills/zazz-board-api/scripts/zazzctl.mjs --profile spec_builder deliverable status \
   --deliverable-id 4 --status BACKLOG
 node .agents/skills/zazz-board-api/scripts/zazzctl.mjs --profile spec_builder deliverable update \
-  --deliverable-id 4 --json '{"specFilepath":"<DOCS_ROOT>/deliverables/ZAZZ-6/multiple-agent-tokens-feature-SPEC.md"}'
+  --deliverable-id 4 --json '{"specFilepath":"<DOCS_ROOT>/specifications/sample-feature.md"}'
 ```

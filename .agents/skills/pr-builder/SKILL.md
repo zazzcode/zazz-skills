@@ -307,7 +307,7 @@ If the PR is draft, make that obvious in the title when repo conventions allow o
 Good patterns:
 
 - `Add role management UI for RBAC milestone 2`
-- `Fix deliverable status transitions for blocked worker tasks`
+- `Fix deliverable status transitions for blocked execution tasks`
 - `Refactor standards loading to use docs-root index discovery`
 
 Avoid vague titles like:

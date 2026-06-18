@@ -1,14 +1,26 @@
 # Zazz Methodology & Skills
 
-Zazz is an opinionated, spec-driven methodology for collaborative software delivery by builders and AI agents.
-It combines a document framework, reusable skills, and delivery conventions so teams can preserve product intent while agents execute bounded work safely.
+Zazz is an opinionated, spec-driven methodology for teams that build software with human owners and AI agents. It gives projects a durable document model, reusable agent skills, and a delivery workflow that moves from product intent to verified draft PRs without losing the reason behind the work.
 
-This repository is the canonical source for the Zazz methodology document and shared skills.
-The reference implementation is [zazz-board](https://github.com/zazzcode/zazz-board), but methodology and skill changes should land here first before propagating outward.
+This repository is the canonical source for the Zazz methodology and shared skills. Downstream repos can vendor or sync these docs and skills, but methodology changes should land here first.
+
+## Executive Overview
+
+Zazz exists to make agent-assisted delivery safer and more repeatable:
+
+- **Define the right work:** `project.md`, architecture docs, proposals, feature requirements, and milestones preserve product and system intent.
+- **Slice work into executable contracts:** deliverable specifications define bounded implementation work with acceptance criteria, test plans, standards, and halt conditions.
+- **Execute in isolation:** agents implement inside worktrees so active work is recoverable and separate from unrelated changes.
+- **Validate before review:** `qa-testing` verifies behavior and evidence; draft PRs are packaged with `pr-builder`; `pr-review` runs self-review before formal review.
+- **Promote durable knowledge:** when work changes product behavior, architecture, or standards, the long-lived docs are updated instead of leaving knowledge trapped in a PR or chat.
+
+The methodology is intentionally Git-native. Durable docs, code, and review evidence move through branches and PRs. Humans keep scope, product signoff, PR approval, and merge authority; agents operate inside approved contracts.
 
 ## Quick Links
 
 - [Methodology overview](zazz-methodology.md)
+- [Methodology sections](docs/methodology/README.md)
+- [Standards index](docs/standards/index.yaml)
 - [AGENTS.md example template](templates/AGENTS.md)
 - [Worktree setup guide](docs/worktree-setup.md)
 - [Agent execution discipline](docs/agent-execution-discipline.md)
@@ -17,26 +29,22 @@ The reference implementation is [zazz-board](https://github.com/zazzcode/zazz-bo
 - [Human-in-the-loop PR review strategy](docs/human-in-loop-pr-review-strategy.md)
 - [Reference implementation: zazz-board](https://github.com/zazzcode/zazz-board)
 
-## Why Zazz
+## Workflow
 
-- Keep long-lived product knowledge in durable docs instead of letting it disappear into chats, tickets, or transient execution notes.
-- Break work into bounded deliverables with explicit acceptance criteria and verification evidence.
-- Give agents enough approved context to operate with meaningful autonomy while preserving human approval, review, and merge gates.
-- Use worktrees as the default execution boundary so active efforts stay isolated, recoverable, and easier to coordinate.
-- Preserve the "why" behind the system while still moving quickly on the "what are we building right now?" question.
+```text
+project.md
+  -> architecture.md
+  -> proposals/
+  -> features/ and milestones
+  -> specifications/
+  -> code generation
+  -> testing and validation
+  -> draft PR creation
+  -> self-review
+  -> human review and merge
+```
 
-## Core Positions
-
-Zazz is intentionally opinionated about artifact boundaries and execution workflow:
-
-- Durable product knowledge belongs in Git or another Git-based review system.
-- Deliverable specifications are the core execution contracts. They replace the old specification + plan split and contain intent, acceptance criteria, implementation guidance, test plan, halt conditions, and the agent implementation prompt.
-- Mutable execution records, such as run logs and handoff notes, live under `<DOCS_ROOT>/execution/` or in a declared external system.
-- Zazz Board is a valid integration pattern, not a methodology requirement.
-- Worktrees are required because they provide the isolation, recoverability, and execution boundaries the methodology depends on.
-- The normal operating rule is one active deliverable per worktree. The supported exception is a GH-stack lane, where one worktree can contain multiple stacked branches when ordered PRs make review easier.
-- Worktrunk is encouraged when a team wants a friendlier workflow on top of `git worktree`, but native Git remains the base capability.
-- PRs are draft-first by default. Agents use `pr-builder` to package draft PRs, author-side automated review runs before formal review, and the Deliverable Owner controls the transition from draft to ready for review.
+Read [zazz-methodology.md](zazz-methodology.md) for the entry point, then use the focused [methodology sections](docs/methodology/README.md) for the part of the workflow you are working on.
 
 ## Document Model
 
@@ -66,16 +74,50 @@ Each document type exists to solve a different coordination problem:
 - `specifications/` contains local deliverable specifications when the repo keeps them on disk.
 - `execution/` contains local mutable execution records such as run logs, handoff notes, QA findings, and recovery notes.
 
-For the full methodology model, read [zazz-methodology.md](zazz-methodology.md).
+For the methodology progression and section table of contents, read [zazz-methodology.md](zazz-methodology.md).
 
 ## Repository Layout
 
 ```text
 .agents/skills/        shared Zazz skills, kept AI-tool agnostic
 docs/                  supporting methodology docs and guides
+docs/standards/        reusable software engineering standards
 templates/             example files for repos adopting the methodology
-zazz-methodology.md    primary methodology philosophy and document model
+zazz-methodology.md    methodology overview and section table of contents
+docs/methodology/      focused methodology section docs
 ```
+
+## Methodology Library
+
+The methodology is split so teams can read only the part of the progression they are working on:
+
+| Stage | Document |
+| ----- | -------- |
+| Executive overview and table of contents | [zazz-methodology.md](zazz-methodology.md) |
+| Project orientation | [docs/methodology/project.md](docs/methodology/project.md) |
+| Architecture direction | [docs/methodology/architecture.md](docs/methodology/architecture.md) |
+| Proposals and decisions | [docs/methodology/proposals.md](docs/methodology/proposals.md) |
+| Features and milestones | [docs/methodology/features-and-milestones.md](docs/methodology/features-and-milestones.md) |
+| Deliverable specifications | [docs/methodology/specifications.md](docs/methodology/specifications.md) |
+| Code generation | [docs/methodology/code-generation.md](docs/methodology/code-generation.md) |
+| Testing and validation | [docs/methodology/testing-and-validation.md](docs/methodology/testing-and-validation.md) |
+| PR creation | [docs/methodology/pr-creation.md](docs/methodology/pr-creation.md) |
+| Draft PR self-review | [docs/methodology/self-review.md](docs/methodology/self-review.md) |
+
+## Standards Library
+
+The standards library is indexed by [docs/standards/index.yaml](docs/standards/index.yaml) so agents can load the smallest relevant standard set for a task.
+
+| Area | Standards |
+| ---- | --------- |
+| Core structure and docs | [code-structure.md](docs/standards/code-structure.md), [contextual-split.md](docs/standards/contextual-split.md), [docs-hygiene.md](docs/standards/docs-hygiene.md), [docs-hygiene-reference-structure.md](docs/standards/docs-hygiene-reference-structure.md), [spec-hygiene.md](docs/standards/spec-hygiene.md), [pr-process.md](docs/standards/pr-process.md) |
+| HTTP/API layer | [http-layer.md](docs/standards/http-layer.md), [http-layer-guide.md](docs/standards/http-layer-guide.md), [http-layer-schemas-and-responses.md](docs/standards/http-layer-schemas-and-responses.md), [http-layer-errors-and-auth.md](docs/standards/http-layer-errors-and-auth.md), [http-layer-docs-and-tests.md](docs/standards/http-layer-docs-and-tests.md) |
+| Service layer | [service-layer.md](docs/standards/service-layer.md), [service-layer-guide.md](docs/standards/service-layer-guide.md), [service-layer-data-and-exceptions.md](docs/standards/service-layer-data-and-exceptions.md), [service-layer-modules-and-cli.md](docs/standards/service-layer-modules-and-cli.md) |
+| Data layer | [data-layer.md](docs/standards/data-layer.md), [data-layer-guide.md](docs/standards/data-layer-guide.md), [data-layer-exec-sproc.md](docs/standards/data-layer-exec-sproc.md), [data-layer-results.md](docs/standards/data-layer-results.md), [data-layer-errors.md](docs/standards/data-layer-errors.md), [data-layer-templates.md](docs/standards/data-layer-templates.md), [data-layer-utilities.md](docs/standards/data-layer-utilities.md), [data-layer-sproc-examples.md](docs/standards/data-layer-sproc-examples.md) |
+| Database | [database.md](docs/standards/database.md), [database-guide.md](docs/standards/database-guide.md), [database-sproc-shape.md](docs/standards/database-sproc-shape.md), [database-sproc-errors.md](docs/standards/database-sproc-errors.md), [database-migrations-and-modernization.md](docs/standards/database-migrations-and-modernization.md), [database-modernization-approach.md](docs/standards/database-modernization-approach.md), [database-testing.md](docs/standards/database-testing.md), [database-testing-guide.md](docs/standards/database-testing-guide.md) |
+| Frontend | [frontend.md](docs/standards/frontend.md), [frontend-admin-crud-guide.md](docs/standards/frontend-admin-crud-guide.md), [frontend-forms-ui.md](docs/standards/frontend-forms-ui.md), [frontend-hook-design.md](docs/standards/frontend-hook-design.md) |
+| Testing and reports | [python-testing.md](docs/standards/python-testing.md), [python-testing-guide.md](docs/standards/python-testing-guide.md), [python-testing-http-behavior.md](docs/standards/python-testing-http-behavior.md), [report-test-strategy.md](docs/standards/report-test-strategy.md), [reports.md](docs/standards/reports.md) |
+| Operations, tooling, and security | [ci-workflows.md](docs/standards/ci-workflows.md), [ci-llm-conformance-workflows.md](docs/standards/ci-llm-conformance-workflows.md), [deployment.md](docs/standards/deployment.md), [backend-entrypoint-initialization-guide.md](docs/standards/backend-entrypoint-initialization-guide.md), [backend-lambda-deployment-guide.md](docs/standards/backend-lambda-deployment-guide.md), [logging-observability.md](docs/standards/logging-observability.md), [logging-runtime-behavior.md](docs/standards/logging-runtime-behavior.md), [settings.md](docs/standards/settings.md), [security.md](docs/standards/security.md), [tooling-hooks-and-formatters.md](docs/standards/tooling-hooks-and-formatters.md), [tooling-lint-format.md](docs/standards/tooling-lint-format.md) |
 
 ## Skill Inventory
 
@@ -155,7 +197,7 @@ skills into a project. Runtime-specific instruction files can either point agent
 
 If you are adopting the methodology in another repo:
 
-1. Read [zazz-methodology.md](zazz-methodology.md).
+1. Read [zazz-methodology.md](zazz-methodology.md), then follow the section links that match your current workflow.
 2. Review [templates/AGENTS.md](templates/AGENTS.md) because `AGENTS.md` declares repo-specific settings such as docs root, tracking system, branch policy, and review workflow.
 3. Install the supporting tools your workflow needs: Git, Worktrunk, `gh`, `gh-stack`, and any project-specific build/test tools.
 4. Read [docs/worktree-setup.md](docs/worktree-setup.md) because the methodology requires the worktree operating model.
@@ -204,53 +246,17 @@ rsync -avc --delete /path/to/zazz-skills/docs/ /path/to/consumer-repo/docs/
 
 ## Changelog
 
+### 2026-06-18 — Public methodology and standards refresh
+
+Split the methodology into a concise executive overview plus focused workflow sections, refreshed the README with the current skill and standards inventory, consolidated QA guidance under `qa-testing`, and added PostgreSQL/SQL Server diagnostic utility skills.
+
 ### 2026-05-24 — Execution artifact location refresh
 
-Renamed the default local mutable execution artifact directory from `<DOCS_ROOT>/implementation/` to
-`<DOCS_ROOT>/execution/`, and clarified that Zazz Board can serve as the centralized execution-record surface for
-run logs, handoff documents, QA findings, and related information shared across worktrees, agents, and sessions.
+Renamed the default local mutable execution artifact directory to `<DOCS_ROOT>/execution/`, and clarified that Zazz Board can serve as the centralized execution-record surface for run logs, handoff documents, QA findings, and related information shared across worktrees, agents, and sessions.
 
 ### 2026-05-23 — Methodology and skill alignment refresh
 
-Aligned the methodology, README, supporting docs, and shared skills around the current Zazz operating model: feature,
-architecture, and specification document locations; draft-first PR packaging; GH-stack review lanes; Zazz Board or
-Git-backed specification storage; and simpler skill customization through direct forking/editing instead of extension
-overlays.
-
-### 2026-05-17 — Execution model simplification
-
-**Removed `planner` skill (obsolete).**
-Modern agents have large context windows and native planning capabilities. A separate plan artifact added ceremony without value. The deliverable specification now includes a prescriptive execution sequence, and the agent decomposes implementation dynamically from live repo context.
-
-- Rationale: agents now read a deliverable specification, inspect the codebase, and internally plan tool-call sequences. A pre-baked text plan was rarely more useful than the specification's scope boundaries plus the agent's own discovery.
-- Migration: previous plan files are replaced by the specification's execution sequence section. No loss of planning rigor; the planning is now done by the agent at execution time.
-
-**Removed `worker` skill (execution is now native agent behavior).**
-Writing code, running tests, and iterating is what modern agents do by default. The `worker` skill conflated native execution with board state sync, which is now handled by `zazz-board-api` or the agent harness's native subagent features when multi-agent orchestration is needed.
-
-- Rationale: agents don't need a skill wrapper to tell them "write code, then run tests." TDD and iteration are intrinsic. Multi-agent coordination is now handled by harness-native subagent features (GPT-4.5, Opus, etc.), not a methodology skill.
-- Migration: single-agent execution needs no skill. Multi-agent execution uses the agent harness's native subagent/teams feature. External system sync uses `zazz-board-api` when needed.
-
-**Removed `coordinator` skill (harness-native subagents replace it).**
-Modern agent harnesses (e.g., GPT-4.5, Opus) include built-in manager/subagent orchestration, task decomposition, and dependency management. The `coordinator` skill replicated what the harness now does natively. Teams should use the agent's native multi-agent mode instead of a methodology-level coordination wrapper.
-
-- Rationale: when the harness can spawn subagents, assign file ownership, and enforce serialization automatically, a separate `coordinator` skill adds indirection and drift. The methodology should document how to use harness-native coordination, not reimplement it.
-- Migration: use the agent's native subagent or "teams" feature. The deliverable specification's prescriptive execution sequence provides the decomposition input; the harness handles the orchestration.
-
-**Added `architecture-doc-builder` and `gh-stack` skills.**
-These reflect evolved practices: paired architecture documents for feature requirements, and stacked PR workflows for incremental review.
-
-**The deliverable specification is now the single execution contract.**
-The old specification + plan split is gone. The deliverable specification contains:
-- capability statement and acceptance criteria
-- prescriptive execution sequence
-- test plan and halt conditions
-
-**Renamed "Zazz Framework" → "Zazz Methodology."**
-The umbrella term is now "Zazz Methodology" to better reflect that it encompasses more than a document model — it includes skills, tooling, and the overall approach to structuring features, milestones, deliverables, and specifications. "Document framework" is retained as a term for the document model component specifically (hierarchy, naming conventions, file layout). The primary document has been renamed from `zazz-framework.md` to `zazz-methodology.md`.
-
-**Added supporting methodology docs.**
-Incorporated guidelines from active project work on feature, architecture, specification-driven development, worktree, and stacked-branch methodology.
+Aligned the methodology, README, supporting docs, and shared skills around feature, architecture, and specification document locations; draft-first PR packaging; stacked PR lanes; Zazz Board or Git-backed specification storage; and direct skill customization.
 
 ## License
 

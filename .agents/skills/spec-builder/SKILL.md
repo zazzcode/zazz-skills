@@ -412,7 +412,7 @@ clean and gives reviewers a concrete rationale.
 
 If QA later finds that the specified tests are low-signal, missing realistic edge cases,
 or testing the wrong boundary, that is a specification quality issue. QA should route the
-finding back through the coordinator/Owner for test-plan clarification or specification
+finding back through the owner or governing workflow for test-plan clarification or specification
 revision before the implementer proceeds.
 
 ### Acceptance criteria and test plan come before execution
