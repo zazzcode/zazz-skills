@@ -8,7 +8,10 @@ Validation has three layers:
 
 - Acceptance criteria: did the deliverable build the intended behavior?
 - Test quality: do the tests honestly prove the behavior and risks?
-- Standards conformance: does the implementation fit the repo's engineering conventions?
+- Deterministic quality gates: did required linters, formatters, type checks, accessibility checks, doc checks, schema
+  checks, and CI gates run and pass?
+- Standards conformance: does the implementation fit the repo's engineering conventions, including rules that cannot
+  be fully automated?
 
 Passing tests are not enough if the tests do not prove the acceptance criteria.
 
@@ -36,6 +39,7 @@ QA should create self-contained rework findings when work fails validation. Each
 Useful evidence includes:
 
 - test command output
+- linter, formatter, type-check, schema-check, accessibility-check, and doc-check output
 - screenshots or browser checks for UI behavior
 - API request/response samples
 - logs or traces for operational behavior
@@ -49,6 +53,8 @@ Useful evidence includes:
 | `qa-testing` | Independently verifies acceptance criteria, checks evidence quality, identifies rework, and produces reviewer-ready validation notes. |
 | `pr-review` | Finds gaps in spec alignment, standards conformance, test quality, and maintainability before human review. |
 | `conformance` | Supports small targeted fixes when validation exposes a standards issue. |
+| `doc-check` | Runs repo-local documentation checks for changed methodology, standards, and other docs. |
+| `standard-builder` | Helps draft or refine stack-specific standards when validation exposes a repeated quality gap. |
 | `psql` | Provides safe PostgreSQL diagnostics for data-backed behavior, performance checks, and query/function profiling. |
 | `sqlcmd` | Provides safe SQL Server diagnostics for stored procedures, database tests, timing probes, and read-only data checks. |
 | `zazz-board-api` | Records QA findings, task state, and validation notes when the repo uses Zazz Board. |
@@ -56,5 +62,6 @@ Useful evidence includes:
 ## Related Sections
 
 - [Specifications](./specifications.md)
+- [Deterministic Quality Gates](./deterministic-quality.md)
 - [PR Creation](./pr-creation.md)
 - [Self-Review](./self-review.md)

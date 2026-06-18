@@ -9,11 +9,12 @@ Read in workflow order:
 3. [Proposals](./proposals.md)
 4. [Features and Milestones](./features-and-milestones.md)
 5. [Specifications](./specifications.md)
-6. [Code Generation](./code-generation.md)
-7. [Testing and Validation](./testing-and-validation.md)
-8. [PR Creation](./pr-creation.md)
-9. [Self-Review](./self-review.md)
-10. [Human Review and Merge](../human-in-loop-pr-review-strategy.md)
+6. [Deterministic Quality Gates](./deterministic-quality.md)
+7. [Code Generation](./code-generation.md)
+8. [Testing and Validation](./testing-and-validation.md)
+9. [PR Creation](./pr-creation.md)
+10. [Self-Review](./self-review.md)
+11. [Human Review and Merge](../human-in-loop-pr-review-strategy.md)
 
 Use only the sections relevant to the current work. Small fixes may start at specifications; larger capabilities usually start with project, architecture, proposal, or feature context.
 
@@ -28,6 +29,7 @@ Each section includes a `Relevant Skills` table that explains which skills apply
 | Proposals and decisions | `proposal-builder`, `feature-doc-builder`, `architecture-doc-builder` |
 | Features and milestones | `feature-doc-builder`, `architecture-doc-builder`, `spec-builder` |
 | Deliverable specifications | `spec-builder`, `zazz-board-api`, `jira-api` |
+| Deterministic quality gates | `standard-builder`, `conformance`, `doc-check`, `qa-testing` |
 | Code generation | `worktree`, `conformance`, `psql`, `sqlcmd`, `zazz-board-api` |
 | Testing and validation | `qa-testing`, `pr-review`, `conformance`, `psql`, `sqlcmd` |
 | PR creation | `pr-builder`, `gh-stack`, `qa-testing` |

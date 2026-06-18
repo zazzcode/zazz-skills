@@ -12,6 +12,7 @@ Zazz gives teams a repeatable path from product intent to a human-reviewed, merg
 
 - Durable docs explain the product, architecture, decisions, features, and standards.
 - Deliverable specifications turn intent into bounded implementation contracts with acceptance criteria, test plans, standards, and halt conditions.
+- Deterministic quality gates turn enforceable code, documentation, accessibility, type-safety, and formatting rules into repeatable checks before probabilistic agent or human review.
 - Agents execute inside approved contracts, isolated worktrees, and repo standards.
 - Validation, pull request packaging, and automated self-review happen before human review and merge.
 - Durable docs are updated when shipped work changes the product, architecture, or standards.
@@ -28,6 +29,7 @@ project.md
   -> proposals/
   -> features/ and milestones
   -> specifications/
+  -> deterministic quality gates
   -> code generation
   -> testing and validation
   -> PR packaging and automated review
@@ -48,6 +50,7 @@ Each focused section includes a `Relevant Skills` table that explains which skil
 | [Proposals](docs/methodology/proposals.md) | Defines durable decision artifacts for uncertain product or technical direction. |
 | [Features and Milestones](docs/methodology/features-and-milestones.md) | Defines feature requirements documents, milestones, and time-boxed deliverables. |
 | [Specifications](docs/methodology/specifications.md) | Defines deliverable specifications as bounded execution contracts. |
+| [Deterministic Quality Gates](docs/methodology/deterministic-quality.md) | Defines linters, formatters, type checks, accessibility checks, doc checks, and CI gates as deterministic controls. |
 | [Code Generation](docs/methodology/code-generation.md) | Defines agent implementation workflow, worktree discipline, and halt conditions. |
 | [Testing and Validation](docs/methodology/testing-and-validation.md) | Defines acceptance verification, test quality, QA loops, and evidence. |
 | [PR Creation](docs/methodology/pr-creation.md) | Defines draft-first PR packaging and stacked PR usage. |
@@ -83,12 +86,13 @@ Repos declare the docs root in `AGENTS.md`, commonly `docs/` or `.zazz/`. The va
 
 1. Durable product and architecture knowledge lives in durable docs, not chats or transient task notes.
 2. Deliverable specifications are the execution contracts for bounded work.
-3. Acceptance criteria and test evidence are required for convergence.
-4. Agents may operate autonomously inside approved contracts, but humans retain scope, approval, signoff, and merge authority.
-5. Active implementation happens in isolated worktrees.
-6. Draft PRs are the normal packaging surface for agent-generated work.
-7. Automated self-review runs before a PR is marked ready for human review.
-8. Durable docs are updated when implementation changes the product, architecture, or standards.
+3. Deterministic tools enforce every quality rule they can express reliably.
+4. Acceptance criteria and test evidence are required for convergence.
+5. Agents may operate autonomously inside approved contracts, but humans retain scope, approval, signoff, and merge authority.
+6. Active implementation happens in isolated worktrees.
+7. Draft PRs are the normal packaging surface for agent-generated work.
+8. Automated self-review runs before a PR is marked ready for human review.
+9. Durable docs are updated when implementation changes the product, architecture, or standards.
 
 ## Skills
 
@@ -105,6 +109,7 @@ The shared skills under [`.agents/skills/`](.agents/skills/) implement the metho
 | Automated self-review | `pr-review` |
 | Stacked PR workflow | `gh-stack` |
 | Worktree setup | `worktree` |
+| Standard creation | `standard-builder` |
 | Standards conformance | `conformance` |
 | Documentation checks | `doc-check` |
 

@@ -42,6 +42,7 @@ project.md
   -> proposals/
   -> features/ and milestones
   -> specifications/
+  -> deterministic quality gates
   -> code generation
   -> testing and validation
   -> PR packaging and automated review
@@ -103,6 +104,7 @@ The methodology is split so teams can read only the part of the progression they
 | Proposals and decisions | [docs/methodology/proposals.md](docs/methodology/proposals.md) |
 | Features and milestones | [docs/methodology/features-and-milestones.md](docs/methodology/features-and-milestones.md) |
 | Deliverable specifications | [docs/methodology/specifications.md](docs/methodology/specifications.md) |
+| Deterministic quality gates | [docs/methodology/deterministic-quality.md](docs/methodology/deterministic-quality.md) |
 | Code generation | [docs/methodology/code-generation.md](docs/methodology/code-generation.md) |
 | Testing and validation | [docs/methodology/testing-and-validation.md](docs/methodology/testing-and-validation.md) |
 | PR creation | [docs/methodology/pr-creation.md](docs/methodology/pr-creation.md) |

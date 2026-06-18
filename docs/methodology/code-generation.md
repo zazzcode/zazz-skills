@@ -9,6 +9,7 @@ Code generation is the implementation phase after a deliverable specification is
 - Relevant standards from `<DOCS_ROOT>/standards/index.yaml`
 - Feature and architecture context linked by the specification
 - Run log or execution-record location
+- Deterministic quality gates that apply to the changed files
 
 ## Worktree Discipline
 
@@ -29,6 +30,10 @@ Before editing:
 4. Record progress, failures, and decisions in the run log.
 5. Repeat until the specification is satisfied or a halt condition is reached.
 
+Prefer deterministic feedback before probabilistic review: run formatters, linters, type checks, schema checks,
+accessibility checks, doc checks, and targeted tests as soon as they are useful. Do not weaken tool configuration,
+silence rules, or skip failing gates just to converge.
+
 ## Halt Conditions
 
 Stop and ask for owner direction when:
@@ -36,6 +41,7 @@ Stop and ask for owner direction when:
 - an open question blocks implementation
 - the implementation requires scope outside the specification
 - a required standard conflicts with the specification
+- a deterministic quality gate conflicts with the specification or existing product behavior
 - a test fails repeatedly for a non-obvious reason
 - reference data or environment access is missing
 - the implementation reveals a product or architecture decision that was not approved
@@ -54,5 +60,6 @@ Stop and ask for owner direction when:
 ## Related Sections
 
 - [Specifications](./specifications.md)
+- [Deterministic Quality Gates](./deterministic-quality.md)
 - [Testing and Validation](./testing-and-validation.md)
 - [PR Creation](./pr-creation.md)
