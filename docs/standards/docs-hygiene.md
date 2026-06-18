@@ -11,13 +11,15 @@ or modifying a markdown document that an agent or human reviewer will consume as
 
 ## Overview
 
-Standards docs in this repo serve two consumers at once: humans during code review, and implementation or review agents
+Standards docs in this public baseline serve two consumers at once: humans during code review, and implementation or review agents
 during automated work. Both expect the same shape — a category-grouped guide with prescriptive prose, paired Desired ✅
 / Not-desired ❌ examples, and clear source notes when rules come from specific precedent. Documents that drift from this shape lose their value to
 agents (vague phrasing, missing examples) and to humans (no audit trail back to the originating reviewer convergence).
 
-Every convention in a standards doc cites the GitHub URL where it was established — a PR comment, a precedent file in
-`dev`, or a sibling standard. A reader who disagrees with a rule can read the original exchange or precedent when available.
+Every convention in a standards doc should cite durable evidence when available: a sibling standard, a repo-relative
+source example, a public issue or PR, or a short provenance note such as "review precedent" when the originating
+discussion is not public. Public standards MUST NOT require restricted PRs, restricted repos, local worktrees, or
+machine-specific paths to understand the rule.
 
 ### How agents consume these docs
 
@@ -48,7 +50,7 @@ the Not-desired example in [docs-hygiene.md §Voice](...) — please adopt the D
 Standards documents and agent guides use RFC-2119 keywords in uppercase for every prescriptive directive: `MUST`,
 `MUST NOT`, `SHOULD`, `SHOULD NOT`, `ONLY USE`. Weak forms (`We will`, `We try to`, `Usually`, `Generally`) do not
 appear in requirements. Agents follow uppercase MUST / MUST NOT lines more reliably than hedged "we will" prose
-(PR #85; precedent at
+(review precedent at
 `docs/standards/database-guide.md`).
 
 The voice is active and direct. "Use X" rather than "Should probably use X." "Do not use Y" rather than "Try not to use
@@ -80,17 +82,17 @@ to use `CREATE UNIQUE INDEX`.
      as optional even when intended as a requirement -->
 ```
 
-(Source: PR #85.)
+(Source: review precedent.)
 
 ## Paired Desired and Not-desired examples
 
 Every prescriptive directive includes both a Desired ✅ example showing the canonical form and a Not-desired ❌ example
 showing the rejected form. A directive without paired examples is incomplete — the abstract rule alone gives the agent
-nothing to pattern-match against (PR #85; precedent
+nothing to pattern-match against (review precedent
 at `docs/standards/database-guide.md`).
 
-Not-desired examples must be real. Lift them from the reviewer's quoted code in a PR comment, from pre-fix code in the
-PR's commit history, or from current code that the rule explicitly rejects. Cite the source URL as a trailing comment
+Not-desired examples must be real. Lift them from a review comment when it is public, from pre-fix code in repo
+history, or from current code that the rule explicitly rejects. Cite the repo-relative source or public URL as a trailing comment
 inside the block. If no real Not-desired example exists for a rule, omit the Not-desired block — a fabricated bad
 example misleads readers about what the rule rejects in practice.
 
@@ -125,16 +127,15 @@ Use prefix `UQ_` followed by the table name and columns.
      the canonical form and the rejected form on its own -->
 ```
 
-(Source: PR #85.)
+(Source: review precedent.)
 
 ### Sourcing real Not-desired examples
 
 A Not-desired ❌ block contains code or markdown that an author would write if they did not know the rule. The example
 is lifted from one of three sources, in priority order:
 
-- The reviewer's quoted code in the PR comment that established the rule — the "change X → Y" snippet, where X is the
-  Not-desired shape.
-- Pre-fix code accessible via the PR's commit history — the file blob at the commit before the reviewer's fix landed.
+- Public review comments that established the rule — the "change X → Y" snippet, where X is the Not-desired shape.
+- Pre-fix code accessible through repo history — the file blob at the commit before the fix landed.
 - Existing code in the integration branch that the rule explicitly rejects, when the rule is about "stop doing X" and there are still
   files showing X.
 
@@ -153,7 +154,7 @@ Agent guides name MCP servers and their tools explicitly, using backticks. Write
 `ping` tool exposed by the `sqlserver` MCP server" — not "the MCP server" or "the SQL Server tool." When a guide
 directs the agent to perform a connectivity or capability check, name the specific tool and state the fallback behavior
 so the agent knows what to invoke and what to do when the tool is unavailable
-(PR #85).
+(review precedent).
 
 ### Desired ✅
 
@@ -171,7 +172,7 @@ Use the MCP server to verify access.
      configured; "verify access" gives no concrete tool name -->
 ```
 
-(Source: PR #85.)
+(Source: review precedent.)
 
 ## References to database tables
 
@@ -179,9 +180,7 @@ When an agent guide directs the agent to consult a database table for context, i
 that names exact columns. Where the same lookup commonly resolves to a small set of values (e.g., specific error codes
 mapped to specific situations), name those values inline. A prose direction like "look up the error in the Error table"
 forces the agent to guess column names and query shape, and increases the chance the agent picks a less-appropriate
-value that happens to match a substring (PR #85;
-precedent at
-`backend/docs-wip/crud-sproc-guide.md`).
+value that happens to match a substring ([database-sproc-errors.md](./database-sproc-errors.md)).
 
 ### Desired ✅
 
@@ -207,14 +206,14 @@ Look up the error in the Error table.
      return -->
 ```
 
-(Source: PR #85.)
+(Source: review precedent.)
 
 ## Cross-document linking
 
 Markdown documents outside `CLAUDE.md` cross-reference each other using relative-path markdown links. `@include` is a
 agent runtime mechanism scoped to `CLAUDE.md`; in any other markdown file it silently does nothing — the include line
 renders as literal text and the referenced content never reaches the reader
-(PR #85).
+(review precedent).
 
 This applies to every markdown file in the repository except `CLAUDE.md` files, regardless of location. A standard, a
 guide, a feature doc, an architecture doc, a README — all cross-link with normal relative-path links.
@@ -234,7 +233,7 @@ for the canonical patterns.
      the referenced content -->
 ```
 
-(Source: PR #85.)
+(Source: review precedent.)
 
 ## Cleanup discipline
 
@@ -242,7 +241,7 @@ Agent guides covering migrations, stored procedure changes, schema changes, or a
 implementation agent into adjacent cleanup work include an explicit clause separating cleanup from the feature work.
 Without it, agents over-eagerly chain cleanup into feature changes — renaming columns, dropping unused indexes,
 reformatting unrelated code — and the PR drifts past its intended scope
-(PR #85).
+(review precedent).
 
 The clause aligns with the broader "one logical change per PR" principle. Cleanup belongs in its own PR so the diff
 stays reviewable and revertible.
@@ -262,7 +261,7 @@ Clean up old <thing> when you're done.
      feature change and the PR drifts past its intended scope -->
 ```
 
-(Source: PR #85.)
+(Source: review precedent.)
 
 ## Test case lists in guides
 
@@ -270,7 +269,7 @@ Numbered test-case lists (`1. Test X`, `2. Test Y`, `3. Test Z`) do not appear i
 prose sections, descriptive headings, or unnumbered bullet points instead. Inserting a new scenario in the middle of a
 numbered list forces renumbering every subsequent entry, which discourages additions and causes merge conflicts when
 multiple contributors add scenarios at the same time
-(PR #113; applied in
+(review precedent; applied in
 `docs/standards/database-testing-guide.md`).
 
 ### Desired ✅
@@ -297,7 +296,7 @@ multiple contributors add scenarios at the same time
      subsequent entry and produces a noisy merge-conflict diff -->
 ```
 
-(Source: PR #113.)
+(Source: review precedent.)
 
 ## Working-doc identifiers do not appear in committed files
 
@@ -305,7 +304,7 @@ Identifiers that anchor into uncommitted execution working docs do not appear in
 inline comments, or Postman request descriptions. Specifically: `SPEC`, `INVARIANT`, `D-N`, `AC-N`, `OQ-N`, and
 `PR-finding` identifiers belong to the locally-ignored `docs/execution/` working docs that drive agentic development.
 Once a PR merges, future readers — and tools like `git blame` — cannot resolve these identifiers; they become orphaned
-strings that hurt comprehension (PR #177).
+strings that hurt comprehension (review precedent).
 
 The same rule applies to this docs-hygiene standard itself, and to every other document under `docs/standards/`.
 Standards documents are committed and long-lived; they do not reference identifiers that exist only in transient
@@ -332,7 +331,7 @@ def _validate_params(report_name, params):
     # docs; after merge they read as orphaned tokens
 ```
 
-(Source: PR #177.)
+(Source: review precedent.)
 
 Concrete patterns the rule excludes from committed paths outside `docs/architecture/` and `docs/features/`:
 

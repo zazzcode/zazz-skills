@@ -78,21 +78,21 @@ coordinated with every sproc and test that pattern-matches the old name
 ### Desired ✅
 
 ```sql
-alter table CustomerGroupPipeline
-add constraint FK_CustomerGroup$CustomerGroupPipeline
-foreign key (CustomerGroupID) references CustomerGroup (CustomerGroupID);
+alter table CustomerSegmentPipeline
+add constraint FK_CustomerSegment$CustomerSegmentPipeline
+foreign key (CustomerSegmentID) references CustomerSegment (CustomerSegmentID);
 ```
 
 ```sql
 -- Renaming an auto-generated FK to the convention
 exec sp_rename
-    'FK__QualityBa__Quali__28ED12D1',
-    'FK_CustomerGroup$CustomerGroupPipeline',
+    'FK__LegacyTa__Paren__28ED12D1',
+    'FK_CustomerSegment$CustomerSegmentPipeline',
     'OBJECT';
 ```
 
 (Source:
-`V00032__rename_fk_CustomerGroupPipeline.sql`.)
+`V00032__rename_fk_CustomerSegmentPipeline.sql`.)
 
 ### Not desired ❌
 
@@ -201,10 +201,10 @@ constraint name inside the catch block (`@DbErrorMsg like '%<FK name>%'`). The s
 tests that apply or remove the constraint by name. Renaming a foreign-key constraint without updating those string
 matches breaks the error contract silently: callers fall through to the generic `gcDatabaseError` branch instead of
 receiving `gcNoParentRecord` or `gcInvalidReference`
-(review precedent; precedent at
-`app_InsertCustomerGroup.sql:222`
+(review precedent at
+`app_InsertCustomerSegment.sql:222`
 and
-`app_UpdateCustomerGroup.sql:217`).
+`app_UpdateCustomerSegment.sql:217`).
 
 The audit checklist for a FK-rename PR:
 
@@ -221,22 +221,22 @@ The audit checklist for a FK-rename PR:
 -- Same PR rolls out the rename and the catch-block update together:
 
 -- 1. Migration
-alter table CustomerGroup drop constraint FK_CustomerGroup$CustomerGroupPipeline;
-alter table CustomerGroup add constraint FK_CustomerGroupPipeline$CustomerGroup
-    foreign key (CustomerGroupPipelineID) references CustomerGroupPipeline (CustomerGroupPipelineID);
+alter table CustomerSegment drop constraint FK_CustomerSegment$CustomerSegmentPipeline;
+alter table CustomerSegment add constraint FK_CustomerSegmentPipeline$CustomerSegment
+    foreign key (CustomerSegmentPipelineID) references CustomerSegmentPipeline (CustomerSegmentPipelineID);
 
--- 2. app_InsertCustomerGroup.sql catch block updated in the same PR:
-else if @DbErrorMsg like '%FK_CustomerGroupPipeline$CustomerGroup%'
-    select @ErrorMessage = 'Invalid Customer Group Pipeline ID.'
+-- 2. app_InsertCustomerSegment.sql catch block updated in the same PR:
+else if @DbErrorMsg like '%FK_CustomerSegmentPipeline$CustomerSegment%'
+    select @ErrorMessage = 'Invalid Customer Segment Pipeline ID.'
 ```
 
 ### Not desired ❌
 
 ```sql
 -- wrong: rename ships without updating the catch-block string match
-alter table CustomerGroup drop constraint FK_CustomerGroup$CustomerGroupPipeline;
-alter table CustomerGroup add constraint FK_CustomerGroupPipeline$CustomerGroup
-    foreign key (CustomerGroupPipelineID) references CustomerGroupPipeline (CustomerGroupPipelineID);
+alter table CustomerSegment drop constraint FK_CustomerSegment$CustomerSegmentPipeline;
+alter table CustomerSegment add constraint FK_CustomerSegmentPipeline$CustomerSegment
+    foreign key (CustomerSegmentPipelineID) references CustomerSegmentPipeline (CustomerSegmentPipelineID);
 -- The sproc still pattern-matches the old name and now falls through to
 -- gcDatabaseError on every FK violation against this constraint.
 ```

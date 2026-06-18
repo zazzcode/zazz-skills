@@ -4,12 +4,11 @@ last_updated_at: 2026-05-25
 
 # Data Layer
 
-The `data` layer (`backend/src/data/`) wraps complex database objects. CustomerGroup leans heavily on stored procedures
-with idiosyncratic return codes, OUTPUT parameters, and parameter surfaces; the `data.sprocs` package contains one
-Python wrapper module per sproc. At present the data layer is restricted to sproc wrappers — the service layer is
-permitted to write SQL queries against tables and views inline, but anything that hits a stored procedure goes through
-this layer. Wrappers are the project's single seam between Python and `pymssql.callproc`; every convention in this
-document protects that seam.
+This stack-specific baseline assumes a Python backend that calls SQL Server stored procedures through
+`pymssql.callproc`. The `data` layer (`backend/src/data/`) wraps complex database objects; the `data.sprocs` package
+contains one Python wrapper module per stored procedure. Wrappers are the project's single seam between Python and
+stored procedures; every convention in this document protects that seam. Teams using an ORM, a document database,
+PostgreSQL functions, or another data-access model should replace this file with equivalent guidance for their stack.
 
 ## Overview
 
@@ -39,9 +38,9 @@ backend/src/data/sprocs/
 ├── util.py                     # validate_column_names / column_names_are_expected
 ├── app_AddAccountRole.py
 ├── app_GetAllLinks.py
-├── app_GetAllShippers.py
+├── app_GetAllVendors.py
 ├── app_InsertProduct.py
-├── app_UpdateShipper.py
+├── app_UpdateVendor.py
 ├── app_CreateUnpostedTicketBulk.py
 └── ... (one module per sproc)
 ```
@@ -60,11 +59,11 @@ wrappers reuse or inherit from:
 - `MismatchedColumnsError` — raised by `validate_column_names` under `testing=True`.
 - `UnexpectedStoredProcedureCallError` — raised when a return code is not one of the wrapper's enumerated cases.
 
-Wrappers add entity-specific subclasses (`ShipperNotFoundError`, `ProductNameInUseError`, `AccountRoleDuplicateError`)
+Wrappers add entity-specific subclasses (`VendorNotFoundError`, `ProductNameInUseError`, `AccountRoleDuplicateError`)
 when the sproc surfaces business-distinct error states
 (__init__.py:51-118;
 app_InsertProduct.py:15-50;
-app_UpdateShipper.py:14-58).
+app_UpdateVendor.py:14-58).
 
 ## Service-layer / data-layer boundary
 
@@ -148,7 +147,7 @@ class SprocArguments:
 ### Use qualified PascalCase field names that match the SQL parameter
 
 Field names in `SprocArguments` match the SQL parameter name exactly. The convention for current `app_*` sprocs is
-qualified PascalCase (`AccountId`, `GrantedById`, `RoleName`, `ShipperID`, `LinkID`). Older sprocs (`legacy_*`) used
+qualified PascalCase (`AccountId`, `GrantedById`, `RoleName`, `VendorID`, `LinkID`). Older sprocs (`legacy_*`) used
 Hungarian notation (`lDataProviderID`, `tSortByColumn`, `sDataProviderName`); when wrapping or maintaining those,
 mirror the SQL name and silence the linter with `# noqa: N815`. Either way, a bare `Id` is forbidden when more than one
 domain entity is in scope on the same sproc (review precedent;
@@ -163,7 +162,7 @@ necessary because the naming looks wrong to Python readers without context
 ```python
 @dataclass
 class SprocArguments:
-    """Parameters accepted by `legacy_ListShipper`.
+    """Parameters accepted by `legacy_ListVendor`.
 
     IMPORTANT: Parameter names MUST exactly match the SQL stored procedure's
     parameter names, including Hungarian notation (e.g., lDataProviderID).
@@ -196,7 +195,7 @@ app_AddAccountRole.py:39-44.
 # Legacy legacy_* convention — Hungarian notation preserved; noqa: N815 to silence lint
 @dataclass
 class SprocArguments:
-    """Parameters accepted by `legacy_ListShipper`."""
+    """Parameters accepted by `legacy_ListVendor`."""
 
     lDataProviderID: int | Literal[-1] = -1  # noqa: N815
 
@@ -241,7 +240,7 @@ SQL `CHAR(1)` flag parameters (`@UpdateFlag`, `@IsActive`, `@SulfurCalculationFl
 `Literal["Y", "N"]` in `SprocArguments` — not as Python `bool`. Pass them directly in the callproc tuple without
 conversion. This applies to both legacy `legacy_*` and current `app_*` wrappers
 (legacy_UpdateDataProvider.py:30;
-app_GetCustomerGroupById.py:56-62).
+app_GetCustomerSegmentById.py:56-62).
 
 ```python
 sUpdateFlag: Literal["Y", "N"]  # noqa: N815  # Y = update existing, N = insert new
@@ -260,7 +259,7 @@ or a one-line note. The reader of the dataclass should see the full SQL signatur
 ```python
 @dataclass
 class SprocArguments:
-    """Parameters accepted by `legacy_ListShipper`."""
+    """Parameters accepted by `legacy_ListVendor`."""
 
     lDataProviderID: int | Literal[-1] = -1  # noqa: N815
 

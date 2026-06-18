@@ -282,7 +282,7 @@ def exec_sproc(
     connection: pymssql.Connection,
     testing: bool = False,
 ) -> None:
-    """Execute `app_UpdateShipper` to update an existing Shipper record.
+    """Execute `app_UpdateVendor` to update an existing Vendor record.
 
     PATCH semantics — only non-null parameters are updated. No result set.
     """
@@ -291,9 +291,9 @@ def exec_sproc(
             SPROC_NAME,
             (
                 pymssql.output(str, None),         # @ErrorMessage OUTPUT — index 0
-                sproc_args.ShipperDescription,
-                str(sproc_args.ShipperID),         # Required — always convert to str
-                sproc_args.ShipperName,
+                sproc_args.VendorDescription,
+                str(sproc_args.VendorID),         # Required — always convert to str
+                sproc_args.VendorName,
                 sproc_args.Username,
             ),
         )
@@ -305,7 +305,7 @@ def exec_sproc(
             return
 
         elif return_code == SprocReturnCode.NO_ROWS_FOUND:
-            raise ShipperNotFoundError(error_message=error_message_output)
+            raise VendorNotFoundError(error_message=error_message_output)
 
         # ... duplicate-data and string-too-long branches as in the INSERT template ...
 
@@ -317,4 +317,4 @@ def exec_sproc(
 ```
 
 Source:
-app_UpdateShipper.py:86-167.
+app_UpdateVendor.py:86-167.

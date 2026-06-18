@@ -25,7 +25,7 @@ src/svc/
 ├── links.py                  # Link CRUD operations
 ├── locations.py              # Location CRUD operations
 ├── permission.py             # RBAC permission management and authorization
-├── customer_groups.py          # Quality bank CRUD operations
+├── customer_segments.py      # Customer segment CRUD operations
 ├── role.py                   # Role management
 ├── security.py               # Cryptographic operations and token handling
 ├── lookups/                  # 'lookup' services; see below section for elaboration on 'lookups'
@@ -37,10 +37,10 @@ src/svc/
 │   ├── pipeline_codes.py     # Pipeline code lookup operations
 │   ├── pipelines.py          # Pipeline lookup operations
 │   ├── products.py           # Product lookup operations
-│   ├── customer_groups.py      # Quality bank lookup operations
+│   ├── customer_segments.py  # Customer segment lookup operations
 │   ├── return_addresses.py   # Return address lookup operations
 │   ├── shared.py             # Shared lookup types and utilities
-│   ├── shippers.py           # Shipper lookup operations
+│   ├── vendors.py            # Vendor lookup operations
 │   └── wire_instructions.py  # Wire instruction lookup operations
 └── tickets/                          # Ticket management services
     ├── __init__.py

@@ -4,16 +4,18 @@ last_review_sha: 7e21e4619cca7bff91ad10e06bb5a94fa5f5b167
 
 # AWS Lambda Deployment
 
-This is a small doc to cover how we deploy to AWS lambda in more detail.
+This stack-specific baseline describes one way to deploy a Python WSGI application to AWS Lambda with Serverless. Teams
+that use containers, direct Lambda handlers, another cloud provider, or a different infrastructure-as-code tool should
+replace this document with equivalent deployment guidance for their stack.
 
 ## Serverless
 
-We use a framework called Serverless to take our application code and ship it off to AWS Lambda. Serverless is
-partially an orchestration tool for infrastructure, but we don't use much of that (infrastructure is mostly maintained
-by other IaaC tools like terraform separately).
+This baseline uses the Serverless framework to package application code and deploy it to AWS Lambda. Serverless can
+also orchestrate infrastructure, but this example assumes durable infrastructure is maintained separately by an
+infrastructure-as-code tool such as Terraform.
 
-**Note:** As of 2025/09/17, we use Serverless v3. Serverless v4 is the current major version and v3 is EOL. We haven't
-moved yet due to breaking changes and how v4 does licensing differently from v3.
+Adopting teams must pin and document the Serverless major version they use. If the selected major version is past end
+of life, the standard must also document the upgrade blocker, the owner, and the plan for replacing or upgrading it.
 
 AWS Lambda's core contract is that it expects application code to have an entrypoint of the below shape:
 
@@ -22,21 +24,19 @@ def lambda_handler(event, context):
     ...
 ```
 
-Our code doesn't typically have entrypoints like that. Our main (and only as of 2025/09/17) entrypoint into the
-application for deployed scenarios is via a Flask server listening on a port number. ...Which is where plugins for
-`serverless` come in that know how to take a WSGI compatible application, create a `lambda_handler()` function that AWS
-Lambda can wire itself to, and invoke the WSGI application with the arguments passed from AWS to the lambda handler.
+WSGI applications do not typically expose a native Lambda handler. Instead, a WSGI adapter creates a
+`lambda_handler()` function that AWS Lambda can invoke and forwards the event/context pair into the WSGI application.
 
 In the python and serverless ecosystem, that job is maintained by the `serverless-wsgi` Serverless plugin.
 
-However, when working with `serverless-wsgi` (and other Serverless plugins), especially due to being on the v3
-Serverless major version deep into EOL, we were hitting a small cascade of incompatibilities.
+However, Serverless plugins can become compatibility risks when the Serverless major version, Python package manager,
+or plugin maintenance state drifts.
 
-Additionally, these plugins were written before `uv` existed/was mature in the ecosystem. And `uv` ...just does so many
-things well that we decided to copy the WSGI \<--> AWS Lambda handler transformation logic from `serverless-wsgi`
-plugin directly into our codebase (see /vendor/serverless-wsgi/\*) and do everything else in house.
+If the repo vendors WSGI adapter code, keep the copied code under a repo-relative vendor path such as
+`backend/vendor/serverless-wsgi/`, document the upstream source and version, and make the deployment build use the
+vendored copy consistently. Do not depend on a globally installed plugin or a local checkout outside the repository.
 
-So, today, for a deploy via the Serverless framework, we:
+For a deploy via the Serverless framework, this baseline expects the build to:
 
 - Create a `./dist` directory with the prod dependencies and application source code
 - Copy two files from the vendored `serverless-wsgi` code:

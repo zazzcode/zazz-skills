@@ -39,13 +39,13 @@ one-line source-of-truth statement. Discovery SQL
 (`SELECT ErrorID, ErrorCode FROM dbo.Error WHERE ErrorCode IN (...)`), runtime-implementation notes about what the SQL
 body does at execution time, and authoring-time scaffolding do not belong in the docstring. The SQL query used to
 derive the enum values lives in PR descriptions or scratch notes; the enum values themselves are the committed record
-(a prior review; a prior review).
+(review precedent).
 
 #### Desired ✅
 
 ```python
 class SprocReturnCode(IntEnum):
-    """Return codes surfaced by `app_UpdateShipper`.
+    """Return codes surfaced by `app_UpdateVendor`.
 
     Values are ErrorIDs from the ERROR table in the database.
     """
@@ -58,13 +58,13 @@ class SprocReturnCode(IntEnum):
 ```
 
 Source:
-app_UpdateShipper.py:59-69.
+app_UpdateVendor.py:59-69.
 
 #### Not desired ❌
 
 ```python
 class SprocReturnCode(IntEnum):
-    """Return codes surfaced by `app_UpdateShipper`.
+    """Return codes surfaced by `app_UpdateVendor`.
 
     Values are ErrorIDs from the ERROR table in the database, confirmed via:
     SELECT ErrorID, ErrorCode FROM dbo.Error WHERE ErrorCode IN (
@@ -220,7 +220,7 @@ return code.
 class SprocDataResultReturnRow(TypedDict):
     """First result set — fully aggregated rows."""
 
-    ShipperID: int
+    VendorID: int
     StatementSubTotal: Decimal
 
 SPROC_RETURN_ROW_COLUMN_NAMES: Final[tuple[str, ...]] = tuple(
@@ -230,7 +230,7 @@ SPROC_RETURN_ROW_COLUMN_NAMES: Final[tuple[str, ...]] = tuple(
 class SprocBreakdownRow(TypedDict):
     """Second result set — finer breakdown off the same materialized working set."""
 
-    ShipperID: int
+    VendorID: int
     Partition: str
     StatementSubTotal: Decimal
 

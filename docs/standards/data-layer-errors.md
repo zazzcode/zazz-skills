@@ -38,7 +38,7 @@ app_InsertProduct.py:15-26.
 (`"Stored procedure returned a database error."`) is the stable user-facing message for this scenario. Do not pass
 `error_message=error_message_output` to it — that couples the Python error message to the SQL `CATCH` block's internal
 `@DbErrorMsg` string and creates a leakage path for internal SQL detail
-(a prior review; __init__.py:71-82).
+(review precedent; __init__.py:71-82).
 
 Entity-specific subclasses that need `error_message_output` for disambiguation (e.g., `ProductNameInUseError` vs
 `ProductDuplicateDataError`, decided by a substring match on the OUTPUT message) are the exception — those branches
@@ -71,7 +71,7 @@ brittle by nature; the wrapper carries a comment noting that the matches must be
 strings are changed. Always include a generic fallback subclass (e.g., `ProductDuplicateDataError`,
 `ProductGenericFieldTooLongError`) for the case where no substring matches
 (app_InsertProduct.py:135-156;
-app_UpdateShipper.py:144-164).
+app_UpdateVendor.py:144-164).
 
 ```python
 # Error paths; be careful and test the sproc manually when brittle substring matches are changed

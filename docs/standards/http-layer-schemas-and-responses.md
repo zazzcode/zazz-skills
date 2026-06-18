@@ -43,7 +43,7 @@ JSON-body input dataclasses follow `<Resource>CreateJSONInput` and `<Resource>Up
 schema appends `Schema` (e.g., `LinkCreateJSONInput` / `LinkCreateJSONInputSchema`). Patterns like
 `<Resource>CreatePayloadInput` or the inverted `Update<Resource>Input` are rejected — consistent suffix and
 resource-first ordering keep input types scannable and unambiguous in static analysis
-(a prior review; see
+(review precedent; see
 http-layer-guide.md §Endpoint Module).
 Query and header inputs follow `*QueryInput` and `*HeadersInput` for the same reason.
 
@@ -53,7 +53,7 @@ Dataclass fields carrying enum-validated or otherwise domain-typed values are ty
 `str`. The Schema validates against the domain set via `fields.String(validate=OneOf([r.value for r in <Enum>]))` and
 `@post_load` returns the dataclass with `cast(list[<Type>], data["field"])`. Carrying raw `str` on the dataclass defers
 the type from the contract to the route body, where it tends to get re-validated or silently lost
-(a prior review; see
+(review precedent; see
 role_update_permissions.py).
 
 ### Desired
@@ -76,7 +76,7 @@ Domain types (`RoleName`, `AccountExternalID`, `PermissionName`, `Password`) are
 HTTP layer's marshmallow schemas deserialize raw request strings into the typed domain values. Service-layer signatures
 accept the already-typed parameters and treat them as valid; they do not re-validate caller intent. Validation at every
 layer produces inconsistent error reporting and undermines the static-analysis value of the typed domain values
-(a prior review; see
+(review precedent; see
 types\_.py).
 
 ### Cast, don't re-comprehend
@@ -220,7 +220,7 @@ flag = apiflask.fields.String(
 Every field in a response schema carries `metadata={"description": "..."}`. The OpenAPI documentation at `/docs` is the
 contract for frontend and integration consumers; fields without descriptions show up as undescribed properties and
 force consumers to infer semantics from field names alone
-(a prior review; see
+(review precedent; see
 account_list.py:89-97).
 
 ### Desired
@@ -270,7 +270,7 @@ HTTP route bodies build the response by reading the service-layer return value, 
 inbound request body. Even when the response field set overlaps with input fields, response data comes from the service
 return — never from `data["roles"]` or equivalent inbound copies. Sourcing from request input lets stale or divergent
 values silently appear in responses and creates surface area for future bugs
-(a prior review; see
+(review precedent; see
 svc/role.py).
 
 ### Desired

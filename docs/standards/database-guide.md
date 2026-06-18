@@ -4,8 +4,8 @@ last_review_sha: c9755a563aa77380c1f6d14e585bc3940980eaed
 
 # Database Guide
 
-This guide is our _intent_. Each change that touches database objects should seek to conform those objects to this
-standard. Exceptions are allowed but should be called out.
+This stack-specific baseline captures the database intent for a SQL Server schema. Each change that touches database
+objects should seek to conform those objects to this standard. Exceptions are allowed but should be called out.
 
 ## Table of Contents
 
@@ -77,27 +77,27 @@ The foreign key should be identical to the primary key of the parent table.
 For example if there is a table Invoice with a primary key of InvoiceID, then the child table InvoiceLine with a
 foreign key from Invoice should be InvoiceLine.InvoiceID.
 
-This allows a glance us to infer that a column of suffix "ID" is a foreign key.
+This makes columns ending in "ID" easy to recognize as primary or foreign keys.
 
 ### Indexes
 
 #### Primary Keys
 
-Being a brownfield database we are inheriting some norms.
+A brownfield database may inherit naming norms that should be preserved for consistency.
 
 Primary keys are named with the table name in Pascal case and the suffix \_PK.
 
 #### Unique Indexes - As Constraints
 
-SQL Server has a strange distinction between a unique constraint and a unique index. For this project the use of we
-will only use unique contraints because their creation includes the creation of the index.
+SQL Server distinguishes between a unique constraint and a unique index. This baseline uses unique constraints for
+business uniqueness rules because creating the constraint also creates the supporting index.
 
 Unique indexes are only created in very specific circumstances. (See below exception case)
 
-Unique contraints are "unique keys" to the primary key and describe a business rule. The underlying index provides
+Unique constraints are "unique keys" to the primary key and describe a business rule. The underlying index provides
 performance enhancements to any query that includes the column(s) in a where clause.
 
-All unique index are prefixed with "AK\_" followed by the table name and the column name(s) separated by a an
+All unique constraints are prefixed with "AK\_" followed by the table name and the column name(s) separated by an
 underscore (\_) character.
 
 Given the table InvoiceLine, with columns CustomerID, InvoiceID and ControlCode:
@@ -109,7 +109,7 @@ Good:
 Bad:
 
 - AKInvoiceLineInvoiceIDControlCode - doesn't use underscore to separate objects
-- AK_InvoiceLine - ambiguous so we cannot infer easily where the problem is from the error SQL Server gives us.
+- AK_InvoiceLine - ambiguous; the SQL Server error does not reveal which column caused the problem.
 
 Given a simpler case of `Location.LocationName` needing to be unique
 
@@ -123,11 +123,10 @@ Bad:
 
 ##### Unique Indexes as Exceptions to the rule
 
-Because we have 20+ years of data and unique constraints often did not exist, we have some duplicate data where it
-should not be. SQL Server has no way to enforce constraints in this situation. However it does provide a way to do so
-with a unique index.
+Long-lived databases may contain duplicate values where uniqueness should have existed. SQL Server cannot add a unique
+constraint while duplicates remain, but a filtered unique index can enforce uniqueness for all non-duplicated values.
 
-In the even that uniqueness should be enforced but duplicates already exist we will use the following pattern
+When uniqueness should be enforced but duplicate legacy values already exist, use the following pattern:
 
 ```sql
 create unique index AK_Product_ProductName
@@ -142,8 +141,9 @@ The where clause excludes the duplicates that already exist and allow for the fo
 
 - New duplicates cannot be created
   - except for the values in the list already
-- Our strategy of protecting the data at the database level first is easier to implement
-  - Our ability to trap DB errors immediately in SPROCs improves our referential integrity by an order of magnitude.
+- A strategy of protecting data at the database level first is easier to implement.
+  - Trapping DB errors immediately in stored procedures improves referential integrity and gives callers stable error
+    contracts.
 
 ## Constraints
 
@@ -165,4 +165,5 @@ explicitly directed to do so.
 
 ### Unique Constraint
 
-See the section on Unique Indexes above. We ONLY create unique constraints and never unique indexes.
+See the section on Unique Indexes above. Create unique constraints for normal uniqueness rules; use unique indexes
+only for the documented filtered-index exception.

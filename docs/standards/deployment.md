@@ -4,7 +4,7 @@ last_updated_at: 2026-05-25
 
 # Deployment
 
-This standard governs how the backend is packaged and deployed to AWS Lambda via the Serverless framework. It covers
+This stack-specific baseline governs how a Python backend is packaged and deployed to AWS Lambda via the Serverless framework. It covers
 the vendored WSGI handler that bridges Flask to Lambda's event model, the exact sequence required to build a correct
 deployment artifact, the three-way coupling between the artifact config, the Serverless handler declaration, and the
 Flask entrypoint module, and the scope boundary between Serverless and Terraform. Rules apply to anyone authoring or
@@ -25,8 +25,8 @@ entirely
 vendor/serverless-wsgi/).
 
 The two vendored files are `wsgi_handler.py` and `serverless_wsgi.py`. They are the only copies of this logic the
-project uses. The `serverless-wsgi` npm plugin must not be re-added to `backend/package.json`. The current
-`package.json` contains only the `serverless` framework dependency itself; that is the correct state
+project uses. The `serverless-wsgi` npm plugin must not be re-added to `backend/package.json`. `package.json` should
+contain only the Serverless framework dependency needed by this deployment path
 (backend/package.json).
 
 If the vendored files need to be updated (e.g., for a Python compatibility fix), update them in place under
@@ -68,8 +68,8 @@ serverless-bundle-dist:
     cp vendor/serverless-wsgi/serverless_wsgi.py dist/
     cp vendor/serverless-wsgi/wsgi_handler.py dist/
     echo '{"app":"http_app_entrypoint.app"}' > dist/.serverless-wsgi # the 'app' here MUST match the 'app' in the serverless.yml file
-    @echo "Zipping dist directory into asl-qualitybank-api.zip..."
-    cd dist && zip -r ../asl-qualitybank-api.zip . # this MUST match the artifact name in the serverless.yml file
+    @echo "Zipping dist directory into backend-api.zip..."
+    cd dist && zip -r ../backend-api.zip . # this MUST match the artifact name in the serverless.yml file
 ```
 
 ### Three-way coupling — renaming the Flask entrypoint
@@ -99,7 +99,7 @@ infrastructure-provisioning blocks
 (backend-lambda-deployment-guide.md §Serverless;
 serverless.yml).
 
-The current `serverless.yml` has no `resources:` block by design — this is the correct state. It references VPC
+In this baseline, `serverless.yml` has no `resources:` block by design. It references VPC
 security group IDs and subnet IDs via environment variables (injected by the deploy workflow at runtime) but does not
 declare or modify those resources. Adding a `resources:` block to provision or modify AWS resources from Serverless
 would create state drift against Terraform and could silently overwrite infrastructure managed by a separate team.

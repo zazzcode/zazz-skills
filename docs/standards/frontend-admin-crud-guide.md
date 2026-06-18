@@ -2,10 +2,9 @@
 last_review_sha: 468bb0335df5338d4d02447fcd256bb165019219
 ---
 
-> **Superseded by [`frontend.md`](frontend.md).** The unified standard is the authoritative source for current rules.
-> This guide prescribes API-client and response-schema paths under `src/api/v1/admin/...`; the current convention has
-> dropped the `admin/` subdirectory — API clients live at `src/api/v1/<entity>.ts` and response schemas at
-> `src/api/v1/responseSchemas/<entity>.ts`. Where this guide conflicts with `frontend.md`, the unified standard wins.
+> **Stack-specific baseline example; superseded by [`frontend.md`](frontend.md).** The unified standard is the
+> authoritative source for current rules. This older guide is retained as a worked CRUD example. If it conflicts with
+> `frontend.md`, follow `frontend.md` and adapt the file paths to the adopting repo's frontend structure.
 
 # Admin Data Endpoints
 

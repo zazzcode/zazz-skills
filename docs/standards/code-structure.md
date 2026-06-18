@@ -28,7 +28,7 @@ companion modules.
 
 Line count catches oversized files; complexity catches oversized *functions*. Measure Python functions with radon
 (`uvx radon cc <file> -s`) and treat its grades as the reviewability signal
-(a prior review).
+(review precedent).
 
 - Functions at grade **A-B (cyclomatic ≤ 10)** are preferred.
 - Functions at grade **C (11-20)** SHOULD be split. If the function is intentionally cohesive (e.g. a single-pass
@@ -41,7 +41,7 @@ Line count catches oversized files; complexity catches oversized *functions*. Me
 How to split: work back from the function's return value — identify what each returned item depends on, and extract
 each independent step into its own helper. A function whose length is far out of proportion to its branch count (deep
 nesting rather than many flat branches) benefits most from extracting inner loop bodies. The `_build_ytd_extras` split
-in a prior review is the worked example: one 185-line D(23) function became a ~30-line A(2) orchestrator over five stage
+in review precedent is the worked example: one 185-line D(23) function became a ~30-line A(2) orchestrator over five stage
 helpers, with the byte-equal output fixtures proving the refactor behavior-neutral.
 
 ### Desired ✅
@@ -67,7 +67,7 @@ data-layer-guide.md on the integration branch.
 
 When a file approaches the threshold, split it by the reason an agent or reviewer would load it. Do not split by page
 count, midpoint, or generic `part-1` / `part-2` names. Contextual splits preserve focus and make `index.yaml` discovery
-meaningful (a prior review; [docs-hygiene.md](./docs-hygiene.md#how-agents-consume-these-docs)).
+meaningful (review precedent; [docs-hygiene.md](./docs-hygiene.md#how-agents-consume-these-docs)).
 
 Good split boundaries include:
 
@@ -133,14 +133,14 @@ needs multiple shapes from the same expensive source, compute that source once a
 same execution. Do not re-run a query, view, stored procedure, external API call, or large aggregation because an
 earlier layer discarded an intermediate result. The data-layer multiple-result-set standard applies this pattern to
 stored procedures ([data-layer-results.md](./data-layer-results.md#multiple-result-sets--compute-once-return-many);
-a prior review).
+review precedent).
 
 ## Preserve provenance when moving rules
 
 When splitting a standard, skill, or guide, moved rules MUST keep their hard references to review comments, precedent
 files, sibling standards, or best-practice sources. Do not turn a cited rule into uncited prose during cleanup. This is
 the same citation requirement used by the docs-hygiene standard
-(a prior review; a prior review).
+(review precedent).
 
 ### Desired ✅
 

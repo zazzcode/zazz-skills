@@ -18,7 +18,7 @@ Every HTTP route returns `422 UNPROCESSABLE_ENTITY` for validation failures. The
 payload fails a marshmallow Schema) and route-level orchestrator validation (raised manually via `apiflask.abort`). No
 HTTP route in the codebase returns 400 for validation. A single status code for "request shape is wrong" keeps client
 error handling uniform regardless of whether the Schema or a manual gate caught the failure
-(a prior review; see
+(review precedent; see
 v1/__init__.py:15).
 
 ### Desired
@@ -44,9 +44,9 @@ A GET endpoint that runs successfully but produces zero rows returns `204 NO_CON
 no entry. An empty-result GET is "request succeeded, no content," not "resource not found"; using 404 for an empty set
 implies the URL is invalid when in fact the URL is a valid resource that happened to compute to an empty set. The 204
 response shape must also appear in the route's `@bp.doc(responses=...)` declaration
-(a prior review; see
+(review precedent; see
 quality_bank_update.py:376,
-report_get.py:140 (post-fix sha)).
+report_get.py:140 (review precedent)).
 
 ### Desired
 
@@ -78,7 +78,7 @@ Every `apiflask.abort(...)` call uses `message=HTTPStatus.<NAME>.phrase` for the
 or developer-meaningful text goes in a structured `detail` dict. `str(exc)` does not appear in `message=` — capture the
 exception via `logger.exception(...)` for log content instead. Separating the public envelope from developer-facing
 exception text gives clients a stable, enumerated `message` while preserving rich debugging context in logs
-(a prior review; see
+(review precedent; see
 quality_bank_create.py:301-318).
 
 Canonical shapes:
@@ -116,7 +116,7 @@ When `detail` carries a field-keyed dict — for any of 422 validation, 404 not-
 500 service errors whose detail is field-specific — the field map sits under a `"json"` outer key. Non-field-keyed
 `detail` payloads (e.g., the generic `{"error": "..."}` for 500) are not wrapped in `"json"`. The project's
 error-handling middleware in `http_api/v1/__init__.py` expects the nested `"json"` envelope; without it, the client
-sees a malformed response shape (a prior review; see
+sees a malformed response shape (review precedent; see
 v1/__init__.py:14-40).
 
 ### Desired
@@ -145,8 +145,8 @@ When a service-layer exception signals "unknown resource," the HTTP route sets `
 and places the exception's developer-meaningful text in `detail`, keyed by the entity name. The exception's own message
 string is left untouched — making service exception messages serve dual duty as public copy is avoided. This keeps the
 public `message` enumerated to HTTP status phrases while preserving the exception's text for developers consuming
-`detail` programmatically (a prior review; see
-report_get.py:130-137 (post-fix sha)).
+`detail` programmatically (review precedent; see
+report_get.py:130-137 (review precedent)).
 
 ### Desired
 
@@ -185,7 +185,7 @@ constants imported from `svc.permission`, and passes it to `@require_permissions
 string literals (e.g., `@require_permissions("pipeline.create")`) are rejected because they bypass the `svc.permission`
 constants module — they can't be grepped from one place and break the OpenAPI permissions trailer generator.
 `@require_permissions` sits between `@bp.doc` and `@bp.output` per the decorator order rule above
-(a prior review; see
+(review precedent; see
 pipeline_create.py:122).
 
 ### Desired
@@ -214,7 +214,7 @@ def create_pipeline_view(...): ...
 ### Permission names
 
 Permission name strings follow `<entity>.<verb>`, all lowercase. The entity is the singular noun for the resource
-(`account`, not `accounts`; `dataprovider`, not `dataproviders`; `qualitybank`, not `qualitybanks`). The verb is the
+(`account`, not `accounts`; `dataprovider`, not `dataproviders`; `customersegment`, not `customersegments`). The verb is the
 CRUD action: `create`, `read`, `update`, or `delete` — not every entity uses all four; only declare the verbs the
 system needs. The separator is a single dot. The bare permission `login` is the sole exception — it has no entity
 prefix because it gates authentication, not a specific resource. The Python constant in `svc/permission.py` is

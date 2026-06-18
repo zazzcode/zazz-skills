@@ -30,12 +30,12 @@ never moving the cost behind a gate.
 ## Choose a minimal, data-coverage-driven input set
 
 The unit of work is **data-shape coverage**, not one test per rule. Pick the fewest
-`(report, CustomerGroup, year, month)` inputs whose underlying **data** exercises every functional variation the layer
+`(report, CustomerSegment, year, month)` inputs whose underlying **data** exercises every functional variation the layer
 must prove (e.g. all-zero rows, negatives/credit memos, current-vs-prior true-ups, YTD/period supersets, name
 truncation, empty windows, multi-result-set shape, ordering). No single case usually carries every variation — choose a
 small set whose *union* is complete, and prefer small/fast cases for the variation they uniquely add.
 
-Inputs are **not** limited to legacy reference fixtures: any CustomerGroup and period in the database is a candidate.
+Inputs are **not** limited to legacy reference fixtures: any CustomerSegment and period in the database is a candidate.
 Scan the actual data (fixtures or the DB) to learn which inputs carry which variation, then cover the union. State the
 **dimension → case mapping** so a reviewer can see the coverage is complete and the case count is justified.
 
@@ -43,15 +43,15 @@ Scan the actual data (fixtures or the DB) to learn which inputs carry which vari
 
 ```text
 # 2 always-on cases, union covers every variation, ~2.5 s total
-Allegheny — negatives, prior-period netting, YTD-only shippers, name truncation, 3 result sets
-Gspm      — all-zero rows (Invariant 5), current/prior split, penny parity
+Segment A — negatives, prior-period netting, YTD-only vendors, name truncation, 3 result sets
+Segment B — all-zero rows, current/prior split, penny parity
 ```
 
 ### Not desired
 
 ```text
 # 5 cases "to be safe": 3 add no new variation, double the runtime, more fixtures to maintain
-Allegheny, Brutus, Gspm, Gravcap, Ps-Smi-205
+Segment A, Segment B, Segment C, Segment D, Segment E
 ```
 
 ## No environment-variable gates

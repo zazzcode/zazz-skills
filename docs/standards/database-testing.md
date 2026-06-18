@@ -35,15 +35,15 @@ For tests with non-obvious behavior, the banner is followed by an explanatory bl
 
 ```sql
 -- =============================================================================
--- Zero gravity with missing hierarchy level auto-passes
+-- Missing hierarchy level auto-passes
 -- =============================================================================
--- Edge case: incomplete CustomerGroup hierarchy. If any of the 5 hierarchy
--- levels is missing, the zero-check JOIN produces no rows and the check
+-- Edge case: incomplete CustomerSegment hierarchy. If any of the 5 hierarchy
+-- levels is missing, the cross-level JOIN produces no rows and the check
 -- silently passes. This matches trigger behavior where the 5-table JOIN
 -- simply has no matching rows.
 -- =============================================================================
 create or alter procedure
-test_app_ValidateGravityCustomerGroup.[test_ZeroGravity_MissingHierarchyLevel_AutoPasses]
+test_app_ValidateCustomerSegmentHierarchy.[test_MissingHierarchyLevel_AutoPasses]
 ```
 
 Add "why" commentary specifically when the test documents a tradeoff or known limitation, when it tests execution order
@@ -58,7 +58,7 @@ Test commentary describes scenarios in terms of behavior — what the trigger or
 conditions — never in terms of locations in source. Line numbers drift whenever the object is edited, and a comment
 that points at "lines 133–172" of the implementation becomes a brittle coupling to a moving target that does not
 survive refactors. Prefer concept names ("at the start of the trigger body"), branch labels ("PipelineLocation check
-when both PipelineID and LocationID are non-NULL"), or phased-logic terms ("APIGravity Phase 1") over
+when both PipelineID and LocationID are non-NULL"), or phased-logic terms ("Hierarchy Phase 1") over
 `(see trigger lines 133–172)` or `Section (lines 12–18)`
 (database-testing-guide.md §Stable references in comments).
 
@@ -170,8 +170,8 @@ if schema_id('test_app_ValidateUnpostedTicket') is not null
 ### Test files shadow the sproc file name
 
 Every test file's name is the sproc file's name with a `Tests` suffix. The tests for `R__dbo.app_UpdateLink.sql` live
-in `R__app_UpdateLinkTests.sql`; the tests for `R__dbo.app_ValidateGravityCustomerGroup.sql` live in
-`R__app_ValidateGravityCustomerGroupTests.sql`. This shadow-naming is the single rule that makes it possible to find the
+in `R__app_UpdateLinkTests.sql`; the tests for `R__dbo.app_ValidateCustomerSegmentHierarchy.sql` live in
+`R__app_ValidateCustomerSegmentHierarchyTests.sql`. This shadow-naming is the single rule that makes it possible to find the
 tests for a sproc by mechanical transformation, without grep
 (database-testing-guide.md §File names).
 
@@ -187,7 +187,7 @@ create or alter procedure
 test_app_UpdateLink.[test_UpdateLinkName_Success]
 as
 begin
-    -- Fake the tables we need
+    -- Fake the required tables
     exec tSQLt.FakeTable 'dbo', 'Link';
     exec tSQLt.FakeTable 'dbo', 'Error';
 

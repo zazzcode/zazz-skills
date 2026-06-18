@@ -2,9 +2,22 @@
 
 This directory is a starting point for teams adopting the Zazz methodology.
 
-The standards here are not meant to be a universal corporate policy or a complete set of rules for every stack. They are baseline examples that show how to make engineering expectations explicit enough for both humans and agents to use during implementation, QA, automated review, and human review.
+The standards here are not a universal corporate policy or a complete set of rules for every stack. They are a starting baseline for efficient AI-assisted software product development: concrete enough for humans and agents to use during implementation, QA, automated review, and human review, but intentionally incomplete until an adopting organization adds its own stack, risk, and governance requirements.
 
 Use them as a template for building your own standards library.
+
+## What This Baseline Is
+
+This library contains two kinds of standards:
+
+- **Generic methodology standards** that should be reusable in most software repos, such as code structure, docs hygiene,
+  specification hygiene, PR process, and agent routing.
+- **Stack-specific baseline examples** that show the expected level of detail for a particular stack, such as Python
+  testing, React admin UI patterns, SQL Server stored procedures, GitHub Actions, AWS Lambda deployment, and
+  Serverless packaging.
+
+Adopting teams should not treat stack-specific examples as universal requirements. Keep them when they match the repo,
+replace them when they do not, and preserve the same level of concrete guidance, halt conditions, and review evidence.
 
 ## Why Standards Matter
 
@@ -24,12 +37,41 @@ Start with [index.yaml](index.yaml). Agents use the index to decide which standa
 
 When adopting these standards:
 
-1. Keep the standards that match your architecture and stack.
-2. Remove standards that do not apply.
-3. Rewrite examples so they match your repo paths, naming, frameworks, tools, and review process.
+1. Keep generic methodology standards that fit your workflow.
+2. Keep stack-specific baseline examples only when they match your architecture and stack.
+3. Replace stack-specific examples that do not apply with equivalent standards for your repo's languages, frameworks,
+   database, infrastructure, and review workflow.
 4. Add corporate guidelines for security, privacy, compliance, accessibility, release management, and coding conventions.
 5. Add stack-specific standards for the languages, frameworks, databases, cloud services, and deployment systems your team actually uses.
 6. Keep standards discoverable through `index.yaml` so agents can load the smallest useful set for each task.
+
+## Prompt For Drafting Repo-Specific Standards
+
+Use this prompt with the `standard-builder` skill when you want an agent to inspect an existing codebase and draft
+standards from the patterns your team already uses. The output should be a reviewable draft, not an automatic policy
+decision.
+
+```text
+Use $standard-builder to inspect this repository and draft stack-specific engineering standards for team review.
+
+Context:
+- This repo is a <monorepo / service repo / frontend app / backend service>.
+- The area to inspect is <repo-relative path or service name>.
+- The target stack is <language, framework, runtime, database, test runner, CI/deploy tools>, if known.
+- Requested standards: <architecture / microservice design / API patterns / unit testing / integration testing /
+  API testing and mocking / data access / observability / deployment / other>.
+
+Please:
+1. Inspect representative source files, tests, configuration, and docs before drafting.
+2. Infer observed patterns from repo-relative examples; do not invent rules without evidence.
+3. Separate observed patterns, recommended standards, and open questions.
+4. Propose a decomposed standards set when one large standard would mix unrelated work contexts.
+5. Include concrete desired and not-desired examples using neutral repo-relative paths.
+6. Include halt conditions and required review evidence for each standard.
+7. Note where the codebase is inconsistent and ask the team to choose the intended direction.
+8. Suggest the `docs/standards/index.yaml` entries needed for agent routing.
+9. Run a sensitive-reference scan before finalizing the draft.
+```
 
 ## Baseline, Not Final Policy
 
@@ -64,7 +106,9 @@ The goal is not to create a large rulebook. The goal is to make important decisi
 - Keep standards concise and prescriptive.
 - Prefer concrete desired and not-desired examples.
 - Use repo-relative paths.
-- Avoid company names, personal paths, private project names, and local machine references.
+- Avoid company names, personal paths, restricted project names, and local machine references.
+- Replace extracted project names, customer names, branch names, line-number fossils, and review breadcrumbs with neutral
+  repo-relative examples before publishing standards outside the source repo.
 - Update `index.yaml` whenever a standard is added, renamed, split, or removed.
 - Remove obsolete guidance instead of letting agents load stale instructions.
 

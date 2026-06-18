@@ -30,7 +30,7 @@ or cross-cutting changes trigger common checks. The two services do not share a 
 The check workflows fire on `pull_request` against `dev` and never on raw `push:`. The deploy workflows fire on `push:`
 against `dev` and `stage`. Caches are populated from `dev` by `cache-warmers.yml` so PR branches can restore on first
 run (cache-warmers.yml;
-a prior review).
+review precedent).
 
 ## Triggers — `pull_request` against `dev` for checks
 
@@ -38,7 +38,7 @@ Backend and frontend check workflows trigger on `pull_request: branches: [dev]` 
 their service. Every commit pushed to an open PR re-runs the full layer-specific suite for that PR, so the PR's status
 list always reflects the current tip — including after follow-up commits that touch only an unrelated layer. Raw
 `push:` triggers on feature branches are not used for check workflows; they produce a per-commit pattern that leaves
-the PR view inconsistent (a prior review; backend-checks.yml:2-11).
+the PR view inconsistent (review precedent; backend-checks.yml:2-11).
 
 The `paths:` filter includes both the service tree and the workflow file itself, so edits to the workflow re-trigger
 it.
@@ -97,7 +97,7 @@ on:
       - stage
   workflow_dispatch:
 permissions:
-  id-token: write # required for requesting the JWT that AWS uses to authorize our request for creds.
+  id-token: write # required for requesting the JWT that AWS uses to authorize the cloud-credentials request
   contents: read # required for actions/checkout
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -129,7 +129,7 @@ permissions:
 ```yaml
 # .github/workflows/backend-serverless-deploy.yml
 permissions:
-  id-token: write # required for requesting the JWT that AWS uses to authorize our request for creds.
+  id-token: write # required for requesting the JWT that AWS uses to authorize the cloud-credentials request
   contents: read # required for actions/checkout
 ```
 
@@ -156,7 +156,7 @@ jobs:
 
 Concrete grants on the integration branch: `frontend-checks.yml` and `backend-checks.yml` use the read-only pair; the two
 `*-serverless-deploy.yml` workflows add `id-token: write` for OIDC; `conformance.yml` and `claude.yml` carry the
-write-trio at job level (a prior review; backend-serverless-deploy.yml:9-11).
+write-trio at job level (review precedent; backend-serverless-deploy.yml:9-11).
 
 ## Caching — `cache-warmers.yml` mirrors every PR-gated cache
 
@@ -164,7 +164,7 @@ GitHub Actions only lets a PR branch restore caches from its own branch or the b
 run on the integration branch itself, so without a dedicated seeder no cache ever exists on the integration branch and every new PR starts cold.
 `.github/workflows/cache-warmers.yml` solves this: it runs on every push to `dev` and pre-populates each cache that a
 PR-gated workflow depends on. When the cache key already exists, each warmer job is a fast no-op (~15s lookup + skip)
-(a prior review; cache-warmers.yml header comment).
+(review precedent; cache-warmers.yml header comment).
 
 When introducing a new `actions/cache` step or a `cache:` directive on a `setup-*` action in a PR-gated workflow, add a
 mirroring job in `cache-warmers.yml` that derives the **same** cache key from the same inputs (lockfile hash, OS, tool
@@ -194,7 +194,7 @@ jobs:
       - name: Install project dependencies
         run: cd backend && uv sync --all-groups
       # install-only: sets up hook environments and saves the prek cache
-      # without actually running hooks. This is all we need to warm the cache.
+      # without actually running hooks. This is sufficient to warm the cache.
       - name: Install prek hook environments
         uses: j178/prek-action@v2
         with:

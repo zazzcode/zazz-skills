@@ -6,8 +6,9 @@ last_review_sha: 0d2b5358692b73cd4224096ab2cb7e0f4b5ee161
 
 ## Overview
 
-This guide documents the organizational patterns for the HTTP API layer. The design prioritizes maintainability and
-constrained context through small, focused files that try to contain as much as possible used by an route.
+This stack-specific baseline documents organizational patterns for an APIFlask HTTP API layer. The design prioritizes
+maintainability and constrained context through small, focused files that contain the schemas, route logic, and
+documentation needed by a route.
 
 ## HTTP layer responsibilities
 
@@ -20,8 +21,8 @@ responsible for:
 - **Response serialization**: Turning service-layer results into HTTP responses using `@bp.output()` and response
   schemas.
 - **Error mapping to HTTP**: Converting domain/service errors into standardized HTTP error responses.
-- **OpenAPI description**: Owning all API documentation concerns for HTTP endpoints. We leverage APIFlask
-  autogeneration utilities to build OpenAPI documentation based on our marshmallow schemas.
+- **OpenAPI description**: Owning all API documentation concerns for HTTP endpoints. This baseline uses APIFlask
+  autogeneration utilities to build OpenAPI documentation from marshmallow schemas.
 - **AuthN and AuthZ enforcement**: Ensuring that only authenticated (and authorized) callers reach the service layer.
 
 ## Directory Structure
@@ -59,7 +60,7 @@ src/http_api/
     │   ├── lookups_pipeline_code.py # GET /v1/lookups/pipeline-code
     │   ├── lookups_product.py       # GET /v1/lookups/product
     │   ├── lookups_quality_bank.py  # GET /v1/lookups/quality-bank
-    │   └── lookups_shipper.py       # GET /v1/lookups/shipper
+    │   └── lookups_vendor.py       # GET /v1/lookups/vendor
     ├── ticket/               # Ticket endpoints
     │   ├── __init__.py                     # Defines blueprint for all ticket endpoints
     │   ├── shared.py                       # Ticket-specific shared components
@@ -230,7 +231,7 @@ class FoobarListQueryInputSchema(apiflask.schemas.Schema):
     def make_object(self, data: Mapping[str, Any], **kwargs: Any) -> FoobarListQueryInput:
         return FoobarListQueryInput(**data)
 
-# If we were to have headers:
+# If headers are needed:
 @dataclass
 class FoobarListHeadersInput:
     """Headers for list requests"""
@@ -342,7 +343,7 @@ All list endpoints return an array of items under a top-level `data` key:
 }
 ```
 
-If aggregates need to be returned (for example, total counts or totals across all rows), we add a top level container
+If aggregates need to be returned (for example, total counts or totals across all rows), add a top level container
 called 'aggregates' to house those attributes:
 
 ```json
@@ -483,8 +484,8 @@ The main app registers resource blueprints:
 # http_api/app.py
 from http_api.v1.foobar import bp as foobar_bp
 
-def create_app(...) -> CustomerGroupFlask:
-    app = CustomerGroupFlask(__name__)
+def create_app(...) -> ExampleFlaskApp:
+    app = ExampleFlaskApp(__name__)
 
     # Register blueprints
     app.register_blueprint(foobar_bp)  # /v1/foobar/*
@@ -513,8 +514,8 @@ should be located into the appropriate `shared.py` directory).
 
 ### Optional input fields: omit allowed, null not allowed
 
-For optional fields where the caller may omit the value, may not send `null` (IE `allow_none=False`), but we want to
-deserialize to `None` on the dataclass in that situation, use `CALLER_BARRED_DEFAULT_NONE` from `http_api.v1.shared`:
+For optional fields where the caller may omit the value, may not send `null` (IE `allow_none=False`), and the dataclass
+should receive `None` when the value is omitted, use `CALLER_BARRED_DEFAULT_NONE` from `http_api.v1.shared`:
 
 ```python
 from http_api.v1.shared import CALLER_BARRED_DEFAULT_NONE

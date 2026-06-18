@@ -29,7 +29,7 @@ Migrated reports must match their legacy Access references row-for-row. Three ru
   or "simplify" ordering logic without re-running the full parity evidence, even when the encoding looks complete
   enough to make it redundant: collisions can be real in the data (e.g. a sort key that encodes production month but
   not production year collides across years in YTD mode)
-  (review precedent discussion).
+  (review precedent).
 - **Rounding is ROUND_HALF_UP everywhere.** Access's `RoundToNearest()` rounds halves away from zero. Python's default
   `Decimal` banker's rounding (`ROUND_HALF_EVEN`) is forbidden in report formatters, and formatter unit tests must
   include a midpoint case where the two modes diverge (e.g. `4.385`) so a silent revert fails.
@@ -43,7 +43,7 @@ Migrated reports must match their legacy Access references row-for-row. Three ru
 Renderers receive the style as a required second argument — no hidden style defaults inside renderer modules. The
 orchestrator passes the registry's `default_pdf_style` explicitly, so the registry entry is the single place a report's
 production style is declared. Reports with a single layout register the explicit `"default"` style and ignore the
-argument (review precedent discussion;
+argument (review precedent;
 follow-up).
 
 ## Report query timeouts
@@ -57,13 +57,13 @@ fast failure; report queries must not share it.
   `_REPORT_QUERY_TIMEOUT_SECONDS` override in `scripts/generate-report.py` is the canonical example. A report path that
   reads the default connection factory is a bug even if every current report happens to finish inside the default — the
   heaviest customer groups are what the override exists for
-  (review precedent discussion).
+  (review precedent).
 - The worst-case report runtime target is ~15 seconds. A report exceeding the target is a performance problem to fix at
   the source — stored-procedure tuning, or more database resources in AWS — never by letting a timeout kill the query.
   Completion wins over latency.
 - Do not trim a report timeout down toward the currently observed worst case. Headroom is the point: the timeout exists
   to catch genuine hangs, not to enforce the performance target
-  (review precedent discussion).
+  (review precedent).
 
 ## Report tests
 
@@ -78,7 +78,7 @@ ReportLab embeds a per-call creation timestamp and document ID in every PDF, so 
 never byte-equal by default. A test asserting `render(doc) != render(doc, style="other")` proves nothing — two renders
 of the *same* style also differ — and `render(doc) == render(doc)` fails outright. Pin determinism with
 `reportlab.rl_config.invariant = 1` before any byte-level comparison
-(review precedent discussion).
+(review precedent).
 
 #### Desired
 

@@ -70,7 +70,7 @@ describing the no-space combined form.
 A single PR scopes one logical change: one feature, one fix, one refactor, or one migration. Incidental bug fixes
 discovered while working on a feature go in their own one-liner PR (or at minimum, an isolated commit on a separate
 PR). Drive-by edits ("while I'm here") and unrelated migrations go in their own PR
-(a prior review; a prior review).
+(review precedent).
 
 Multi-layer PRs (`[BE+DB+FE]`) are reserved for changes that are genuinely cross-cutting — an endpoint plus its
 frontend caller plus its sproc — not for bundling unrelated work behind a multi-scope label. The label declares
@@ -85,10 +85,10 @@ service per commit" preference.
 
 ```text
 [FE] Fix Redux userSlice login reducer
-# a prior review — one-liner extracted from a feature PR
+# review precedent — one-liner extracted from a feature PR
 
 [BE+FE] Add RBAC role-permission matrix UI
-# a prior review — feature only, no bundled migrations or drive-by fixes
+# review precedent — feature only, no bundled migrations or drive-by fixes
 ```
 
 ### Not desired ❌
@@ -107,7 +107,7 @@ service per commit" preference.
 
 For any PR that replicates or replaces a legacy app screen with a new modal or page, the PR body includes the legacy
 app screenshot in the **WHY** section and a GIF (or screen recording) of the new implementation in the **Demo**
-section. The PR is self-contained — a reviewer or future `git log` reader does not need to open the Avaza ticket to
+section. The PR is self-contained — a reviewer or future `git log` reader does not need to open the tracker ticket to
 understand what was being replicated .
 
 The template at
@@ -120,15 +120,15 @@ rather than leaving the **Demo** section empty or describing the legacy in prose
 ```markdown
 ### WHY
 
-We're replicating the Customer Group "Create" screen from the legacy app
-so users can create banks without leaving the new UI.
+This PR replaces the legacy Customer Segment "Create" screen
+so users can create customer segments without leaving the new UI.
 
 Legacy screen:
-![legacy create screen](./.images/legacy-qb-create.png)
+![legacy create screen](./.images/legacy-customer-segment-create.png)
 
 ### Demo
 
-![new create modal](./.images/new-qb-create.gif)
+![new create modal](./.images/new-customer-segment-create.gif)
 ```
 
 ### Not desired ❌
@@ -136,8 +136,8 @@ Legacy screen:
 ```markdown
 ### WHY
 
-Adds the Create Customer Group modal.
-# reviewer has to open the Avaza ticket to see what was being replicated;
+Adds the Create Customer Segment modal.
+# reviewer has to open the tracker ticket to see what was being replicated;
 # the PR body carries no visual context for "what existed before".
 ```
 
@@ -148,7 +148,7 @@ value after merge. If the only reason the code exists is "support for the prior 
 stories that haven't been updated yet," update the consumers in the same PR and delete the bridge
 .
 
-Concrete patterns flagged in review and removed before merge in a prior review:
+Concrete patterns flagged in review and removed before merge in review precedent:
 
 - `RolePermissionMatrixProps` — legacy props interface kept only to bridge to the old component shape. Removed.
 - `TRole` — type export used only by old Storybook stories. Removed.
@@ -241,7 +241,7 @@ Direnv configuration lives at the repo root in `.envrc`, which calls `dotenv_if_
 exists at the service level (`backend/.envrc`, `frontend/.envrc`, `backend/.env`, `frontend/.env`). If a PR
 re-introduces a service-level `.envrc` or `.env` — typically from merging an old branch that predates the root
 consolidation — the file is removed rather than merged
-(a prior review; see
+(review precedent; see
 `.envrc`).
 
 #### Desired ✅
@@ -274,7 +274,7 @@ example-app/
 ### Root-only YAML formatting (`yamlfmt`)
 
 YAML formatting is wired at the repo root, not in any service directory. Three pieces work together
-(a prior review; see
+(review precedent; see
 `.pre-commit-config.yaml` and
 `.yamlfmt.yaml`):
 

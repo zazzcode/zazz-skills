@@ -26,8 +26,8 @@ edit (review precedent).
 ### Not desired ❌
 
 ```sql
--- Editing V00039__conform_grav_sulfer.sql purely to fix a comment typo:
--- "SulferDifferentialMethod" → "SulfurDifferentialMethod"
+-- Editing V00039__rename_legacy_status_column.sql purely to fix a comment typo:
+-- "LegacyStausCode" → "LegacyStatusCode"
 -- wrong: V__ migrations are one-time historical records; comment typos
 -- have no functional impact
 ```
@@ -38,10 +38,8 @@ Repeatable (`R__*.sql`) migrations re-run on every schema build and represent th
 define. Treat them as living documentation: when an object referenced by an `R__` file is renamed, deleted, or has its
 behavior changed, every `R__` file that mentions the object by name must be updated in the same PR. A stale reference
 in an `R__` file misleads future readers about the current design and survives every schema rebuild as if it were
-authoritative (review precedent; precedent at
-`R__dbo.app_ValidateGravityCustomerGroup.sql`
-and
-`R__dbo.app_ValidateSulfurCustomerGroup.sql`).
+authoritative. For example, if `dbo.app_ValidateCustomerSegmentHierarchy` is renamed, both
+`R__dbo.app_ValidateCustomerSegmentHierarchy.sql` and its matching tests must move together.
 
 The reviewer checklist for a deletion PR: grep every `R__*` file for the deleted object's name and update each match.
 Comment blocks that explained motivation rooted in code that no longer exists should be deleted rather than rewritten —
@@ -116,7 +114,7 @@ snapshots, so it is a clean rollback to exactly the state before the experiment 
 
 This is a local-development tool only. Never run `db-snapshot.py` against a shared, staging, or production-equivalent
 database — the `restore` and `delete` subcommands are destructive without a secondary confirmation path, and the script
-assumes `$DB_URL` points to your personal dev instance.
+assumes `$DB_URL` points to an isolated disposable development database.
 
 ### Desired ✅
 

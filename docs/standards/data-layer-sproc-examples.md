@@ -17,7 +17,7 @@ idiom explanations and reference material.
 Use this pattern when the stored procedure returns result rows.
 
 ```python
-"""Wrapper for the `legacy_ListShipper` stored procedure."""
+"""Wrapper for the `legacy_ListVendor` stored procedure."""
 
 from dataclasses import dataclass
 from enum import IntEnum
@@ -28,11 +28,11 @@ import pymssql
 from data.sprocs import StoredProcedureCallError
 from data.sprocs.util import validate_column_names
 
-SPROC_NAME: Final[str] = "legacy_ListShipper"
+SPROC_NAME: Final[str] = "legacy_ListVendor"
 
 
 class SprocReturnCode(IntEnum):
-    """Return codes surfaced by `legacy_ListShipper`."""
+    """Return codes surfaced by `legacy_ListVendor`."""
 
     SUCCESS = 0
     NO_RESULTS = 1
@@ -40,7 +40,7 @@ class SprocReturnCode(IntEnum):
 
 @dataclass
 class SprocArguments:
-    """Parameters accepted by `legacy_ListShipper`.
+    """Parameters accepted by `legacy_ListVendor`.
 
     IMPORTANT: Parameter names MUST exactly match the SQL stored procedure's
     parameter names, including Hungarian notation (e.g., lDataProviderID).
@@ -56,9 +56,9 @@ class SprocArguments:
 class SprocDataResultReturnRow(TypedDict):
     """Shape of each row returned by the stored procedure."""
 
-    ShipperName: str
-    ShipperID: int
-    ShipperCode: str | None
+    VendorName: str
+    VendorID: int
+    VendorCode: str | None
 
 
 SPROC_RETURN_ROW_COLUMN_NAMES: Final[tuple[str, ...]] = tuple(
@@ -72,7 +72,7 @@ def exec_sproc(
     connection: pymssql.Connection,
     testing: bool = False,
 ) -> list[SprocDataResultReturnRow]:
-    """Execute `legacy_ListShipper` and return the raw rows.
+    """Execute `legacy_ListVendor` and return the raw rows.
 
     Args:
         sproc_args: Parameters to pass to the stored procedure.
@@ -81,7 +81,7 @@ def exec_sproc(
             Only pass True from test code.
 
     Returns:
-        List of shipper records from the database.
+        List of vendor records from the database.
 
     Raises:
         StoredProcedureCallError: If the stored procedure returns an unexpected code.
@@ -106,7 +106,7 @@ def exec_sproc(
 
         else:
             raise StoredProcedureCallError(
-                f"Failed to list shippers: {return_value}",
+                f"Failed to list vendors: {return_value}",
             )
 
         description = cursor.description or tuple()

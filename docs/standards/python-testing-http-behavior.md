@@ -12,16 +12,13 @@ consolidation.
 Error-path HTTP tests lock the no-leak invariant explicitly. A status-code-only test passes while the body silently
 leaks internals; the invariant only stays locked if the test asserts that internal markers are absent from the response
 body. This complements the response-shape contract enforced by the HTTP layer itself (see
-http-layer.md](./http-layer.md)). ([a prior review;
-precedent:
-post-fix test_report_get.py).
+[http-layer.md](./http-layer.md)).
 
 The pattern has four parts:
 
-1. Mock the service exception with a message containing internal markers — file paths, sproc names, schema-internal
-   field names: `ReportGenerationError("renderer crashed at /private/internal/path; sproc=app_secret")`.
-1. Assert each marker is absent from the response body: `"renderer crashed"`, `"app_secret"`,
-   `"/private/internal/path"`.
+1. Mock the service exception with a message containing internal markers — implementation names, diagnostic tokens, or
+   schema-internal field names: `ReportGenerationError("renderer crashed; diagnostic_marker=raw_backend_detail")`.
+1. Assert each marker is absent from the response body: `"renderer crashed"`, `"raw_backend_detail"`.
 1. Assert the body matches the canonical shape: `message == HTTPStatus.<STATUS>.phrase` and `detail` contains only safe
    fields (e.g., `{"error": "Report generation failed"}` for 500; `{"locations": {"_schema": [...]}}` for 422).
 1. Name the test method ending in `_without_leaking_internals` so the invariant is visible in test output.
@@ -33,15 +30,14 @@ def test_get_report_generation_error_returns_500_without_leaking_internals(clien
     mocker.patch(
         "svc.report.run",
         side_effect=ReportGenerationError(
-            "renderer crashed at /private/internal/path; sproc=app_secret"
+            "renderer crashed; diagnostic_marker=raw_backend_detail"
         ),
     )
     response = client.get("/v1/report/foo")
     assert response.status_code == 500
     body = response.get_json()
     assert "renderer crashed" not in str(body)
-    assert "app_secret" not in str(body)
-    assert "/private/internal/path" not in str(body)
+    assert "raw_backend_detail" not in str(body)
     assert body["message"] == HTTPStatus.INTERNAL_SERVER_ERROR.phrase
     assert body["detail"] == {"error": "Report generation failed"}
 ```
@@ -67,7 +63,7 @@ exception message contains internals; the response body asserts the canonical sh
 ```python
 def test_create_link_name_conflict_returns_422(
     self,
-    test_app_for_http_layer: CustomerGroupFlask,
+    test_app_for_http_layer: ExampleFlaskApp,
     auth_headers: dict[str, str],
     valid_body: dict[str, Any],
 ) -> None:
@@ -239,7 +235,7 @@ fail under any plausible refactor that preserves the documented behavior, it add
 The same applies to a test whose name promises one assertion but whose body verifies something narrower, weaker, or
 different. Generated tests are not exempt — every test is read, maintained, and run on every push, and a misleading or
 value-free test costs the team more than a missing one
-(a prior review follow-up).
+(review precedent).
 
 Four anti-patterns recur. Each has a concrete signal a reviewer or agent can grep for.
 
@@ -249,7 +245,7 @@ under behavior-preserving refactors and passes under behavior-breaking ones — 
 the invariant under test is structural ("this function does not write files," "this orchestrator does not open
 sockets," "this path is purely in-memory"), exercise the function in a sandboxed environment and assert the observable
 consequence. If the invariant cannot be exercised, delete the test; document the property in the function's docstring
-or signature instead (a prior review discussion).
+or signature instead (review precedent).
 
 ```python
 # Desired ✅ — exercise behavior in a sandbox
@@ -267,7 +263,7 @@ def test_run_report_does_not_write_files():
     src = inspect.getsource(run_report)
     assert not re.search(r"\bopen\s*\(", src)
     assert "Path(" not in src
-# Source: described in a prior review follow-up at
+# Source: described in review precedent at
 # review precedent
 ```
 
@@ -281,7 +277,7 @@ monkey-patched. Delete these tests; rely on type checking and framework defaults
 `test_run_report_propagates_no_data_error` whose body asserts a 404 response when the route now returns 204 is
 dishonest in two ways at once — the name and the assertion both lie. Names and assertions must be re-verified together
 when route behavior changes; a name that disagrees with its body is a defect, not a stylistic concern
-(a prior review follow-up).
+(review precedent).
 
 **Trivially-passing assertions.** `assert result is not None` after a function whose return type is non-Optional,
 `assert len(rows) >= 0`, `assert isinstance(value, dict)` when the function's return annotation already says

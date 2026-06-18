@@ -4,7 +4,7 @@ last_updated_at: 2026-06-06
 
 # Frontend
 
-This standard governs the React/Next.js frontend service: custom hook shape, the admin CRUD vertical slice, RTK Query
+This stack-specific baseline governs a React/Next.js frontend service: custom hook shape, the admin CRUD vertical slice, RTK Query
 usage, MUI form and modal conventions, TypeScript idioms used across consumers of the API layer, styling via theme
 tokens, UI-side authorization, hygiene around component refactors, and the testing expectations that pair with
 response-schema changes.
@@ -40,20 +40,10 @@ src/
     └── <entity>.ts                        # Form validation schemas
 ```
 
-The original guide nested API clients under `src/api/v1/admin/` and components under `src/components/admin/<entity>/`;
-current `dev` keeps API clients at `src/api/v1/<entity>.ts` and nests components per entity under
-`src/components/admin/<entity>/` (e.g.,
-`data-providers/`,
-`links/`,
-`customer-groups/`). Use the
-current layout. Reference implementations live in the Users admin set at
-`frontend/src/components/admin/UsersAdmin.tsx`,
-`CreateUserModal.tsx`,
-`UpdateUserModal.tsx`
-(frontend-admin-crud-guide.md §Reference Files).
-
-The Users implementation is the canonical reference: a list page with table, plus paired create/update modals using
-`react-hook-form` + `zod` + RTK Query mutations.
+This baseline keeps API clients at `src/api/v1/<entity>.ts`, response schemas at
+`src/api/v1/responseSchemas/<entity>.ts`, and entity components under `src/components/admin/<entity>/` (for example,
+`data-providers/`, `links/`, and `customer-segments/`). A complete admin implementation consists of a list page with a
+table plus paired create/update modals using `react-hook-form`, `zod`, and RTK Query mutations.
 
 ## Hook design
 
@@ -131,7 +121,7 @@ call by ref and discard stale resolutions. RTK Query does not auto-cancel a prio
 the trigger again, so two rapid calls return two independent promises whose resolutions race. A `reset()` exposed by
 the hook MUST also abort the in-flight call, and the unmount cleanup MUST abort and revoke any owned URLs/Blobs. The
 shape: capture the pending trigger result in a ref, compare on resolution, drop the result if the ref has moved on
-(a prior review; useReportPdf.ts).
+(review precedent; useReportPdf.ts).
 
 This matters for hooks that own a side effect — a Blob URL, a download cursor, a one-shot mutation — where a stale
 resolution would clobber newer state or orphan a resource the UI no longer references.
@@ -266,7 +256,7 @@ All RTK Query mutation side effects — closing the dialog, showing a toast, upd
 `onSubmit` handler's `try/catch`, using `.unwrap()` so a failed request raises an exception the catch can handle.
 Calling parent `setState` (or `dispatch`) directly in the render body while a child is rendering produces React's
 "Cannot update a component while rendering a different component" error and a render loop that locks up the app
-(a prior review; CreateUserModal.tsx:64-79;
+(review precedent; CreateUserModal.tsx:64-79;
 UpdateUserModal.tsx).
 
 #### Desired ✅
@@ -295,7 +285,7 @@ const onSubmit = async (data: TCreateAccountData) => {
 
 ```tsx
 // wrong: setState in render body triggers "Cannot update during render"
-// + render loop. Diagnosed and removed in a prior review.
+// + render loop. Diagnosed and removed in review precedent.
 if (isSuccess) { parentSetState(result); }
 if (error) { setLocalError(error); }
 ```
@@ -305,7 +295,7 @@ if (error) { setLocalError(error); }
 When a mutation changes what a GET endpoint returns, add the appropriate tag to the mutation's `invalidatesTags` and
 let RTK Query refetch. Do not maintain a parallel `keptOnScreen` / `displayedRows` array that mirrors server state.
 Modal tables source rows from the fresh RTK Query result, not from a manually maintained intermediate array
-(a prior review comment;
+(review precedent;
 link.ts:18-110;
 LinkDetailsModal.tsx).
 
@@ -332,7 +322,7 @@ swapLinkDataProviderMapping: builder.mutation<
 
 ```ts
 // wrong: hand-rolled optimistic state diverges from server truth.
-// User has to clear cache to see updates. Removed in a prior review.
+// User has to clear cache to see updates. Removed in review precedent.
 const [keptOnScreen, setKeptOnScreen] = useState<Row[]>([]);
 setKeptOnScreen(prev =>
   prev.map(r => r.id === edited ? { ...r, mappingId: next } : r)
@@ -346,7 +336,7 @@ When a single user action dispatches one mutation per row in a group (e.g., upda
 in a shared group), use `Promise.allSettled`, not `Promise.all`. With `allSettled`, outcomes are reconciled per row:
 only successfully updated peers feed the kept-on-screen list, and the edited cell reverts only if its own update
 failed. `Promise.all` rejects immediately on the first failure, dropping context about which individual rows succeeded
-(a prior review discussion).
+(review precedent).
 
 A later iteration on `LinkDetailsModal.tsx` replaced the per-row dispatch loop with a single server-side swap endpoint
 plus cache invalidation, but the rule applies any time per-row fan-out is the right shape.
@@ -379,7 +369,7 @@ When a grid row's identity depends on a composite key (e.g., `${mappingId}-${dat
 component of that key regenerates the row's `id` from the new values. Spreading the old row and only updating the
 changed field leaves a stale-key ghost — the refetch arrives with a new `id` while the kept row still has the old `id`,
 so both appear in the grid until the modal closes
-(a prior review discussion).
+(review precedent).
 
 #### Desired ✅
 
@@ -407,10 +397,10 @@ When a PR adds new response schemas to a schema file, tests for those schemas la
 the same PR. The test file already demonstrates the expected pattern — shape validation, required fields, optional
 fields, type coercions — so adding coverage alongside the schema change is low-effort. Pre-existing schemas without
 coverage are out of scope; new schemas in the current PR are in scope
-(a prior review comment;
+(review precedent;
 `responseSchemas/link.test.ts`;
 see also
-`qualityBank.test.ts`,
+`customerSegment.test.ts`,
 `dataProvider.test.ts`).
 
 ## Related standards

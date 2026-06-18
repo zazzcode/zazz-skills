@@ -23,6 +23,6 @@ def test_batch_validation_rejects_mixed_movement_types() -> None:
     ...
 ```
 
-In both cases, we should use a docstring, but a doc string should be considered a more verbose version of a title.
+In both cases, use a docstring, but treat a docstring as a more verbose version of a title.
 
 A comment can be used that elaborates on the special 'why'.

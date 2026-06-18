@@ -89,7 +89,7 @@ Tests pass `environment="test"` explicitly because:
 
 - Test settings are constructed manually (not from env vars)
 - The `test_settings` fixture isn't available at import time
-- We want console output during test runs
+- Test runs should use console output
 
 ## Settings Module Design
 

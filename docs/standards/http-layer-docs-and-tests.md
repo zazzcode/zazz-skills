@@ -16,7 +16,7 @@ assemble the OpenAPI spec exposed at `/docs`, and clients infer error contracts 
 Every route that can `apiflask.abort(HTTPStatus.UNPROCESSABLE_ENTITY.value, ...)` declares the 422 response in
 `@bp.doc(responses=...)`. The `description` value uses `HTTPStatus.UNPROCESSABLE_ENTITY.phrase`. The OpenAPI spec
 silently omits error codes not declared in `@bp.doc`; clients and consumers of `/docs` need to know which error
-conditions a route may return (a prior review; see
+conditions a route may return (review precedent; see
 quality_bank_create.py).
 
 ### Desired
@@ -84,12 +84,11 @@ def create_pipeline_view(json_data: PipelineCreateJSONInput) -> PipelineCreateRe
 
 ### Exercise new endpoints via `/docs`
 
-Before marking a PR ready for review, exercise each new endpoint via the Swagger UI at `http://localhost:5001/docs`. A
-successful response proves the route registers, `@require_permissions` accepts a valid caller with the required
-permission, and the data layer is reachable — integration failures the unit tests may miss. This is not a substitute
-for automated tests; it catches misconfigurations (missing seed permissions, broken route registration, DB
-connectivity) faster than code review alone
-.
+Before marking a PR ready for review, exercise each new endpoint via the repo's documented local API docs URL, commonly
+`<LOCAL_API_BASE_URL>/docs`. A successful response proves the route registers, `@require_permissions` accepts a valid
+caller with the required permission, and the data layer is reachable — integration failures the unit tests may miss.
+This is not a substitute for automated tests; it catches misconfigurations (missing seed permissions, broken route
+registration, DB connectivity) faster than code review alone.
 
 ## Error-path tests
 
@@ -98,8 +97,7 @@ leaks internals; locking the invariant prevents future regressions where someone
 `message=` or `detail`. The pattern: mock the service exception with internal markers in its message — file paths,
 sproc names, schema-internal field names — then assert each marker is absent from the response body, assert the body
 matches the canonical shape (`message == HTTPStatus.<STATUS>.phrase`; `detail` contains only safe fields), and name the
-test method `_without_leaking_internals` (a prior review; see
-test_report_get.py:300-332 (post-fix sha)).
+test method `_without_leaking_internals`.
 
 ### Desired
 
@@ -107,7 +105,7 @@ test_report_get.py:300-332 (post-fix sha)).
 def test_get_report_generation_error_returns_500_without_leaking_internals(
     test_app_for_http_layer, auth_headers,
 ):
-    underlying_message = "renderer crashed at /private/internal/path; sproc=app_secret"
+    underlying_message = "renderer crashed; diagnostic_marker=raw_backend_detail"
     with patch("http_api.v1.report.report_get.run_report", autospec=True) as mock_run:
         mock_run.side_effect = ReportGenerationError(underlying_message)
         response = test_app_for_http_layer.test_client().get("/v1/report/foo?...", headers=auth_headers)
@@ -116,8 +114,7 @@ def test_get_report_generation_error_returns_500_without_leaking_internals(
     body_text = response.data.decode("utf-8")
     assert underlying_message not in body_text
     assert "renderer crashed" not in body_text
-    assert "app_secret" not in body_text
-    assert "/private/internal/path" not in body_text
+    assert "raw_backend_detail" not in body_text
 
     body = response.get_json()
     assert body["message"] == HTTPStatus.INTERNAL_SERVER_ERROR.phrase
@@ -140,7 +137,7 @@ For deeper testing conventions (mocking strategies, fixture organization, naming
 When iterating over a filtered collection, extract the filter as a named intermediate with a descriptive identifier and
 iterate that named collection. Inlining guard `continue` clauses inside the loop body is rejected because it obscures
 iteration intent. A named filtered collection signals intent at the call site and lets the subsequent loop body focus
-on action rather than guard clauses (a prior review; see
+on action rather than guard clauses (review precedent; see
 account_list.py:237-241).
 
 ### Desired

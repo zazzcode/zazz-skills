@@ -13,9 +13,9 @@ Storybook, and frontend tests.
 
 MUI `TextField` and other form inputs for required fields include `required` so the label renders with an asterisk on
 initial render. Required status is not hidden until a submit-time validation error
-(PR #48;
+(review precedent;
 CreateUserModal.tsx:115;
-CreateCustomerGroupModal.tsx).
+CreateCustomerSegmentModal.tsx).
 
 #### Desired ✅
 
@@ -41,8 +41,8 @@ The rule above applies wherever the TextField actually lives in the tree, not on
 When the TextField is built inside an `Autocomplete`'s `renderInput`, a `DatePicker`'s `slotProps.textField`, or any
 other wrapped/controlled MUI input, `required` MUST be passed through to that inner TextField. React Hook Form's
 `Controller` with `rules={{ required }}` enforces validation but does not affect rendering — the asterisk only appears
-when the TextField itself carries `required` (PR #187;
-CustomerGroupPeriodDialog.tsx).
+when the TextField itself carries `required` (review precedent;
+CustomerSegmentPeriodDialog.tsx).
 
 ##### Desired ✅
 
@@ -50,7 +50,7 @@ CustomerGroupPeriodDialog.tsx).
 <Controller
   control={control}
   name="qualityBankId"
-  rules={{ required: "Customer Group is required" }}
+  rules={{ required: "Customer Segment is required" }}
   render={({ field }) => (
     <Autocomplete
       {...field}
@@ -58,7 +58,7 @@ CustomerGroupPeriodDialog.tsx).
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Customer Group"
+          label="Customer Segment"
           required        // ← asterisk on first render
           error={!!errors.qualityBankId}
           helperText={errors.qualityBankId?.message}
@@ -91,12 +91,12 @@ CustomerGroupPeriodDialog.tsx).
 
 ```tsx
 <Controller
-  rules={{ required: "Customer Group is required" }}   // validation only
+  rules={{ required: "Customer Segment is required" }}   // validation only
   render={({ field }) => (
     <Autocomplete
       {...field}
       renderInput={(params) => (
-        <TextField {...params} label="Customer Group" />
+        <TextField {...params} label="Customer Segment" />
         // wrong: no `required` on the inner TextField — asterisk
         // does not render until submit-time validation fires.
       )}
@@ -110,7 +110,7 @@ CustomerGroupPeriodDialog.tsx).
 All modal components in `frontend/src/components/admin/` use `<CloseModalButton handleClose={handleClose} />` for the
 close button. The shared component encapsulates positioning, icon choice, and `aria-label`; re-implementing it inline
 with bare `IconButton` + `CloseIcon` diverges silently across modals
-(PR #159 comment;
+(review precedent comment;
 CreateLinkModal.tsx:17;
 CreateLinkModal.tsx:112;
 LinkDetailsModal.tsx:1016).
@@ -141,7 +141,7 @@ When valid values come from an enumerable, queryable table (DataProviders, Locat
 searchable dropdown labeled with both the ID and a human-readable identifier (e.g., `{id}: {provider name}`), sourced
 from the live list via an RTK Query lookup hook. Already-used values are filtered out of the picker options so
 producing a 409 conflict is impossible. Free-text numeric ID fields are rejected — numeric IDs are opaque to users and
-bypass implicit validation (PR #170 comment;
+bypass implicit validation (review precedent comment;
 LinkDetailsModal.tsx:336).
 
 #### Desired ✅
@@ -180,7 +180,7 @@ import { Autocomplete } from "@mui/material";
 When the same fixed enumerable option set (Month, Year, etc. — values whose domain is fixed and known at build time)
 appears across multiple components, extract it into a shared typed module under `frontend/src/models/` rather than
 re-inlining the literals. The shared definition carries both a typed value (for storage/transmission) and a display
-label (PR #107 discussion).
+label (review precedent discussion).
 
 #### Desired ✅
 
@@ -218,13 +218,13 @@ When guarding an absent or unloaded API response field with an empty-array fallb
 `||` (logical OR). `??` falls back only when the left side is `null` or `undefined` — the precise guard needed for an
 absent API response. `||` would coerce on any falsy value (`0`, `false`, `""`), creating silent bugs when the API
 legitimately returns a zero-valued field
-(PR #159 comment;
-CustomerGroupsAdmin.tsx:115).
+(review precedent comment;
+CustomerSegmentsAdmin.tsx:115).
 
 #### Desired ✅
 
 ```ts
-// frontend/src/components/admin/customer-groups/CustomerGroupsAdmin.tsx
+// frontend/src/components/admin/customer-segments/CustomerSegmentsAdmin.tsx
 rows={data?.data ?? []}
 ```
 
@@ -245,7 +245,7 @@ samples the same clock at a different lifecycle phase (per render, on submit, et
 `.refine()` that reads the clock at parse time. Capturing `new Date().getFullYear()` at module load freezes the bound
 for the lifetime of the process, while a render-time `dayjs().add(1, "year")` (or similar) re-reads the clock on every
 render — a tab open across midnight Dec 31 ends up with the schema and the UI disagreeing about which years are valid
-(PR #187;
+(review precedent;
 schemas/report.ts).
 
 #### Desired ✅
@@ -292,7 +292,7 @@ Component styles reference MUI theme tokens via `useTheme()` or the `sx` prop's 
 literals (`#1976d2`, `#fff`, `rgb(...)`) are permitted only when the theme cannot represent the needed color, and the
 inline must document why. Theme colors propagate through light/dark mode toggles and design-system updates without code
 edits; inline literals create silent visual divergence
-(PR #65 discussion;
+(review precedent discussion;
 theme.ts).
 
 #### Desired ✅
@@ -322,7 +322,7 @@ Frontend code references permission identifiers through the `EnumPermissions` en
 `frontend/src/models/enums/EnumPermissions.ts`.
 String literals for permission identifiers are not used in components, tests, selectors, or hooks. Permission names are
 fixed and known; a string literal decouples from the enum so a rename or typo passes type-check while breaking behavior
-at runtime (PR #65 discussion;
+at runtime (review precedent discussion;
 userSlice.ts:38-54).
 
 #### Desired ✅
@@ -356,7 +356,7 @@ convention
 Transitional types, parameters, and interfaces added "for the migration" are removed in the same PR if they offer no
 value after merge. Code that exists only to support the prior version of a component, or to keep old Storybook stories
 compiling, is cruft from day one of the merge. Update the consumers (including stories) in the same PR and delete the
-bridge (PR #65 discussion).
+bridge (review precedent discussion).
 
 #### Desired ✅
 
@@ -379,7 +379,7 @@ export const RolePermissionMatrix: FC<RolePermissionMatrixProps> = (
 
 ```tsx
 // wrong: legacy props interface kept "for transition" — immediately cruft on merge.
-// `TRole` and `_props` removed in PR #65 after this exact feedback.
+// `TRole` and `_props` removed in review precedent after this exact feedback.
 export interface RolePermissionMatrixProps { /* legacy shape */ }
 export type TRole = string; // used only by old Storybook stories
 export const RolePermissionMatrix: FC<NewProps> = (_props) => {
@@ -391,7 +391,7 @@ export const RolePermissionMatrix: FC<NewProps> = (_props) => {
 
 Component refactors update each `*.stories.tsx` in the same PR rather than leaving legacy props or types in the
 component to keep old stories compiling. Storybook compatibility is not a reason to leak deprecated types into runtime
-component code (PR #65 discussion;
+component code (review precedent discussion;
 RolePermissionMatrix.stories.tsx).
 
 The mechanical sequence is:
@@ -405,7 +405,7 @@ The mechanical sequence is:
 Response-schema changes carry their tests. New schemas added to a response schema file have at least one matching test
 in the corresponding `.test.ts` file in the same PR, following the existing test's pattern: shape validation,
 required-field coverage, optional-field coverage, and type coercion checks where the preprocessor converts snake_case
-to camelCase (PR #159 comment;
+to camelCase (review precedent comment;
 `responseSchemas/link.test.ts`;
 `responseSchemas/qualityBank.test.ts`;
 `responseSchemas/role.test.ts`;

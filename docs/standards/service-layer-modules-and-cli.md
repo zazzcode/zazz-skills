@@ -26,11 +26,11 @@ tickets/list_tickets.py).
 `lookups/shared.py` carries the `ListLookupsPageResult` generic type used across lookup services
 (service-layer-guide.md §Subdirectory-Level).
 
-The reports subtree is the largest example. Each report (currently `all_shippers_master`) sits in its own subdirectory
+The reports subtree is the largest example. Each report, such as `vendor_summary`, sits in its own subdirectory
 with one file per concern:
 
 ```text
-svc/reports/all_shippers_master/
+svc/reports/vendor_summary/
 ├── service.py     # run_report() — entry point; calls sproc, builds document
 ├── document.py    # Domain dataclasses, REPORT_VARIANTS table, error classes
 ├── formatting.py  # Format-agnostic value formatting helpers
@@ -42,7 +42,7 @@ svc/reports/all_shippers_master/
 subdirectory. The CLI's `generate-report.py` imports `run_report` from `service.py` and the renderers from the sibling
 files explicitly
 (generate-report.py:30;
-all_shippers_master/service.py:1).
+vendor_summary/service.py:1).
 
 ## Lookups pattern
 
@@ -170,13 +170,13 @@ HTTP clients consume the stable `phrase` envelope and pick out structured fields
 ```python
 try:
     document = run_report(
-        quality_bank_id=resolved_id,
+        customer_segment_id=resolved_id,
         accounting_period_year=accounting_period_year,
         accounting_period_month=accounting_period_month,
         report_variant=variant,
         connection=connection,
     )
-except (AllShippersMasterServiceError, NoDataForReportError) as exc:
+except (VendorSummaryServiceError, NoDataForReportError) as exc:
     raise click.ClickException(str(exc)) from exc
 except StoredProcedureCallError as exc:
     raise click.ClickException(f"Database error: {exc}") from exc
@@ -213,12 +213,13 @@ except UnknownReportError:
 
 The CLI / HTTP asymmetry only works because the service layer takes responsibility for producing exception text
 suitable for a developer audience. A service exception with the message `"Not Found"` would be useless to the CLI user;
-a service exception with `f"Quality bank {quality_bank_id} was not found."` carries the identifier the developer needs.
+a service exception with `f"Customer segment {customer_segment_id} was not found."` carries the identifier the developer
+needs.
 The exception-message convention in
 [service-layer-data-and-exceptions.md](./service-layer-data-and-exceptions.md#exception-messages) is what enables the
 CLI handler to pass `str(exc)` through unmodified
 (review precedent;
-reports/all_shippers_master/service.py:47).
+reports/vendor_summary/service.py:47).
 
 ### CLI script structure
 

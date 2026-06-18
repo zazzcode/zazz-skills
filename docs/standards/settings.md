@@ -48,7 +48,7 @@ class Settings:
     db_conn_args: MSSQLConnectionArgs
     frontend_allowed_origins: list[str]
     # Some accounts, set via comma-delimited list ('name1,name2,name3'), are
-    # flagged as special and we don't want them being returned in API responses
+    # flagged as special and should not be returned in API responses
     # or interacted with through the HTTP layer.
     hidden_account_usernames: list[str] = field(default_factory=list)
     bugsnag_api_key: str | None = None

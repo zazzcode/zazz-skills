@@ -99,7 +99,7 @@ class ListLookupLocationsQueryInput:
     """Query parameters for listing LookupLocations."""
     data_provider_id: int | None
     pipeline_id: int | None
-    quality_bank_id: int | None
+    customer_segment_id: int | None
 
 @dataclass
 class ListLookupLocationsResponse:
@@ -163,7 +163,7 @@ The canonical decorator order on every view is `@bp.route` → `@bp.input` (when
 `@require_permissions` → `@bp.output`. `@bp.output` is the final decorator before the view function — placing it
 earlier (for example, immediately after `@bp.route` or before `@bp.doc`) is incorrect because decorator order affects
 how APIFlask assembles the OpenAPI spec and the route middleware chain
-(a prior review; see
+(review precedent; see
 account_list.py:212-214,
 pipeline_create.py:92-123).
 

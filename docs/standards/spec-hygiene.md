@@ -26,9 +26,9 @@ directory layout or on a file that only exists in the author's checkout.
 ## Paths are repository-relative, never absolute
 
 Every path a specification names — in prose, in a markdown link, in a required-reading list, in an agent prompt — MUST
-be relative to the repository root. Absolute machine paths (`/Users/...`, `/home/...`, `C:\...`) MUST NOT appear. An
-absolute path resolves only on the author's machine; it breaks for every other reviewer and every agent running in a
-different worktree, and it silently encodes one person's local layout into a shared document
+be relative to the repository root. Absolute machine paths and paths that climb into a sibling checkout MUST NOT
+appear. They resolve only for the author, break for other reviewers and agents, and silently encode one person's
+checkout layout into a shared document
 .
 
 ### Desired ✅
@@ -41,10 +41,10 @@ Open `docs/standards/index.yaml` and load only the standards whose
 ### Not desired ❌
 
 ```markdown
-Open `../feature-standards-from-pr-comments/docs/standards/index.yaml`
+Open `<absolute-checkout-path>/docs/standards/index.yaml`
 and load only the matching standards.
-<!-- absolute machine path; resolves only on the author's checkout and
-     breaks for every other reviewer/agent and worktree.
+<!-- machine-specific checkout path; resolves only for the author and
+     breaks for every other reviewer/agent.
 ```
 
 ## Link to standards and prior specifications; do not inline them
@@ -91,15 +91,15 @@ the integration branch yet. Do not reach outside the repository to another workt
 
 ```markdown
 Follow the iterated standards at `docs/standards/` (not yet merged to the
-integration branch; tracked in a prior review).
+integration branch; tracked in PR 1234).
 ```
 
 ### Not desired ❌
 
 ```markdown
 Follow the iterated standards at
-`../feature-standards-from-pr-comments/docs/standards/`.
-<!-- points at a second worktree by absolute path because the files are
+`../sibling-worktree/docs/standards/`.
+<!-- points at a second checkout because the files are
      not yet merged; unreadable from any other checkout.
 ```
 

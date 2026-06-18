@@ -166,7 +166,7 @@ from business code:
 http_api/util.py#L121-L154;
 http_api/util.py#L157-L173;
 http_api/util.py#L188-L197;
-a prior review.)
+review precedent.)
 
 When adding new structured log keys from business code, pick a new namespace prefix that does not collide with the
 reserved set, and build the key through `to_log_key` so the dot-delimiter convention is enforced by one helper.
@@ -199,7 +199,7 @@ The Flask `_before_request` handler binds `deploy.*`, `http.request.*`, and (whe
 `aws.lambda.*` on every request, before any route handler runs. Response context is bound in `_after_request`. The
 split is deliberate: `@after_request` does not fire on error paths, so any log emitted between request entry and the
 error must already carry `request.*` and `deploy.*` for the log to be useful
-(a prior review; app.py#L155-L196).
+(review precedent; app.py#L155-L196).
 
 Binding order inside `_before_request`:
 
@@ -220,7 +220,7 @@ does not have an account yet .
 
 Use `structlog.contextvars.bind_contextvars(...)`, never `logger.bind(...)`. The contextvars binding survives across
 function boundaries within the same request, which is what makes the bound keys reach the end-of-request access log
-(a prior review; app.py#L168).
+(review precedent; app.py#L168).
 
 ### Desired ✅
 
@@ -264,23 +264,20 @@ def _after_request(response):
     return response
 ```
 
-Source: pre-fix anti-pattern described in a prior review ("This doesn't add
-response info, cause response info can be harder to capture in error situations where `@after_request` handlers don't
-fire.")
+Source: pre-fix anti-pattern where response context was bound too late for error logs emitted before the
+`@after_request` handler.
 
 ## Deploy context is bound on every request
 
 Every emitted structured log must carry the `deploy.*` keys: `deploy.git_sha`, `deploy.environment`,
 `deploy.timestamp`. The values come from `Settings` (`git_sha`, `environment`, `deployed_timestamp`), parsed once per
 process by `get_settings()`. Binding happens once per request inside `_before_request`, alongside the request and
-Lambda context binds (a prior review; app.py#L168-L174;
+Lambda context binds (review precedent; app.py#L168-L174;
 util.py#L43-L49).
 
 Re-binding per-request is intentional even though the values do not change between requests: it colocates
 context-binding logic in one handler and makes it impossible for a log to slip through without the deploy keys
-attached. The PR author note on the design choice: "this doesn't really need to be set per request, but everything else
-currently gets set via request so I'm colocating mainly for organization"
-.
+attached.
 
 ### Desired ✅
 

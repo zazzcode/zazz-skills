@@ -10,10 +10,7 @@ business logs, and local profiling.
 ## The "request completed" log line
 
 `_after_request` emits exactly one `logger.info(HTTP_REQUEST_COMPLETED_LOG_MESSAGE)` per request, where
-`HTTP_REQUEST_COMPLETED_LOG_MESSAGE` is a module-level `Final[str]` constant defined at the top of `app.py`
-(PR #153;
-app.py#L57;
-app.py#L223-L224). This is the project's
+`HTTP_REQUEST_COMPLETED_LOG_MESSAGE` is a module-level `Final[str]` constant defined at the top of `app.py`. This is the project's
 application-level access log; it carries the full bound context (deploy, request, Lambda, response) and is queryable by
 stable message string.
 
@@ -25,23 +22,17 @@ The constant carries an inline comment marking it as stable:
 HTTP_REQUEST_COMPLETED_LOG_MESSAGE: Final[str] = "request completed"
 ```
 
-Source: app.py#L55-L57
-
 The emission is gated on `settings.environment != "local"`. The Flask local dev server emits its own access log, and
-double-logging the same request in local would be redundant (PR #153;
-app.py#L222-L224).
+double-logging the same request in local would be redundant.
 
 Response context is bound just before the emission, wrapped in a `try/except` that warning-logs on failure and does not
-crash the response. The author rationale: "an error raised by logic here could crash the whole app on an otherwise
-successful block and that would feel so dumb" (PR #153;
-app.py#L207-L220). Duration is computed
+crash the response. Duration is computed
 as `round((time.perf_counter() - g.request_start_time) * 1000)` and bound as `http.response.duration_ms`; the
 `getattr(g, "request_start_time", None)` guard handles the case where `_before_request` did not run
 (app.py#L210-L212).
 
 Route handlers do not emit access-log lines of their own. The single end-of-request emission is the project's access
-log; route-level logger calls are reserved for business events or errors
-(PR #153).
+log; route-level logger calls are reserved for business events or errors.
 
 ### Desired ✅
 
@@ -86,8 +77,7 @@ def list_links_view():
     return ...
 ```
 
-Source: anti-pattern described in PR #153 ("the single end-of-request
-emission is the project's access log; route-level logs are reserved for business events or errors").
+Source: anti-pattern from route-level access logs duplicating the single end-of-request emission.
 
 ## Lambda cold-start signal
 
@@ -194,8 +184,7 @@ logger for:
 - errors and exceptions, ideally with `exc_info=True`
 
 They do not log "entered handler" / "served GET /v1/link" lines, and they do not log on every successful path that
-already has a 200 response — that information is already in the access log
-(PR #153).
+already has a 200 response — that information is already in the access log.
 
 When a business log is emitted, the bound contextvars supply the request/account/deploy context automatically; the log
 call itself should add only the event-specific keys.

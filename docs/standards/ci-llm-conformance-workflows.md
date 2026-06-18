@@ -152,7 +152,7 @@ agent to first list any open PRs labeled `conformance` and skip candidates alrea
 `/conformance ... --auto`, then create a `conformance/<short-kebab-description>` branch and open a labeled PR with the
 `[BE] Conformance: ...` title shape
 (conformance.yml;
-a prior review).
+review precedent).
 
 ### Desired ✅
 

@@ -4,11 +4,12 @@ last_updated_at: 2026-05-25
 
 # Tooling, lint, and format
 
-This standard governs the configured developer toolchain for the CustomerGroup monorepo: ruff (Python lint and format),
-mypy (Python type-checking), `google/yamlfmt` (YAML formatting), and `prek` (the Rust-based pre-commit runner used in
-place of stock `pre-commit`). It covers how the configs are scoped across the repo, what conventions apply when editing
+This stack-specific baseline governs a Python/TypeScript monorepo toolchain: ruff (Python lint and format), mypy
+(Python type-checking), `google/yamlfmt` (YAML formatting), and `prek` (the Rust-based pre-commit runner used in place
+of stock `pre-commit`). It covers how the configs are scoped across the repo, what conventions apply when editing
 those configs, and the small set of source-level rules that the configured linters enforce but that an author still has
-to follow by hand.
+to follow by hand. Teams using different languages or hook runners should replace the tool names while preserving the
+same placement, pinning, and evidence rules.
 
 ## Overview
 
@@ -83,7 +84,7 @@ exclude = [
 [[tool.mypy.overrides]]
 module = "some.lib"
 ignore_missing_imports = true
-# types-somelib only covers the HTTP client; we use only the async
+# types-somelib only covers the HTTP client; this service uses only the async
 # transport, which has no stubs yet.
 ```
 
@@ -128,7 +129,7 @@ When adding a new tool that has its own type stubs or plugins (sqlfluff is the o
 `.yamlfmt.yaml` sits at the repo root and configures the formatter for every YAML file in the monorepo. The root
 `.pre-commit-config.yaml` registers the `google/yamlfmt` hook at a pinned tag. There is no `backend/.yamlfmt.yaml`, no
 `frontend/.yamlfmt.yaml`, and no service-level pre-commit entry for yamlfmt
-(a prior review; `.yamlfmt.yaml`).
+(review precedent; `.yamlfmt.yaml`).
 
 The rationale is drift prevention: splitting a repo-wide tool across multiple service-level configs guarantees that one
 service gets the latest version, another lags, and YAML files at the root or in the `frontend/` tree escape coverage
@@ -222,7 +223,7 @@ select = [
 ]
 ignore = [
   "SIM108", # ternaries are more difficult to read than if-else blocks # https://docs.astral.sh/ruff/rules/if-else-block-instead-of-if-exp/
-  "S101",   # assert is too useful, particularly with mypy strict mode; we also don't run with -O # https://docs.astral.sh/ruff/rules/assert/#assert-s101
+  "S101",   # assert is useful with mypy strict mode; tests do not run with -O # https://docs.astral.sh/ruff/rules/assert/#assert-s101
   "S603",   # TODO: enable # https://docs.astral.sh/ruff/rules/subprocess-without-shell-equals-true/
 ]
 ```
@@ -262,7 +263,7 @@ banned import, set the `.msg` so the lint failure tells the author what to use i
 Ruff isort runs with the default `combine-as-imports = false`. Aliased and unaliased imports from the same module
 remain in separate `from … import (…)` blocks. Merging them into one block triggers `I001`, and `ruff --fix` actively
 re-splits them on the next run, so manually combining is a fight the author always loses
-(a prior review; `backend/scripts/manage-account.py`).
+(review precedent; `backend/scripts/manage-account.py`).
 
 Flipping `combine-as-imports = true` is not the answer for a single PR — it reflows imports across the entire backend
 and is out of scope for any feature change.
@@ -271,10 +272,10 @@ and is out of scope for any feature change.
 
 ```python
 # Unaliased imports from a module — own block
-from svc.reports.all_shippers_master import service
+from svc.reports.vendor_summary import service
 
 # Aliased imports from the same module — separate block
-from svc.reports.all_shippers_master import (
+from svc.reports.vendor_summary import (
     pdf as asm_pdf,
 )
 ```
@@ -282,7 +283,7 @@ from svc.reports.all_shippers_master import (
 #### Not desired ❌
 
 ```python
-from svc.reports.all_shippers_master import (
+from svc.reports.vendor_summary import (
     service,
     pdf as asm_pdf,
 )

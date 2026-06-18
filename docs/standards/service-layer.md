@@ -4,9 +4,10 @@ last_updated_at: 2026-06-10
 
 # Service layer
 
-The service layer (`backend/src/svc/`) carries the project's business logic, domain validation, and composite domain
+This stack-specific baseline assumes a Python backend with explicit HTTP, service, and data layers. The service layer
+(`backend/src/svc/`) carries the project's business logic, domain validation, and composite domain
 operations. Services are pure business logic — no Flask globals, no HTTP concerns, no JSON serialization, no connection
-construction. Callsites (HTTP routes, CLI scripts, future background workers) build connections, pass them in, and
+construction. Call sites (HTTP routes, CLI scripts, and background workers) build connections, pass them in, and
 consume the typed dataclasses, generators, or scalar returns the services produce. This document governs every file
 under `backend/src/svc/` and `backend/scripts/`, including the report subtree and the lookups subtree.
 
@@ -29,10 +30,10 @@ src/svc/
 ├── permission.py             # RBAC permission management
 ├── pipelines.py              # Pipeline CRUD
 ├── products.py               # Product CRUD
-├── customer_groups.py          # CustomerGroup CRUD operations
+├── customer_segments.py        # Customer segment CRUD operations
 ├── role.py                   # Role management
 ├── security.py               # Cryptographic operations and token handling
-├── shippers.py               # Shipper CRUD
+├── vendors.py                 # Vendor CRUD
 ├── json_utils.py             # JSON canonicalization helpers used by reports/CLI
 ├── lookups/                  # Slim entity views for dropdown population
 │   ├── pipeline_codes.py
@@ -40,7 +41,7 @@ src/svc/
 │   ├── wire_instructions.py
 │   └── ...
 ├── reports/                  # Report runners and rendering helpers
-│   └── all_shippers_master/
+│   └── vendor_summary/
 │       ├── service.py        # run_report() entry point
 │       ├── document.py       # Errors + dataclasses + variant table
 │       ├── formatting.py
@@ -65,7 +66,7 @@ Service functions in `backend/src/svc/` invoke sproc wrappers from `backend/src/
 SQL strings, call `cursor.execute(...)` against business tables, or call `callproc(...)` directly. When a domain
 operation needs more than one sproc — for example, the "always full replacement" semantics of `update_account_roles` —
 the service composes sproc calls inside a single connection and transaction, rather than dropping to raw SQL
-(a prior review; account.py replace block).
+(review precedent; account.py replace block).
 
 The sproc-wrapper-per-sproc pattern is the project's single DB seam. Bypassing it loses the data-layer's error
 vocabulary (typed `*NotFoundError` / `*InUseError` / `*TooLongError` raised from sproc return codes), the
@@ -120,7 +121,7 @@ def update_account_roles(*, account_external_id, role_names, connection):
 
 ### Closing the post-sproc lookup
 
-Where a service operation needs to enrich the sproc result with a display-name lookup that no sproc currently provides,
+Where a service operation needs to enrich the sproc result with a display-name lookup that no sproc provides,
 perform the lookup inside the same `connection` cursor — but only after the sproc-driven domain work is complete. The
 post-sproc display query in `update_account_roles` is the canonical example: roles have just been validated by the
 sproc (so a subsequent `SELECT name, display_name FROM dbo.role WHERE name IN (...)` is guaranteed to match), and the
@@ -129,12 +130,12 @@ lookup carries a `noqa: S608` comment because the placeholder list is constructe
 reads still need their own sproc.
 
 The same carve-out covers a small read-only display-metadata lookup that runs **before** the sproc when the lookup
-doubles as the existence check for the sproc's key parameter — for example, resolving a CustomerGroup's name and
+doubles as the existence check for the sproc's key parameter — for example, resolving a customer segment's name and
 description for a report header and raising the binding's invalid-key error when no row matches. Keep such a lookup
 inline at its call site with a one-line comment citing this carve-out; do not collect these into a separate `queries`
 directory or module. They are single-cursor display reads scoped to one service operation, and moving the SQL away from
 its call site hides the connection/transaction context it shares with the sproc call
-(a prior review discussion). Business-table reads that
+(review precedent). Business-table reads that
 carry domain logic still need their own sproc.
 
 ### Do not re-derive in the service layer what the sproc already computed
@@ -154,7 +155,7 @@ This both removes the redundant work and keeps all SQL behind the sproc seam (pe
 Error classes live at the top of the service file, grouped together, after imports and module-level constants and
 before any function definition. New error classes added to an existing file join the top-of-file group; they do not get
 appended after the function bodies that raise them
-(a prior review; links.py L21-91).
+(review precedent; links.py L21-91).
 
 Top-of-file grouping lets a reader enumerate the full error vocabulary of a service at a glance. Error classes
 scattered throughout the file force readers to hunt for them, and reviewers can't tell from the top of the file whether
@@ -227,13 +228,9 @@ class LinkDataProviderConflictError(Exception): ...
 Each top-level service module defines a single `<Entity>ServiceError(Exception)` base and inherits every
 domain-specific error from it. Callers that want to catch "anything this service might throw" reach for the base;
 callers that need a specific outcome reach for the specific subclass. `LinkServiceError` is the canonical shape;
-`CustomerGroupServiceError`, `RoleServiceError`, `AccountServiceError`, `TicketsServiceError`, `LocationServiceError`,
-`PipelineServiceError`, `ProductServiceError`, `ShipperServiceError`, `DataProviderServiceError`, and
-`LookupsServiceError` follow the same pattern
-(links.py:21;
-customer_groups.py:19;
-tickets/errors.py:1;
-lookups/shared.py:4).
+`CustomerSegmentServiceError`, `RoleServiceError`, `AccountServiceError`, `TicketsServiceError`, `LocationServiceError`,
+`PipelineServiceError`, `ProductServiceError`, `VendorServiceError`, `DataProviderServiceError`, and
+`LookupsServiceError` follow the same pattern.
 
 ### Field-too-long: prefer a parameterized error to per-field subclasses
 
@@ -243,11 +240,9 @@ parameterized exception class that accepts the field name as data. Per-field sub
 attribute. The field name is data, not a type
 .
 
-This direction is partially adopted in current code. `LinkFieldTooLongError` exists as a parent for the per-field
-subclasses (`LinkNameTooLongError`, `LinkDescriptionTooLongError`, `LinkCodeTooLongError`) so callers can catch the
-parent when they don't care which field; new service modules should start from the parameterized shape rather than
-spawning new per-field classes
-(links.py:48-91).
+Existing modules may still carry per-field subclasses such as `LinkNameTooLongError`, `LinkDescriptionTooLongError`,
+and `LinkCodeTooLongError`. Treat those as compatibility leftovers. New service modules should start from the
+parameterized shape rather than spawning new per-field classes.
 
 #### Desired
 
@@ -280,16 +275,14 @@ later), add an inline comment naming the condition under which the class becomes
 
 The original `LinkDataProviderMappingNotFoundError` was deleted on this basis: `app_DeleteDataProviderLink` returns
 `SUCCESS` even when the `(LinkID, MappingID)` pair did not exist, so no raise site was reachable. The class remains in
-current `links.py` because subsequent sproc work re-introduced a reachable case — but the principle of "delete or
-annotate" is unchanged (links.py:79).
+`links.py` only when subsequent stored procedure work re-introduces a reachable case. The principle of "delete or
+annotate" is unchanged.
 
 ### Annotate when the DB compat version blocks fine-grained errors
 
-When a generic error class exists because the production MSSQL compatibility level can't surface the specific failure
+When a generic error class exists because the production SQL Server compatibility level cannot surface the specific failure
 case (e.g., "which field was too long", "which unique constraint was violated"), say so in the class docstring with a
-date stamp. The block in `links.py` is the reference shape; `customer_groups.py` carries the same pattern
-(links.py:39-55;
-customer_groups.py:42-58).
+date stamp. The block in `links.py` is the reference shape.
 
 #### Desired
 
@@ -297,7 +290,7 @@ customer_groups.py:42-58).
 class LinkDuplicateDataError(LinkServiceError):
     """Raised when a unique constraint is violated but we cannot determine which field."""
 
-    # As of 2026/03/03, we use db compat version 120, which does not support
+    # As of 2026/03/03, the deployed DB compat version is 120, which does not support
     # specifying which column was duplicated
 
     pass

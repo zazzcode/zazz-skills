@@ -19,10 +19,10 @@ last_review_sha: ac73578bab3bd2c329a6b67232c5146bce90eb89
 
 ## Quick Start
 
-The `data` layer (`/src/data`) wraps complex database objects. This application leverages _many_ stored procedures with
+The `data` layer (`/src/data`) wraps complex database objects. This baseline assumes many stored procedures with
 idiosyncratic behavior; the `data.sprocs` package contains Python bindings to them.
 
-**AT THIS TIME** we are ONLY wrapping stored procedures. The service layer may write SQL queries against tables and
+This baseline wraps only stored procedures. The service layer may write SQL queries against tables and
 views inline.
 
 For complete, copy-paste-ready examples, see [Data Layer Sproc Examples](data-layer-sproc-examples.md).
@@ -42,8 +42,8 @@ src/data/sprocs/
 ├── legacy_ListPipeline.py
 ├── legacy_ListPipelineCode.py
 ├── legacy_ListProduct.py
-├── legacy_ListCustomerGroup.py
-├── legacy_ListShipper.py
+├── legacy_ListCustomerSegment.py
+├── legacy_ListVendor.py
 ├── legacy_UpdateDataProvider.py
 └── util.py                    # Shared utilities for all stored procedures
 ```
@@ -75,7 +75,7 @@ class SprocArguments:
     ...
 ```
 
-If the SQL sproc itself doesn't take arguments, we define a `SprocArguments` dataclass without any attributes:
+If the SQL sproc itself doesn't take arguments, define a `SprocArguments` dataclass without any attributes:
 
 ```python
 @dataclass
@@ -175,7 +175,7 @@ Python `SprocArguments` must match SQL parameter names exactly:
 
 ```sql
 -- SQL Stored Procedure
-CREATE OR ALTER PROCEDURE legacy_ListShipper
+CREATE OR ALTER PROCEDURE legacy_ListVendor
  @lDataProviderID Integer  = -1,
  @tSortByColumn  TinyInt  = 1
 AS
@@ -186,7 +186,7 @@ AS
 # Python Wrapper
 @dataclass
 class SprocArguments:
-    """Parameters accepted by `legacy_ListShipper`."""
+    """Parameters accepted by `legacy_ListVendor`."""
 
     lDataProviderID: int | Literal[-1] = -1  # noqa: N815
     # tSortByColumn omitted - hardcoded in implementation
@@ -195,7 +195,7 @@ class SprocArguments:
 Service layer code converts from snake_case to Hungarian notation:
 
 ```python
-sproc_args = legacy_ListShipper.SprocArguments()
+sproc_args = legacy_ListVendor.SprocArguments()
 if filters.data_provider_id is not None:
     sproc_args.lDataProviderID = filters.data_provider_id
 ```

@@ -19,9 +19,9 @@ Standards documents are reference material, not essays and not checklists. The f
   applies it.
 - "Rationale" as a separate per-item header. Rationale, when needed, is one sentence woven into the prose.
 - Numbered test-case lists, per the rule above
-  (PR #113).
+  (review precedent).
 - `SPEC`, `INVARIANT`, `D-N`, `AC-N`, `OQ-N`, `PR-finding` identifiers, per the rule above
-  (PR #177).
+  (review precedent).
 - Skill names, methodology terms, or framework-specific workflow vocabulary. Standards are project-neutral reference
   material that survives changes to the development workflow.
 - Padding. Sentences that restate the section heading, preface the next sentence, or repeat a point made earlier are
@@ -29,52 +29,43 @@ Standards documents are reference material, not essays and not checklists. The f
 
 ## Citations
 
-Every convention in a standards doc ends with at least one clickable GitHub URL citation. The citation lets any reader
-click through to the PR comment, precedent file, or sibling standard that established the rule.
+Every convention in a standards doc should be traceable to durable evidence: a sibling standard, a repo-relative source
+example, a public issue or PR, or a short provenance note such as "review precedent" when the originating discussion is
+not public. Public baseline standards MUST NOT require readers to open restricted PRs, restricted repos, local
+worktrees, or machine-specific paths to understand the rule.
 
 Citation formats, used wherever flows best in the prose:
 
 - End-of-sentence:
-  `... must be the last decorator before the view function (PR #155).`
+  `... must be the last decorator before the view function ([http-layer.md](./http-layer.md)).`
 - End-of-paragraph:
-  `(Sources: PR #65; http-layer-guide.md §Endpoint Module.)`
+  `(Sources: [http-layer-guide.md §Endpoint Module](./http-layer-guide.md#endpoint-module); review precedent.)`
 - Bracketed mid-sentence:
-  `The canonical pattern at account_list.py:213 shows ...`
+  `The canonical pattern in `src/http_api/v1/accounts/account_list.py` shows ...`
 
-Bare file paths or section names are not acceptable citations. Convert any non-URL reference to a full GitHub URL
-before committing the standard.
+Bare file paths are acceptable only when they are repo-relative examples that establish the pattern locally. Prefer a
+markdown link for standards and long-lived docs. If the evidence is external, cite only public URLs that future readers
+can open.
 
-When multiple PR comments converge on the same convention, cite all of them in the same parenthetical:
+When multiple examples converge on the same convention, cite all relevant standards or repo-relative examples in the
+same parenthetical:
 
 ```markdown
-... (PR #65; PR #155).
+... ([http-layer.md](./http-layer.md); `src/http_api/v1/accounts/account_list.py`).
 ```
-
-Citation URL shapes used in this codebase:
-
-- PR review-comment thread: `review precedent
-- PR top-level review or issue comment: `review precedent or
-  `#pullrequestreview-<id>`
-- Code line in the integration branch: `review precedent
-- Code range in the integration branch: `review precedent
-- Sibling standard section: `review precedent
-
-A relative-path link to a sibling standard in the same directory (e.g., `[pr-process.md](./pr-process.md)`) is
-acceptable for cross-references between unified standards in `docs/standards/`. A bare file path with no link target is
-not.
 
 ### Desired ✅
 
 ```markdown
-HTTP routes return 422 for validation, not 400 (PR #177; see report_get.py:120).
+HTTP routes return 422 for validation, not 400 ([http-layer-errors-and-auth.md](./http-layer-errors-and-auth.md)).
 ```
 
 ### Not desired ❌
 
 ```markdown
-HTTP routes return 422 for validation, not 400 (see report_get.py).
-<!-- bare file path; no clickable URL; reader cannot verify the
-     convention against a specific line or PR thread -->
+HTTP routes return 422 for validation, not 400 (because a reviewer said so).
+<!-- unverifiable private discussion; reader cannot inspect the reason or
+     locate the durable standard that owns the rule -->
 ```
 
 ## Section ordering
@@ -100,8 +91,7 @@ illustrating the canonical shape, and a Not-desired ❌ block lifted from real s
 When an agent guide directs the agent to consult a database table for
 context, include a copy-pasteable `SELECT` query that names exact
 columns. Where the same lookup commonly resolves to a small set of
-values, name those values inline (PR #85;
-precedent at `backend/docs-wip/crud-sproc-guide.md`).
+values, name those values inline ([database-sproc-errors.md](./database-sproc-errors.md)).
 
 ### Desired ✅
 

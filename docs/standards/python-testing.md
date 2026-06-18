@@ -50,7 +50,7 @@ backend/tests/
 │       └── test_app_InsertLink.py
 ├── svc/                                 # one test file per service module
 │   ├── test_links.py
-│   ├── reports/all_shippers_master/
+│   ├── reports/vendor_summary/
 │   │   ├── conftest.py
 │   │   ├── test_service.py
 │   │   ├── test_document.py
@@ -131,8 +131,8 @@ Test method names encode the assertion: `test_<action>_<condition>_returns_<stat
 Logic that transforms or formats rows returned by the service — grouping, sorting, display-type coercion, column
 reshaping — is unit-tested by constructing the row data in Python and passing it to the document or formatter function
 directly. Do not reach for the `db` marker when no database behavior is being exercised
-(a prior review; precedent:
-all_shippers_master/test_service.py).
+(review precedent:
+vendor_summary/test_service.py).
 
 ### Desired
 
@@ -280,12 +280,12 @@ the column mapping and the join shape — and push the breadth into Python-level
 A convergence test (byte-for-byte comparison against a locked JSON fixture) is a legitimate `-m db` use because it pins
 the entire round-trip from sproc through service-layer mapping; the breadth comes from the fixture matrix, not from a
 wide parametrize over the sproc itself
-(all_shippers_master/test_service.py:33-71).
+(vendor_summary/test_service.py:33-71).
 
 ```python
 @pytest.mark.db
 @pytest.mark.parametrize(
-    ("slug", "quality_bank_id", "year", "month", "variant"),
+    ("slug", "customer_segment_id", "year", "month", "variant"),
     [
         (slug, legacy_id, year, month, variant)
         for (slug, legacy_id, year, month) in CASES
@@ -294,7 +294,7 @@ wide parametrize over the sproc itself
     ids=[...],
 )
 def test_run_report_matches_locked_fixture(  # noqa: PLR0913
-    slug, quality_bank_id, year, month, variant,
+    slug, customer_segment_id, year, month, variant,
     transactional_db_connection: pymssql.Connection,
 ) -> None:
     """Verify that run_report() output is byte-for-byte identical to the locked service fixture.
@@ -318,9 +318,9 @@ style means every case is verifying actual DB-driven output, not Python-level sh
 
 An assertion that or-chains several acceptable outputs means the test does not know which behavior the code actually
 has — it locks in nothing and silently keeps passing when the error path changes. Determine the real output and assert
-that one message. When a prior review tightened such an assertion, it revealed the failure came from the CLI's own
+that one message. When review precedent tightened such an assertion, it revealed the failure came from the CLI's own
 quality-bank resolution, not the orchestrator translation the docstring claimed
-(a prior review discussion).
+(review precedent).
 
 ### Desired
 
@@ -334,7 +334,7 @@ assert "No customer group found with ID 999999999" in result.output
 ```python
 assert result.exit_code != 0
 assert (
-    "InvalidCustomerGroup" in result.output
+    "InvalidCustomerSegment" in result.output
     or "999999999" in result.output
     or "no rows" in result.output.lower()
     or "no data" in result.output.lower()

@@ -16,7 +16,7 @@ sproc shape. `testing` is `True` only inside the test suite
 (data-layer-guide.md §exec_sproc Function).
 The `testing` parameter is present on all `exec_sproc` functions, including write sprocs that do not validate columns,
 to keep the call-site signature uniform across all wrapper kinds
-(app_UpdateShipper.py:90).
+(app_UpdateVendor.py:90).
 
 ```python
 def exec_sproc(
@@ -31,7 +31,7 @@ def exec_sproc(
 Source:
 app_GetAllLinks.py:69-74;
 app_InsertProduct.py:93-98;
-app_UpdateShipper.py:86-91.
+app_UpdateVendor.py:86-91.
 
 ### Alphabetical callproc tuple matching the SQL parameter declaration
 
@@ -39,7 +39,7 @@ app_UpdateShipper.py:86-91.
 alphabetical order as the SQL sproc's parameter declaration, and each element carries an inline comment naming the SQL
 parameter it satisfies. New sprocs are authored with alphabetical SQL parameter order; the Python tuple is the derived
 artifact that must match the SQL order exactly
-(a prior review; a prior review).
+(review precedent).
 
 A few legacy sprocs are not yet alphabetical in their SQL declaration (e.g., `app_CreateUnpostedTicketBulk` declares
 `@ImportFileName, @ImportFileDescription` in declaration order). In those wrappers the Python tuple matches the SQL
@@ -87,14 +87,14 @@ This section applies only to sprocs that declare `@ErrorMessage varchar(...) OUT
 `legacy_*` sprocs that predate this pattern do not include this slot and their callproc tuples omit the placeholder
 entirely
 (legacy_UpdateDataProvider.py;
-legacy_ListShipper.py).
+legacy_ListVendor.py).
 
 Every sproc with `@ErrorMessage varchar(...) OUTPUT` in its SQL signature gets a `pymssql.output(str, None)`
 placeholder at the corresponding position in the callproc tuple. The position matches the alphabetical slot of
 `@ErrorMessage` in the SQL declaration. Forgetting the placeholder is not a no-op: `pymssql` will silently shift every
 subsequent positional argument left by one, so the next argument's value lands in `@ErrorMessage` and the last SQL
-parameter is left unbound. No exception is raised. This is the silent data-corruption bug that a prior review fixed in
-`app_GetAllLinks` (a prior review; app_GetAllLinks.py:88-92).
+parameter is left unbound. No exception is raised. This is the silent data-corruption bug that review precedent fixed in
+`app_GetAllLinks` (review precedent; app_GetAllLinks.py:88-92).
 
 When the wrapper needs to read `@ErrorMessage` after the call — to disambiguate entity-specific errors from a generic
 return code — capture the return of `cursor.callproc(...)` and read it positionally:
@@ -140,9 +140,9 @@ cursor.callproc(
 
 ### Convert integer IDs to `str` before passing them in the tuple
 
-Several wrappers cast integer ID arguments to `str` in the callproc tuple (`str(sproc_args.ShipperID)`,
+Several wrappers cast integer ID arguments to `str` in the callproc tuple (`str(sproc_args.VendorID)`,
 `str(sproc_args.lDataProviderID)`). This matches the existing wrapper convention for required integer IDs
-(app_UpdateShipper.py:125;
+(app_UpdateVendor.py:125;
 data-layer-sproc-examples.md §Stored Procedure With No Data Return).
 UUID-typed IDs are also stringified (`str(sproc_args.AccountId)`,
 app_AddAccountRole.py:75).
@@ -152,9 +152,9 @@ cursor.callproc(
     SPROC_NAME,
     (
         pymssql.output(str, None),         # @ErrorMessage OUTPUT — index 0
-        sproc_args.ShipperDescription,
-        str(sproc_args.ShipperID),         # Required — always convert to str
-        sproc_args.ShipperName,
+        sproc_args.VendorDescription,
+        str(sproc_args.VendorID),         # Required — always convert to str
+        sproc_args.VendorName,
         sproc_args.Username,
     ),
 )
@@ -176,10 +176,10 @@ updated for; raising `UnexpectedStoredProcedureCallError` makes that drift loud 
 A return code that means zero results (`NO_ROWS_FOUND`, `NO_RESULTS`) on a read sproc returns an empty list — it is a
 normal variant, not an error, and must not raise
 (app_GetAllLinks.py:101-103;
-legacy_ListShipper.py). On write
+legacy_ListVendor.py). On write
 sprocs the inverse rule applies: a zero-rows-affected code (`NO_ROWS_AFFECTED`, `NO_ROWS_FOUND`) indicates a logic or
 data error and must raise — the entity the caller expected to exist was not found
-(app_UpdateShipper.py:137-138;
+(app_UpdateVendor.py:137-138;
 legacy_UpdateDataProvider.py).
 
 #### Desired ✅

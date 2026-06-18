@@ -21,15 +21,15 @@ For tests with non-obvious behavior, add explanatory commentary after the title:
 
 ```sql
 -- =============================================================================
--- Zero gravity with missing hierarchy level auto-passes
+-- Missing hierarchy level auto-passes
 -- =============================================================================
--- Edge case: incomplete CustomerGroup hierarchy. If any of the 5 hierarchy
--- levels is missing, the zero-check JOIN produces no rows and the check
+-- Edge case: incomplete CustomerSegment hierarchy. If any of the 5 hierarchy
+-- levels is missing, the cross-level JOIN produces no rows and the check
 -- silently passes. This matches trigger behavior where the 5-table JOIN
 -- simply has no matching rows.
 -- =============================================================================
 create or alter procedure
-test_app_ValidateGravityCustomerGroup.[test_ZeroGravity_MissingHierarchyLevel_AutoPasses]
+test_app_ValidateCustomerSegmentHierarchy.[test_MissingHierarchyLevel_AutoPasses]
 ```
 
 ## When to add "why" commentary
@@ -89,7 +89,7 @@ refactors.
 
 - Concept or branch names: e.g. “at the start of the trigger body”, “year validation before code-resolution branches”,
   “PipelineLocation check when both PipelineID and LocationID are non-NULL”.
-- **Phased logic** (e.g. APIGravity Phase 1 / Phase 2): keep phase labels and conditions; omit `(lines …)` after the
+- **Phased logic** (e.g. Hierarchy Phase 1 / Phase 2): keep phase labels and conditions; omit `(lines …)` after the
   phase name.
 - **Section banners** in large test files (e.g. “A. Baseline — …”): the title is enough; do not add parentheticals that
   only point at implementation line ranges.

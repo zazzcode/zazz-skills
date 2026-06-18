@@ -4,14 +4,15 @@ last_updated_at: 2026-05-25
 
 # Security
 
-This standard governs the security-adjacent conventions that show up in day-to-day work on this repo: how CI workflows
+This standard governs the security-adjacent conventions that show up in day-to-day work in a product repo: how CI workflows
 scope secrets and privileges, how CVE-remediation PRs identify themselves and document their residual audit findings,
 and how the frontend keeps known-risky supply-chain surface area off the direct dependency list. It covers GitHub
 Actions workflow files under `.github/workflows/`, `frontend/package.json`, and the bodies of PRs that remediate a
 published advisory.
 
-The rules originate from PR-review history on `dev` (PRs #34, #75, #87) and are reinforced by the current state of
-workflow files and `frontend/package.json` on `dev`.
+This is a stack-specific baseline for GitHub Actions and npm-based frontend dependencies. Teams using a different CI
+system or package manager should replace the examples while preserving the same requirements: scoped secrets,
+minimum-privilege workflow permissions, direct-dependency risk reduction, and documented residual CVE analysis.
 
 ## Workflow secrets are workflow-scoped
 
@@ -104,7 +105,7 @@ frontend-checks.yml#L13-L15.
 ```yaml
 # .github/workflows/backend-serverless-deploy.yml
 permissions:
-  id-token: write # required for the JWT AWS uses to authorize our creds request
+  id-token: write # required for the JWT AWS uses to authorize the cloud-credentials request
   contents: read  # required for actions/checkout
 ```
 
@@ -265,7 +266,7 @@ order (review precedent):
 1. The reachability chain through `npm ls`, naming every link from a direct dependency down to the vulnerable package.
 1. The exploitability condition — the specific runtime configuration or call pattern that triggers the vulnerability.
 1. The actual runtime instantiation in this project, with enough detail to confirm or deny the exploit condition.
-1. The deferral decision: exploitable in our runtime (block this PR on the upstream fix), or non-exploitable /
+1. The deferral decision: exploitable in the runtime (block this PR on the upstream fix), or non-exploitable /
    acceptably-bounded (defer, with the analysis above as the durable record).
 
 Pair the security-context section with a `## Verification` block that lists the commands actually run to confirm the
@@ -287,17 +288,17 @@ the change.
 
 - Reachability: `@mui/x-data-grid-pro -> @mui/x-license -> @mui/x-telemetry -> conf -> ajv`
 - Exploit condition: Ajv must be instantiated with `$data` enabled.
-- Our runtime: Ajv is created with options equivalent to
+- Runtime analysis: Ajv is created with options equivalent to
   `{ allErrors: true, useDefaults: true }` and does not enable `$data`.
-- Decision: Defer; non-exploitable in our usage.
+- Decision: Defer; non-exploitable for this usage.
 
 ### `yaml` GHSA-48c2-rrv3-qjmp (moderate)
 
 - Reachability: `@emotion/react -> ... -> cosmiconfig -> yaml`
 - Exploit condition: parsing untrusted YAML at runtime.
-- Our runtime: `yaml` is only invoked at build time by `cosmiconfig`
-  loading our own config files; no user input reaches the parser.
-- Decision: Defer; non-exploitable in our usage.
+- Runtime analysis: `yaml` is only invoked at build time by `cosmiconfig`
+  loading repo-owned config files; no user input reaches the parser.
+- Decision: Defer; non-exploitable for this usage.
 
 ## Verification
 

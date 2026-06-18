@@ -1,0 +1,4 @@
+interface:
+  display_name: "Standard Builder"
+  short_description: "Infer reviewable standards from existing code"
+  default_prompt: "Use $standard-builder to inspect this repo and draft stack-specific standards for team review."

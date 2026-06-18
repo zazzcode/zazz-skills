@@ -91,26 +91,26 @@ exceptions. Use distinct strings for each path even when the return code (`gcNoR
 the same (review precedent; see
 `app_AddAccountRole.sql`).
 
-The same discipline applies inside the catch block. When `IX_CustomerGroup` is the constraint that fired, the message
-names the Customer Group Code; when `CustomerGroupName` is in the violation text, the message names the Name. Generic
+The same discipline applies inside the catch block. When `IX_CustomerSegment` is the constraint that fired, the message
+names the Customer Segment Code; when `CustomerSegmentName` is in the violation text, the message names the Name. Generic
 "Duplicate data" and "Foreign key constraint violation" prefixes appear only as a fallback when no constraint name in
 `@DbErrorMsg` matches a known case
-(`app_InsertCustomerGroup.sql`).
+(`app_InsertCustomerSegment.sql`).
 
 ### Desired ✅
 
 ```sql
 -- Specific messages for each FK that can fail on insert
-if @DbErrorMsg like '%FK_CalculationMethod$CustomerGroup%'
+if @DbErrorMsg like '%FK_CalculationMethod$CustomerSegment%'
     or @DbErrorMsg like '%CalculationMethod%'
     select @ErrorMessage = 'Invalid Calculation Method ID.'
-else if @DbErrorMsg like '%FK_CustomerGroupType$CustomerGroup%'
-    or @DbErrorMsg like '%CustomerGroupType%'
-    select @ErrorMessage = 'Invalid Customer Group Type ID.'
-else if @DbErrorMsg like '%FK_ReturnAddress$CustomerGroup%'
+else if @DbErrorMsg like '%FK_CustomerSegmentType$CustomerSegment%'
+    or @DbErrorMsg like '%CustomerSegmentType%'
+    select @ErrorMessage = 'Invalid Customer Segment Type ID.'
+else if @DbErrorMsg like '%FK_ReturnAddress$CustomerSegment%'
     or @DbErrorMsg like '%ReturnAddress%'
     select @ErrorMessage = 'Invalid Return Address ID.'
-else if @DbErrorMsg like '%FK_WireInstruction$CustomerGroup%'
+else if @DbErrorMsg like '%FK_WireInstruction$CustomerSegment%'
     or @DbErrorMsg like '%WireInstruction%'
     select @ErrorMessage = 'Invalid Wire Instruction ID.'
 else
@@ -190,9 +190,9 @@ The `BEGIN CATCH` block is where the sproc's three-channel return contract is se
 (`error_number() = 547` → `gcNoParentRecord`, never the generic `gcDatabaseError`). The third handles truncation
 (`error_number() in (8152, 2628)` → `gcStringTooLong`). The default branch maps everything else to `gcDatabaseError`
 (review precedent; see
-`app_InsertCustomerGroup.sql`
+`app_InsertCustomerSegment.sql`
 and
-`app_UpdateCustomerGroup.sql`).
+`app_UpdateCustomerSegment.sql`).
 
 Returning a domain-level error code rather than a generic database error gives callers a stable signal they can branch
 on without treating it as an unexpected system failure. `gcNoParentRecord` means "the parent record you referenced
@@ -211,11 +211,11 @@ begin catch
             select @ReturnCode = ErrorID from Error
             where ErrorCode = 'gcDuplicateData'
 
-            if @DbErrorMsg like '%IX_CustomerGroup%'
-                or @DbErrorMsg like '%CustomerGroupCode%'
-                select @ErrorMessage = 'Customer Group Code is already in use.'
-            else if @DbErrorMsg like '%CustomerGroupName%'
-                select @ErrorMessage = 'Customer Group Name is already in use.'
+            if @DbErrorMsg like '%IX_CustomerSegment%'
+                or @DbErrorMsg like '%CustomerSegmentCode%'
+                select @ErrorMessage = 'Customer Segment Code is already in use.'
+            else if @DbErrorMsg like '%CustomerSegmentName%'
+                select @ErrorMessage = 'Customer Segment Name is already in use.'
             else
                 select @ErrorMessage = 'Duplicate data: ' + @DbErrorMsg
         end
@@ -225,7 +225,7 @@ begin catch
             select @ReturnCode = ErrorID from Error
             where ErrorCode = 'gcNoParentRecord'
 
-            if @DbErrorMsg like '%FK_CalculationMethod$CustomerGroup%'
+            if @DbErrorMsg like '%FK_CalculationMethod$CustomerSegment%'
                 or @DbErrorMsg like '%CalculationMethod%'
                 select @ErrorMessage = 'Invalid Calculation Method ID.'
             -- ... other FK branches ...
@@ -275,7 +275,7 @@ loudly with `raiserror(..., 16, 1)` if any row is missing. Subsequent branches a
 re-querying `dbo.Error`. A misconfigured `dbo.Error` becomes a loud, immediate signal once at proc entry instead of an
 intermittent `NULL` that leaks out only when a particular branch fires
 (review precedent; see
-`app_ReportAllShippersMaster.sql`).
+`app_ReportVendorSummary.sql`).
 
 For **write sprocs** (UPDATE / INSERT / DELETE with `BEGIN TRY` / `BEGIN CATCH`), the per-branch ad-hoc lookup
 documented in *External-ID resolution at the top of the body* and *Catch-block error-code dispatch* above remains the
@@ -296,7 +296,7 @@ sprocs, it is the existing per-branch pattern.
 -- proc entry, with a severity-16 raise if dbo.Error is misconfigured.
 declare @Ok int;
 declare @NoRowsFound int;
-declare @InvalidCustomerGroup int;
+declare @InvalidCustomerSegment int;
 
 select @Ok = ErrorID
 from dbo.Error
@@ -310,11 +310,11 @@ where ErrorCode = 'gcNoRowsFound';
 if @NoRowsFound is null
     raiserror ('Missing Error table row: gcNoRowsFound', 16, 1);
 
-select @InvalidCustomerGroup = ErrorID
+select @InvalidCustomerSegment = ErrorID
 from dbo.Error
-where ErrorCode = 'gcInvalidCustomerGroup';
-if @InvalidCustomerGroup is null
-    raiserror ('Missing Error table row: gcInvalidCustomerGroup', 16, 1);
+where ErrorCode = 'gcInvalidCustomerSegment';
+if @InvalidCustomerSegment is null
+    raiserror ('Missing Error table row: gcInvalidCustomerSegment', 16, 1);
 
 -- ... existence checks and main query ...
 

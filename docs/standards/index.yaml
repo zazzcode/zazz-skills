@@ -6,6 +6,12 @@
 #   file        - document filename in this directory
 #   applies_to  - situations where the standard applies
 #   purpose     - concise description of decisions governed by the file
+#
+# This public baseline intentionally mixes generic methodology standards with
+# stack-specific baseline examples. When adopting it, keep the schema stable
+# for agent routing and update paths, activities, and purpose text to match the
+# target repository. Stack-specific entries are examples to keep or replace,
+# not universal requirements.
 standards:
   # Unified standards (2026-05-25). Large standards are split by agent work context
   # so a task loads the smallest relevant document set instead of one oversized guide.
@@ -135,7 +141,7 @@ standards:
         - modifying report rendering, report fixtures, or convergence tests
         - changing report execution timeouts or the report registry
     purpose: >-
-      Report-specific rules only (general standards still apply): one-document architecture, legacy-parity contract (line order, ROUND_HALF_UP, byte-equal convergence), registry/style contract, report query timeouts, and PDF test determinism.
+      Report-specific baseline rules only (general standards still apply): one-document architecture, parity contract, registry/style contract, report query timeouts, and PDF test determinism.
 
   - file: service-layer-data-and-exceptions.md
     applies_to:
@@ -275,7 +281,7 @@ standards:
       activities:
         - adding LLM-invoking workflows, workflow-scoped API keys, or conformance automation
     purpose: >-
-      LLM workflow API keys, settings-first prompt layout, display_report, and incremental conformance workflow.
+      LLM workflow API keys, settings-first prompt layout, visible run summaries, and incremental conformance workflow.
 
   - file: pr-process.md
     applies_to:
@@ -286,7 +292,7 @@ standards:
         - replacing legacy screens
         - editing root direnv, .env, or yamlfmt configuration
     purpose: >-
-      PR title scopes, one logical change per PR, legacy replacement evidence, no transitional cruft, CVE title format, and repo hygiene.
+      PR title scopes, one logical change per PR, replacement evidence, no transitional cruft, CVE title format, and repo hygiene.
 
   - file: security.md
     applies_to:
@@ -332,7 +338,7 @@ standards:
         - deciding committed vs gated report tests
         - separating functional report tests from load or latency testing
     purpose: >-
-      Per-report-aggregate test-time budget, minimal data-coverage-driven input selection, no env-var gates, functional-vs-load/latency separation, and per-layer coverage ownership for report test batteries.
+      Per-report aggregate test-time budget, minimal data-coverage-driven input selection, no environment-variable gates, functional-vs-load/latency separation, and per-layer coverage ownership for report test batteries.
 
   - file: logging-observability.md
     applies_to:

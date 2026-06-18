@@ -28,7 +28,7 @@ the context: schemas, authorization, migrations, wrapper templates, runtime logg
 Splitting a standard must not remove hard references. Each normative standard keeps clickable citations to the PR
 comment, precedent file, or established best-practice source that justifies the rule. The citation requirement comes
 from the docs-hygiene standard and originated in PR review feedback requiring verifiable source URLs
-(a prior review; a prior review).
+(review precedent).
 
 This file is a map of the split. The rule text and its citations remain in the individual standards listed below.
 

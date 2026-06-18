@@ -14,7 +14,7 @@ distinction is intentional: update payloads carry a fixed set of fields between 
 and `frozen=True` makes accidental mutation impossible; insert payloads sometimes need to be assembled or defaulted in
 steps before the call, and the mutability supports that
 (review precedent;
-customer_groups.py:108;
+customer_segments.py:108;
 links.py:205).
 
 ### Desired
@@ -49,11 +49,11 @@ class UpdateLinkData:  # wrong: update payloads must be immutable; use frozen=Tr
 
 ### Result dataclasses
 
-Domain-result dataclasses (e.g., `Link`, `Location`, `CustomerGroup`, `Ticket`) are plain `@dataclass` — they're read on
+Domain-result dataclasses (e.g., `Link`, `Location`, `CustomerSegment`, `Ticket`) are plain `@dataclass` — they're read on
 the way out of the service, never mutated. Type hints use `datetime` (UTC-aware), `Decimal`, the `NewType`-defined
 identifiers from `types_.py` (`AccountExternalID`, `AccountInternalID`, `RoleName`, `PermissionName`, etc.), and
 `Literal["Y", "N"]` for the project's char-flag columns
-(customer_groups.py:134;
+(customer_segments.py:134;
 links.py:94;
 tickets/list_tickets.py).
 
@@ -67,7 +67,7 @@ links.py:137;
 locations.py:118;
 pipelines.py:109;
 products.py:109;
-shippers.py:109).
+vendors.py:109).
 
 The comment goes at the assignment line itself — not in the dataclass docstring, not in a module-level note. The
 comment must be visible to whoever is reading the row-mapping block, not to someone hunting elsewhere in the file.
@@ -278,9 +278,9 @@ def set_account_roles(*, account_external_id, role_names, connection):
 
 When the underlying sproc supports PATCH semantics (only non-None fields are written), the `Update*Data` dataclass uses
 `... | None = None` defaults and the function docstring says so explicitly. `UpdateLinkData` and
-`UpdateCustomerGroupData` are the reference shapes
+`UpdateCustomerSegmentData` are the reference shapes
 (links.py:206;
-customer_groups.py:108).
+customer_segments.py:108).
 
 #### Desired
 
