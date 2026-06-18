@@ -23,6 +23,7 @@ The methodology is intentionally Git-native. Durable docs, code, review evidence
 
 - [Methodology overview](zazz-methodology.md)
 - [Methodology sections](docs/methodology/README.md)
+- [Standards baseline](docs/standards/README.md)
 - [Standards index](docs/standards/index.yaml)
 - [AGENTS.md example template](templates/AGENTS.md)
 - [Worktree setup guide](docs/worktree-setup.md)
@@ -112,7 +113,9 @@ Each section includes a `Relevant Skills` table that explains which skills apply
 
 ## Standards Library
 
-The standards library is indexed by [docs/standards/index.yaml](docs/standards/index.yaml) so agents can load the smallest relevant standard set for a task.
+Start with [docs/standards/README.md](docs/standards/README.md). The standards library is also indexed by [docs/standards/index.yaml](docs/standards/index.yaml) so agents can load the smallest relevant standard set for a task.
+
+The standards are baseline templates, not a universal policy. Teams adopting Zazz should keep the standards that match their architecture, replace technology-specific examples that do not fit, and add their own corporate requirements for security, privacy, compliance, accessibility, release management, code ownership, and review evidence. The important habit is to make engineering expectations explicit enough that humans and agents can implement, test, and review against the same source of truth.
 
 | Area | Standards |
 | ---- | --------- |
