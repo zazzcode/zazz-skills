@@ -52,7 +52,7 @@ Useful evidence includes:
 | ----- | ----------------------- |
 | `qa-testing` | Independently verifies acceptance criteria, checks evidence quality, identifies rework, and produces reviewer-ready validation notes. |
 | `pr-review` | Finds gaps in spec alignment, standards conformance, test quality, and maintainability before human review. |
-| `conformance` | Supports small targeted fixes when validation exposes a standards issue. |
+| `conformance` | Supports small targeted fixes when validation exposes standards drift in a bounded repo area. |
 | `doc-check` | Runs repo-local documentation checks for changed methodology, standards, and other docs. |
 | `standard-builder` | Helps draft or refine stack-specific standards when validation exposes a repeated quality gap. |
 | `psql` | Provides safe PostgreSQL diagnostics for data-backed behavior, performance checks, and query/function profiling. |

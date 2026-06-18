@@ -52,7 +52,7 @@ Stop and ask for owner direction when:
 | ----- | ----------------------- |
 | `worktree` | Creates or repairs isolated worktree lanes so implementation stays separate, recoverable, and easy to review. |
 | `spec-builder` | Supplies the approved execution contract, sequencing guidance, standards list, and halt conditions. |
-| `conformance` | Applies one focused standards-alignment fix when the implementation needs a small documented correction. |
+| `conformance` | Applies one focused standards-alignment fix against a named standard and bounded code area when implementation exposes drift. |
 | `psql` | Speeds safe PostgreSQL schema inspection, read-only checks, query profiling, and function/procedure diagnostics. |
 | `sqlcmd` | Speeds safe SQL Server schema inspection, stored procedure checks, timing probes, and read-only diagnostics. |
 | `zazz-board-api` | Updates task state, locks, notes, and execution metadata when the repo uses Zazz Board. |

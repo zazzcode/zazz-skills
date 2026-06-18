@@ -36,6 +36,26 @@ Every adopting repo should define deterministic checks for the stack it actually
 The repo's `AGENTS.md`, standards index, and deliverable specifications should point agents at these commands. A
 standard that cannot name its verification command should explain why the requirement is manual.
 
+## Ongoing Standards Conformance
+
+Standards are useful only if existing code keeps moving toward them. Zazz treats conformance as recurring maintenance:
+point the `conformance` skill at a named standard or standard section and a bounded part of the codebase, then produce a
+small PR-sized fix that reduces drift.
+
+Good conformance work has three inputs:
+
+- the standard or exact section that defines the rule
+- the repo area to inspect, such as one service, package, module, test suite, docs folder, or file set
+- the deterministic checks or review evidence required by that standard
+
+The output should be a focused change that reviewers can evaluate quickly. Do not mix conformance with unrelated
+feature work, broad migrations, opportunistic refactors, or cosmetic churn. When a standard exposes several drift
+patterns, split them into separate conformance PRs unless the fixes are inseparable.
+
+Use this loop for legacy code, recently merged code that missed a standard, or areas that need preparation before a
+larger deliverable. If the repo cannot name the standard rule being applied, pause and update or create the standard
+first.
+
 ## Stack-Specific Examples
 
 These examples are baselines, not universal requirements:
@@ -80,6 +100,10 @@ Agents should use deterministic gates throughout implementation:
 Agents may apply auto-formatters and safe lint fixes when the repo standard allows it. They must not silence lint
 rules, loosen type checks, skip accessibility checks, or weaken CI gates just to make a PR pass.
 
+For conformance maintenance, agents should first bind the work to one named standard and one bounded repo area. They
+should cite the standard section, apply a small fix, run the required checks, and leave other discovered drift as
+follow-up candidates instead of widening the diff.
+
 ## Standards And Specifications
 
 Standards should distinguish between:
@@ -108,9 +132,12 @@ gap and define the manual evidence expected until the tooling exists.
 
 Stop and ask for human direction when:
 
+- conformance work cannot identify the governing standard or the bounded code area
 - no repo-standard command exists for a quality requirement that should be deterministic
 - a linter/type checker/accessibility rule conflicts with existing code or product behavior
 - a proposed suppression is broad, permanent, or not explained inline
+- a conformance pass would require behavior changes, wide renames, or multi-package migration outside the requested
+  scope
 - automated accessibility checks pass but the UI still has likely keyboard, focus, contrast, or screen-reader risks
 - a formatter would rewrite unrelated files or obscure a focused diff
 - CI and local results disagree and the cause is not understood

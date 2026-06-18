@@ -9,7 +9,7 @@ Read in workflow order:
 3. [Proposals](./proposals.md)
 4. [Features and Milestones](./features-and-milestones.md)
 5. [Specifications](./specifications.md)
-6. [Deterministic Quality Gates](./deterministic-quality.md)
+6. [Deterministic Quality Gates and Conformance](./deterministic-quality.md)
 7. [Code Generation](./code-generation.md)
 8. [Testing and Validation](./testing-and-validation.md)
 9. [PR Creation](./pr-creation.md)
@@ -29,7 +29,7 @@ Each section includes a `Relevant Skills` table that explains which skills apply
 | Proposals and decisions | `proposal-builder`, `feature-doc-builder`, `architecture-doc-builder` |
 | Features and milestones | `feature-doc-builder`, `architecture-doc-builder`, `spec-builder` |
 | Deliverable specifications | `spec-builder`, `zazz-board-api`, `jira-api` |
-| Deterministic quality gates | `standard-builder`, `conformance`, `doc-check`, `qa-testing` |
+| Deterministic quality gates and standards conformance | `standard-builder`, `conformance`, `doc-check`, `qa-testing` |
 | Code generation | `worktree`, `conformance`, `psql`, `sqlcmd`, `zazz-board-api` |
 | Testing and validation | `qa-testing`, `pr-review`, `conformance`, `psql`, `sqlcmd` |
 | PR creation | `pr-builder`, `gh-stack`, `qa-testing` |

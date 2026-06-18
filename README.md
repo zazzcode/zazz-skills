@@ -13,6 +13,7 @@ Zazz gives executives and engineering teams:
 - **Faster delivery with control:** agents can implement and verify bounded work, while humans keep scope, product signoff, review, approval, and merge authority.
 - **Clearer product intent:** `project.md`, proposals, architecture docs, feature requirements, and milestones preserve why the work matters before code is written.
 - **Executable delivery contracts:** deliverable specifications turn intent into scoped implementation work with acceptance criteria, test plans, standards, and halt conditions.
+- **Ongoing standards conformance:** small maintenance PRs keep legacy and existing code aligned with adopted standards instead of letting drift accumulate.
 - **Cleaner parallel execution:** isolated worktrees keep active agent work separate, recoverable, and easier to coordinate across teams or branches.
 - **Stronger review signal:** `qa-testing` verifies behavior and evidence, `pr-builder` packages the pull request, and `pr-review` runs automated self-review before human review and merge.
 - **Durable organizational knowledge:** shipped work updates product, architecture, and standards docs so decisions do not disappear into chats, tickets, or PR comments.
@@ -43,6 +44,7 @@ project.md
   -> features/ and milestones
   -> specifications/
   -> deterministic quality gates
+  -> standards conformance maintenance
   -> code generation
   -> testing and validation
   -> PR packaging and automated review
@@ -104,7 +106,7 @@ The methodology is split so teams can read only the part of the progression they
 | Proposals and decisions | [docs/methodology/proposals.md](docs/methodology/proposals.md) |
 | Features and milestones | [docs/methodology/features-and-milestones.md](docs/methodology/features-and-milestones.md) |
 | Deliverable specifications | [docs/methodology/specifications.md](docs/methodology/specifications.md) |
-| Deterministic quality gates | [docs/methodology/deterministic-quality.md](docs/methodology/deterministic-quality.md) |
+| Deterministic quality gates and standards conformance | [docs/methodology/deterministic-quality.md](docs/methodology/deterministic-quality.md) |
 | Code generation | [docs/methodology/code-generation.md](docs/methodology/code-generation.md) |
 | Testing and validation | [docs/methodology/testing-and-validation.md](docs/methodology/testing-and-validation.md) |
 | PR creation | [docs/methodology/pr-creation.md](docs/methodology/pr-creation.md) |
@@ -167,7 +169,7 @@ Recommended adoption flow:
 | `worktree` | Sets up or manages the methodology's Zazz-style worktree model through the Worktrunk workflow used by the skill. |
 | `zazz-board-api` | Companion utility skill for Zazz Board integration. |
 | `jira-api` | Draft companion utility for Jira-backed repos. |
-| `conformance` | Applies one focused standards-alignment change against a named guide. |
+| `conformance` | Applies one focused standards-alignment change against a named standard and bounded repo area. |
 | `doc-check` | Runs repo-local formatting and linting checks for documentation changes. |
 | `psql` | Provides safe PostgreSQL diagnostic and profiling command guidance for repos that use `psql`. |
 | `sqlcmd` | Provides safe SQL Server diagnostic command guidance for repos that use `sqlcmd`. |
