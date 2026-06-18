@@ -47,7 +47,7 @@ Useful evidence includes:
 | Skill | How it helps efficiency |
 | ----- | ----------------------- |
 | `qa-testing` | Independently verifies acceptance criteria, checks evidence quality, identifies rework, and produces reviewer-ready validation notes. |
-| `pr-review` | Finds gaps in spec alignment, standards conformance, test quality, and maintainability before formal review. |
+| `pr-review` | Finds gaps in spec alignment, standards conformance, test quality, and maintainability before human review. |
 | `conformance` | Supports small targeted fixes when validation exposes a standards issue. |
 | `psql` | Provides safe PostgreSQL diagnostics for data-backed behavior, performance checks, and query/function profiling. |
 | `sqlcmd` | Provides safe SQL Server diagnostics for stored procedures, database tests, timing probes, and read-only data checks. |

@@ -1,6 +1,6 @@
 # PR Creation
 
-Pull requests package the completed deliverable for review. Zazz uses draft-first PRs by default so implementation, evidence, and self-review can converge before formal review.
+Pull requests package the completed deliverable for automated review, human review, and merge. Zazz uses draft-first PRs by default so implementation, evidence, and self-review can converge before the team asks for human approval.
 
 ## Draft-First Flow
 
@@ -8,7 +8,7 @@ Pull requests package the completed deliverable for review. Zazz uses draft-firs
 2. Keep the PR scoped to one logical deliverable or one branch in a stack.
 3. Fill the PR body with specification links, summary, test evidence, and known risks.
 4. Run validation and self-review while the PR is still draft.
-5. Mark ready only after owner-required evidence and rework loops are complete.
+5. Mark ready only after required evidence, automated review, and rework loops are complete.
 
 ## PR Contents
 
@@ -46,3 +46,4 @@ Use `gh-stack` when the repo uses GitHub and dependent PRs.
 - [Code Generation](./code-generation.md)
 - [Testing and Validation](./testing-and-validation.md)
 - [Self-Review](./self-review.md)
+- [Human Review and Merge](../human-in-loop-pr-review-strategy.md)

@@ -1,6 +1,6 @@
 # Zazz Methodology & Skills
 
-Zazz is an opinionated, spec-driven methodology for teams that build software with human owners and AI agents. It gives projects a durable document model, reusable agent skills, and a delivery workflow that moves from product intent to review-ready pull requests without losing the reason behind the work.
+Zazz is an opinionated, spec-driven methodology for teams that build software with human owners and AI agents. It gives projects a durable document model, reusable agent skills, and a delivery workflow that moves from product intent to human-reviewed, merged software changes without losing the reason behind the work.
 
 This repository is the canonical source for the Zazz methodology and shared skills. Downstream repos can vendor or sync these docs and skills, but methodology changes should land here first.
 
@@ -11,7 +11,7 @@ Zazz exists to make agent-assisted delivery safer and more repeatable:
 - **Define the right work:** `project.md`, architecture docs, proposals, feature requirements, and milestones preserve product and system intent.
 - **Slice work into executable contracts:** deliverable specifications define bounded implementation work with acceptance criteria, test plans, standards, and halt conditions.
 - **Execute in isolation:** agents implement inside worktrees so active work is recoverable and separate from unrelated changes.
-- **Validate before review:** `qa-testing` verifies behavior and evidence; draft PRs are packaged with `pr-builder`; `pr-review` runs self-review before formal review.
+- **Review before merge:** `qa-testing` verifies behavior and evidence; `pr-builder` packages the pull request; `pr-review` runs automated self-review before human review and merge.
 - **Promote durable knowledge:** when work changes product behavior, architecture, or standards, the long-lived docs are updated instead of leaving knowledge trapped in a PR or chat.
 
 The methodology is intentionally Git-native. Durable docs, code, and review evidence move through branches and PRs. Humans keep scope, product signoff, PR approval, and merge authority; agents operate inside approved contracts.
@@ -40,8 +40,7 @@ project.md
   -> specifications/
   -> code generation
   -> testing and validation
-  -> draft PR creation
-  -> self-review
+  -> PR packaging and automated review
   -> human review and merge
 ```
 
@@ -103,7 +102,8 @@ The methodology is split so teams can read only the part of the progression they
 | Code generation | [docs/methodology/code-generation.md](docs/methodology/code-generation.md) |
 | Testing and validation | [docs/methodology/testing-and-validation.md](docs/methodology/testing-and-validation.md) |
 | PR creation | [docs/methodology/pr-creation.md](docs/methodology/pr-creation.md) |
-| Draft PR self-review | [docs/methodology/self-review.md](docs/methodology/self-review.md) |
+| Automated self-review | [docs/methodology/self-review.md](docs/methodology/self-review.md) |
+| Human review and merge | [docs/human-in-loop-pr-review-strategy.md](docs/human-in-loop-pr-review-strategy.md) |
 
 Each section includes a `Relevant Skills` table that explains which skills apply and how they improve process efficiency.
 
@@ -138,7 +138,7 @@ The standards library is indexed by [docs/standards/index.yaml](docs/standards/i
 | Skill | Purpose |
 | ----- | ------- |
 | `qa-testing` | Runs verification against requirements, standards, tests, frontend/backend behavior, API checks, and evidence quality. |
-| `pr-review` | Reviews PRs or local diffs for correctness, evidence quality, low-value tests, agentic slop, redundancy, and scope drift. |
+| `pr-review` | Reviews PRs or local diffs for correctness, evidence quality, low-value tests, generated-code clutter, redundancy, and scope drift. |
 
 ### Delivery and infrastructure skills
 

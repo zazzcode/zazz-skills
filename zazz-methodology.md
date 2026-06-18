@@ -6,12 +6,12 @@ This document is the methodology entry point and executive overview. The detaile
 
 ## Executive Overview
 
-Zazz gives teams a repeatable path from product intent to reviewed code. It does that by separating durable knowledge from execution work:
+Zazz gives teams a repeatable path from product intent to a human-reviewed, merged software change. It does that by separating durable knowledge from execution work:
 
 - Durable docs explain the product, architecture, decisions, features, and standards.
 - Deliverable specifications define one bounded unit of implementation.
 - Agents execute inside approved contracts, isolated worktrees, and repo standards.
-- Validation, draft PR packaging, and self-review happen before formal human review.
+- Validation, pull request packaging, and automated self-review happen before human review and merge.
 - Durable docs are updated when the shipped work changes the product or system design.
 
 The result is a workflow where humans retain product, scope, approval, and merge authority while agents can handle more of the implementation and verification loop with less supervision.
@@ -28,8 +28,7 @@ project.md
   -> specifications/
   -> code generation
   -> testing and validation
-  -> draft PR creation
-  -> self-review
+  -> PR packaging and automated review
   -> human review and merge
   -> durable docs updated
 ```
@@ -50,7 +49,8 @@ Each focused section includes a `Relevant Skills` table that explains which skil
 | [Code Generation](docs/methodology/code-generation.md) | Defines agent implementation workflow, worktree discipline, and halt conditions. |
 | [Testing and Validation](docs/methodology/testing-and-validation.md) | Defines acceptance verification, test quality, QA loops, and evidence. |
 | [PR Creation](docs/methodology/pr-creation.md) | Defines draft-first PR packaging and stacked PR usage. |
-| [Self-Review](docs/methodology/self-review.md) | Defines author-side automated review before formal human review. |
+| [Self-Review](docs/methodology/self-review.md) | Defines author-side automated review before human review. |
+| [Human Review and Merge](docs/human-in-loop-pr-review-strategy.md) | Defines review tiers, human approval, merge expectations, and post-merge learning. |
 
 ## Core Model
 
@@ -85,7 +85,7 @@ Repos declare the docs root in `AGENTS.md`, commonly `docs/` or `.zazz/`. The va
 4. Agents may operate autonomously inside approved contracts, but humans retain scope, approval, signoff, and merge authority.
 5. Active implementation happens in isolated worktrees.
 6. Draft PRs are the normal packaging surface for agent-generated work.
-7. Self-review runs before a draft PR is marked ready for human review.
+7. Automated self-review runs before a PR is marked ready for human review.
 8. Durable docs are updated when implementation changes the product, architecture, or standards.
 
 ## Skills
@@ -100,7 +100,7 @@ The shared skills under [`.agents/skills/`](.agents/skills/) implement the metho
 | Deliverable specifications | `spec-builder` |
 | Implementation verification | `qa-testing` |
 | PR packaging | `pr-builder` |
-| Draft PR self-review | `pr-review` |
+| Automated self-review | `pr-review` |
 | Stacked PR workflow | `gh-stack` |
 | Worktree setup | `worktree` |
 | Standards conformance | `conformance` |
@@ -110,14 +110,14 @@ Companion utility skills such as `zazz-board-api`, `jira-api`, `psql`, and `sqlc
 
 ## Authority Gates
 
-Agents can draft docs, implement code, run tests, create draft PRs, and perform self-review when the governing contract is approved.
+Agents can draft docs, implement code, run tests, prepare pull requests, and perform self-review when the governing contract is approved.
 
 Humans control:
 
 - approving proposals, feature direction, architecture direction, and deliverable specifications
 - resolving product or technical ambiguity
 - accepting subjective UX or product behavior
-- marking PRs ready for formal review when repo policy requires it
+- requesting human review when repo policy requires it
 - approving and merging PRs
 
 ## Storage Modes
@@ -130,4 +130,4 @@ Repos may use external systems for proposals, specifications, or execution recor
 
 This repository is the canonical source for the methodology and shared skills. Downstream repos may vendor or sync these docs and skills, but methodology changes should land here first.
 
-[zazz-board](https://github.com/zazzcode/zazz-board) is the reference implementation and dogfoods the methodology.
+[zazz-board](https://github.com/zazzcode/zazz-board) is the reference implementation and uses the methodology.

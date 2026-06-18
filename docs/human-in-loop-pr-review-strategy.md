@@ -1,8 +1,8 @@
-# Human-in-the-Loop PR Review Strategy for Agent-Generated Code
+# Human-in-the-Loop PR Review Strategy for AI-Assisted Code
 
 ## Executive Summary
 
-Agentic development moves the bottleneck from code production to review. An agent can
+AI-assisted development moves the bottleneck from code production to review. An agent can
 produce a plausible 100-file pull request faster than a human can understand whether the
 change is correct, safe, maintainable, and worth merging.
 
@@ -11,20 +11,19 @@ The recommended Zazz strategy is:
 1. Require a documented implementation contract before implementation.
 2. Package every PR with evidence and reviewer guidance.
 3. Use agents to grade PRs against the implementation contract and repo standards.
-4. Verify that broad agent output follows the approved decomposition before formal human
-   review.
+4. Verify that broad agent output follows the approved decomposition before human review.
 5. Route review depth by change category, blast radius, and risk.
 6. Preserve human approval and merge authority.
 
-Humans remain the gatekeepers. Agents prepare the work, check standards, surface risk,
-and reduce cold diff archaeology.
+Humans keep final approval and merge authority. Agents prepare the work, check standards,
+surface risk, and reduce manual diff investigation.
 
 Core guardrails:
 
 - No implementation should begin from an ad hoc request alone. The work should start from
   a documented implementation contract: a merged approved specification, approved feature
   or architecture document, detailed bug report, or defined tracker task.
-- No formal human review without a clear implementation contract, evidence, and reviewer
+- No human review without a clear implementation contract, evidence, and reviewer
   guidance.
 - `pr-builder` packages PR context; `pr-review` grades the PR against the governing
   implementation contract, evidence, and repo standards.
@@ -34,7 +33,7 @@ Core guardrails:
   approved, merged, and used to define the review shape before implementation starts.
 - Broad agent-generated diffs should pass a decomposition gate that verifies the
   implementation followed the approved review shape. If no review shape was approved, the
-  work returns to specification update and approval before formal review.
+  work returns to specification update and approval before human review.
 - A stack is useful when it creates coherent review units. It is not useful when it turns
   one unreviewable PR into dozens of tiny PRs.
 - Humans approve, reject, merge, and own final product risk.
@@ -42,7 +41,7 @@ Core guardrails:
 ## The Core Problem
 
 Traditional review guidance assumes humans constrain both code production and review.
-Agentic development breaks that balance: generating code is cheap; building justified
+AI-assisted development changes that balance: generating code is cheap; building justified
 confidence is still expensive.
 
 The failure modes are predictable:
@@ -54,7 +53,7 @@ The failure modes are predictable:
 - Reviewers cannot tell whether the PR follows the approved implementation contract.
 - Architecture, data, security, migration, or rollback risk is buried inside a broad
   implementation diff.
-- Human reviewers become the cleanup crew for unshaped agent throughput.
+- Human reviewers become the cleanup crew for poorly shaped automated output.
 
 The strategy is not "make every PR tiny." It is to make every review unit honest: a human
 can understand the documented contract, inspect the important diff, trust the evidence,
@@ -180,16 +179,16 @@ contract compatibility. A unit test may prove a helper; it does not prove a work
 ## Operating Model
 
 Implementation PRs should normally open as drafts, run objective checks early, receive an
-author-side agent review, and carry clear reviewer guidance before formal human review.
+author-side agent review, and carry clear reviewer guidance before human review.
 Advisory labels for risk, evidence, generated artifacts, size, and review shape are useful
 inputs, but the source of truth is the approved implementation contract.
 
-A PR that is large, unclear, or unverified can be returned to draft or routed back to
+A PR that is large, unclear, or missing evidence can be returned to draft or routed back to
 specification even if it passes CI.
 
 ## Agent-Assisted Review
 
-`pr-review` should normally run before formal human review and may run again on reviewer
+`pr-review` should normally run before human review and may run again on reviewer
 request. It needs:
 
 1. `AGENTS.md` to resolve the docs root and repo workflow.
@@ -259,7 +258,7 @@ Use these signals during specification review and PR review:
 - whether generated or mechanical files obscure semantic changes
 - whether security, auth, data, migration, or operational risk is mixed with routine work
 - whether each proposed review unit has its own acceptance criteria and evidence
-- whether a human reviewer can understand the change without trusting the generator
+- whether a human reviewer can understand the change without trusting automation blindly
 
 If implementation reveals that the approved review shape is wrong, the correct outcome is
 to update and re-approve the merged specification, not an unapproved split, stack, or
@@ -334,7 +333,7 @@ remove the human gate.
 
 ### Stacked PR Process
 
-1. The Deliverable Owner approves a specification that says this deliverable will use a
+1. The responsible owner approves a specification that says this deliverable will use a
    stack.
 2. The specification defines the stack map: slice names, dependency order, acceptance
    criteria covered by each slice, expected reviewers, evidence expectations, and merge
@@ -424,13 +423,13 @@ flowchart TB
 The plan-conformance check is not a late opportunity to invent a split or stack. It
 confirms that implementation followed the decomposition approved during specification. If
 the PR needs a different shape, the specification is updated and re-approved before
-formal review continues.
+human review continues.
 
 ## Draft, Ready, And Merge Expectations
 
 ### Draft PR
 
-Draft PRs are for shaping and cleanup before formal review.
+Draft PRs are for shaping and cleanup before human review.
 
 Before requesting review, the author or agent should complete the implementation from the
 approved contract, self-review the diff, remove unrelated edits, run practical checks, and
@@ -590,7 +589,7 @@ Default critical-path categories:
 
 Each repo should map these categories to concrete standards, CODEOWNERS, and labels.
 
-That mapping is only the starting point. A reviewer or Deliverable Owner should be able
+That mapping is only the starting point. A reviewer or responsible owner should be able
 to raise or lower the tier when the actual change is safer or riskier than the default,
 and the override should be visible so the team can tune the heuristics.
 
@@ -660,7 +659,7 @@ typed the first draft.
 
 An ad hoc prompt is provenance, not authority. If a PR began from a prompt, the prompt
 must be reconciled back to an approved specification, detailed bug report, or defined
-tracker task before formal review.
+tracker task before human review.
 
 ## Human Reviewer Expectations
 
@@ -687,7 +686,7 @@ Humans should not spend review time on:
 - trivial lint issues
 - generated output consistency when deterministic checks can verify it
 - template omissions that automation can catch
-- reconstructing an agent session from an unshaped diff
+- reconstructing an agent session from an unclear diff
 
 ## Metrics
 

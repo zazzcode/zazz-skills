@@ -1,10 +1,10 @@
 # Self-Review
 
-Self-review is an author-side automated review pass on a draft PR or local diff before formal human review.
+Self-review is an author-side automated review pass on a draft PR or local diff before human review.
 
 ## Purpose
 
-Self-review catches issues while the author or agent still owns the draft. It reduces review noise and helps ensure the final PR has clear evidence, correct scope, and standards alignment.
+Self-review catches issues while the author or agent still owns the draft. It reduces review noise and helps ensure the PR has clear evidence, correct scope, and standards alignment before human reviewers spend time on it.
 
 Self-review does not approve, merge, or replace human review.
 
@@ -13,7 +13,7 @@ Self-review does not approve, merge, or replace human review.
 Run self-review:
 
 - after implementation and QA evidence are in place
-- before marking a draft PR ready
+- before marking a PR ready for human review
 - after large rework that changes the review surface
 - before asking a human to spend review time on a complex diff
 
@@ -57,3 +57,4 @@ Self-review should produce:
 
 - [PR Creation](./pr-creation.md)
 - [Testing and Validation](./testing-and-validation.md)
+- [Human Review and Merge](../human-in-loop-pr-review-strategy.md)

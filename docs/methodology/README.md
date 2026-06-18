@@ -13,6 +13,7 @@ Read in workflow order:
 7. [Testing and Validation](./testing-and-validation.md)
 8. [PR Creation](./pr-creation.md)
 9. [Self-Review](./self-review.md)
+10. [Human Review and Merge](../human-in-loop-pr-review-strategy.md)
 
 Use only the sections relevant to the current work. Small fixes may start at specifications; larger capabilities usually start with project, architecture, proposal, or feature context.
 
@@ -30,4 +31,5 @@ Each section includes a `Relevant Skills` table that explains which skills apply
 | Code generation | `worktree`, `conformance`, `psql`, `sqlcmd`, `zazz-board-api` |
 | Testing and validation | `qa-testing`, `pr-review`, `conformance`, `psql`, `sqlcmd` |
 | PR creation | `pr-builder`, `gh-stack`, `qa-testing` |
-| Draft PR self-review | `pr-review`, `qa-testing`, `pr-builder`, `conformance` |
+| Automated self-review | `pr-review`, `qa-testing`, `pr-builder`, `conformance` |
+| Human review and merge | `pr-review`, `gh-stack`, `doc-check` |
