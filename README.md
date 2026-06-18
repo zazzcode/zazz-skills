@@ -13,7 +13,7 @@ Zazz gives executives and engineering teams:
 - **Faster delivery with control:** agents can implement and verify bounded work, while humans keep scope, product signoff, review, approval, and merge authority.
 - **Clearer product intent:** `project.md`, proposals, architecture docs, feature requirements, and milestones preserve why the work matters before code is written.
 - **Executable delivery contracts:** deliverable specifications turn intent into scoped implementation work with acceptance criteria, test plans, standards, and halt conditions.
-- **Ongoing standards conformance:** small maintenance PRs keep legacy and existing code aligned with adopted standards instead of letting drift accumulate.
+- **Ongoing standards conformance:** localized, evidence-backed maintenance PRs keep legacy and existing code aligned with adopted standards instead of letting drift accumulate.
 - **Cleaner parallel execution:** isolated worktrees keep active agent work separate, recoverable, and easier to coordinate across teams or branches.
 - **Stronger review signal:** `qa-testing` verifies behavior and evidence, `pr-builder` packages the pull request, and `pr-review` runs automated self-review before human review and merge.
 - **Durable organizational knowledge:** shipped work updates product, architecture, and standards docs so decisions do not disappear into chats, tickets, or PR comments.
@@ -169,7 +169,7 @@ Recommended adoption flow:
 | `worktree` | Sets up or manages the methodology's Zazz-style worktree model through the Worktrunk workflow used by the skill. |
 | `zazz-board-api` | Companion utility skill for Zazz Board integration. |
 | `jira-api` | Draft companion utility for Jira-backed repos. |
-| `conformance` | Applies one focused standards-alignment change against a named standard and bounded repo area. |
+| `conformance` | Applies one focused standards-alignment change against a named standard and bounded repo area, then prepares verified, self-reviewed PR evidence. |
 | `doc-check` | Runs repo-local formatting and linting checks for documentation changes. |
 | `psql` | Provides safe PostgreSQL diagnostic and profiling command guidance for repos that use `psql`. |
 | `sqlcmd` | Provides safe SQL Server diagnostic command guidance for repos that use `sqlcmd`. |
@@ -181,7 +181,7 @@ entry points the methodology expects:
 
 - **Git**: required. Zazz uses branches, worktrees, commits, diffs, and PRs as core collaboration primitives. Install it through the normal path for your platform, such as Apple Command Line Tools on macOS, a Linux package manager, Git for Windows, or the downloads linked from [git-scm.com](https://git-scm.com/downloads).
 - **Git hosting and PR tooling**: required for normal team use. GitHub is common, but the methodology also works with GitLab, Bitbucket, Forgejo, or another Git-based review system.
-- **GitHub CLI (`gh`)**: recommended when the repo uses GitHub, draft PR automation, or `gh-stack`. Install from [cli.github.com](https://cli.github.com/) and run `gh auth login` before expecting agents to create or inspect PRs.
+- **GitHub CLI (`gh`)**: recommended when the repo uses GitHub, PR automation, or `gh-stack`. Install from [cli.github.com](https://cli.github.com/) and run `gh auth login` before expecting agents to create or inspect PRs.
 - **Worktrunk**: recommended for routine worktree management and required by the bundled `worktree` skill. Native `git worktree` remains the base capability. Install from [worktrunk.dev](https://worktrunk.dev/).
 - **`gh-stack`**: optional, but recommended when the team wants stacked PR lanes. Install the GitHub CLI extension from [github/gh-stack](https://github.com/github/gh-stack); command reference lives at [github.github.com/gh-stack](https://github.github.com/gh-stack/reference/cli/).
 - **Agent runtime**: required. Use Codex, Claude, Cursor, Warp, or another agent environment that can read repo instructions and load skills.

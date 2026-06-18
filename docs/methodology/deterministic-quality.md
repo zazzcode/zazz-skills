@@ -42,6 +42,11 @@ Standards are useful only if existing code keeps moving toward them. Zazz treats
 point the `conformance` skill at a named standard or standard section and a bounded part of the codebase, then produce a
 small PR-sized fix that reduces drift.
 
+When tests and deterministic gates are strong enough, conformance can be relatively hands-off. Teams should be able to
+run localized passes on demand against a service, package, module, test suite, or docs area; let the agent apply and
+verify a safe standards fix; run self-review and address in-scope findings; then review the resulting PR. The model is
+similar to automated dependency-update PRs: small, routine, evidence-backed, and human-approved before merge.
+
 Good conformance work has three inputs:
 
 - the standard or exact section that defines the rule
@@ -50,7 +55,8 @@ Good conformance work has three inputs:
 
 The output should be a focused change that reviewers can evaluate quickly. Do not mix conformance with unrelated
 feature work, broad migrations, opportunistic refactors, or cosmetic churn. When a standard exposes several drift
-patterns, split them into separate conformance PRs unless the fixes are inseparable.
+patterns, split them into separate conformance PRs unless the fixes are inseparable. Prefer a stream of localized,
+easy-to-approve PRs over one large cleanup branch.
 
 Use this loop for legacy code, recently merged code that missed a standard, or areas that need preparation before a
 larger deliverable. If the repo cannot name the standard rule being applied, pause and update or create the standard
@@ -102,7 +108,9 @@ rules, loosen type checks, skip accessibility checks, or weaken CI gates just to
 
 For conformance maintenance, agents should first bind the work to one named standard and one bounded repo area. They
 should cite the standard section, apply a small fix, run the required checks, and leave other discovered drift as
-follow-up candidates instead of widening the diff.
+follow-up candidates instead of widening the diff. If repo policy allows PR preparation, the agent should package the
+verified and self-reviewed result as a ready-for-review PR. Use draft only when the repo requires draft-first PRs or the
+evidence is incomplete; humans still approve and merge.
 
 ## Standards And Specifications
 
@@ -133,6 +141,7 @@ gap and define the manual evidence expected until the tooling exists.
 Stop and ask for human direction when:
 
 - conformance work cannot identify the governing standard or the bounded code area
+- conformance work lacks enough tests, deterministic checks, or review evidence to support hands-off changes
 - no repo-standard command exists for a quality requirement that should be deterministic
 - a linter/type checker/accessibility rule conflicts with existing code or product behavior
 - a proposed suppression is broad, permanent, or not explained inline

@@ -1,6 +1,6 @@
 ---
 name: conformance
-description: Identify and apply a small, PR-sized code or documentation change that brings a bounded area of a repo into conformance with a named standard, guide, or convention document. Use when the user wants standards-driven maintenance, legacy-code cleanup, drift prevention, a focused conformance fix, or an incremental cleanup against standards for a specific package, service, module, file, or docs area.
+description: Identify and apply a small, PR-sized code or documentation change that brings a bounded area of a repo into conformance with a named standard, guide, or convention document, then verify and prepare PR-ready evidence. Use when the user wants standards-driven maintenance, legacy-code cleanup, drift prevention, an automated or on-demand conformance pass, a ready-for-review conformance PR, a focused conformance fix, or an incremental cleanup against standards for a specific package, service, module, file, or docs area.
 ---
 
 # Conformance
@@ -9,18 +9,34 @@ Apply one small, topically isolated change that brings a bounded part of a repo 
 
 Use standards as the authority. Conformance work can inspect legacy or existing code for drift, but it must not invent new rules. If the needed rule does not exist, recommend creating or updating a standard before applying broad cleanup.
 
+The intended operating model is relatively hands-off when the repo has strong deterministic gates and sufficient tests:
+run a localized pass on demand, apply a safe fix independently, verify it, run self-review, address self-review
+findings that stay within scope, and open a ready-for-review PR for human approval. Treat it like an automated
+dependency-update PR: routine, bounded, evidence-backed, and easy for a reviewer to sign off.
+
+## Autonomy Modes
+
+- **Ready PR mode**: Use when the user asks for an automated pass or PR and the safety envelope is strong. Apply the
+  fix, run required checks, run self-review, address in-scope self-review findings, and prepare a ready-for-review PR.
+- **Patch mode**: Use when PR tooling is unavailable or the user asks only for local changes. Apply and verify the fix,
+  then return PR-ready evidence.
+- **Triage mode**: Use when the standard, scope, tests, or expected behavior are unclear. Identify candidates and ask
+  for direction before editing.
+
 ## Workflow
 
 1. Identify the governing standard and bounded code area. Prefer an explicit user-provided standard section plus path, package, service, module, or file list.
 2. If the user provides only a standard, inspect the standards index or guide metadata for `applies_to` paths and choose a conservative bounded area. If several areas are plausible, present the best 2-4 options.
 3. Read the named guide or standard. Extract required structure, naming conventions, test expectations, mocking rules, evidence requirements, forbidden shapes, halt conditions, and explicit path patterns.
 4. Discover relevant files inside the bounded area. Avoid expanding into unrelated packages, generated code, vendored dependencies, or broad formatting churn.
-5. Check for overlapping in-flight work when the repo has PR or task metadata available. Avoid duplicating a conformance fix already underway.
-6. Identify candidate non-conformances with file locations, violated standard section, estimated change size, likely verification command, and risk.
-7. Select one PR-sized change. Prefer the smallest fix that clearly improves conformance without mixing unrelated cleanup.
-8. Apply only that change.
-9. Run the narrowest relevant formatter, linter, type check, doc check, or test command. Broaden only if the changed file is shared or the standard requires broader validation.
-10. Summarize the change, the standard rule satisfied, verification results, and remaining conformance candidates.
+5. Confirm the autonomy mode and safety envelope: existing tests, deterministic gates, expected behavior preservation, and whether the repo permits automated PR preparation for this kind of change.
+6. Check for overlapping in-flight work when the repo has PR or task metadata available. Avoid duplicating a conformance fix already underway.
+7. Identify candidate non-conformances with file locations, violated standard section, estimated change size, likely verification command, and risk.
+8. Select one PR-sized change. Prefer the smallest fix that clearly improves conformance without mixing unrelated cleanup.
+9. Apply only that change.
+10. Run the narrowest relevant formatter, linter, type check, doc check, or test command. Broaden only if the changed file is shared or the standard requires broader validation.
+11. Run self-review when the repo has an automated review workflow. Fix self-review findings that are within the same standard, bounded area, and risk envelope; leave wider findings as follow-up candidates.
+12. Summarize the change, the standard rule satisfied, verification results, self-review result, and remaining conformance candidates. If the user asked for PR preparation and repo policy allows it, package the result as a ready-for-review PR. Use draft only when repo policy requires draft-first PRs or evidence is incomplete.
 
 ## Selection Rules
 
@@ -31,7 +47,21 @@ Use standards as the authority. Conformance work can inspect legacy or existing 
 - Prefer deterministic enforcement when available: formatter, linter, type checker, schema validator, accessibility checker, doc checker, or test suite.
 - Treat missing deterministic tooling as a standards gap. Do not replace explicit evidence requirements with intuition.
 - Keep conformance work reviewable. A good output can become a small PR with one theme, clear evidence, and a short list of follow-up candidates.
+- Be more autonomous only when tests and deterministic checks cover the affected behavior. If coverage is weak, keep the pass smaller, produce clearer residual risk, or stop for human direction.
+- Prefer repeated localized passes over one sweeping cleanup. The goal is a stream of easy approvals, not a heroic migration diff.
 - If every candidate is ambiguous or high risk, present the best 2-4 options and ask the user to choose.
+
+## Ready PR Criteria
+
+Prepare a ready-for-review PR only when all are true:
+
+- the fix is bound to one named standard and one bounded repo area
+- required formatter, linter, type, schema, doc, or test checks pass or have explained non-blocking failures
+- automated self-review has no unresolved in-scope findings
+- the PR body can cite the standard section, changed files, verification commands, self-review result, and residual risk
+- merge still requires human approval
+
+Use a draft PR, local patch, or triage output instead when these criteria are not met.
 
 ## Output
 
@@ -40,5 +70,7 @@ Return:
 - changed file(s)
 - standard section or rule satisfied
 - verification command(s) and result
+- self-review command(s), findings, and follow-up fixes when run
 - remaining candidate conformance issues deliberately left for later
 - PR-ready summary of why the change prevents standards drift
+- ready-for-review PR title/body when PR preparation is requested
