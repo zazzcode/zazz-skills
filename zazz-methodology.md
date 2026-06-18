@@ -38,6 +38,8 @@ Not every step is needed for every change. Small fixes may start at a specificat
 
 ## Section Guide
 
+Each focused section includes a `Relevant Skills` table that explains which skills apply to that stage and how they improve process efficiency.
+
 | Section | Purpose |
 | ------- | ------- |
 | [Project Document](docs/methodology/project.md) | Defines `project.md`, the top-level product orientation document. |

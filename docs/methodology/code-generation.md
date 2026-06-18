@@ -40,6 +40,17 @@ Stop and ask for owner direction when:
 - reference data or environment access is missing
 - the implementation reveals a product or architecture decision that was not approved
 
+## Relevant Skills
+
+| Skill | How it helps efficiency |
+| ----- | ----------------------- |
+| `worktree` | Creates or repairs isolated worktree lanes so implementation stays separate, recoverable, and easy to review. |
+| `spec-builder` | Supplies the approved execution contract, sequencing guidance, standards list, and halt conditions. |
+| `conformance` | Applies one focused standards-alignment fix when the implementation needs a small documented correction. |
+| `psql` | Speeds safe PostgreSQL schema inspection, read-only checks, query profiling, and function/procedure diagnostics. |
+| `sqlcmd` | Speeds safe SQL Server schema inspection, stored procedure checks, timing probes, and read-only diagnostics. |
+| `zazz-board-api` | Updates task state, locks, notes, and execution metadata when the repo uses Zazz Board. |
+
 ## Related Sections
 
 - [Specifications](./specifications.md)

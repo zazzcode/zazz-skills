@@ -104,6 +104,8 @@ The methodology is split so teams can read only the part of the progression they
 | PR creation | [docs/methodology/pr-creation.md](docs/methodology/pr-creation.md) |
 | Draft PR self-review | [docs/methodology/self-review.md](docs/methodology/self-review.md) |
 
+Each section includes a `Relevant Skills` table that explains which skills apply and how they improve process efficiency.
+
 ## Standards Library
 
 The standards library is indexed by [docs/standards/index.yaml](docs/standards/index.yaml) so agents can load the smallest relevant standard set for a task.

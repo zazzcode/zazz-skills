@@ -31,6 +31,16 @@ Use a stacked branch lane when a deliverable is easier to review as ordered laye
 
 Use `gh-stack` when the repo uses GitHub and dependent PRs.
 
+## Relevant Skills
+
+| Skill | How it helps efficiency |
+| ----- | ----------------------- |
+| `pr-builder` | Assembles draft PR titles and bodies from the diff, specification links, validation evidence, risks, and reviewer instructions. |
+| `gh-stack` | Manages dependent branches and PRs when a deliverable is easier to review as an ordered stack. |
+| `qa-testing` | Supplies concise verification evidence and unresolved findings for the PR body. |
+| `jira-api` | Provides a future Jira-backed path for issue references; today it documents how to use repo-provided or user-provided Jira context. |
+| `zazz-board-api` | Supplies board-backed deliverable and task context when the repo uses Zazz Board. |
+
 ## Related Sections
 
 - [Code Generation](./code-generation.md)

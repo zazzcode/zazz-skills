@@ -37,6 +37,16 @@ Self-review should produce:
 - residual risks
 - a short readiness recommendation
 
+## Relevant Skills
+
+| Skill | How it helps efficiency |
+| ----- | ----------------------- |
+| `pr-review` | Separates standards review from specification review so the draft can catch both wrong-implementation and wrong-scope problems early. |
+| `qa-testing` | Provides validation evidence and rework history that helps self-review focus on residual risk instead of rediscovering basic behavior. |
+| `pr-builder` | Refreshes the draft PR body after self-review fixes or new evidence change the reviewer-facing story. |
+| `conformance` | Applies one targeted standards fix from the review findings without turning self-review into a broad refactor. |
+| `doc-check` | Verifies documentation updates that are part of the review package. |
+
 ## Related Sections
 
 - [PR Creation](./pr-creation.md)

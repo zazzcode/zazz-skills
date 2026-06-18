@@ -28,6 +28,16 @@ Architecture documents guide implementation strategy. Deliverable specifications
 
 If implementation reveals an architecture decision is wrong, update the architecture document through normal review. Do not let one deliverable silently fork the intended system shape.
 
+## Relevant Skills
+
+| Skill | How it helps efficiency |
+| ----- | ----------------------- |
+| `architecture-doc-builder` | Structures system design, module placement, data ownership, sequence flow, and open questions so specs start from stable technical intent. |
+| `proposal-builder` | Compares architectural options before the team commits to a costly direction. |
+| `spec-builder` | Converts accepted architecture into bounded implementation contracts without re-litigating design decisions. |
+| `conformance` | Makes targeted architecture-doc or standards alignment updates when implementation exposes drift. |
+| `doc-check` | Checks formatting, links, and doc hygiene after architecture edits. |
+
 ## Related Sections
 
 - [Project Document](./project.md)

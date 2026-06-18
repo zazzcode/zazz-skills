@@ -26,6 +26,16 @@ Use `project.md` to keep project-level context out of transient chats and delive
 - Prefer repo-relative links.
 - Keep examples generic enough that a future contributor can understand them without reading old PR discussions.
 
+## Relevant Skills
+
+| Skill | How it helps efficiency |
+| ----- | ----------------------- |
+| `feature-doc-builder` | Turns durable project context into focused feature requirements without rebuilding product background in every conversation. |
+| `architecture-doc-builder` | Connects project-level capability direction to system design, reducing repeated discovery before each deliverable. |
+| `proposal-builder` | Captures uncertain direction as a decision artifact before it leaks into implementation churn. |
+| `conformance` | Applies small standards-alignment updates when `project.md` drifts from the repo's documented conventions. |
+| `doc-check` | Verifies documentation hygiene before changes are committed. |
+
 ## Related Sections
 
 - [Architecture](./architecture.md)
