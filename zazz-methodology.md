@@ -1,20 +1,22 @@
 # The Zazz Methodology
 
-Zazz is an opinionated, spec-driven methodology for collaborative software delivery by builders and AI agents. It keeps durable product knowledge separate from bounded execution contracts so teams can move quickly without losing the reason behind the work.
+Zazz is an operating model for AI-assisted software delivery. It helps teams use agents to move faster while keeping product direction, engineering quality, review discipline, and merge authority in human hands.
 
 This document is the methodology entry point and executive overview. The detailed guidance lives in focused section docs under [`docs/methodology/`](docs/methodology/).
 
 ## Executive Overview
 
-Zazz gives teams a repeatable path from product intent to a human-reviewed, merged software change. It does that by separating durable knowledge from execution work:
+AI agents can produce code quickly. The hard part is making sure the team is building the right thing, the implementation is reviewable, the evidence is credible, and the knowledge survives after merge.
+
+Zazz gives teams a repeatable path from product intent to a human-reviewed, merged software change:
 
 - Durable docs explain the product, architecture, decisions, features, and standards.
-- Deliverable specifications define one bounded unit of implementation.
+- Deliverable specifications turn intent into bounded implementation contracts with acceptance criteria, test plans, standards, and halt conditions.
 - Agents execute inside approved contracts, isolated worktrees, and repo standards.
 - Validation, pull request packaging, and automated self-review happen before human review and merge.
-- Durable docs are updated when the shipped work changes the product or system design.
+- Durable docs are updated when shipped work changes the product, architecture, or standards.
 
-The result is a workflow where humans retain product, scope, approval, and merge authority while agents can handle more of the implementation and verification loop with less supervision.
+The result is faster agent-assisted delivery with clearer scope, stronger review signal, less rework, and durable knowledge that stays useful after the PR is merged.
 
 ## Progression
 

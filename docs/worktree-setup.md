@@ -2,7 +2,7 @@
 
 This document defines the required worktree structure for repos using the Zazz methodology.
 
-The methodology is opinionated here on purpose. A consistent worktree model reduces ambiguity, makes agent execution safer, and gives teams a clean recovery path when a deliverable or document branch goes in the wrong direction.
+The methodology is opinionated here on purpose. A consistent worktree model reduces ambiguity, keeps agent work isolated, and gives teams a clean recovery path when a deliverable or document branch goes in the wrong direction.
 
 Worktrees are required by the methodology. This document describes the methodology's opinionated worktree operating model.
 

@@ -1,20 +1,23 @@
 # Zazz Methodology & Skills
 
-Zazz is an opinionated, spec-driven methodology for teams that build software with human owners and AI agents. It gives projects a durable document model, reusable agent skills, and a delivery workflow that moves from product intent to human-reviewed, merged software changes without losing the reason behind the work.
+Zazz is an operating model for AI-assisted software delivery. It helps teams use agents to move faster while keeping product direction, engineering quality, review discipline, and merge authority in human hands.
 
 This repository is the canonical source for the Zazz methodology and shared skills. Downstream repos can vendor or sync these docs and skills, but methodology changes should land here first.
 
 ## Executive Overview
 
-Zazz exists to make agent-assisted delivery safer and more repeatable:
+AI agents can produce code quickly. The hard part is making sure the team is building the right thing, the implementation is reviewable, the evidence is credible, and the knowledge survives after merge. Zazz provides the structure for that.
 
-- **Define the right work:** `project.md`, architecture docs, proposals, feature requirements, and milestones preserve product and system intent.
-- **Slice work into executable contracts:** deliverable specifications define bounded implementation work with acceptance criteria, test plans, standards, and halt conditions.
-- **Execute in isolation:** agents implement inside worktrees so active work is recoverable and separate from unrelated changes.
-- **Review before merge:** `qa-testing` verifies behavior and evidence; `pr-builder` packages the pull request; `pr-review` runs automated self-review before human review and merge.
-- **Promote durable knowledge:** when work changes product behavior, architecture, or standards, the long-lived docs are updated instead of leaving knowledge trapped in a PR or chat.
+Zazz gives executives and engineering teams:
 
-The methodology is intentionally Git-native. Durable docs, code, and review evidence move through branches and PRs. Humans keep scope, product signoff, PR approval, and merge authority; agents operate inside approved contracts.
+- **Faster delivery with control:** agents can implement and verify bounded work, while humans keep scope, product signoff, review, approval, and merge authority.
+- **Clearer product intent:** `project.md`, proposals, architecture docs, feature requirements, and milestones preserve why the work matters before code is written.
+- **Executable delivery contracts:** deliverable specifications turn intent into scoped implementation work with acceptance criteria, test plans, standards, and halt conditions.
+- **Cleaner parallel execution:** isolated worktrees keep active agent work separate, recoverable, and easier to coordinate across teams or branches.
+- **Stronger review signal:** `qa-testing` verifies behavior and evidence, `pr-builder` packages the pull request, and `pr-review` runs automated self-review before human review and merge.
+- **Durable organizational knowledge:** shipped work updates product, architecture, and standards docs so decisions do not disappear into chats, tickets, or PR comments.
+
+The methodology is intentionally Git-native. Durable docs, code, review evidence, automated review, human approval, and merge all move through normal branch and PR workflows. The shared skills in `.agents/skills/` operationalize the workflow so teams can apply it consistently across projects and agent runtimes.
 
 ## Quick Links
 

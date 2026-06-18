@@ -590,7 +590,7 @@ Default critical-path categories:
 Each repo should map these categories to concrete standards, CODEOWNERS, and labels.
 
 That mapping is only the starting point. A reviewer or responsible owner should be able
-to raise or lower the tier when the actual change is safer or riskier than the default,
+to raise or lower the tier when the actual change has lower or higher risk than the default,
 and the override should be visible so the team can tune the heuristics.
 
 ## Testing And Regression Policy

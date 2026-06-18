@@ -12,7 +12,7 @@ Fast reference for working in:
 repo-wt/
 ├── .bare/
 ├── dev/
-├── feature-shippers-master-rport-1/
+├── feature-reporting-flow-1/
 └── <other-worktrees>/
 ```
 
@@ -62,7 +62,7 @@ wt -C .bare switch ^
 Switch to an existing branch worktree:
 
 ```bash
-wt -C .bare switch feature-shippers-master-rport-1
+wt -C .bare switch feature-reporting-flow-1
 ```
 
 Create a new branch and worktree from `dev`:
@@ -149,7 +149,7 @@ git push -u origin my-feature
 A stacked branch series is a chain where each branch's PR targets the prior branch instead of `dev`. Each branch lives in its own sibling worktree. Example chain:
 
 ```text
-dev → feature-shippers-master-rport-1 → feature-shippers-master-rport-2 → feature-shippers-master-rport-3
+dev → feature-reporting-flow-1 → feature-reporting-flow-2 → feature-reporting-flow-3
 ```
 
 PR `-2` merges into `-1`, PR `-3` merges into `-2`, and so on. The topmost branch contains the cumulative content of the whole stack and is where end-to-end testing happens.
@@ -157,7 +157,7 @@ PR `-2` merges into `-1`, PR `-3` merges into `-2`, and so on. The topmost branc
 Create the next branch in a stack from the current one (not from `dev`):
 
 ```bash
-wt -C .bare switch --create feature-shippers-master-rport-3 --base feature-shippers-master-rport-2
+wt -C .bare switch --create feature-reporting-flow-3 --base feature-reporting-flow-2
 ```
 
 ### Verify the tip contains every parent's changes
@@ -165,8 +165,8 @@ wt -C .bare switch --create feature-shippers-master-rport-3 --base feature-shipp
 After any parent in the stack is rebased and force-pushed, the topmost branch needs to be rebased onto the new parent. To prove the tip is current with every parent — even after rebases rewrite SHAs — use `git cherry`:
 
 ```bash
-git cherry -v HEAD origin/feature-shippers-master-rport-1
-git cherry -v HEAD origin/feature-shippers-master-rport-2
+git cherry -v HEAD origin/feature-reporting-flow-1
+git cherry -v HEAD origin/feature-reporting-flow-2
 ```
 
 Empty output means every parent commit is present (by ancestry or by patch-equivalence). Any line starting with `+` is a real gap that needs investigation.
@@ -177,7 +177,7 @@ One-liner to check every parent in a stack:
 
 ```bash
 for p in 1 2; do
-  out=$(git cherry HEAD origin/feature-shippers-master-rport-$p)
+  out=$(git cherry HEAD origin/feature-reporting-flow-$p)
   [ -z "$out" ] && echo "-$p: contained" || printf -- "-%s: MISSING:\n%s\n" "$p" "$out"
 done
 ```
@@ -188,14 +188,14 @@ When a parent in the stack gets rebased and force-pushed, fetch with explicit re
 
 ```bash
 git fetch origin \
-  '+refs/heads/feature-shippers-master-rport-2:refs/remotes/origin/feature-shippers-master-rport-2' \
-  '+refs/heads/feature-shippers-master-rport-3:refs/remotes/origin/feature-shippers-master-rport-3'
+  '+refs/heads/feature-reporting-flow-2:refs/remotes/origin/feature-reporting-flow-2' \
+  '+refs/heads/feature-reporting-flow-3:refs/remotes/origin/feature-reporting-flow-3'
 ```
 
 Then rebase the current branch onto the new parent:
 
 ```bash
-git rebase origin/feature-shippers-master-rport-2
+git rebase origin/feature-reporting-flow-2
 ```
 
 Patch-equivalent commits (changes already absorbed into the new parent) are skipped automatically. The branch's own unique commits are replayed on top.
@@ -205,10 +205,10 @@ Patch-equivalent commits (changes already absorbed into the new parent) are skip
 After a rebase, push with `--force-with-lease` pinned to the verified remote SHA. Plain `--force-with-lease` can fail with "stale info" if remote-tracking refs are not fresh, and falling back to plain `--force` discards that safety check.
 
 ```bash
-git ls-remote origin refs/heads/feature-shippers-master-rport-3
+git ls-remote origin refs/heads/feature-reporting-flow-3
 # copy the SHA, then:
-git push --force-with-lease=feature-shippers-master-rport-3:<expected-remote-sha> \
-  origin feature-shippers-master-rport-3
+git push --force-with-lease=feature-reporting-flow-3:<expected-remote-sha> \
+  origin feature-reporting-flow-3
 ```
 
 ### Inspect divergence
@@ -216,7 +216,7 @@ git push --force-with-lease=feature-shippers-master-rport-3:<expected-remote-sha
 When `git cherry` reports a `+` line and you want to see exactly how a commit differs across two branches, use `git range-diff`:
 
 ```bash
-git range-diff origin/feature-shippers-master-rport-2...HEAD
+git range-diff origin/feature-reporting-flow-2...HEAD
 ```
 
 It aligns commits by patch-id and shows the deltas.
@@ -229,9 +229,9 @@ Create the worktree from `dev` using the bottom branch name, then initialize the
 
 ```bash
 cd ~/work/repo-wt
-wt -C .bare switch --create feature-invoice-register-rpt-struct --base dev
-cd ~/work/repo-wt/feature-invoice-register-rpt-struct
-gh stack init --base dev feature-invoice-register-rpt-struct feature-invoice-register-rpt-svc
+wt -C .bare switch --create feature-reporting-struct --base dev
+cd ~/work/repo-wt/feature-reporting-struct
+gh stack init --base dev feature-reporting-struct feature-reporting-svc
 ```
 
 All branches share the same working directory. Switch between them with `gh stack` navigation:
