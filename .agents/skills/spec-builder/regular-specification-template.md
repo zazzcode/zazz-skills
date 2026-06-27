@@ -61,8 +61,8 @@ Read this specification end to end first.
 
 ### 1.b Feature / Milestone Context
 
-- `{{ docs/features/path.md }}` — read {{ section numbers }}.
-- `{{ docs/architecture/path.md }}` — read {{ section numbers }}.
+- `{{ <DOCS_ROOT>/features/path.md }}` — read {{ section numbers }}.
+- `{{ <DOCS_ROOT>/architecture/path.md }}` — read {{ section numbers }}.
 
 ### 1.c Prior Specifications In This Delivery Effort
 
@@ -72,11 +72,11 @@ Read this specification end to end first.
 
 ### 1.d Standards
 
-Per `docs/standards/index.yaml`, the following standards apply to this specification's scope:
+Per `<DOCS_ROOT>/standards/index.yaml`, the following standards apply to this specification's scope:
 
 | Standard | What it governs here |
 | --- | --- |
-| `docs/standards/{{ standard.md }}` | {{ scope }} |
+| `<DOCS_ROOT>/standards/{{ standard.md }}` | {{ scope }} |
 
 **Verification step before writing code:** run the standards lookup yourself against the
 file list in §3. If an applicable standard is missing from this table, stop and surface
@@ -413,7 +413,7 @@ NON-NEGOTIABLE RULES
 1. Follow the specification's Agent Implementation Rules.
 2. Resolve every Open Question before writing code; log answers in the implementation
    log.
-3. Verify standards via docs/standards/index.yaml before writing code.
+3. Verify standards via <DOCS_ROOT>/standards/index.yaml before writing code.
 4. Tests and verification are not optional. Every AC must have evidence.
 
 ORDER OF WORK

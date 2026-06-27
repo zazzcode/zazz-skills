@@ -86,7 +86,7 @@ Review PR #123 and help me decide what findings to send back to the author.
 
 ```text
 Use pr-review.
-This is a backend/database change. Load the relevant standards from docs/standards/index.yaml
+This is a backend/database change. Load the relevant standards from <DOCS_ROOT>/standards/index.yaml
 and call out any realistic edge cases the tests miss.
 ```
 

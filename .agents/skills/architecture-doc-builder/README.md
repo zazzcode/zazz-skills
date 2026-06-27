@@ -56,7 +56,7 @@ You do not need to provide a full architecture document up front. A good startin
 
 ```text
 Use architecture-doc-builder.
-We have a feature document at docs/features/reporting.md.
+We have a feature document at <DOCS_ROOT>/features/reporting.md.
 Help me draft the paired architecture document with per-milestone system and sequence diagrams.
 ```
 
@@ -68,7 +68,7 @@ Please update the architecture document so M2 reflects what is now live and refi
 
 ```text
 Use architecture-doc-builder.
-I have a proposal in docs/proposals/reports-s3-to-client-architecture.md that we've committed to.
+I have a proposal in <DOCS_ROOT>/proposals/reports-s3-to-client-architecture.md that we've committed to.
 Please draft the architecture document from it, with per-milestone diagrams, and ask follow-up questions where
 the proposal is ambiguous.
 ```

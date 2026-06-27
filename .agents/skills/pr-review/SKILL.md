@@ -36,11 +36,16 @@ conventions when available.
 
 **Standards discovery cascade** — resolve the docs root and standards index using this order. Stop at the first hit:
 
-1. `AGENTS.md` or `CLAUDE.md` declares a docs root (e.g., `docs/`) → look for `<docs-root>/standards/index.yaml`.
+1. `AGENTS.md` or `CLAUDE.md` declares a docs root (e.g., `.zazz/` or `docs/`) → look for `<docs-root>/standards/index.yaml`.
 1. The environment variable `ZAZZ_DOCS_ROOT` is set → use its value as the docs root.
-1. Convention: check `docs/standards/index.yaml` at the repo root.
+1. Convention: check `.zazz/standards/index.yaml`, then `docs/standards/index.yaml`, at the repo root.
 1. If none of the above finds a standards index, ask the user: "I couldn't find a standards index. Where are your
    coding standards (a directory path), or should I run without standards-driven review?"
+
+Do not infer that a directory literally named `docs/` is the docs root when a repo has a
+declared Zazz root such as `.zazz/`. In those repos, `.zazz/docs/` may be imported
+reference material while review standards and specifications live under sibling
+methodology directories such as `.zazz/standards/` and `.zazz/specifications/`.
 
 Record the resolved docs root and standards index path. If no standards are available, the Standards axis still runs
 using general engineering judgment but notes the gap as residual risk.
@@ -113,7 +118,7 @@ Collect the inputs each sub-agent will need.
 **For the Spec axis**, search for the originating spec in this order:
 
 1. A deliverable specification or external specification record linked in the PR body or branch name.
-1. A specification file in `<DOCS_ROOT>/specifications/` (or `docs/specifications/` by convention) matching the branch
+1. A specification file in `<DOCS_ROOT>/specifications/` matching the branch
    name, feature name, or linked work item.
 1. Issue references in the commit messages (`#123`, `Closes #45`, etc.) — fetch via the repo's issue tracker workflow
    if available.

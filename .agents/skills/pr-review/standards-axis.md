@@ -91,9 +91,11 @@ Recommended review wording:
 
 ## Agentic Slop And Redundancy
 
-When the repository contains a code-structure standard in `docs/standards/` or `<ZAZZ_DOCS_ROOT>/standards/`, load it
-and treat it as the authoritative policy for file-size thresholds, contextual splitting, incrementally discoverable
-skills, agentic slop, and duplicated runtime work. In example repo, that standard is `docs/standards/code-structure.md`.
+When the repository contains a code-structure standard in `<DOCS_ROOT>/standards/`, load
+it and treat it as the authoritative policy for file-size thresholds, contextual
+splitting, incrementally discoverable skills, agentic slop, and duplicated runtime work.
+In an example repo, that standard might be
+`<DOCS_ROOT>/standards/code-structure.md`.
 
 If no code-structure standard exists, use this fallback rubric and state that the missing standard is residual review
 risk. Flag patterns that often appear in agent-generated diffs and make the codebase worse:

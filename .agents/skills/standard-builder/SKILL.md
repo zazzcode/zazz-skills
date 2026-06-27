@@ -45,7 +45,8 @@ default.
 
 Look for:
 
-- docs: `README`, `AGENTS.md`, `docs/`, architecture notes, standards, ADRs.
+- docs: `README`, `AGENTS.md`, the configured docs root (for example `.zazz/` or
+  `docs/`), architecture notes, standards, ADRs.
 - package/config: `package.json`, `tsconfig.json`, `eslint`, `vitest`, `jest`, `playwright`, `docker`, CI workflows.
 - source layout: representative services, route modules, middleware, controllers, clients, repositories, workers.
 - tests: unit, integration, API, contract, fixtures, mocks, test builders, snapshot usage.
@@ -78,7 +79,7 @@ Draft standards as concrete, agent-usable docs:
 - title and short scope statement.
 - stack-specific baseline note when the standard assumes a particular language, framework, database, cloud, or test
   runner.
-- `applies_to` guidance that can be reflected in `docs/standards/index.yaml`.
+- `applies_to` guidance that can be reflected in `<DOCS_ROOT>/standards/index.yaml`.
 - prescriptive rules with desired and not-desired examples.
 - halt conditions.
 - required review evidence.

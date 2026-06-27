@@ -59,8 +59,14 @@ Secondary audiences for the resulting architecture document:
 
 ## Docs Root Convention
 
-Use the repo docs root declared in `AGENTS.md` as the base for methodology docs. Example paths in this skill may use
-`<DOCS_ROOT>/...` as shorthand.
+Use the repo docs root declared in `AGENTS.md`, the standards index, or another
+repo-local orientation document as the base for Zazz methodology artifacts. Example
+paths in this skill may use `<DOCS_ROOT>/...` as shorthand.
+
+Important: do not infer that a directory literally named `docs/` is the docs root. Some
+repos use a Zazz root such as `.zazz/`, with `.zazz/docs/` reserved for imported
+reference guides. In that layout, architecture documents belong under
+`.zazz/architecture/`, not under `.zazz/docs/architecture/`.
 
 ## What This Skill Produces
 
@@ -217,7 +223,7 @@ This skill should feel like a structured system-design conversation, not an impl
 
 ```text
 Use architecture-doc-builder.
-We have a feature document at docs/features/reporting.md.
+We have a feature document at <DOCS_ROOT>/features/reporting.md.
 Help me draft the paired architecture document that defines module placement, per-milestone system diagrams,
 sequence diagrams for each use case, and the data model vision for the final milestone.
 ```
@@ -235,7 +241,7 @@ diagrams based on what we learned.
 
 ```text
 Use architecture-doc-builder.
-I have a proposal in docs/proposals/reports-s3-to-client-architecture.md that we've now committed to.
+I have a proposal in <DOCS_ROOT>/proposals/reports-s3-to-client-architecture.md that we've now committed to.
 Please draft the architecture document from that proposal, with per-milestone system and sequence diagrams, and
 ask follow-up questions where the proposal is ambiguous.
 ```
@@ -244,7 +250,7 @@ ask follow-up questions where the proposal is ambiguous.
 
 ```text
 Use architecture-doc-builder.
-Help me draft the project-level architecture document at docs/architecture/project-architecture.md so it captures
+Help me draft the project-level architecture document at <DOCS_ROOT>/architecture/project-architecture.md so it captures
 the major services, runtime boundaries, data stores, integration patterns, and cross-cutting technical decisions.
 ```
 

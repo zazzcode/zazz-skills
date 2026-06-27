@@ -129,7 +129,7 @@ contain multiple deliverables/specifications and uses sections per specification
 stacked lane uses sections per branch/specification when needed.
 
 - **Standards verification** — agent confirms the specification's standards prescription matches
-  a fresh `docs/standards/index.yaml` lookup.
+  a fresh `<DOCS_ROOT>/standards/index.yaml` lookup.
 - **OQ Resolutions** — verbatim user answers, timestamped.
 - **Phase Completions** — commit SHAs, verifying-command outcomes.
 - **QA Findings & Rework** — QA pass/fail summaries, weak-test findings, specification-gap
@@ -206,11 +206,15 @@ branches, flag the concern once and continue with the stated topology if reaffir
 5. For stacked topology, read the `gh-stack` skill if available. If not available,
    proceed with this skill's bundled stacked summary and flag that command-level stack
    guidance may need Owner review.
-6. Read `docs/standards/index.yaml` from the active worktree when present and load only the
+6. Resolve `DOCS_ROOT` from `AGENTS.md`, the standards index, or another repo-local
+   orientation document. Do not assume that a directory literally named `docs/` is the
+   docs root; some repos use `.zazz/` as the root and reserve `.zazz/docs/` for imported
+   reference guides.
+7. Read `<DOCS_ROOT>/standards/index.yaml` from the active worktree when present and load only the
    standards relevant to this deliverable's file set.
-7. Inspect existing specifications in `<DOCS_ROOT>/specifications/`, Zazz Board, or the
+8. Inspect existing specifications in `<DOCS_ROOT>/specifications/`, Zazz Board, or the
    repo's declared external tracking location to calibrate level of detail.
-8. Begin the dialogue. One bounded deliverable/specification at a time, while keeping the larger
+9. Begin the dialogue. One bounded deliverable/specification at a time, while keeping the larger
    milestone topology visible when multiple specifications share one branch or run log.
 
 ## Interaction model
@@ -258,7 +262,7 @@ Before presenting a near-final specification, the spec-builder agent must be abl
 - **Acceptance criteria** — testable outcomes, each with verifying evidence.
 - **Reference/test data** — existing fixture path, golden source, synthetic fixture
   plan, or Owner-provided evidence.
-- **Standards** — applicable `docs/standards/` entries based on expected file paths and
+- **Standards** — applicable `<DOCS_ROOT>/standards/` entries based on expected file paths and
   activity.
 - **Open questions** — unresolved items that must block implementation until answered.
 
@@ -308,7 +312,7 @@ Use these as prompts, not a rigid questionnaire:
 - **Stacked review lane**: one worktree contains the stacked branches managed with `gh-stack`. Do not create stacked
   worktrees. A worktree normally has one deliverable, but a stacked lane may contain multiple deliverables/specifications
   when those deliverables are intentionally stacked for review.
-- **Standards** live in `docs/standards/`, gated by `index.yaml`. Specifications prescribe the
+- **Standards** live in `<DOCS_ROOT>/standards/`, gated by `index.yaml`. Specifications prescribe the
   applicable standards; the implementing agent verifies via its own index lookup.
 - **Branch scope discipline**: the specification is scoped to the diff between its branch and
   the integration branch (`{{ integration-branch }}`, confirmed during intake).
@@ -490,7 +494,7 @@ halt conditions:
 4. `git diff {{ integration-branch }} --stat` shows a file outside scope.
 5. Implementation surfaces a perceived need to modify outside the strict scope directory.
 6. A standard not prescribed in the specification matches the file list via the
-   docs/standards/index.yaml lookup.
+   `<DOCS_ROOT>/standards/index.yaml` lookup.
 7. Reference data unavailable (e.g. local test DB lacks the named reference data/period combo).
 
 Tailor halt conditions to the specification. The list above is the minimum.
@@ -574,7 +578,7 @@ A deliverable specification is complete when:
 - **Definition of Done** binary checklist.
 - **Agent Implementation Prompt** paste-ready, includes verifier dispatch.
 - **Required reading** cited by section number, not whole documents.
-- **Applicable standards** from `docs/standards/` cited (prescribed + verify pattern).
+- **Applicable standards** from `<DOCS_ROOT>/standards/` cited (prescribed + verify pattern).
 - For stacked: **integration seam** (locked public symbols, types, contracts) concrete
   enough that an upper branch can build on a lower branch through the branch stack.
 - **Ownership** identified (per-specification deliverable for regular/milestone; per-branch for

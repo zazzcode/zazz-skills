@@ -51,14 +51,25 @@ Secondary audiences for the resulting feature requirements document:
 
 ## Docs Root Convention
 
-Use the repo docs root declared in `AGENTS.md` as the base for methodology docs. Example paths in this skill may use
-`<DOCS_ROOT>/...` as shorthand.
+Use the repo docs root declared in `AGENTS.md`, the standards index, or another
+repo-local orientation document as the base for Zazz methodology artifacts. Example
+paths in this skill may use `<DOCS_ROOT>/...` as shorthand.
+
+Important: do not infer that a directory literally named `docs/` is the docs root. Some
+repos use a Zazz root such as `.zazz/`, with `.zazz/docs/` reserved for imported
+reference guides. In that layout, feature documents belong under `.zazz/features/`, not
+under `.zazz/docs/features/`.
 
 ## What This Skill Produces
 
 Primary artifact:
 
 - `<DOCS_ROOT>/features/{feature-key}.md`
+
+If the user provides an explicit feature document filename or path, that filename/path is
+sacrosanct. Use it exactly, normalized only for the repo's docs root when necessary. Do
+not replace it with a slug inferred from the feature title, domain language, an earlier
+draft title, or adjacent filenames.
 
 Supporting discovery artifact:
 
@@ -202,6 +213,7 @@ section was padding and should have been left out. Prefer a short, dense documen
 Before drafting a serious feature document, elicit or infer:
 
 1. feature name and feature key
+1. explicit feature document filename/path, if the user provided one
 1. problem statement
 1. business/domain justification
 1. who is affected
@@ -211,6 +223,9 @@ Before drafting a serious feature document, elicit or infer:
 1. milestone breakdown or at least a first-pass milestone model
 
 If important inputs are missing, continue the dialogue and mark assumptions explicitly.
+If the user has provided a feature document filename/path and later wording seems to
+conflict with it, stop and ask for confirmation before creating, moving, renaming, or
+referencing a different feature document.
 
 ## Standards and Feature Context Integration
 
@@ -361,8 +376,44 @@ Use methodology naming guidance:
 - Feature requirements document: `<DOCS_ROOT>/features/{feature-key}.md`
 - Features index: `<DOCS_ROOT>/features/index.yaml`
 
-Keep `features/` flat by default. If a project later has a real need for multiple durable artifacts per feature, it may
-introduce subdirectories, but that is not the default methodology recommendation.
+Filename authority rule:
+
+- An explicit user-provided feature document filename or path wins over generated names.
+- Do not infer a replacement filename from the feature title, a broad capability label,
+  or a previous mistaken document name.
+- If two filenames appear in the conversation or repo state, ask which one is canonical
+  before editing paths, indexes, or downstream specification references.
+- If the user explicitly renames the feature document, update the feature index and all
+  downstream references in the same change.
+
+Keep `features/` flat by default: one feature key maps to one feature document. Do not
+create a sibling feature document for additional discussion about the same feature.
+
+Only split a feature into subdocuments when the feature document itself becomes large
+enough to need it, typically around 700-800+ lines. Treat that range as a prompt to
+consider the structure, not as a mechanical line-count rule. If a split is needed, split
+by logical feature sections such as overview, user flows, milestone roadmap, data model,
+integration notes, or open questions. Do not split by arbitrary line ranges.
+
+When that happens, replace the file with a directory using the same feature slug:
+
+```text
+<DOCS_ROOT>/features/{feature-key}.md
+```
+
+becomes:
+
+```text
+<DOCS_ROOT>/features/{feature-key}/
+```
+
+Use numbered filenames so the directory listing stays organized. The entry point should
+be named `0-feature-summary.md`, matching the first section of a normal feature
+document. It should orient readers to the feature and include a table of contents
+linking to the other section documents. Continue with logical section documents such as
+`1-user-flows.md`, `2-milestone-roadmap.md`, or `3-data-model.md`, using names that
+match the actual feature structure. The feature key and feature identity remain the
+same.
 
 ## Generation Triggers
 

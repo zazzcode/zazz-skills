@@ -34,6 +34,15 @@ Supporting output:
 
 - a structured handoff into `feature-doc-builder` or `spec-builder` once the proposal is approved
 
+## Docs Root Convention
+
+Use the repo docs root declared in `AGENTS.md`, the standards index, or another
+repo-local orientation document as the base for Zazz methodology artifacts. Do not infer
+that a directory literally named `docs/` is the docs root. Some repos use a Zazz root
+such as `.zazz/`, with `.zazz/docs/` reserved for imported reference guides. In that
+layout, proposal documents belong under `.zazz/proposals/`, not under
+`.zazz/docs/proposals/`.
+
 ## Role
 Proposal Builder (one per proposal discussion; works with Owner/stakeholders)
 
@@ -269,8 +278,8 @@ Use methodology naming guidance:
   - capture the feature key, deliverable code, or both inside the document title, metadata, and handoff section
 - Keep proposal documents in `proposals/` rather than mixing them into `features/` or `deliverables/`
 
-Docs root can be `.zazz/`, `docs/`, or project-configured root.
-Use the repository’s configured docs root.
+Docs root can be `.zazz/`, `docs/`, or another project-configured root. Use the
+repository's configured docs root.
 
 ---
 

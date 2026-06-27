@@ -48,7 +48,7 @@ before drafting implementation guidance.
 6. Copy `regular-specification-template.md` to the specification path. Fill placeholders interactively
    with the Owner.
 7. Read this skill's bundled `references/spec-driven-development-methodology.md`.
-8. Read `docs/standards/index.yaml` from the active worktree when present; load standards whose
+8. Read `<DOCS_ROOT>/standards/index.yaml` from the active worktree when present; load standards whose
    `applies_to` matches files this specification will affect.
 9. Iterate to Owner approval.
 

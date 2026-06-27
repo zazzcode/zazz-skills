@@ -80,7 +80,7 @@ section list.
 6. Read a project-local prior stacked specification if the Owner points to one for calibration.
 7. If no `gh-stack` skill is available, continue with this workflow's summary and flag
    command-level stack guidance for Owner review.
-8. Read `docs/standards/index.yaml` from the active lane worktree; load only relevant
+8. Read `<DOCS_ROOT>/standards/index.yaml` from the active lane worktree; load only relevant
    standards.
 9. Copy `stacked-specification-template.md` to the specification path or external record and fill placeholders
    interactively with the Owner.
