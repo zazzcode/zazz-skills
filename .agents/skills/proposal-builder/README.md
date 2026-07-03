@@ -37,7 +37,7 @@ Use this skill when:
 - you’re exploring a new feature direction
 - you want to compare implementation approaches before committing
 - there’s stakeholder disagreement and you need structured decision support
-- you want a proposal before writing/updating SPEC
+- you want a proposal before writing or updating a deliverable specification
 
 ---
 
@@ -160,7 +160,7 @@ Naming follows methodology conventions:
 ## Notes
 
 - Proposal is exploratory and non-authoritative.
-- Feature Requirements Documents and SPECs remain authoritative contracts.
+- Feature requirements documents and deliverable specifications remain authoritative contracts.
 - The skill should reference project standards while comparing approaches.
-- Proposal discussion can include technical implementation direction; final implementation contract still belongs in SPEC/PLAN.
+- Proposal discussion can include technical implementation direction; final implementation contract still belongs in a deliverable specification.
 - After proposal sign-off, transition to `feature-doc-builder`, `spec-builder`, or both using the proposal handoff summary.

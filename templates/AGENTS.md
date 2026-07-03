@@ -21,26 +21,28 @@ For a real in-use example, see the reference implementation:
 3. Replace every placeholder section with real repo instructions or remove the section if it does not apply.
 4. Keep the methodology-required parts intact:
    - docs-root declaration
+   - documentation operating model declaration
    - standards index location
    - selective standards loading rules
-   - features index location when used
-   - deliverables policy
+   - durable-doc and active-artifact storage policy
+   - features index location when used and when feature docs are repo-local
    - tracking system / issue-management declaration
    - shared-file coordination policy
    - worktree / branch policy
    - agent execution discipline reference and repo-specific overrides
-5. Add only repo-specific information that an agent actually needs during execution, planning, QA, or review.
+5. Add only repo-specific information that an agent actually needs during specification, execution, QA, or review.
 
 ## What Must Be In a Real `AGENTS.md`
 
 The following are required for repos using the Zazz methodology:
 
 - the repo's methodology docs-root rule
+- the repo's documentation operating model
 - the path to `<DOCS_ROOT>/standards/index.yaml`
 - instructions to read the standards index first and load only relevant standards
-- the path to `<DOCS_ROOT>/features/index.yaml` when the repo uses feature requirements documents
-- the repo's proposal storage policy, including whether proposal bodies live under `<DOCS_ROOT>/proposals/` or in an external document system with Git-tracked pointers
-- the repo's policy for `<DOCS_ROOT>/deliverables/`
+- the path to `<DOCS_ROOT>/features/index.yaml` when the repo uses repo-local feature requirements documents
+- the repo's durable-doc storage policy for project overview, architecture, features, project plans, roadmap, milestones, proposals, standards, and completed implemented specifications
+- the repo's active-artifact policy for RUN_LOG files, QA notes, handoffs, evidence, and scratch work
 - the repo's work-tracking system for deliverables / tickets / PR context
 - the repo's shared-file coordination policy for execution
 - worktree / branch workflow expectations
@@ -55,7 +57,8 @@ Without those pieces, agents will tend to either miss important project rules or
 - Prefer pointers over duplication. Point to standards and feature indexes instead of restating their contents.
 - Separate methodology rules from repo rules. Use the methodology for shared concepts and this file for repo-specific behavior.
 - Be explicit about workflows. If the repo requires worktrees, branch naming, env copying, or GitHub-only merges, say so directly.
-- Be explicit about tracking. Say whether the repo uses Zazz Board, Jira, Avaza, or another system for PR-facing work items and whether that affects deliverable naming, SPEC paths, or PR links.
+- Be explicit about the documentation operating model. Say whether durable docs live in committed Markdown, GitHub Wiki, Confluence, Zazz Board/Jira, or a hybrid.
+- Be explicit about tracking. Say whether the repo uses Zazz Board, Jira, Avaza, or another system for PR-facing work items and whether that affects specification metadata, final spec promotion, or PR links.
 - Be explicit about shared-file coordination. If the repo uses Zazz Board locks, Switchman, harness-native coordination, or strict serialization, say so in one short section.
 - State defaults and exceptions. Example: deliverables are local/untracked by default unless the repo explicitly commits them.
 - Avoid stale reference text. If a section is not maintained, delete it rather than leaving misleading instructions.
@@ -76,6 +79,7 @@ This repository uses the Zazz methodology for long-lived product docs, execution
 Agents should use this file as the starting point for:
 
 - docs-root discovery
+- documentation operating model discovery
 - standards loading
 - feature-context loading
 - worktree and deliverable conventions
@@ -97,10 +101,45 @@ Rules:
 
 - The docs root is a repo-relative path, not an absolute path.
 - Methodology docs live under `<DOCS_ROOT>/`.
-- `project.md`, proposal files or proposal pointers, `features/`, and `standards/` live under that same root.
+- Repo-local durable docs and local ephemeral artifacts live under that same root when the operating model stores them in the repo.
 - Do not hardcode `.zazz` if this repo uses another docs root.
 - If this repo resolves the docs root from an environment variable, document that rule explicitly here.
 - If the repo is a monorepo, set this to the monorepo-level docs location that governs the project as a whole.
+
+## Documentation Operating Model
+
+Declare how this repo stores durable docs and active implementation artifacts. Agents
+must follow this declaration and must not infer storage behavior from directory names
+that happen to exist.
+
+Choose and fill in one model, or write the repo's hybrid policy explicitly:
+
+- `Documentation operating model: GitHub-only committed Markdown`
+- `Documentation operating model: GitHub repo plus GitHub Wiki`
+- `Documentation operating model: Zazz Board for execution records plus repo or wiki durable docs`
+- `Documentation operating model: Jira plus Confluence`
+- `Documentation operating model: Hybrid; see per-artifact source-of-truth table below`
+
+Per-artifact source of truth:
+
+| Artifact | Source of truth | Agent update rule |
+| --- | --- | --- |
+| Project overview | {{ <DOCS_ROOT>/project.md | GitHub Wiki page | Confluence page | other }} | {{ update rule }} |
+| Architecture | {{ <DOCS_ROOT>/architecture/ | GitHub Wiki index | Confluence space | other }} | {{ update rule }} |
+| Feature requirements | {{ <DOCS_ROOT>/features/ | GitHub Wiki pages | Confluence pages | other }} | {{ update rule }} |
+| Project plans / roadmap / milestones | {{ repo docs | GitHub Wiki | Confluence | tracker | other }} | {{ update rule }} |
+| Proposals | {{ <DOCS_ROOT>/proposals/ | wiki/KB pages | pointer files | other }} | {{ update rule }} |
+| Specifications | `<DOCS_ROOT>/specifications/` | {{ tracked | ignored | mirrored to Zazz Board/Jira | promoted to wiki/Confluence after merge }} |
+| RUN_LOG / QA / handoff / evidence | {{ file under <DOCS_ROOT>/ephemeral/ | Zazz Board | Jira | other }} | {{ update rule }} |
+| Final implemented specifications | {{ <DOCS_ROOT>/specifications/ | GitHub Wiki | Confluence | Zazz Board | Jira | none }} | {{ promotion/update rule }} |
+| Standards | {{ <DOCS_ROOT>/standards/ | other }} | {{ update rule }} |
+
+Rules:
+
+- `<DOCS_ROOT>/specifications/` is the local spec-builder working directory. Declare whether it is tracked, ignored, mirrored, or promoted elsewhere.
+- `<DOCS_ROOT>/ephemeral/` is the optional local scratch surface for RUN_LOG files, QA notes, handoffs, evidence, recovery notes, and scratch work. Do not create or assume subdirectories inside it unless this file declares them.
+- If final specs live in GitHub Wiki, Confluence, Zazz Board, Jira, or another durable surface, keep `<DOCS_ROOT>/specifications/` excluded from Git unless the repo also wants local specs committed.
+- When a feature, architecture, roadmap, milestone, or completed spec changes, update the declared source of truth through the appropriate skill or repo process.
 
 ## Standards Loading Rules
 
@@ -141,41 +180,16 @@ Rules:
 
 If the repo does not yet use feature requirements documents, either remove this section or replace it with a note that the repo is currently deliverable-only.
 
-## Deliverables Policy
-
-Deliverable docs live under:
-
-- `<DOCS_ROOT>/deliverables/`
-
-Declare the actual repo policy here. Valid patterns include:
-
-- deliverable SPECs are local ignored execution artifacts
-- deliverable SPECs are intentionally committed
-- deliverable SPECs are mirrored, tracked, or referenced through an external system such as Zazz Board
-
-Regardless of the mode:
-
-- `standards/` and `features/` are long-lived tracked docs
-- the repo should state whether `<DOCS_ROOT>/deliverables/` exists on disk, is ignored locally, is committed, or is mostly external
-- agents should not guess this policy from repo shape alone
-
-If this repo uses a different policy, document it here.
-
-This section should be explicit because agents need to know whether deliverable docs are expected to be committed, ignored locally, or promoted selectively.
-
 ## Tracking System Policy
 
-Declare the primary project tracking system that agents should use when referencing work in PRs, SPECs, QA notes, and related review artifacts.
+Declare the primary project tracking system that agents should use when referencing work in PRs, specifications, QA notes, and related review artifacts.
 
 Recommended contents:
 
 - whether the project uses Zazz Board, Jira, Avaza, another tracker, or no external tracker
 - which system is authoritative for PR-facing work-item links
 - the project-level identifier agents should use for that system
-- whether deliverable folder naming follows:
-  - flat slug layout
-  - Zazz deliverable-code layout
-  - Jira issue-key layout
+- whether active or completed specification storage depends on tracker IDs
 - whether external ticket URLs should be included in PRs even when they do not affect deliverable file paths
 - what agents should do when the exact ticket URL or ID is not available at draft time
 
@@ -188,9 +202,9 @@ When relevant, also state how to resolve the tracker's project identifier:
 
 Example:
 
-- `Tracking system: Zazz Board for service-assisted execution, board project code comes from ZAZZ_PROJECT_CODE, deliverable docs use the Zazz deliverable-code subdirectory layout under <DOCS_ROOT>/deliverables/.`
-- `Tracking system: Jira for issue management, Jira project key is PROJ, Jira issue link required at the top of PRs, deliverable docs use the Jira issue-key subdirectory layout under <DOCS_ROOT>/deliverables/.`
-- `Tracking system: Avaza for PR-facing task links, deliverable docs remain flat under <DOCS_ROOT>/deliverables/, include Avaza task URL in PR context when provided.`
+- `Tracking system: Zazz Board for service-assisted execution, board project code comes from ZAZZ_PROJECT_CODE, execution records live in Zazz Board unless the owner asks for local files; specification files still live under <DOCS_ROOT>/specifications/.`
+- `Tracking system: Jira for issue management, Jira project key is PROJ, Jira issue link required at the top of PRs, completed specs are promoted to Confluence after merge.`
+- `Tracking system: Avaza for PR-facing task links; specification files live under <DOCS_ROOT>/specifications/ and include Avaza task URL in PR context when provided.`
 
 Keep this section short and factual.
 Its purpose is to remove ambiguity about how PRs and deliverable references should be anchored in this repo.
@@ -274,8 +288,9 @@ This is the right place for repo-specific instructions that should not live in t
 
 - Agent execution discipline: `docs/agent-execution-discipline.md`
 - Standards index: `<DOCS_ROOT>/standards/index.yaml`
-- Features index: `<DOCS_ROOT>/features/index.yaml`
-- Deliverables dir: `<DOCS_ROOT>/deliverables/`
+- Feature index or durable feature surface: `<DOCS_ROOT>/features/index.yaml` or the declared wiki/KB index
+- Active scratch surface when local files are used: `<DOCS_ROOT>/ephemeral/`
+- Completed-spec surface: `<DOCS_ROOT>/specifications/`, GitHub Wiki, Confluence, tracker, or none per the operating model
 
 ## Maintainer Checklist
 
@@ -283,6 +298,7 @@ Before you commit a real repo `AGENTS.md`, verify that:
 
 - placeholders have been replaced or removed
 - all referenced paths exist in that repo
+- documentation operating model is explicit and does not imply directories the repo does not use
 - the worktree / branch rules are accurate
 - standards and features sections reflect the repo's actual document model
 - tracking and shared-file coordination policies are explicit and accurate

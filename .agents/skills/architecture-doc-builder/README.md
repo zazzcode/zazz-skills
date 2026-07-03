@@ -16,7 +16,7 @@ It is designed to capture:
 - data model vision for milestones that introduce persistence
 - technical open questions
 
-This is an architecture-level skill, not an implementation-planning skill and not a feature-definition skill.
+This is an architecture-level skill, not a deliverable-specification skill and not a feature-definition skill.
 
 ## When to Use It
 

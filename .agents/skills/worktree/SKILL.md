@@ -57,7 +57,7 @@ That includes simple human requests such as "I need to review PR 193" or "create
 
 - Worktrees are required by the methodology.
 - The required model is a bare-repo container with sibling worktrees.
-- Durable docs belong in Git; execution artifacts follow the repo's declared deliverables policy.
+- Durable docs belong in Git; execution artifacts follow the repo's declared active-artifact policy.
 - One active deliverable or document effort must map to one branch and one worktree.
 - Flat branch names are preferred because they map cleanly to sibling worktree directory names.
 - Worktrunk is optional in the methodology, but required to use this skill.
@@ -231,7 +231,7 @@ Before cleanup actions, confirm:
 When a worktree effort goes wrong:
 
 1. Stop forcing the bad path forward.
-2. Return to the governing proposal, feature requirements document, or SPEC.
+2. Return to the governing proposal, feature requirements document, or deliverable specification.
 3. Decide whether to repair the same worktree or abandon it.
 4. If abandoning, remove or archive the worktree intentionally and create a fresh sibling worktree for the corrected approach.
 

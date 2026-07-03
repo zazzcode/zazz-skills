@@ -13,7 +13,7 @@ It is designed to capture:
 - what still needs to be built
 - how the feature should evolve through milestones
 
-This is a feature-level skill, not an implementation-planning skill.
+This is a feature-level skill, not a deliverable-specification skill.
 
 ## When to Use It
 

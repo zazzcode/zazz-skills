@@ -96,7 +96,7 @@ specification before implementation continues.
 For feature and deliverable work, the specification is more than scope. It should usually
 include implementation strategy, acceptance criteria, test expectations, and agent
 execution guidance. Its milestones, architecture notes, migration steps, rollout plan,
-test plan, execution sequence, and risk boundaries should define the review shape before
+test strategy, execution sequence, and risk boundaries should define the review shape before
 work starts:
 
 - small enough for one PR
@@ -109,7 +109,7 @@ its acceptance criteria, its evidence expectations, and any ordering assumptions
 implementation may discover small clarifications, corrected details, or validation notes.
 Those can be captured as a specification changelog in the implementation PR when they do
 not change scope, acceptance criteria, risk, or review shape. If implementation reveals
-that the approved plan is materially wrong, the correct outcome is to update and
+	that the approved specification is materially wrong, the correct outcome is to update and
 re-approve the specification rather than silently reshaping the work after coding has
 started.
 
@@ -245,7 +245,7 @@ stack.
 A broad PR should normally remain draft until it has:
 
 - a governing implementation contract
-- an approved decomposition, stack, or large-exception plan when the work is broad
+- an approved decomposition, stack, or large-exception review shape when the work is broad
 - evidence, an agent review report, and a decomposition rationale linked to the approved
   specification
 - a reviewer guide by file group, risk area, or stack branch
@@ -403,11 +403,11 @@ flowchart TB
     B --> C["Human review of scope, criteria, risks, guidance, and review shape"]
     C --> D{"Specification approved?"}
     D -- "No" --> B
-    D -- "Yes" --> E["Approved plan: one PR, multiple deliverables, or bounded stack"]
+    D -- "Yes" --> E["Approved review shape: one PR, multiple deliverables, or bounded stack"]
     E --> F["Implement approved review unit in isolated worktree"]
     F --> G["Open draft implementation PR"]
     G --> H["pr-builder packages contract, evidence, risk, and reviewer guide"]
-    H --> I["pr-review grades specification, standards, evidence, reviewability, and plan fit"]
+    H --> I["pr-review grades specification, standards, evidence, reviewability, and review-shape fit"]
     I --> J{"Matches approved review shape?"}
     J -- "No" --> B
     J -- "Yes" --> K{"Needs evidence or rework?"}
@@ -420,7 +420,7 @@ flowchart TB
     O --> P["Promote durable knowledge to docs or standards"]
 ```
 
-The plan-conformance check is not a late opportunity to invent a split or stack. It
+The review-shape conformance check is not a late opportunity to invent a split or stack. It
 confirms that implementation followed the decomposition approved during specification. If
 the PR needs a different shape, the specification is updated and re-approved before
 human review continues.
@@ -465,7 +465,7 @@ Before requesting human review, the PR should generally have:
   updates
 - checklist-style human verification instructions in the PR body
 - recommended review tier and rationale
-- stack map and parent assumptions when the approved plan uses a stack
+- stack map and parent assumptions when the approved specification uses a stack
 - decomposition rationale for broad diffs, tied back to the approved specification
 
 ### Before Merge
@@ -609,7 +609,7 @@ For bug fixes:
   manual or runtime evidence
 - treat "fixed without regression coverage" as an exception
 
-Test planning should prefer meaningful coverage over test volume:
+Test strategy should prefer meaningful coverage over test volume:
 
 - choose the lowest layer that proves the behavior
 - add higher-level tests when the bug crosses boundaries
@@ -726,7 +726,7 @@ risky rubber-stamps, and better signal for where human attention is needed.
 2. **Standards and agent review**: create or improve `<DOCS_ROOT>/standards/index.yaml`,
    add author-side `pr-review`, and track false positives and missed risks.
 3. **Decomposition gate**: require approved review shape and decomposition rationale,
-   then pilot specification update and re-approval when PRs drift from the plan.
+   then pilot specification update and re-approval when PRs drift from the approved review shape.
 4. **Risk-tiered routing**: route automated, standard, critical, and large-exception PRs
    differently and define minimum human review expectations for each.
 5. **Stack pilot**: use GH-stack and isolated worktree lanes when the approved

@@ -1,6 +1,6 @@
 ---
 name: feature-doc-builder
-description: Help a user create, draft, refine, or update a long-lived feature document for a product capability; use when the user wants to define or improve feature purpose, current state, milestone roadmap, and feature-level direction before or alongside deliverable planning.
+description: Help a user create, draft, refine, or update a long-lived feature document for a product capability; use when the user wants to define or improve feature purpose, current state, milestone roadmap, and feature-level direction before or alongside deliverable specification.
 ---
 
 # Feature Doc Builder Skill
@@ -29,7 +29,7 @@ The feature requirements document should help answer:
 - what still needs to be built
 - how the work should be organized into milestones
 
-This skill is for feature definition and feature evolution. It is not an implementation-planning skill and it does not
+This skill is for feature definition and feature evolution. It is not a deliverable-specification skill and it does not
 replace deliverable specification authoring.
 
 It should help the Product Owner articulate feature-level success criteria and milestone outcome criteria that later
@@ -142,7 +142,7 @@ dialogue is enough. The agent should:
 - help define or revise the next few meaningful milestones
 - draft the feature document early enough that the owner can react to a concrete document
 
-This skill should feel like a structured product-definition conversation, not an implementation planning session.
+This skill should feel like a structured product-definition conversation, not a deliverable-specification session.
 
 ### Example starter prompts
 

@@ -78,7 +78,7 @@ standard and can hold the exclusions against it.
 A standard does not need a section per source PR. A single section may consolidate three PR comments that all converge
 on the same convention; a single PR comment may motivate two sections if it touched two distinct sub-topics. Group by
 what the reader needs to look up, not by where the rule came from. The front-matter, the citations, and
-`docs/execution/findings/by-bucket/<topic>.md` together provide the provenance audit trail.
+the repo-declared ephemeral findings files together provide the provenance audit trail.
 
 ## Worked example: a well-formed section
 

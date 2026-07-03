@@ -4,7 +4,7 @@
   Copy this file to:
     <DOCS_ROOT>/specifications/<slug>.md
 
-  For milestone branches with multiple deliverables/specifications, use a consistent ordered
+  For milestone branches with multiple deliverables and specifications, use a consistent ordered
   pattern such as:
     <DOCS_ROOT>/specifications/m2-spec-1-service-layer-foundation.md
 
@@ -15,10 +15,10 @@
     a worktree / branch / PR may contain one deliverable, multiple deliverables, or a
     single-lane stack of branches. This template is for non-stacked specifications.
 
-  This deliverable specification is the implementation contract. There is no separate plan.
+  This deliverable specification is the implementation contract. There is no separate execution document.
 
   The specification is test/AC-driven:
-    define acceptance criteria and test plan before execution sequence.
+    define acceptance criteria and test strategy before execution sequence.
 
   The specification also defines the approved review shape before implementation:
     one PR, one milestone PR, sibling PRs, stacked PRs, or a large exception.
@@ -40,7 +40,10 @@
 **Integration branch:** `{{ integration-branch }}` (e.g. `dev`, `main`, `master` — confirmed with Owner)
 **Merge policy:** PR review required — agents commit/push feature branches only
 **Drafted:** {{ YYYY-MM-DD }}
-**Shared run log:** {{ `<DOCS_ROOT>/execution/<slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }} ({{ section-name }} section).
+**Shared run log:** {{ `<DOCS_ROOT>/ephemeral/<slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }} ({{ section-name }} section).
+**Execution tracking:** {{ local run log only | Zazz Board project/deliverable/task IDs | Jira issue key/URL | other tracker reference }}
+**Implementation coordination:** {{ lead implementation agent only | lead implementation agent coordinating subagents by phase/task }}
+**Companion skills for implementation:** {{ `zazz-board` | `jira` | repo-specific tracker skill/guidance | N/A }}
 
 ---
 
@@ -116,7 +119,8 @@ These are load-bearing and must hold verbatim. Restate them in the PR body when 
 This specification is approved for {{ one PR | one milestone PR | sibling PRs | large exception }}.
 Implementation must follow this review shape. If implementation surfaces a need to split,
 stack, combine, or treat the work as a large exception differently than described here,
-stop and revise the specification with Owner sign-off before continuing.
+stop for Owner sign-off, update the affected specification sections in place, and record
+the change in §13 before continuing.
 
 **Rationale.** {{ Explain why this review unit is honest for human review. Name rejected
 alternatives, such as stacked PRs, sibling PRs, one milestone PR, or a large exception. }}
@@ -196,7 +200,8 @@ Do not push after every phase by default.
 ### Scope Verification
 
 For a single-specification branch, `git diff {{ integration-branch }} --stat` should list
-exactly the files in §3 unless the Owner approved a specification revision.
+exactly the files in §3 unless the Owner approved a contract change and the change is
+recorded in §13.
 
 For a milestone branch with multiple specifications, verify this specification's slice with its commit(s),
 path list, or an Owner-approved slice-diff base. The full branch diff may include other
@@ -224,13 +229,50 @@ Adaptive guidance:
 
 The agent may adapt guidance when verified local evidence supports it, provided hard
 constraints still hold. Meaningful deviations go in the run log. Contract-changing
-deviations require Owner sign-off and specification revision.
+deviations require Owner sign-off, in-place specification updates, and a §13 change-log
+entry.
 
 ### Run Log
 
 Maintain the run log at {{ run-log path, Zazz Board note, external tracker record, or N/A }}. Append entries after OQ
 resolutions, phase completions, deviations, manual evidence, QA findings, rework
 references, and load-bearing issues.
+
+### Execution Tracking
+
+Use {{ local run log only | Zazz Board | Jira | other tracker }} as the execution
+tracking system for this specification.
+
+- **Authoritative record:** {{ run log path, Zazz Board deliverable/task IDs, Jira issue key/URL, or other tracker reference }}.
+- **Required updates:** {{ status changes, task notes, subagent progress, evidence links, lock updates, or N/A }}.
+- **Companion skill:** {{ `zazz-board` when using Zazz Board; `jira` when using Jira; repo-specific guidance; N/A }}.
+- **Fallback:** {{ what to do when tracker access is unavailable }}.
+
+### Lead / Subagent Coordination
+
+Implementation uses {{ lead implementation agent only | lead implementation agent coordinating subagents }}.
+
+All implementation happens in the single active worktree named above. If subagents are
+used, the lead implementation agent owns final scope control, file-conflict
+serialization, integration, evidence quality, run-log/tracker updates, and PR-ready
+output. Subagents may own only the delegated phases/tasks below and must return concise
+evidence and changed-file summaries to the lead before integration.
+
+Order work so overlapping file ownership is serialized. Do not run or merge delegated
+tasks in a way that lets agents overwrite each other's edits. When two tasks may touch
+the same file, the lead agent sequences them and reconciles the diff before continuing.
+
+| Phase / task | Owner | Allowed scope | Required evidence |
+| --- | --- | --- | --- |
+| {{ phase/task }} | {{ lead agent | subagent role }} | {{ paths/contract boundary }} | {{ tests/checks/output }} |
+
+### Independent QA / Verification Agents
+
+Use fresh-context QA/verifier agents for {{ functionality | performance | code hygiene |
+security | accessibility | standards | N/A }} when available. Each QA agent should read
+only the specification, run log/tracker record, relevant evidence, and focused code
+scope it needs for its quality dimension. QA agents do not modify code; they return
+PASS/FAIL findings with evidence and rework recommendations.
 
 ### Halt Conditions
 
@@ -258,7 +300,7 @@ The agent must stop and surface to the Owner if any of these occur:
 
 ---
 
-## 7. Test Plan
+## 7. Test Strategy
 
 Test value rule: every automated test below must prove an AC, invariant, public
 contract, realistic edge case, regression, or named risk. Prefer compact matrices that
@@ -269,7 +311,8 @@ proves an AC or edge case, cite it here instead of adding a new test.
 Test contract rule: this section defines the required test intent, reference data,
 realistic edge cases, and verification layer before implementation starts. Implementers
 may adapt local mechanics, but they must not weaken or rewrite this coverage to make the
-implementation pass. Material changes require Owner sign-off and specification revision.
+implementation pass. Material changes require Owner sign-off, in-place specification
+updates, and a §13 change-log entry.
 
 Reference data sources:
 
@@ -292,7 +335,7 @@ Manual verification:
 
 ## 8. TDD Entry Point + Prescriptive Execution Sequence
 
-The execution sequence is derived from §6 Acceptance Criteria and §7 Test Plan. Do not
+The execution sequence is derived from §6 Acceptance Criteria and §7 Test Strategy. Do not
 change the implementation contract by changing only this section; revise ACs/decisions
 first when the contract changes.
 
@@ -339,7 +382,8 @@ deviations.
 - [ ] Scope verification lists exactly the files in §3 for this specification slice.
 - [ ] PR shape matches the approved review shape in §3.
 - [ ] All AC1–ACn verified, with evidence cited.
-- [ ] Run-log section for this specification is up to date when a run log is used.
+- [ ] Run-log/tracker record for this specification is up to date, including subagent
+      outcomes when subagents were used.
 - [ ] Verifier sub-agent dispatched and returned all-pass.
 - [ ] PR draft body links this specification and lists each AC's verification.
 
@@ -357,18 +401,23 @@ Resolve these before code is written. Log each answer in the run log.
 
 This specification uses the shared run log:
 
-{{ `<DOCS_ROOT>/execution/<slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}
+{{ `<DOCS_ROOT>/ephemeral/<slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}
 
-When stored on disk, the run log should normally live under `<DOCS_ROOT>/execution/`
+When stored on disk, the run log should normally live under `<DOCS_ROOT>/ephemeral/`
 and remain untracked via repo-local or bare-repo exclude rules unless the repo explicitly
 chooses committed execution history.
 
-Repos that do not use Zazz Board may rely exclusively on `<DOCS_ROOT>/execution/` for
+Repos that do not use Zazz Board may rely exclusively on `<DOCS_ROOT>/ephemeral/` for
 run logs, handoff notes, QA findings, and related execution records.
 
 When the Owner uses Zazz Board, the run log, handoff notes, QA findings, and related
 execution information may live there instead so multiple agents can share the same
 record across worktrees and sessions.
+
+When the Owner uses Jira or another tracker, follow the repo-declared tracker workflow
+and keep enough stable identifiers here for implementors and reviewers to find the
+authoritative issue, task, or execution record. Jira live integration is not assumed
+unless the repo declares one.
 
 The agent appends entries; it does not rewrite prior entries.
 
@@ -394,7 +443,7 @@ Session start protocol:
 
 ---
 
-## 12. Appendix — Agent Implementation Prompt
+## 12. Agent Implementation Prompt
 
 Paste this into a fresh implementation session:
 
@@ -403,23 +452,59 @@ You are starting fresh in the worktree at {{ absolute-worktree-path }}.
 Your task is to implement {{ deliverable-name }}.
 
 Specification: {{ specification path or external record }}
-Shared run log: {{ `<DOCS_ROOT>/execution/<slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}
+Shared run log: {{ `<DOCS_ROOT>/ephemeral/<slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}
+Execution tracking: {{ local run log only | Zazz Board IDs | Jira issue | other tracker reference }}
+Implementation coordination: {{ lead implementation agent only | lead implementation agent coordinating subagents }}
+Companion skills to load: {{ `zazz-board` | `jira` | repo-specific tracker guidance | N/A }}
 
 Read the specification end to end before doing anything else. Then read the shared run log in
 full. If this specification is part of a milestone branch, read prior specification sections and their
 run-log sections because earlier decisions, QA findings, and deviations may affect this work.
 
+TRACKING SYSTEM
+- If execution tracking is Zazz Board, load `zazz-board` and use the repo-declared
+  project/deliverable/task identifiers. Update status, task notes, subagent progress,
+  file locks when required, and evidence links through that skill.
+- If execution tracking is Jira, load `jira` and use the repo-provided or
+  Owner-provided issue key/URL and acceptance context. Do not assume live Jira
+  access unless the repo declares it.
+- If execution tracking is another tracker, follow the repo-declared workflow named in
+  this specification.
+- If execution tracking is local run log only, keep the run log and PR evidence current.
+
+LEAD / SUBAGENT OPERATING MODEL
+- Work in the single active worktree named by the specification.
+- The lead implementation agent owns the specification, scope control, file-conflict
+  serialization, integration, evidence quality, run-log/tracker updates, and final
+  PR-ready output.
+- If this specification allows subagents, delegate only the phases/tasks listed in §5.
+  Give each subagent its scope, ACs, required evidence, and halt conditions.
+- Require every subagent to return changed-file summaries, commands run, evidence, risks,
+  and unresolved questions. The lead reconciles subagent output before declaring any AC
+  complete.
+- Order overlapping file work so delegated tasks do not overwrite each other. If two
+  tasks may touch the same file, serialize them and reconcile the diff before continuing.
+- If subagents are not available in the active harness, the lead implementation agent
+  performs the phases directly and records that in the run log.
+
+FRESH-CONTEXT QA / VERIFICATION
+- Use separate fresh-context QA/verifier agents for the quality dimensions named in §5
+  when the active harness supports them.
+- QA/verifier agents read the specification, run log/tracker record, relevant evidence,
+  and focused code scope; they do not modify code.
+- Treat QA findings that change the implementation contract through the Implementation
+  And Review Change Log protocol.
+
 NON-NEGOTIABLE RULES
 1. Follow the specification's Agent Implementation Rules.
-2. Resolve every Open Question before writing code; log answers in the implementation
-   log.
+2. Resolve every Open Question before writing code; log answers in the run log.
 3. Verify standards via <DOCS_ROOT>/standards/index.yaml before writing code.
 4. Tests and verification are not optional. Every AC must have evidence.
 
 ORDER OF WORK
 1. Read the specification, run log, required docs, standards, and code references.
 2. Resolve OQs.
-3. Review ACs (§6) and Test Plan (§7); start with the TDD entry point in §8.
+3. Review ACs (§6) and Test Strategy (§7); start with the TDD entry point in §8.
 4. Confirm the implementation still matches the approved review shape in §3.
 5. Execute the specification's phases.
 6. Run verification and complete the DoD (§9).
@@ -431,7 +516,7 @@ After your own DoD checklist is green, dispatch a fresh sub-agent:
 
   "You are verifying {{ deliverable-name }} in {{ absolute-worktree-path }}. Read the
   specification at {{ specification path or external record }} and the shared run log at
-  {{ `<DOCS_ROOT>/execution/<slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}. Follow the
+  {{ `<DOCS_ROOT>/ephemeral/<slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}. Follow the
   Implementation Rules. For each AC, independently verify it by running the
   cited test or command. Cross-check deviations and QA findings logged in the run log against the code.
   Verify the specification slice matches its scope using the scope command named in the specification. Do
@@ -442,4 +527,27 @@ Only declare done after the verifier reports all-pass.
 
 ---
 
-*End of specification. Implementation proceeds from this specification and the run log; no separate plan is created.*
+## 13. Implementation And Review Change Log
+
+Accepted steering, QA/UAT findings, PR review feedback, or implementation-discovered
+bugs that change the contract must update the affected sections above in place. This
+section records the audit trail; the current contract lives in the body of the
+specification.
+
+No changes recorded. Delete this line when adding the first change-log entry.
+
+### {{ YYYY-MM-DD HH:MM TZ }} — {{ Short Change Title }}
+
+**Source.** {{ Owner steering, QA/UAT, PR review, implementation-discovered bug, or other source. }}
+
+**Changed Sections.** {{ Links or section numbers, e.g. [§6 Acceptance Criteria](#6-acceptance-criteria), [§7 Test Strategy](#7-test-strategy). }}
+
+**Rationale.** {{ Why the accepted change was needed. }}
+
+**Summary.** {{ Short summary of the in-place spec edits. }}
+
+**Verification Impact.** {{ Tests, manual checks, evidence, or re-verification now required. }}
+
+---
+
+*End of specification. Implementation proceeds from this specification and the run log; no separate execution document is created.*

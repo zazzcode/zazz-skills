@@ -1,11 +1,11 @@
 ---
-name: "Zazz Board API"
+name: zazz-board
 type: "rule"
 description: "CLI-first companion skill for service-assisted repos that use Zazz Board; use it to create and manage deliverables, tasks, relations, notes, statuses, and file locks through zazzctl, with live OpenAPI as the protocol validation and fallback surface."
 required_for: ["qa-testing", "spec-builder", "pr-builder"]
 ---
 
-# Zazz Board API (Agent Routes)
+# Zazz Board Skill
 
 ## Startup Sequence
 
@@ -16,13 +16,23 @@ Before making board/API calls:
 4. Then make only the board updates that are supported by the current role and task context.
 
 ## Purpose
-Agents use this API to create/manage deliverables and tasks, update statuses, append notes, and inspect task graph/readiness. Projects and users are pre-configured; agents do not create them.
+Agents use this skill to understand and interact with Zazz Board in service-assisted repos. It covers board purpose, deliverables, tasks, statuses, notes, locks, graph/readiness checks, and the CLI/API surfaces used to keep execution records synchronized. Projects and users are pre-configured; agents do not create them.
 
 This skill is only for **service-assisted** adoption. It is optional in the methodology and should not be required in `process-only` or ordinary `skills-assisted` repos that are just following the methodology's document model and directory structure.
 
-### Deliverable SPEC paths on disk
+### Specification paths on disk
 
-Projects are **flat**, **Zazz Board**, or **Jira** (mutually exclusive). **Flat:** `deliverables/{slug}-SPEC.md`. **Subdirectory:** `deliverables/{id}/{slug}-SPEC.md` with slug-only filenames inside—**Zazz** uses board **deliverable code** as `{id}` (this API syncs `dedFilePath` / `specFilepath`); **Jira** uses the **same layout** with an **issue key** as `{id}` and does **not** sync paths through this API. Paths you send must match files on disk. See [zazz-methodology.md](../../../zazz-methodology.md) and **spec-builder** → **Deliverable files: storage, naming, and index**.
+Projects are **flat**, **Zazz Board**, or **Jira** (mutually exclusive) when using
+repo-local specification files. **Flat:** `specifications/{slug}.md`. **Subdirectory:**
+`specifications/{id}/{slug}.md` with slug-only filenames inside. **Zazz** uses board
+**deliverable code** as `{id}` when the repo declares that layout; this API syncs
+`dedFilePath` / `specFilepath`. **Jira** may use the same layout with an **issue key**
+as `{id}` and does **not** sync paths through this API. Paths you send must match files
+on disk and the repo's declared documentation operating model. If the repo stores
+active specs only in Zazz Board, Jira, GitHub Wiki, Confluence, or another external
+surface, do not invent local specification paths. See
+[zazz-methodology.md](../../../zazz-methodology.md) and **spec-builder** storage
+guidance.
 
 ---
 
@@ -45,7 +55,7 @@ All API requests (except `/openapi.json`, `/health`, `/`, `/db-test`, `/token-in
 
 ## Canonical CLI Adapter (Required)
 Use the canonical Node CLI for board communication:
-- Script: `.agents/skills/zazz-board-api/scripts/zazzctl.mjs`
+- Script: `.agents/skills/zazz-board/scripts/zazzctl.mjs`
 - Runtime prereq: Node.js 22+ (project baseline)
 
 CLI-first policy:
@@ -59,7 +69,7 @@ CLI-first policy:
 
 CLI profile usage:
 - Execution profile: `zazzctl --profile worker ...`
-- Planning profile: `zazzctl --profile planner ...`
+- Specification setup profile: `zazzctl --profile planner ...`
 - Spec-builder profile: `zazzctl --profile spec_builder ...`
 - Generic fallback: `zazzctl ...` or `zazzctl --profile generic ...`
 
@@ -69,7 +79,7 @@ This skill uses a split source-of-truth model so each layer has one clear respon
 
 - **`zazzctl` is the primary agent interface.** Agents should prefer the CLI and its built-in help as the first surface for normal board operations.
 - **OpenAPI is the protocol validation and fallback surface.** The board implementation should keep the CLI aligned with the live API schema and routes.
-- **This repo defines the agent-facing contract.** The `zazz-board-api` skill and CLI usage model here describe how agents are expected to operate.
+- **This repo defines the agent-facing contract.** The `zazz-board` skill and CLI usage model here describe how agents are expected to operate.
 - **[zazz-board](https://github.com/zazzcode/zazz-board) is the reference implementation.** That repo implements the API and CLI behavior that this skill expects.
 
 Practical rule:
@@ -161,7 +171,7 @@ If a critical capability cannot be resolved, stop and surface the mismatch.
 ---
 
 ## Mandatory execution contract
-For board-assisted planning, execution, or QA runs, these behaviors are required:
+For board-assisted specification, execution, or QA runs, these behaviors are required:
 - Use live API for all task/deliverable lifecycle updates.
 - Do not leave created tasks in ambiguous state.
 - Keep task graph relations explicit and verifiable.
@@ -180,11 +190,11 @@ Deliverable lifecycle (required):
 - Resolve project deliverable workflow from API/OpenAPI-capable endpoints.
 - Update deliverable status explicitly with status endpoints; do not assume implicit transitions.
 - Approve deliverable explicitly with approve endpoint when workflow requires it.
-- Planning start gate: when planning starts, set deliverable status to `PLANNING`.
+- Specification start gate: when specification work starts, set deliverable status to `PLANNING`.
 - Spec-builder gate: after deliverable creation, set default status to `BACKLOG` and persist `specFilepath`.
 
 Dependency lifecycle (required):
-- Treat `DEPENDS_ON` in PLAN as required `TASK_RELATIONS` rows.
+- Treat `DEPENDS_ON` in the approved task/specification contract as required `TASK_RELATIONS` rows.
 - Do not assume task create `dependencies` field is sufficient for graph lines.
 - After task creation, create each dependency edge explicitly via relation endpoint.
 - Create dependency edges immediately after the dependent task exists, even if upstream work is not complete yet.
@@ -205,7 +215,7 @@ Harness-aware exception:
 Verification lifecycle (required):
 - After creating/updating tasks, re-fetch deliverable task list and confirm task `id`, `phaseStep`, `status`, and blocker fields when used.
 - Re-fetch deliverable graph and confirm task presence and relation edges.
-- For every instantiated task with non-`none` planned `DEPENDS_ON`, verify matching graph edges are present before declaring board sync complete.
+- For every instantiated task with non-`none` declared `DEPENDS_ON`, verify matching graph edges are present before declaring board sync complete.
 - If mismatch appears, report exact endpoint + payload + response.
 
 ---
@@ -226,9 +236,9 @@ Verification lifecycle (required):
   - Return both numeric `id` and display `deliverableId`
 - Create task:
   - Required inputs: `code`, `delivId`, `title`
-  - Required operational fields for planning execution: `phase`, `phaseStep`, `prompt`
+  - Required operational fields for task execution: `phase`, `phaseStep`, `prompt`
   - Respect deliverable approval prerequisites
-  - For each planned dependency, create explicit relation (`DEPENDS_ON`) immediately after task creation
+  - For each declared dependency, create explicit relation (`DEPENDS_ON`) immediately after task creation
 - Update task status:
   - Resolve valid transitions from live workflow; common path is `READY` -> `IN_PROGRESS` -> (`QA` optional) -> `COMPLETED`
   - Include `agentName` when moving to `IN_PROGRESS` to claim work

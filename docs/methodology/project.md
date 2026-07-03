@@ -26,6 +26,16 @@ Use `project.md` to keep project-level context out of transient chats and delive
 - Prefer repo-relative links.
 - Keep examples generic enough that a future contributor can understand them without reading old PR discussions.
 
+## Storage
+
+The project overview lives in the repo's declared durable storage surface. In a
+repo-committed Markdown mode this is usually `<DOCS_ROOT>/project.md`. In a wiki or
+knowledge-base mode, `AGENTS.md` should point agents at the project overview page and
+the durable docs index.
+
+Do not store the project overview under `<DOCS_ROOT>/ephemeral/`; that directory is for
+active implementation scratch and mutable execution records.
+
 ## Relevant Skills
 
 | Skill | How it helps efficiency |
@@ -33,11 +43,14 @@ Use `project.md` to keep project-level context out of transient chats and delive
 | `feature-doc-builder` | Turns durable project context into focused feature requirements without rebuilding product background in every conversation. |
 | `architecture-doc-builder` | Connects project-level capability direction to system design, reducing repeated discovery before each deliverable. |
 | `proposal-builder` | Captures uncertain direction as a decision artifact before it leaks into implementation churn. |
+| `gh-wiki` | Updates the project overview when the repo uses GitHub Wiki as the durable docs surface. |
+| `confluence` | Drafts or updates project overview content for Confluence-backed repos. |
 | `conformance` | Applies small standards-alignment updates when `project.md` drifts from the repo's documented conventions. |
 | `doc-check` | Verifies documentation hygiene before changes are committed. |
 
 ## Related Sections
 
 - [Architecture](./architecture.md)
+- [Document Storage](./document-storage.md)
 - [Features and Milestones](./features-and-milestones.md)
 - [Specifications](./specifications.md)

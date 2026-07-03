@@ -1,6 +1,6 @@
-# Zazz Board API Skill — User Guide
+# Zazz Board Skill — User Guide
 
-How to use the Zazz Board API skill when a repo operates in service-assisted mode with Zazz Board.
+How to use the Zazz Board skill when a repo operates in service-assisted mode with Zazz Board.
 
 ## What It Does
 
@@ -31,14 +31,14 @@ Do not require this skill in ordinary skills-assisted repos that are just follow
 
 The preferred interface is the CLI:
 
-- script: `.agents/skills/zazz-board-api/scripts/zazzctl.mjs`
+- script: `.agents/skills/zazz-board/scripts/zazzctl.mjs`
 
 The skill is intentionally CLI-first.
 
 ## Example Uses
 
 Typical indirect use:
-- `spec-builder` syncing a SPEC path to a board-backed deliverable
+- `spec-builder` syncing a specification path to a board-backed deliverable
 - an implementation agent updating task status or locks
 - an agent creating tasks or dependency edges from an approved execution contract
 - `qa-testing` appending validation findings or evidence

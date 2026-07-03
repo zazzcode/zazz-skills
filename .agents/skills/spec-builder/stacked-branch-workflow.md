@@ -8,12 +8,13 @@ Stacked work is implemented as **multiple branches inside one lane worktree** us
 after even two worktrees.
 
 Do not use this workflow as PR-time cleanup for an oversized implementation. If coding
-has already started and a stack now seems necessary, revise the specification with Owner
-sign-off before continuing.
+has already started and a stack now seems necessary, stop for Owner sign-off, update the
+affected specification sections in place, and record the change in the Implementation
+And Review Change Log before continuing.
 
 Agents may push stack branches and create/update PRs when instructed, but they never
-merge directly to `dev`. Lower branches reach `dev` only after human PR review and the
-PR lands.
+merge directly to the repo's confirmed integration branch. Lower branches reach the
+integration branch only after human PR review and the PR lands.
 
 For command-level stack guidance, prefer the separate `gh-stack` skill when available.
 If that skill is not available, use the summary in this file and ask the Owner to
@@ -36,8 +37,9 @@ concerns" section. This file is workflow only.
 
 ## Naming and location
 
-- **Stacked specification**: `<DOCS_ROOT>/specifications/<slug>.md` when committed in
-  Git, or Zazz Board / the repo-declared tracking system when external.
+- **Stacked specification**: `<DOCS_ROOT>/specifications/<slug>.md` unless the repo
+  declares a more specific naming policy. The operating model determines whether
+  `specifications/` is tracked, ignored, mirrored, or promoted elsewhere.
 - **Lane worktree dir**: repo-conventional flat worktree name, usually matching the
   deliverable or branch slug where practical.
 - **Stacked branch names**: flat branch names managed by `gh-stack`; avoid `/` so branch
@@ -45,7 +47,7 @@ concerns" section. This file is workflow only.
 - **Run log**: follow the repo's declared storage policy; use sections per branch or per
   deliverable when useful.
 
-No separate plan files are created. Branch-specific execution phases, ACs, halt conditions, and
+No separate execution document is created. Branch-specific execution phases, ACs, halt conditions, and
 implementation prompts live in the stacked specification and run log.
 
 ## Required specification contents beyond the standard quality bar

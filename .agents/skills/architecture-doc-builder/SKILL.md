@@ -37,7 +37,7 @@ The architecture document should help answer:
 - which sequence of components participates in each use case
 - which technical decisions still need to be made
 
-This skill is for architecture definition and evolution. It is not an implementation-planning skill and it does not
+This skill is for architecture definition and evolution. It is not a deliverable-specification skill and it does not
 replace deliverable specification authoring or feature-level product definition.
 
 It should help the lead developer or architect articulate technical decisions and per-milestone system shape that
@@ -215,7 +215,7 @@ iterative dialogue is enough. The agent should:
 - help define per-milestone system and sequence diagrams
 - draft the architecture document early enough that the user can react to a concrete document
 
-This skill should feel like a structured system-design conversation, not an implementation planning session.
+This skill should feel like a structured system-design conversation, not a deliverable-specification session.
 
 ### Example starter prompts
 

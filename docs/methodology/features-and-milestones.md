@@ -43,6 +43,21 @@ Good deliverables:
 
 If a deliverable cannot be tested or reviewed independently, split it or move the uncertainty back to a proposal, feature doc, or architecture doc.
 
+## Storage
+
+Feature requirements, project plans, roadmap, and milestone history live in the repo's
+declared durable storage surface. In committed Markdown mode, feature requirements
+usually live under `<DOCS_ROOT>/features/`, while roadmap or plan documents may live
+under `<DOCS_ROOT>/roadmap/` when the team keeps them separately from feature docs. In
+wiki or knowledge-base mode, `AGENTS.md` should identify the feature, roadmap, and
+milestone index pages.
+
+Active deliverable specifications remain under `<DOCS_ROOT>/specifications/` while
+RUN_LOG files, QA notes, handoffs, and scratch milestone analysis belong under
+`<DOCS_ROOT>/ephemeral/` or the declared tracker/service while the work is underway. When
+implementation changes shipped behavior, promote the durable feature, roadmap, or
+milestone update into the declared durable docs surface.
+
 ## Relevant Skills
 
 | Skill | How it helps efficiency |
@@ -51,10 +66,13 @@ If a deliverable cannot be tested or reviewed independently, split it or move th
 | `proposal-builder` | Resolves product or technical uncertainty before a feature roadmap hardens around the wrong assumption. |
 | `architecture-doc-builder` | Adds design depth for features that span multiple deliverables, services, workflows, or data boundaries. |
 | `spec-builder` | Slices approved milestones into executable deliverable specifications with acceptance criteria and test intent. |
-| `zazz-board-api` | Synchronizes feature-linked deliverables and execution state when the repo uses Zazz Board. |
+| `gh-wiki` | Updates feature, roadmap, and milestone pages when the repo uses GitHub Wiki as the durable docs surface. |
+| `confluence` | Drafts or updates feature, roadmap, and milestone pages for Confluence-backed repos. |
+| `zazz-board` | Synchronizes feature-linked deliverables and execution state when the repo uses Zazz Board. |
 
 ## Related Sections
 
+- [Document Storage](./document-storage.md)
 - [Specifications](./specifications.md)
 - [Code Generation](./code-generation.md)
 - [Testing and Validation](./testing-and-validation.md)

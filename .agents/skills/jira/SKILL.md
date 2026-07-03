@@ -1,9 +1,9 @@
 ---
-name: jira-api
-description: Draft only, not yet implemented. Planned future companion utility skill for Jira-backed repos, intended to eventually fetch story details, acceptance criteria, links, and workflow metadata through an MCP or CLI interface.
+name: jira
+description: Draft only, not yet implemented. Future companion utility skill for Jira-backed repos, intended to eventually fetch story details, acceptance criteria, links, and workflow metadata through an MCP or CLI interface.
 ---
 
-# Jira API Skill
+# Jira Skill
 
 ## Draft Status
 
@@ -17,14 +17,14 @@ If a task needs Jira context today:
 
 1. Use `AGENTS.md` as the source of truth for repo-specific settings such as tracking system, project-code conventions, and Jira workflow rules. Read it if that context is not already available, along with any skill extension that declares Jira conventions.
 2. Ask the user for the Jira issue key, URL, acceptance criteria, or related story details when they are not already available in repo docs.
-3. Use the user-provided or repo-provided Jira information as context for planning, QA, PR drafting, or execution.
+3. Use the user-provided or repo-provided Jira information as context for specification, QA, PR drafting, or execution.
 4. Clearly distinguish provided facts from anything still missing.
 
 ## Operating Modes
 
 This draft skill is intended for two future usage patterns:
 
-1. **Interactive support** for a human-in-the-loop agent that needs Jira context during planning, QA review, PR drafting, or execution.
+1. **Interactive support** for a human-in-the-loop agent that needs Jira context during specification, QA review, PR drafting, or execution.
 2. **Companion utility support** for automation-driven agents, including an agent running the `qa-testing` skill, that need authoritative Jira issue context to validate acceptance criteria, confirm scope, or anchor reviewer evidence.
 
 Today, both modes still rely on repo guidance and user-provided Jira context because live integration is not implemented yet.
@@ -32,13 +32,13 @@ The important distinction is that this skill is not only for conversational look
 
 ## Intended Future Role
 
-This skill is expected to become the Jira counterpart to `zazz-board-api` for repos that use Jira as the authoritative issue-management system.
+This skill is expected to become the Jira counterpart to `zazz-board` for repos that use Jira as the authoritative issue-management system.
 
-Planned responsibilities may include:
+Future responsibilities may include:
 
 - fetching Jira issue summaries, descriptions, and acceptance criteria
 - retrieving issue URLs, statuses, assignees, and workflow metadata
-- resolving related parent/child issue context when review or planning depends on it
+- resolving related parent/child issue context when specification or review depends on it
 - providing authoritative PR-facing Jira references for skills such as `pr-builder`
 - helping `spec-builder`, `pr-builder`, `pr-review`, and an agent running `qa-testing` validate that work remains aligned with the governing Jira issue
 - informing automation-driven QA-agent flows with authoritative Jira acceptance criteria and issue metadata
@@ -56,7 +56,7 @@ Until that exists, this skill is documentation-only.
 ## Usage Rules For Now
 
 - Treat this skill as a roadmap marker, not an executable integration.
-- Do not invent Jira API endpoints, auth flows, or commands.
+- Do not invent Jira endpoints, auth flows, or commands.
 - Do not imply that Jira data can be fetched automatically through this skill yet.
 - If a repo uses Jira, ask the user for the authoritative Jira reference when it is required and unavailable.
 - If an automation-driven agent such as an agent running `qa-testing` needs Jira context, use repo guidance plus user-provided Jira details as the current fallback input.
@@ -75,7 +75,7 @@ When this skill is implemented, it should likely follow the same broad methodolo
 
 ## Non-Goals In This Draft
 
-- no live Jira API behavior
+- no live Jira behavior
 - no bundled scripts
 - no auth instructions
 - no required environment variables yet
