@@ -70,6 +70,7 @@ variable should use `ZAZZ_DOCS_ROOT`, and its value must be a repo-relative path
 ├── proposals/
 ├── features/
 ├── architecture/
+├── specifications/
 └── ephemeral/
 ```
 
@@ -230,10 +231,13 @@ repo/
     ├── standards/
     ├── features/
     ├── architecture/
+    ├── specifications/
     └── ephemeral/
 ```
 
-Track or ignore `<DOCS_ROOT>/specifications/` according to the repo's operating model.
+Keep `<DOCS_ROOT>/specifications/` available in the local worktree for agent-readable
+spec-builder files. Track, ignore, mirror, or promote it according to the repo's
+operating model.
 
 Use `.agents/skills/` as the canonical repo-local skill location when vendoring Zazz
 skills into a project. Runtime-specific instruction files can either point agents at

@@ -83,9 +83,9 @@ Zazz uses a project-first document model:
 
 Repos declare the docs root in `AGENTS.md`, commonly `docs/` or `.zazz/`. The value must be repo-relative.
 Repos also declare their documentation operating model. That model decides whether
-`specifications/` is tracked or ignored, and whether final specs, project plans,
-roadmap, project milestones, or other durable docs are promoted to GitHub Wiki,
-Confluence, or another system.
+`specifications/` is tracked, ignored, mirrored, or promoted, and whether final specs,
+project plans, roadmap, project milestones, or other durable docs are promoted to
+GitHub Wiki, Confluence, or another system.
 
 ```text
 <DOCS_ROOT>/
@@ -93,6 +93,7 @@ Confluence, or another system.
 ├── architecture/
 ├── proposals/
 ├── features/
+├── specifications/
 ├── ephemeral/
 └── standards/
 ```
