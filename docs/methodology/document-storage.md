@@ -72,6 +72,8 @@ repository shape.
 
 Active implementation artifacts live under `<DOCS_ROOT>/ephemeral/` when kept on disk.
 This directory is normally ignored by Git because it contains scratch and runtime state.
+Ephemeral means uncommitted and non-durable, not necessarily memory-only; these files may
+persist locally until the worktree is removed.
 Do not assume or create a universal subdirectory layout inside `ephemeral/`. Each repo's
 `AGENTS.md` declares the exact filenames, naming convention, and whether RUN_LOG files,
 QA findings, handoff notes, local evidence captures, recovery notes, or scratch

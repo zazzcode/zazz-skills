@@ -88,7 +88,7 @@ Each document type exists to solve a different coordination problem:
 - Project milestones are project-owned timeline containers that communicate when work is expected to land; a single project milestone can contain deliverables from multiple features.
 - `architecture/` contains project-level or feature-level technical design.
 - `specifications/` contains local specification files; the repo decides whether they are committed, ignored, mirrored, or promoted elsewhere.
-- `ephemeral/` contains active implementation scratch such as RUN_LOG files, handoff notes, QA findings, recovery notes, evidence, and scratch analysis.
+- `ephemeral/` contains active implementation scratch such as RUN_LOG files, handoff notes, QA findings, recovery notes, evidence, and scratch analysis. Ephemeral means uncommitted and non-durable, not necessarily memory-only; these files may persist locally until the worktree is removed.
 
 For the methodology progression and section table of contents, read [zazz-methodology.md](zazz-methodology.md).
 
