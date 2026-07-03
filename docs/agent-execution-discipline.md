@@ -96,13 +96,13 @@ Use the repo-declared execution-record surface.
 Default local paths:
 
 ```text
-<DOCS_ROOT>/execution/<slug>-run-log.md
-<DOCS_ROOT>/execution/<milestone-or-lane-slug>-run-log.md
+<DOCS_ROOT>/ephemeral/<slug>-run-log.md
+<DOCS_ROOT>/ephemeral/<milestone-or-lane-slug>-run-log.md
 ```
 
 Allowed surfaces include:
 
-- ignored local file under `<DOCS_ROOT>/execution/`
+- ignored local file under `<DOCS_ROOT>/ephemeral/`
 - committed support artifact when the repo intentionally tracks execution history
 - Zazz Board note or attachment
 - external tracker entry

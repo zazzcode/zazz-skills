@@ -319,7 +319,7 @@ Examples:
   zazzctl help task create
   zazzctl --profile worker exec begin --deliverable-id 8 --task-id 25 --agent-name implementation-agent-1 --file src/routes/example.js
   zazzctl --profile planner deliverable update --deliverable-id 4 --json '{"specFilepath":"<DOCS_ROOT>/specifications/sample-feature.md"}'
-  zazzctl --profile spec_builder deliverable create --name "Agent Tokens" --type FEATURE --spec-filepath "<DOCS_ROOT>/deliverables/ZAZZ-6/agent-tokens-SPEC.md"
+  zazzctl --profile spec_builder deliverable create --name "Agent Tokens" --type FEATURE --spec-filepath "<DOCS_ROOT>/specifications/ZAZZ-6/agent-tokens.md"
   ZAZZCTL_ENV_FILE=.env zazzctl deliverable list
 `;
   }

@@ -23,25 +23,26 @@ single-lane stack of branches
 The skill conducts an interactive dialogue, captures decisions and acceptance criteria,
 and produces a self-contained specification. The specification includes the approved
 review shape and decomposition rationale, execution sequence, definition of done, halt
-conditions, run-log protocol, and paste-ready implementation prompt. There is no
-separate plan document.
+conditions, run-log protocol, paste-ready implementation prompt, and final
+Implementation And Review Change Log. There is no separate execution document.
 
 The skill writes deliverable specifications. It does **not** implement product code.
 
 ## Team integration rule
 
 This is a team repository. Agents may commit to their feature branch and push their
-feature branch when the specification says to, but they must never merge directly to `dev`.
+feature branch when the specification says to, but they must never merge directly to the
+repo's confirmed integration branch.
 
-All integration to `dev` happens through human PR review. Specifications should use wording like
-"submit a PR to `dev`", "after the PR lands", or "after the lower PR lands" rather than
-instructing an agent to merge.
+All integration happens through human PR review. Specifications should use wording like
+"submit a PR to `{{ integration-branch }}`", "after the PR lands", or "after the lower
+PR lands" rather than instructing an agent to merge.
 
 ## When to use it
 
 - You have a bounded deliverable and want to capture scope, decisions, and ACs before
   implementation.
-- You are defining a milestone branch with multiple ordered deliverables/specifications that
+- You are defining a milestone branch with multiple ordered deliverables and specifications that
   will be reviewed as one PR.
 - You are defining sibling deliverables that will be reviewed as separate PRs.
 - You are defining a stacked review lane where branches are stacked inside one lane
@@ -54,7 +55,7 @@ The skill should help choose the simplest topology that matches the intended rev
 artifact.
 
 - **Single-deliverable branch** — one deliverable, one specification, one branch/PR.
-- **Milestone branch** — multiple deliverables/specifications in one worktree and branch, one
+- **Milestone branch** — multiple deliverables and specifications in one worktree and branch, one
   shared run log, one PR. Use when the milestone is reviewed as a whole.
 - **Sibling branches** — multiple independently reviewable branches/PRs for one
   milestone. Use when deliverables do not depend on each other strongly enough to need
@@ -68,7 +69,9 @@ Do not create stacked worktrees. Stacks are branches inside one worktree.
 For features and deliverables, this topology decision is made during specification. The
 approved specification must say whether the work will be reviewed as one PR, one
 milestone PR, sibling PRs, stacked PRs, or a large exception. If implementation later
-needs a different shape, revise the specification with Owner sign-off before continuing.
+needs a different shape, stop for Owner sign-off, update the affected specification
+sections in place, and record the change in the Implementation And Review Change Log
+before continuing.
 
 ## How to invoke
 
@@ -87,9 +90,18 @@ State these up front when you know them:
   stacked PRs.
 - **Decomposition rationale** — why that review shape is correct and which alternatives
   were rejected.
+- **Execution tracking system** — local run log only, Zazz Board, Jira, or another
+  tracker, including stable IDs/URLs when known.
+- **Implementation coordination** — one lead implementation agent only, or a lead
+  implementation agent coordinating subagents by phase, task, branch, or verification
+  slice.
+- **Conflict and QA model** — file areas that require ordered work to avoid overwrites,
+  and whether fresh-context QA agents should check functionality, performance, code
+  hygiene, standards, or another quality dimension.
 
 The skill will ask follow-ups on scope boundaries, decisions, acceptance criteria,
-run-log shape, and review boundaries.
+run-log shape, execution tracking, subagent delegation boundaries, and review
+boundaries.
 
 You do not need to arrive with every answer. If topology, deliverable boundaries,
 reference data, acceptance criteria, or test evidence are unclear, the skill should
@@ -99,29 +111,39 @@ deliverable is done.
 
 ## Output paths
 
-- **Committed specification**:
-  `<DOCS_ROOT>/specifications/<slug>.md`
+- **Specification**:
+  `<DOCS_ROOT>/specifications/<slug>.md` unless the repo declares a more specific naming
+  policy. The repo's operating model determines whether `specifications/` is tracked,
+  ignored, mirrored to Zazz Board/Jira, or promoted after merge to GitHub Wiki,
+  Confluence, or another durable surface.
 - **Milestone branch specifications**:
   `<DOCS_ROOT>/specifications/<milestone>-spec-<n>-<slug>.md` or another
   Owner-approved consistent naming pattern under `specifications/`.
 - **Run log**:
-  default local path: `<DOCS_ROOT>/execution/<slug>-run-log.md`; for milestones or
-  stacks, use `<DOCS_ROOT>/execution/<milestone-or-lane-slug>-run-log.md`. This
+  default local path: `<DOCS_ROOT>/ephemeral/<slug>-run-log.md`; for milestones or
+  stacks, use `<DOCS_ROOT>/ephemeral/<milestone-or-lane-slug>-run-log.md`. This
   directory is usually excluded from Git by repo-local or bare-repo exclude rules unless
   the repo explicitly chooses committed execution history. Zazz Board notes and external
   tracker records are also valid when declared. Repos that do not use Zazz Board may rely
-  exclusively on `<DOCS_ROOT>/execution/`. When the Owner uses Zazz Board, use it as the
+  exclusively on `<DOCS_ROOT>/ephemeral/`. When the Owner uses Zazz Board, use it as the
   centralized place for run logs, handoff notes, QA findings, and related execution
   information that must be available across worktrees, agents, and sessions.
-- **Externally stored specification**:
-  Zazz Board or the repo-declared tracking system, with a stable identifier linked from
-  the PR and implementation prompt.
+- **External specification mirror or final storage**:
+  Zazz Board, Jira, GitHub Wiki, Confluence, or another repo-declared system, with a
+  stable identifier linked from the PR and implementation prompt when used.
 
 ## What you should have ready
 
 - A rough sketch of the deliverable or milestone and why it is needed.
 - The intended review shape: one PR, one milestone PR, sibling PRs, stacked PRs, or a
   large exception.
+- Whether implementation progress should be tracked only in the run log, in Zazz Board,
+  in Jira, or in another system.
+- Whether the implementation prompt should assume a single lead agent or a lead agent
+  that may delegate scoped phases/tasks to subagents.
+- Any file ownership risks where work should be ordered in one worktree instead of
+  delegated concurrently.
+- Which independent QA passes should run with fresh context.
 - Any constraints that already exist: legacy compatibility, performance targets,
   coordination with other work in flight.
 - Known source documents: feature docs, architecture docs, standards, prior specifications.
@@ -132,5 +154,7 @@ Implementation starts from the specification itself and the run log. A fresh imp
 reads the specification, resolves open questions, maintains the run log, executes the phases,
 and dispatches a verifier when the definition of done is complete.
 
-Material contract changes during implementation require Owner sign-off and specification
-revision; progress and evidence go in the run log.
+After greenlight, material contract changes during implementation or review are governed
+by `spec-driven-development`: update the affected specification sections in place,
+record the audit entry in the Implementation And Review Change Log, and keep progress
+and evidence in the run log.

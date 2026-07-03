@@ -26,7 +26,14 @@ Skip a proposal when the path is obvious and a feature document or deliverable s
 
 ## Storage
 
-Store proposals under `<DOCS_ROOT>/proposals/` by default. If the team uses an external document surface for stakeholder review, keep a stable repo-tracked pointer with title, owner, status, and link.
+Store proposals in the repo's declared durable storage surface. In committed Markdown
+mode, use `<DOCS_ROOT>/proposals/` by default. If the team uses GitHub Wiki,
+Confluence, Google Docs, SharePoint, or another document surface for stakeholder
+review, keep a stable pointer in `AGENTS.md`, an index page, or a repo-tracked pointer
+with title, owner, status, and link.
+
+Do not store accepted proposal outcomes only under `<DOCS_ROOT>/ephemeral/`; that
+directory is for active scratch and execution records.
 
 ## Workflow
 
@@ -41,11 +48,14 @@ Store proposals under `<DOCS_ROOT>/proposals/` by default. If the team uses an e
 | ----- | ----------------------- |
 | `proposal-builder` | Guides option comparison, tradeoff analysis, recommendation drafting, and decision capture without premature implementation. |
 | `architecture-doc-builder` | Turns accepted technical proposals into durable architecture guidance. |
-| `feature-doc-builder` | Turns accepted product proposals into durable feature requirements and milestone direction. |
+| `feature-doc-builder` | Turns accepted product proposals into durable feature requirements and roadmap-increment direction. |
 | `spec-builder` | Converts an approved proposal outcome into the first bounded deliverable when the direction is ready to execute. |
+| `gh-wiki` | Updates proposal pages or accepted-decision summaries when GitHub Wiki is the durable docs surface. |
+| `confluence` | Drafts or updates proposal pages for Confluence-backed repos. |
 | `doc-check` | Catches documentation hygiene issues before proposal artifacts are reviewed or committed. |
 
 ## Related Sections
 
-- [Features and Milestones](./features-and-milestones.md)
+- [Features and Project Milestones](./features-and-milestones.md)
 - [Architecture](./architecture.md)
+- [Document Storage](./document-storage.md)

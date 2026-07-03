@@ -302,7 +302,7 @@ multiple contributors add scenarios at the same time
 
 Identifiers that anchor into uncommitted execution working docs do not appear in committed code, tests, docstrings,
 inline comments, or Postman request descriptions. Specifically: `SPEC`, `INVARIANT`, `D-N`, `AC-N`, `OQ-N`, and
-`PR-finding` identifiers belong to the locally-ignored `docs/execution/` working docs that drive agentic development.
+`PR-finding` identifiers belong to the locally ignored ephemeral working docs that drive agentic development.
 Once a PR merges, future readers — and tools like `git blame` — cannot resolve these identifiers; they become orphaned
 strings that hurt comprehension (review precedent).
 
@@ -311,8 +311,8 @@ Standards documents are committed and long-lived; they do not reference identifi
 execution docs.
 
 Architecture and feature docs under `docs/architecture/*.md` and `docs/features/*.md` may retain these identifiers
-because they serve narrative spec-driven development and were not flagged in review. Files under `docs/execution/`
-(locally ignored) may reference the identifiers freely — they are not part of the committed repository.
+because they serve narrative spec-driven development and were not flagged in review. Locally ignored files under the
+repo-declared ephemeral surface may reference the identifiers freely — they are not part of the committed repository.
 
 ### Desired ✅
 

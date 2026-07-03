@@ -26,6 +26,12 @@ Use `pr-review` when available. It separates two concerns:
 
 Keeping the axes separate prevents a clean implementation of the wrong thing from looking like a pass, and prevents correct behavior from hiding standards problems.
 
+If self-review finds that the implementation and the approved specification disagree,
+first decide whether the implementation is wrong or the contract has changed. Contract
+changes use [Spec-Driven Development](./spec-driven-development.md): update affected
+specification sections in place, append an Implementation And Review Change Log entry,
+and re-verify affected evidence.
+
 ## Graph-Assisted Review
 
 For large or high-risk diffs, `pr-review` may use `code-review-graph` as a context accelerator before the Standards and Spec axes inspect source. The graph helps identify changed symbols, likely blast radius, read-first files, and reviewability signals.
@@ -48,6 +54,7 @@ Self-review should produce:
 | Skill | How it helps efficiency |
 | ----- | ----------------------- |
 | `pr-review` | Separates standards review from specification review so the draft can catch both wrong-implementation and wrong-scope problems early. |
+| `spec-driven-development` | Routes spec-axis findings into implementation rework or controlled contract updates. |
 | `qa-testing` | Provides validation evidence and rework history that helps self-review focus on residual risk instead of rediscovering basic behavior. |
 | `pr-builder` | Refreshes the draft PR body after self-review fixes or new evidence change the reviewer-facing story. |
 | `conformance` | Turns one standards finding into a bounded conformance fix without widening self-review into a broad refactor. |
@@ -56,5 +63,6 @@ Self-review should produce:
 ## Related Sections
 
 - [PR Creation](./pr-creation.md)
+- [Spec-Driven Development](./spec-driven-development.md)
 - [Testing and Validation](./testing-and-validation.md)
 - [Human Review and Merge](../human-in-loop-pr-review-strategy.md)

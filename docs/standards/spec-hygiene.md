@@ -126,12 +126,12 @@ The report endpoint works correctly for both report modes.
      be written from and nothing a reviewer can check -->
 ```
 
-## Test plan is high-signal and proportional
+## Test strategy is high-signal and proportional
 
-The test plan proves the acceptance criteria and the realistic edge cases with the smallest meaningful set of tests —
+The test strategy proves the acceptance criteria and the realistic edge cases with the smallest meaningful set of tests —
 not a coverage quota. Prefer table-driven matrices when several realistic cases share one behavior boundary; prefer one
 integrated behavior test over several that only confirm a collaborator was called. When a case is intentionally omitted
-because nearby coverage already proves it, the test plan says so in one line, so the omission reads as a decision
+because nearby coverage already proves it, the test strategy says so in one line, so the omission reads as a decision
 rather than a gap.
 
 ### Desired ✅

@@ -1,6 +1,6 @@
 ---
 name: proposal-builder
-description: Help one or more stakeholders create, draft, refine, or update a proposal for a feature, deliverable, or technical direction; use when the user wants to explore an idea, compare options, weigh tradeoffs, and improve a proposal before committing to a feature document or SPEC.
+description: Help one or more stakeholders create, draft, refine, or update a proposal for a feature, deliverable, or technical direction; use when the user wants to explore an idea, compare options, weigh tradeoffs, and improve a proposal before committing to a feature document or deliverable specification.
 ---
 
 # Proposal Builder Skill
@@ -20,7 +20,7 @@ This role is both:
 - **facilitator** (asks probing questions, surfaces tradeoffs, keeps discussion on track)
 - **scribe** (captures decisions, dissent, assumptions, risks, and open questions)
 
-The proposal is exploratory and non-authoritative. It informs decisions before committing to SPEC/PLAN.
+The proposal is exploratory and non-authoritative. It informs decisions before committing to a feature requirements document or deliverable specification.
 
 ## What This Skill Produces
 
@@ -64,7 +64,7 @@ Help answer:
   - **joint** (both)
 - Authoritative contracts remain:
   - Feature Requirements Document for feature requirements
-  - Deliverable SPEC (`-SPEC`) for execution scope
+  - Deliverable specification for execution scope
 
 ---
 
@@ -75,7 +75,7 @@ Your job is to run a high-signal proposal dialogue and produce a proposal docume
 Your primary deliverable in this skill is the proposal document itself.
 
 You do not implement code.
-You do not author the feature document or the final SPEC unless explicitly asked to switch roles.
+You do not author the feature document or the final deliverable specification unless explicitly asked to switch roles.
 
 You must:
 1. Elicit business and technical justification.
@@ -225,7 +225,7 @@ Each generated proposal draft should include:
 12. **Decision Checklist / Approval Questions**
 13. **Open Questions**
 14. **Discussion Log / Notable Arguments** (especially in multi-human discussions)
-15. **Sign-off Outcome and Next-Phase Handoff** (what was approved and what moves to feature-document and/or SPEC)
+15. **Sign-off Outcome and Next-Phase Handoff** (what was approved and what moves to feature-document and/or specification)
 
 ---
 
@@ -276,7 +276,7 @@ Use methodology naming guidance:
     URL, owner, status, and next-phase handoff context
 - If the proposal is tied to a feature or deliverable:
   - capture the feature key, deliverable code, or both inside the document title, metadata, and handoff section
-- Keep proposal documents in `proposals/` rather than mixing them into `features/` or `deliverables/`
+- Keep proposal documents in `proposals/` rather than mixing them into `features/` or `specifications/`
 
 Docs root can be `.zazz/`, `docs/`, or another project-configured root. Use the
 repository's configured docs root.
@@ -311,10 +311,10 @@ When the proposal is approved, provide a handoff package containing:
 3. Chosen approach and rejected alternatives (with rationale)
 4. Key constraints and standards implications
 5. Risks that must be explicitly covered in the next authoritative document
-6. Open questions that must be resolved during feature document or SPEC dialogue
+6. Open questions that must be resolved during feature document or specification dialogue
 7. Suggested initial focus areas for the next phase (feature definition, deliverable specification, or both)
 
-This handoff is input to the next authoritative phase; it does not replace Feature Requirements Document or SPEC authoring.
+This handoff is input to the next authoritative phase; it does not replace feature requirements document or deliverable specification authoring.
 
 ---
 
@@ -336,7 +336,7 @@ A proposal draft is high quality when:
 - Do not present opinions as facts.
 - Do not erase stakeholder disagreement.
 - Do not skip alternatives analysis unless explicitly directed and documented.
-- Do not jump straight to implementation planning.
+- Do not jump straight to deliverable specification.
 - Do not claim live Zoom listening/chat capability unless integration is actually available; otherwise use transcript + Q&A workflow.
 
 ---

@@ -1,6 +1,6 @@
 # Zazz Methodology & Skills
 
-Zazz is an operating model for AI-assisted software delivery. It helps teams use agents to move faster while keeping product direction, engineering quality, review discipline, and merge authority in human hands.
+Zazz is an operating model for the agentic software delivery lifecycle. It helps teams use agents to move faster while keeping product direction, engineering quality, review discipline, and merge authority in human hands.
 
 This repository is the canonical source for the Zazz methodology and shared skills. Downstream repos can vendor or sync these docs and skills, but methodology changes should land here first.
 
@@ -11,8 +11,9 @@ AI agents can produce code quickly. The hard part is making sure the team is bui
 Zazz gives executives and engineering teams:
 
 - **Faster delivery with control:** agents can implement and verify bounded work, while humans keep scope, product signoff, review, approval, and merge authority.
-- **Clearer product intent:** `project.md`, proposals, architecture docs, feature requirements, and milestones preserve why the work matters before code is written.
-- **Executable delivery contracts:** deliverable specifications turn intent into scoped implementation work with acceptance criteria, test plans, standards, and halt conditions.
+- **Clearer product intent:** `project.md`, proposals, architecture docs, feature requirements, and project milestones preserve why the work matters and when stakeholders should expect outcomes.
+- **Executable delivery contracts:** deliverable specifications turn intent into scoped implementation work with acceptance criteria, test strategies, standards, and halt conditions.
+- **Spec-driven implementation:** approved specifications stay current through implementation, Owner steering, QA, and PR review by updating the spec body in place and recording contract changes.
 - **Ongoing standards conformance:** localized, evidence-backed maintenance PRs keep legacy and existing code aligned with adopted standards instead of letting drift accumulate.
 - **Cleaner parallel execution:** isolated worktrees keep active agent work separate, recoverable, and easier to coordinate across teams or branches.
 - **Stronger review signal:** `qa-testing` verifies behavior and evidence, `pr-builder` packages the pull request, and `pr-review` runs automated self-review before human review and merge.
@@ -41,8 +42,10 @@ The methodology is intentionally Git-native. Durable docs, code, review evidence
 project.md
   -> architecture.md
   -> proposals/
-  -> features/ and milestones
+  -> features/ for capability context
+  -> project milestones / roadmap for timeline planning
   -> specifications/
+  -> spec-driven development
   -> deterministic quality gates
   -> standards conformance maintenance
   -> code generation
@@ -67,19 +70,25 @@ variable should use `ZAZZ_DOCS_ROOT`, and its value must be a repo-relative path
 ├── proposals/
 ├── features/
 ├── architecture/
-├── specifications/
-└── execution/
+└── ephemeral/
 ```
+
+The `specifications/` directory is the normal local working directory for spec-builder
+files. The repo's `AGENTS.md` declares whether it is tracked, ignored, mirrored, or
+promoted to another durable system. Other durable locations, such as roadmap, project
+plans, project milestones, or wiki/knowledge-base pages, are also declared by the
+repo's operating model.
 
 Each document type exists to solve a different coordination problem:
 
 - `project.md` provides top-level durable orientation for the software project.
 - `standards/` defines how the software should be built.
 - `proposals/` provides a durable place to work through uncertainty before committing to a direction.
-- `features/` contains long-lived feature requirements documents for capability intent and milestone evolution.
+- `features/` contains long-lived feature requirements documents for capability intent and feature roadmap increments.
+- Project milestones are project-owned timeline containers that communicate when work is expected to land; a single project milestone can contain deliverables from multiple features.
 - `architecture/` contains project-level or feature-level technical design.
-- `specifications/` contains local deliverable specifications when the repo keeps them on disk.
-- `execution/` contains local mutable execution records such as run logs, handoff notes, QA findings, and recovery notes.
+- `specifications/` contains local specification files; the repo decides whether they are committed, ignored, mirrored, or promoted elsewhere.
+- `ephemeral/` contains active implementation scratch such as RUN_LOG files, handoff notes, QA findings, recovery notes, evidence, and scratch analysis. Ephemeral means uncommitted and non-durable, not necessarily memory-only; these files may persist locally until the worktree is removed.
 
 For the methodology progression and section table of contents, read [zazz-methodology.md](zazz-methodology.md).
 
@@ -101,11 +110,13 @@ The methodology is split so teams can read only the part of the progression they
 | Stage | Document |
 | ----- | -------- |
 | Executive overview and table of contents | [zazz-methodology.md](zazz-methodology.md) |
+| Document storage | [docs/methodology/document-storage.md](docs/methodology/document-storage.md) |
 | Project orientation | [docs/methodology/project.md](docs/methodology/project.md) |
 | Architecture direction | [docs/methodology/architecture.md](docs/methodology/architecture.md) |
 | Proposals and decisions | [docs/methodology/proposals.md](docs/methodology/proposals.md) |
-| Features and milestones | [docs/methodology/features-and-milestones.md](docs/methodology/features-and-milestones.md) |
+| Features and project milestones | [docs/methodology/features-and-milestones.md](docs/methodology/features-and-milestones.md) |
 | Deliverable specifications | [docs/methodology/specifications.md](docs/methodology/specifications.md) |
+| Spec-driven development | [docs/methodology/spec-driven-development.md](docs/methodology/spec-driven-development.md) |
 | Deterministic quality gates and standards conformance | [docs/methodology/deterministic-quality.md](docs/methodology/deterministic-quality.md) |
 | Code generation | [docs/methodology/code-generation.md](docs/methodology/code-generation.md) |
 | Testing and validation | [docs/methodology/testing-and-validation.md](docs/methodology/testing-and-validation.md) |
@@ -158,6 +169,9 @@ tool-specific preferences.
 | `feature-doc-builder` | Creates and evolves feature requirements documents for long-lived capabilities; the skill keeps its historical name for compatibility. |
 | `architecture-doc-builder` | Creates and evolves project-level or feature-level architecture documents. |
 | `spec-builder` | Guides bounded deliverable specification authoring, including prescriptive execution sequence and implementation guidance. |
+| `spec-driven-development` | Guides the post-greenlight lifecycle: implementation loops, steering, contract updates, QA/PR feedback, and signoff. |
+| `gh-wiki` | Placeholder workflow guidance for GitHub Wiki-backed durable docs and completed-spec promotion. |
+| `confluence` | Placeholder workflow guidance for Confluence-backed durable docs and completed-spec promotion. |
 | `standard-builder` | Inspects an existing codebase and drafts repo-specific standards for team review. |
 
 ### Execution and verification skills
@@ -174,8 +188,9 @@ tool-specific preferences.
 | `pr-builder` | Produces draft-first PR packaging from diff, docs, stack context, and evidence. |
 | `gh-stack` | Manages stacked branches and dependent PRs for incremental review workflows. |
 | `worktree` | Sets up or manages the methodology's Zazz-style worktree model through the Worktrunk workflow used by the skill. |
-| `zazz-board-api` | Companion utility skill for Zazz Board integration. |
-| `jira-api` | Draft companion utility for Jira-backed repos. |
+| `zazz-board` | Companion utility skill for Zazz Board integration. |
+| `jira` | Draft companion utility for Jira-backed repos. |
+| `gh-issue` | Companion utility skill for creating, reading, commenting on, and routing GitHub Issues when a repo uses GitHub issue tracking. |
 | `conformance` | Applies one focused standards-alignment change against a named standard and bounded repo area, then prepares verified, self-reviewed PR evidence. |
 | `doc-check` | Runs repo-local formatting and linting checks for documentation changes. |
 | `psql` | Provides safe PostgreSQL diagnostic and profiling command guidance for repos that use `psql`. |
@@ -193,8 +208,8 @@ entry points the methodology expects:
 - **`gh-stack`**: optional, but recommended when the team wants stacked PR lanes. Install the GitHub CLI extension from [github/gh-stack](https://github.com/github/gh-stack); command reference lives at [github.github.com/gh-stack](https://github.github.com/gh-stack/reference/cli/).
 - **Agent runtime**: required. Use Codex, Claude, Cursor, Warp, or another agent environment that can read repo instructions and load skills.
 - **Project runtime/toolchain**: required for real execution. Install the repo's normal language runtimes, package managers, test tools, database services, and local environment helpers before asking agents to implement or verify work.
-- **Node.js**: required when using the bundled `zazz-board-api` CLI helper, because `zazzctl` is a Node-based script.
-- **External tracker or service**: optional. Zazz Board can centralize specifications, run logs, handoff notes, QA findings, file locks, and task state, but repos may also operate entirely from Git plus `<DOCS_ROOT>/execution/`.
+- **Node.js**: required when using the bundled `zazz-board` CLI helper, because `zazzctl` is a Node-based script.
+- **External tracker, wiki, or knowledge base**: optional. Zazz Board can centralize run logs, handoff notes, QA findings, file locks, and task state, and may mirror specification metadata when the repo declares that. GitHub Wiki or Confluence can hold durable project knowledge and final implemented specs. Repos may also operate entirely from Git plus `<DOCS_ROOT>/ephemeral/`.
 
 Common setup commands:
 
@@ -215,9 +230,10 @@ repo/
     ├── standards/
     ├── features/
     ├── architecture/
-    ├── specifications/
-    └── execution/
+    └── ephemeral/
 ```
+
+Track or ignore `<DOCS_ROOT>/specifications/` according to the repo's operating model.
 
 Use `.agents/skills/` as the canonical repo-local skill location when vendoring Zazz
 skills into a project. Runtime-specific instruction files can either point agents at
@@ -250,17 +266,24 @@ Historical naming note:
 
 ## Artifact Storage
 
-Git remains the durable home for `project.md`, proposal markdown files or proposal
-pointers, feature requirements documents, architecture documents, standards,
-methodology docs, and skill source.
+Zazz is Git-native, but durable project docs do not always have to be committed
+Markdown files in the application repo. Repos declare their document storage policy in
+`AGENTS.md`.
 
-Repos choose and document their execution-artifact policy in `AGENTS.md`:
+Supported durable surfaces:
 
-- Proposals live under `<DOCS_ROOT>/proposals/` by default, but may live in Google Docs, SharePoint, or another shared document system when rich images, screenshots, diagrams, comments, or non-engineering stakeholder review make that the better collaboration surface. In that case, keep a stable Git-tracked pointer under `<DOCS_ROOT>/proposals/`.
-- Deliverable specifications live under `<DOCS_ROOT>/specifications/` when kept on disk. They may be committed, ignored locally, mirrored externally, or stored only in a declared tracker.
-- Mutable execution records live under `<DOCS_ROOT>/execution/` when kept on disk. This directory usually stays out of Git and holds run logs, handoff notes, QA findings, recovery notes, and related active-work records.
-- Teams that do not use Zazz Board can rely exclusively on `<DOCS_ROOT>/execution/` for local execution records.
-- Teams that use Zazz Board may use it as the centralized execution-record service so multiple agents can share specifications, run logs, handoff documents, QA findings, task state, and related information across worktrees and sessions.
+- repo-committed Markdown reviewed through PRs
+- GitHub Wiki, GitLab Wiki, Bitbucket Wiki, or another repo wiki
+- Confluence, SharePoint, Google Docs, Notion, or a similar knowledge base
+- tracker-backed records such as Zazz Board or Jira
+
+Repos choose and document their active-artifact policy in `AGENTS.md`:
+
+- Proposals live under `<DOCS_ROOT>/proposals/` by default, but may live in Google Docs, SharePoint, Confluence, or another shared document system when rich images, screenshots, diagrams, comments, or non-engineering stakeholder review make that the better collaboration surface. In that case, keep a stable pointer under the declared docs entry point.
+- Deliverable specifications live under `<DOCS_ROOT>/specifications/` as local spec-builder working files. The operating model decides whether those files are committed, ignored, mirrored to Zazz Board/Jira, or promoted after merge to GitHub Wiki, Confluence, or another declared durable surface.
+- RUN_LOG files and mutable execution records live under `<DOCS_ROOT>/ephemeral/` when kept on disk. This directory usually stays out of Git and holds run logs, handoff notes, QA findings, recovery notes, evidence, and related active-work records.
+- Teams that do not use Zazz Board can rely exclusively on `<DOCS_ROOT>/ephemeral/` for local active implementation records.
+- Teams that use Zazz Board may use it as the centralized execution-record service so multiple agents can share run logs, handoff documents, QA findings, task state, specification metadata, and related information across worktrees and sessions.
 
 ## Propagation
 
@@ -280,9 +303,13 @@ rsync -avc --delete /path/to/zazz-skills/docs/ /path/to/consumer-repo/docs/
 
 Split the methodology into a concise executive overview plus focused workflow sections, refreshed the README with the current skill and standards inventory, consolidated QA guidance under `qa-testing`, and added PostgreSQL/SQL Server diagnostic utility skills.
 
+### 2026-07-03 — Ephemeral and wiki-backed docs model
+
+Added the optional durable storage model for repo Markdown, GitHub Wiki, Confluence, and tracker-backed records. Specifications remain local working files under `<DOCS_ROOT>/specifications/`, with the repo deciding whether that directory is tracked, ignored, mirrored, or promoted elsewhere. RUN_LOG files, QA notes, handoffs, recovery notes, evidence, and scratch artifacts now default to `<DOCS_ROOT>/ephemeral/`.
+
 ### 2026-05-24 — Execution artifact location refresh
 
-Renamed the default local mutable execution artifact directory to `<DOCS_ROOT>/execution/`, and clarified that Zazz Board can serve as the centralized execution-record surface for run logs, handoff documents, QA findings, and related information shared across worktrees, agents, and sessions.
+Renamed the default local mutable execution artifact directory to `<DOCS_ROOT>/ephemeral/`, and clarified that Zazz Board can serve as the centralized execution-record surface for run logs, handoff documents, QA findings, and related information shared across worktrees, agents, and sessions.
 
 ### 2026-05-23 — Methodology and skill alignment refresh
 

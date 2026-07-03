@@ -261,7 +261,7 @@ standards:
         - authoring or revising a deliverable specification
         - reviewing a specification document for path, link, or content-quality issues
     purpose: >-
-      Specification path/link portability (repository-relative paths, link-don't-inline, annotating unmerged references) and the content-quality bar a spec review holds: testable acceptance criteria, proportional test plan, decisions with rationale, and explicit scope/exclusions.
+      Specification path/link portability (repository-relative paths, link-don't-inline, annotating unmerged references) and the content-quality bar a spec review holds: testable acceptance criteria, proportional test strategy, decisions with rationale, and explicit scope/exclusions.
 
   - file: ci-workflows.md
     applies_to:

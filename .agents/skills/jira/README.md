@@ -1,4 +1,4 @@
-# Jira API Skill — Draft User Guide
+# Jira Skill — Draft User Guide
 
 This is a draft placeholder for a future Jira integration skill.
 It is not implemented yet.
@@ -11,13 +11,13 @@ That future skill will likely help with:
 - pulling story or ticket details
 - reading acceptance criteria
 - resolving Jira links and workflow context
-- supporting PR, QA, planning, and execution flows with authoritative Jira issue data
+- supporting specification, PR, QA, and execution flows with authoritative Jira issue data
 
 It is expected to support both:
 - interactive, human-in-the-loop use
 - automation-driven agent use, such as informing an agent running the `qa-testing` skill with Jira issue context
 
-## Planned Interface
+## Future Interface
 
 The current expectation is that this will eventually be implemented through:
 - an MCP integration
@@ -41,6 +41,6 @@ That fallback applies whether the consumer is:
 
 ## Why This Exists Now
 
-The methodology is expected to need a Jira utility skill over time, similar in spirit to `zazz-board-api` for Zazz Board.
+The methodology is expected to need a Jira utility skill over time, similar in spirit to `zazz-board` for Zazz Board.
 
-Adding the draft now makes that planned dependency visible and gives downstream skills a place to point once Jira integration is implemented.
+Adding the draft now makes that future dependency visible and gives downstream skills a place to point once Jira integration is implemented.

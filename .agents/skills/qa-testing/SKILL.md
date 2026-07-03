@@ -41,7 +41,7 @@ Flag tests that:
 - skip migration, fixture, or environment failures that should be fixed or documented
 - create broad fixture worlds when a smaller table-driven matrix would prove the same behavior
 
-When the specified test plan is weak, treat that as a requirements gap. Ask the owner to approve a stronger test contract instead of silently accepting easier tests.
+When the specified test strategy is weak, treat that as a requirements gap. Ask the owner to approve a stronger test contract instead of silently accepting easier tests.
 
 ## Verification Lenses
 

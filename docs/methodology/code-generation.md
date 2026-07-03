@@ -1,6 +1,8 @@
 # Code Generation
 
-Code generation is the implementation phase after a deliverable specification is approved. The agent or contributor works from the specification, relevant standards, and repo instructions.
+Code generation is the implementation work inside the spec-driven development lifecycle.
+The agent or contributor works from the current specification, relevant standards, repo
+instructions, and execution record.
 
 ## Required Inputs
 
@@ -8,12 +10,17 @@ Code generation is the implementation phase after a deliverable specification is
 - Repo instructions from `AGENTS.md`
 - Relevant standards from `<DOCS_ROOT>/standards/index.yaml`
 - Feature and architecture context linked by the specification
-- Run log or execution-record location
+- Specification path under `<DOCS_ROOT>/specifications/`
+- RUN_LOG location, usually under `<DOCS_ROOT>/ephemeral/`
+- Execution tracking system, such as local run log, Zazz Board, Jira, or another tracker
 - Deterministic quality gates that apply to the changed files
 
 ## Worktree Discipline
 
-Active implementation happens in an isolated worktree. The normal rule is one active deliverable per worktree. A stacked branch lane is acceptable when the deliverable naturally decomposes into ordered review layers.
+Active implementation happens in an isolated worktree or approved stacked branch lane.
+The lead implementation agent owns the current specification, work ordering, and
+file-conflict serialization. When subagents are used, overlapping file work must be
+ordered so agents do not overwrite one another.
 
 Before editing:
 
@@ -27,12 +34,18 @@ Before editing:
 1. Make the smallest coherent change toward an acceptance criterion.
 2. Add or update tests that prove the behavior.
 3. Run the narrowest meaningful checks.
-4. Record progress, failures, and decisions in the run log.
-5. Repeat until the specification is satisfied or a halt condition is reached.
+4. Record progress, failures, decisions, and subagent outcomes in the RUN_LOG under
+   `<DOCS_ROOT>/ephemeral/` or the declared tracker/service.
+5. Repeat until the current specification is satisfied or a halt condition is reached.
 
 Prefer deterministic feedback before probabilistic review: run formatters, linters, type checks, schema checks,
 accessibility checks, doc checks, and targeted tests as soon as they are useful. Do not weaken tool configuration,
 silence rules, or skip failing gates just to converge.
+
+If implementation reveals a needed contract change, follow [Spec-Driven
+Development](./spec-driven-development.md): get Owner signoff, update the affected
+specification sections in place, record an Implementation And Review Change Log entry,
+and re-verify affected evidence.
 
 ## Halt Conditions
 
@@ -51,15 +64,18 @@ Stop and ask for owner direction when:
 | Skill | How it helps efficiency |
 | ----- | ----------------------- |
 | `worktree` | Creates or repairs isolated worktree lanes so implementation stays separate, recoverable, and easy to review. |
+| `spec-driven-development` | Governs the post-greenlight implementation loop, contract-change protocol, lead/subagent coordination, and signoff path. |
 | `spec-builder` | Supplies the approved execution contract, sequencing guidance, standards list, and halt conditions. |
 | `conformance` | Applies one focused standards-alignment fix against a named standard and bounded code area when implementation exposes drift. |
 | `psql` | Speeds safe PostgreSQL schema inspection, read-only checks, query profiling, and function/procedure diagnostics. |
 | `sqlcmd` | Speeds safe SQL Server schema inspection, stored procedure checks, timing probes, and read-only diagnostics. |
-| `zazz-board-api` | Updates task state, locks, notes, and execution metadata when the repo uses Zazz Board. |
+| `zazz-board` | Updates task state, locks, notes, and execution metadata when the repo uses Zazz Board. |
 
 ## Related Sections
 
 - [Specifications](./specifications.md)
+- [Document Storage](./document-storage.md)
+- [Spec-Driven Development](./spec-driven-development.md)
 - [Deterministic Quality Gates](./deterministic-quality.md)
 - [Testing and Validation](./testing-and-validation.md)
 - [PR Creation](./pr-creation.md)

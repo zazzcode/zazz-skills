@@ -1,7 +1,7 @@
 # zazzctl (Canonical Board CLI)
 
 Canonical location:
-- `.agents/skills/zazz-board-api/scripts/zazzctl.mjs`
+- `.agents/skills/zazz-board/scripts/zazzctl.mjs`
 
 Role in the methodology:
 - `zazzctl` is the primary agent/operator interface for Zazz Board operations
@@ -19,9 +19,9 @@ Environment loading:
 
 Quick start:
 ```bash
-node .agents/skills/zazz-board-api/scripts/zazzctl.mjs help
-node .agents/skills/zazz-board-api/scripts/zazzctl.mjs help deliverable
-node .agents/skills/zazz-board-api/scripts/zazzctl.mjs help exec begin
+node .agents/skills/zazz-board/scripts/zazzctl.mjs help
+node .agents/skills/zazz-board/scripts/zazzctl.mjs help deliverable
+node .agents/skills/zazz-board/scripts/zazzctl.mjs help exec begin
 ```
 
 Source-of-truth model:
@@ -40,8 +40,8 @@ If the repo keeps these values in `.env`, `zazzctl` will pick them up automatica
 
 Profiles:
 - `worker`: execution task/relation/lock workflow; read-only deliverable ops
-- `planner`: planning updates and read checks
-- `spec_builder`: deliverable create/status/update for SPEC sync
+- `planner`: specification setup updates and read checks
+- `spec_builder`: deliverable create/status/update for specification sync
 - `generic`: unrestricted adapter (use sparingly)
 
 The `worker` and `planner` names are CLI permission profiles, not methodology skill names.
@@ -49,20 +49,20 @@ The `worker` and `planner` names are CLI permission profiles, not methodology sk
 Examples:
 ```bash
 # Execution claim + lock protocol
-node .agents/skills/zazz-board-api/scripts/zazzctl.mjs --profile worker exec begin \
+node .agents/skills/zazz-board/scripts/zazzctl.mjs --profile worker exec begin \
   --deliverable-id 8 --task-id 25 --agent-name implementation-agent-1 --file src/routes/example.js
 
-# Planning profile sets planning status and execution-contract path
-node .agents/skills/zazz-board-api/scripts/zazzctl.mjs --profile planner deliverable status \
+# `planner` profile sets specification status and execution-contract path
+node .agents/skills/zazz-board/scripts/zazzctl.mjs --profile planner deliverable status \
   --deliverable-id 4 --status PLANNING
-node .agents/skills/zazz-board-api/scripts/zazzctl.mjs --profile planner deliverable update \
+node .agents/skills/zazz-board/scripts/zazzctl.mjs --profile planner deliverable update \
   --deliverable-id 4 --json '{"specFilepath":"<DOCS_ROOT>/specifications/sample-feature.md"}'
 
-# Spec builder creates deliverable, sets BACKLOG, then saves SPEC filepath
-node .agents/skills/zazz-board-api/scripts/zazzctl.mjs --profile spec_builder deliverable create \
+# Spec builder creates deliverable, sets BACKLOG, then saves specification filepath
+node .agents/skills/zazz-board/scripts/zazzctl.mjs --profile spec_builder deliverable create \
   --name "sample-feature" --type FEATURE
-node .agents/skills/zazz-board-api/scripts/zazzctl.mjs --profile spec_builder deliverable status \
+node .agents/skills/zazz-board/scripts/zazzctl.mjs --profile spec_builder deliverable status \
   --deliverable-id 4 --status BACKLOG
-node .agents/skills/zazz-board-api/scripts/zazzctl.mjs --profile spec_builder deliverable update \
+node .agents/skills/zazz-board/scripts/zazzctl.mjs --profile spec_builder deliverable update \
   --deliverable-id 4 --json '{"specFilepath":"<DOCS_ROOT>/specifications/sample-feature.md"}'
 ```
