@@ -16,7 +16,9 @@ Before making board/API calls:
 4. Then make only the board updates that are supported by the current role and task context.
 
 ## Purpose
-Agents use this skill to understand and interact with Zazz Board in service-assisted repos. It covers board purpose, deliverables, tasks, statuses, notes, locks, graph/readiness checks, and the CLI/API surfaces used to keep execution records synchronized. Projects and users are pre-configured; agents do not create them.
+Agents use this skill to understand and interact with Zazz Board in service-assisted repos. It covers board purpose, projects, project milestones, deliverables, tasks, statuses, notes, locks, graph/readiness checks, and the CLI/API surfaces used to keep execution records synchronized. Projects and users are pre-configured; agents do not create them.
+
+Projects are the planning boundary. A project can have project milestones, and those milestones group associated deliverables for stakeholder-facing timeline planning. A Gantt view is one common representation of project milestones and their deliverables; it is not the methodology concept itself.
 
 This skill is only for **service-assisted** adoption. It is optional in the methodology and should not be required in `process-only` or ordinary `skills-assisted` repos that are just following the methodology's document model and directory structure.
 

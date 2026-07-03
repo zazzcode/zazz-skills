@@ -70,6 +70,9 @@ When a repo uses Zazz Board or another tracker as the project planning surface, 
 system may be the canonical source for project milestone records, dates, deliverable
 assignment, and timeline state. Feature requirements documents can link to project
 milestones, but they should not duplicate or redefine the project milestone schedule.
+A Gantt chart is one common representation of project milestones and their associated
+deliverables; the core methodology concept is simpler: projects have milestones, and
+deliverables are assigned to those milestones for timeline communication.
 
 ## Time-Boxed Deliverables
 

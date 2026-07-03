@@ -363,7 +363,7 @@ Use this section order unless the owner explicitly asks for a different structur
 
 - What are the most important user flows?
 - What are the key system flows behind them?
-- Which flows differ across milestones?
+- Which flows differ across roadmap increments?
 
 ### Feature roadmap and project milestones
 
