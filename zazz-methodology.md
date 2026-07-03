@@ -77,7 +77,7 @@ Zazz uses a project-first document model:
 - `architecture/` explains intended technical shape and important system decisions.
 - `proposals/` records decisions when the path is uncertain.
 - `features/` describes long-lived capabilities and feature roadmap increments.
-- `specifications/` contains local specification files for spec-builder. The repo decides whether this directory is tracked, ignored, mirrored, or promoted elsewhere.
+- `specifications/` contains deliverable specifications authored by spec-builder and executed by implementation agents inside the worktree. The repo decides whether this directory is tracked, ignored, mirrored, or promoted elsewhere.
 - `ephemeral/` contains active implementation scratch: run logs, QA findings, handoff notes, recovery notes, evidence, and other records that normally stay out of Git. Ephemeral means uncommitted and non-durable, not necessarily memory-only; these files may persist locally until the worktree is removed.
 - `standards/` defines how the software should be built.
 

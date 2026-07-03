@@ -136,7 +136,7 @@ Per-artifact source of truth:
 
 Rules:
 
-- `<DOCS_ROOT>/specifications/` is the local spec-builder working directory. Declare whether it is tracked, ignored, mirrored, or promoted elsewhere.
+- `<DOCS_ROOT>/specifications/` is the local worktree directory for deliverable specifications authored by spec-builder and executed by implementation agents. Declare whether it is tracked, ignored, mirrored, or promoted elsewhere.
 - `<DOCS_ROOT>/ephemeral/` is the optional local scratch surface for RUN_LOG files, QA notes, handoffs, evidence, recovery notes, and scratch work. Ephemeral means uncommitted and non-durable, not necessarily memory-only; these files may persist locally until the worktree is removed. Do not create or assume subdirectories inside it unless this file declares them.
 - If final specs live in GitHub Wiki, Confluence, Zazz Board, Jira, or another durable surface, keep `<DOCS_ROOT>/specifications/` excluded from Git unless the repo also wants local specs committed.
 - When a feature, architecture, feature roadmap increment, project milestone, or completed spec changes, update the declared source of truth through the appropriate skill or repo process.

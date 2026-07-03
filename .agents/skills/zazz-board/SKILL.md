@@ -25,14 +25,14 @@ This skill is only for **service-assisted** adoption. It is optional in the meth
 ### Specification paths on disk
 
 Projects are **flat**, **Zazz Board**, or **Jira** (mutually exclusive) when using
-repo-local specification files. **Flat:** `specifications/{slug}.md`. **Subdirectory:**
-`specifications/{id}/{slug}.md` with slug-only filenames inside. **Zazz** uses board
-**deliverable code** as `{id}` when the repo declares that layout; this API syncs
-`dedFilePath` / `specFilepath`. **Jira** may use the same layout with an **issue key**
-as `{id}` and does **not** sync paths through this API. Paths you send must match files
-on disk and the repo's declared documentation operating model. If the repo stores
-active specs only in Zazz Board, Jira, GitHub Wiki, Confluence, or another external
-surface, do not invent local specification paths. See
+deliverable specifications on disk. **Flat:** `specifications/{slug}.md`.
+**Subdirectory:** `specifications/{id}/{slug}.md` with slug-only filenames inside.
+**Zazz** uses board **deliverable code** as `{id}` when the repo declares that layout;
+this API syncs `dedFilePath` / `specFilepath`. **Jira** may use the same layout with an
+**issue key** as `{id}` and does **not** sync paths through this API. Paths you send
+must match files on disk and the repo's declared documentation operating model. If the
+repo stores active specs only in Zazz Board, Jira, GitHub Wiki, Confluence, or another
+external surface, do not invent local specification paths. See
 [zazz-methodology.md](../../../zazz-methodology.md) and **spec-builder** storage
 guidance.
 

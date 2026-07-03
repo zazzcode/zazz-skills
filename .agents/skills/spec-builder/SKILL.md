@@ -337,9 +337,11 @@ Use these as prompts, not a rigid questionnaire:
   specifications or implementation files into it; always work from the active feature worktree or the repo's approved
   documentation surface.
 - **Specification location**: follow the repo's declared documentation operating model.
-  Local specification files live under `<DOCS_ROOT>/specifications/{slug}.md` unless
-  the repo declares a more specific naming policy. The operating model determines
-  whether that directory is tracked, ignored, mirrored, or promoted elsewhere.
+  Deliverable specifications created by this skill live under
+  `<DOCS_ROOT>/specifications/{slug}.md` so implementation agents can execute the
+  current spec from the local worktree, unless the repo declares a more specific naming
+  policy. The operating model determines whether that directory is tracked, ignored,
+  mirrored, or promoted elsewhere.
 - **External specification storage**: when the repo policy says specifications are not committed, store or link them
   in Zazz Board, Jira, GitHub Wiki, Confluence, or the declared external surface and
   include enough stable identifier context for agents and reviewers to find the artifact.

@@ -40,11 +40,12 @@ Common operating models:
   project milestones, and completed specs.
 - **Hybrid**: each document type names its own source of truth.
 
-`<DOCS_ROOT>/specifications/` is the normal local specification directory for
-spec-builder working files. It exists even when final specifications are stored in
-GitHub Wiki, Jira, Confluence, Zazz Board, or another durable system. The operating
-model determines whether the local `specifications/` files are tracked in Git, ignored
-locally, mirrored to another system, or promoted elsewhere after implementation.
+`<DOCS_ROOT>/specifications/` is the normal local directory for deliverable
+specifications authored by spec-builder and executed by implementation agents inside the
+worktree. It exists even when final specifications are stored in GitHub Wiki, Jira,
+Confluence, Zazz Board, or another durable system. The operating model determines
+whether the local `specifications/` files are tracked in Git, ignored locally, mirrored
+to another system, or promoted elsewhere after implementation.
 
 ## Durable Knowledge
 
