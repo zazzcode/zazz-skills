@@ -41,7 +41,7 @@ The following are required for repos using the Zazz methodology:
 - the path to `<DOCS_ROOT>/standards/index.yaml`
 - instructions to read the standards index first and load only relevant standards
 - the path to `<DOCS_ROOT>/features/index.yaml` when the repo uses repo-local feature requirements documents
-- the repo's durable-doc storage policy for project overview, architecture, features, project plans, roadmap, milestones, proposals, standards, and completed implemented specifications
+- the repo's durable-doc storage policy for project overview, architecture, features, feature roadmap increments, project plans, roadmap, project milestones, proposals, standards, and completed implemented specifications
 - the repo's active-artifact policy for RUN_LOG files, QA notes, handoffs, evidence, and scratch work
 - the repo's work-tracking system for deliverables / tickets / PR context
 - the repo's shared-file coordination policy for execution
@@ -127,7 +127,7 @@ Per-artifact source of truth:
 | Project overview | {{ <DOCS_ROOT>/project.md | GitHub Wiki page | Confluence page | other }} | {{ update rule }} |
 | Architecture | {{ <DOCS_ROOT>/architecture/ | GitHub Wiki index | Confluence space | other }} | {{ update rule }} |
 | Feature requirements | {{ <DOCS_ROOT>/features/ | GitHub Wiki pages | Confluence pages | other }} | {{ update rule }} |
-| Project plans / roadmap / milestones | {{ repo docs | GitHub Wiki | Confluence | tracker | other }} | {{ update rule }} |
+| Project plans / roadmap / project milestones | {{ repo docs | GitHub Wiki | Confluence | tracker | Zazz Board | other }} | {{ update rule }} |
 | Proposals | {{ <DOCS_ROOT>/proposals/ | wiki/KB pages | pointer files | other }} | {{ update rule }} |
 | Specifications | `<DOCS_ROOT>/specifications/` | {{ tracked | ignored | mirrored to Zazz Board/Jira | promoted to wiki/Confluence after merge }} |
 | RUN_LOG / QA / handoff / evidence | {{ file under <DOCS_ROOT>/ephemeral/ | Zazz Board | Jira | other }} | {{ update rule }} |
@@ -139,7 +139,7 @@ Rules:
 - `<DOCS_ROOT>/specifications/` is the local spec-builder working directory. Declare whether it is tracked, ignored, mirrored, or promoted elsewhere.
 - `<DOCS_ROOT>/ephemeral/` is the optional local scratch surface for RUN_LOG files, QA notes, handoffs, evidence, recovery notes, and scratch work. Do not create or assume subdirectories inside it unless this file declares them.
 - If final specs live in GitHub Wiki, Confluence, Zazz Board, Jira, or another durable surface, keep `<DOCS_ROOT>/specifications/` excluded from Git unless the repo also wants local specs committed.
-- When a feature, architecture, roadmap, milestone, or completed spec changes, update the declared source of truth through the appropriate skill or repo process.
+- When a feature, architecture, feature roadmap increment, project milestone, or completed spec changes, update the declared source of truth through the appropriate skill or repo process.
 
 ## Standards Loading Rules
 
@@ -169,14 +169,15 @@ Feature index:
 
 - `<DOCS_ROOT>/features/index.yaml`
 
-Use feature requirements documents when the task touches product behavior, user-facing capability, roadmap context, milestone history, or stakeholder intent.
+Use feature requirements documents when the task touches product behavior, user-facing capability, feature roadmap context, or stakeholder intent.
 
 Rules:
 
 1. Read `<DOCS_ROOT>/features/index.yaml` when product context may matter.
 2. Load only the relevant feature requirements document(s), not the entire features directory.
-3. Treat feature requirements documents as long-lived capability docs, not execution specs.
+3. Treat feature requirements documents as long-lived capability docs, not execution specs or project milestone records.
 4. When a deliverable changes shipped behavior, update the relevant feature requirements document so it reflects the current system.
+5. When a deliverable is assigned to, removed from, or rescheduled across a project milestone, update the declared project milestone source of truth instead of redefining the milestone in the feature document.
 
 If the repo does not yet use feature requirements documents, either remove this section or replace it with a note that the repo is currently deliverable-only.
 
@@ -291,6 +292,7 @@ This is the right place for repo-specific instructions that should not live in t
 - Feature index or durable feature surface: `<DOCS_ROOT>/features/index.yaml` or the declared wiki/KB index
 - Active scratch surface when local files are used: `<DOCS_ROOT>/ephemeral/`
 - Completed-spec surface: `<DOCS_ROOT>/specifications/`, GitHub Wiki, Confluence, tracker, or none per the operating model
+- Project milestone source of truth: repo roadmap docs, Zazz Board, GitHub Projects, Jira, Confluence, or another declared system
 
 ## Maintainer Checklist
 

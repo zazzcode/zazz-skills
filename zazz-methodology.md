@@ -30,7 +30,8 @@ Zazz moves from durable context to executable work, then back into durable knowl
 project.md
   -> architecture.md
   -> proposals/
-  -> features/ and milestones
+  -> features/ for capability context
+  -> project milestones / roadmap for timeline planning
   -> specifications/
   -> spec-driven development
   -> deterministic quality gates
@@ -58,7 +59,7 @@ Each focused section includes a `Relevant Skills` table that explains which skil
 | [Document Storage](docs/methodology/document-storage.md) | Defines where durable docs, active implementation scratch, completed specs, project plans, roadmaps, and milestones live. |
 | [Architecture](docs/methodology/architecture.md) | Defines project-level and feature-level architecture docs. |
 | [Proposals](docs/methodology/proposals.md) | Defines durable decision artifacts for uncertain product or technical direction. |
-| [Features and Milestones](docs/methodology/features-and-milestones.md) | Defines feature requirements documents, milestones, and time-boxed deliverables. |
+| [Features and Project Milestones](docs/methodology/features-and-milestones.md) | Defines feature requirements documents, feature roadmap increments, project milestones, and time-boxed deliverables. |
 | [Specifications](docs/methodology/specifications.md) | Defines deliverable specifications as bounded execution contracts. |
 | [Spec-Driven Development](docs/methodology/spec-driven-development.md) | Defines the post-greenlight lifecycle for implementation, steering, contract updates, QA, PR feedback, and signoff. |
 | [Deterministic Quality Gates](docs/methodology/deterministic-quality.md) | Defines linters, formatters, type checks, accessibility checks, doc checks, CI gates, and ongoing standards conformance as deterministic controls. |
@@ -75,7 +76,7 @@ Zazz uses a project-first document model:
 - `project.md` explains the product's purpose, users, major capabilities, and durable operating assumptions.
 - `architecture/` explains intended technical shape and important system decisions.
 - `proposals/` records decisions when the path is uncertain.
-- `features/` describes long-lived capabilities and milestone progression.
+- `features/` describes long-lived capabilities and feature roadmap increments.
 - `specifications/` contains local specification files for spec-builder. The repo decides whether this directory is tracked, ignored, mirrored, or promoted elsewhere.
 - `ephemeral/` contains active implementation scratch: run logs, QA findings, handoff notes, recovery notes, evidence, and other records that normally stay out of Git.
 - `standards/` defines how the software should be built.
@@ -83,8 +84,8 @@ Zazz uses a project-first document model:
 Repos declare the docs root in `AGENTS.md`, commonly `docs/` or `.zazz/`. The value must be repo-relative.
 Repos also declare their documentation operating model. That model decides whether
 `specifications/` is tracked or ignored, and whether final specs, project plans,
-roadmap, milestones, or other durable docs are promoted to GitHub Wiki, Confluence, or
-another system.
+roadmap, project milestones, or other durable docs are promoted to GitHub Wiki,
+Confluence, or another system.
 
 ```text
 <DOCS_ROOT>/
@@ -110,7 +111,7 @@ another system.
 9. Draft PRs are the normal packaging surface for agent-generated work.
 10. Automated self-review runs before a PR is marked ready for human review.
 11. Active implementation artifacts live in `<DOCS_ROOT>/ephemeral/` or a declared tracker/service, and only durable knowledge is promoted into the repo, wiki, Confluence, or another declared knowledge base.
-12. Durable docs are updated when implementation changes the product, architecture, feature capability, roadmap, milestone state, or standards.
+12. Durable docs are updated when implementation changes the product, architecture, feature capability, roadmap, project milestone state, or standards.
 
 ## Skills
 
@@ -159,7 +160,7 @@ Supported durable storage modes include:
 - Confluence or a similar knowledge-base system
 - tracker-backed records for issue-specific context
 
-`project.md`, architecture, feature requirements, project plans, roadmaps, milestones, and final implemented specifications may live in the declared durable storage surface. Local specification working files live under `<DOCS_ROOT>/specifications/`; RUN_LOG files and other mutable execution records live in `<DOCS_ROOT>/ephemeral/` or the declared tracker/service while work is underway. After implementation lands, the final current specification may be promoted to a wiki, Confluence, Jira, Zazz Board, or another durable location if the repo policy calls for it.
+`project.md`, architecture, feature requirements, project plans, roadmaps, project milestones, and final implemented specifications may live in the declared durable storage surface. Local specification working files live under `<DOCS_ROOT>/specifications/`; RUN_LOG files and other mutable execution records live in `<DOCS_ROOT>/ephemeral/` or the declared tracker/service while work is underway. After implementation lands, the final current specification may be promoted to a wiki, Confluence, Jira, Zazz Board, or another durable location if the repo policy calls for it.
 
 When an external document is the source of truth, keep a stable pointer in `AGENTS.md`, an index page, or a repo-tracked pointer file with title, owner, status, and link. See [Document Storage](docs/methodology/document-storage.md).
 

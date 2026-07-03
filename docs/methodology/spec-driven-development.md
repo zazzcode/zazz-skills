@@ -159,7 +159,7 @@ Durable completed-spec locations include:
 - Zazz Board, Jira, or another tracker-backed archive
 
 The promoted spec should retain the final `Implementation And Review Change Log` and
-link the PR, merge commit, feature, milestone, roadmap, and architecture context when
+link the PR, merge commit, feature, project milestone, roadmap, and architecture context when
 available. Do not promote RUN_LOG files, scratch notes, failed attempts, or transient QA
 work into the durable spec archive.
 
@@ -173,7 +173,7 @@ work into the durable spec archive.
 | `pr-builder` | Packages draft PR evidence, risks, and spec links for review. |
 | `pr-review` | Reviews draft PRs for spec alignment, standards conformance, evidence quality, and maintainability. |
 | `gh-stack` | Manages stacked branch lanes when the approved review shape is a stack. |
-| `gh-wiki` | Promotes completed specs and updates feature, architecture, roadmap, or milestone wiki pages after shipped changes. |
+| `gh-wiki` | Promotes completed specs and updates feature, architecture, roadmap, or project milestone wiki pages after shipped changes. |
 | `confluence` | Drafts durable completed-spec and project-doc updates for Confluence-backed repos. |
 | `zazz-board` | Updates Zazz Board tasks, notes, statuses, locks, and evidence when the repo uses Zazz Board. |
 | `jira` | Provides Jira-backed context when the repo uses Jira; live integration depends on repo support. |

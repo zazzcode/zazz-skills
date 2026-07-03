@@ -13,6 +13,7 @@ Use `project.md` to keep project-level context out of transient chats and delive
 - Product purpose and value proposition
 - Primary users and important user goals
 - Major established capabilities
+- Project milestone and roadmap links when stakeholder timeline context lives outside `project.md`
 - Current operating assumptions and constraints
 - Links to active feature requirements documents
 - Links to project-level architecture documents
@@ -52,5 +53,5 @@ active implementation scratch and mutable execution records.
 
 - [Architecture](./architecture.md)
 - [Document Storage](./document-storage.md)
-- [Features and Milestones](./features-and-milestones.md)
+- [Features and Project Milestones](./features-and-milestones.md)
 - [Specifications](./specifications.md)

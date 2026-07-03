@@ -8,7 +8,7 @@ Read in workflow order:
 2. [Document Storage](./document-storage.md)
 3. [Architecture](./architecture.md)
 4. [Proposals](./proposals.md)
-5. [Features and Milestones](./features-and-milestones.md)
+5. [Features and Project Milestones](./features-and-milestones.md)
 6. [Specifications](./specifications.md)
 7. [Spec-Driven Development](./spec-driven-development.md)
 8. [Deterministic Quality Gates and Conformance](./deterministic-quality.md)
@@ -34,7 +34,7 @@ Each section includes a `Relevant Skills` table that explains which skills apply
 | Document storage | `gh-wiki`, `confluence`, `doc-check`, `zazz-board`, `jira` |
 | Architecture direction | `architecture-doc-builder`, `proposal-builder`, `spec-builder` |
 | Proposals and decisions | `proposal-builder`, `feature-doc-builder`, `architecture-doc-builder` |
-| Features and milestones | `feature-doc-builder`, `architecture-doc-builder`, `spec-builder` |
+| Features and project milestones | `feature-doc-builder`, `architecture-doc-builder`, `spec-builder` |
 | Deliverable specifications | `spec-builder`, `zazz-board`, `jira` |
 | Spec-driven development | `spec-driven-development`, `qa-testing`, `pr-builder`, `pr-review`, `zazz-board`, `jira` |
 | Deterministic quality gates and standards conformance | `standard-builder`, `conformance`, `doc-check`, `qa-testing` |

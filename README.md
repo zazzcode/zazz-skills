@@ -11,7 +11,7 @@ AI agents can produce code quickly. The hard part is making sure the team is bui
 Zazz gives executives and engineering teams:
 
 - **Faster delivery with control:** agents can implement and verify bounded work, while humans keep scope, product signoff, review, approval, and merge authority.
-- **Clearer product intent:** `project.md`, proposals, architecture docs, feature requirements, and milestones preserve why the work matters before code is written.
+- **Clearer product intent:** `project.md`, proposals, architecture docs, feature requirements, and project milestones preserve why the work matters and when stakeholders should expect outcomes.
 - **Executable delivery contracts:** deliverable specifications turn intent into scoped implementation work with acceptance criteria, test strategies, standards, and halt conditions.
 - **Spec-driven implementation:** approved specifications stay current through implementation, Owner steering, QA, and PR review by updating the spec body in place and recording contract changes.
 - **Ongoing standards conformance:** localized, evidence-backed maintenance PRs keep legacy and existing code aligned with adopted standards instead of letting drift accumulate.
@@ -42,7 +42,8 @@ The methodology is intentionally Git-native. Durable docs, code, review evidence
 project.md
   -> architecture.md
   -> proposals/
-  -> features/ and milestones
+  -> features/ for capability context
+  -> project milestones / roadmap for timeline planning
   -> specifications/
   -> spec-driven development
   -> deterministic quality gates
@@ -75,15 +76,16 @@ variable should use `ZAZZ_DOCS_ROOT`, and its value must be a repo-relative path
 The `specifications/` directory is the normal local working directory for spec-builder
 files. The repo's `AGENTS.md` declares whether it is tracked, ignored, mirrored, or
 promoted to another durable system. Other durable locations, such as roadmap, project
-plans, milestones, or wiki/knowledge-base pages, are also declared by the repo's
-operating model.
+plans, project milestones, or wiki/knowledge-base pages, are also declared by the
+repo's operating model.
 
 Each document type exists to solve a different coordination problem:
 
 - `project.md` provides top-level durable orientation for the software project.
 - `standards/` defines how the software should be built.
 - `proposals/` provides a durable place to work through uncertainty before committing to a direction.
-- `features/` contains long-lived feature requirements documents for capability intent and milestone evolution.
+- `features/` contains long-lived feature requirements documents for capability intent and feature roadmap increments.
+- Project milestones are project-owned timeline containers that communicate when work is expected to land; a single project milestone can contain deliverables from multiple features.
 - `architecture/` contains project-level or feature-level technical design.
 - `specifications/` contains local specification files; the repo decides whether they are committed, ignored, mirrored, or promoted elsewhere.
 - `ephemeral/` contains active implementation scratch such as RUN_LOG files, handoff notes, QA findings, recovery notes, evidence, and scratch analysis.
@@ -112,7 +114,7 @@ The methodology is split so teams can read only the part of the progression they
 | Project orientation | [docs/methodology/project.md](docs/methodology/project.md) |
 | Architecture direction | [docs/methodology/architecture.md](docs/methodology/architecture.md) |
 | Proposals and decisions | [docs/methodology/proposals.md](docs/methodology/proposals.md) |
-| Features and milestones | [docs/methodology/features-and-milestones.md](docs/methodology/features-and-milestones.md) |
+| Features and project milestones | [docs/methodology/features-and-milestones.md](docs/methodology/features-and-milestones.md) |
 | Deliverable specifications | [docs/methodology/specifications.md](docs/methodology/specifications.md) |
 | Spec-driven development | [docs/methodology/spec-driven-development.md](docs/methodology/spec-driven-development.md) |
 | Deterministic quality gates and standards conformance | [docs/methodology/deterministic-quality.md](docs/methodology/deterministic-quality.md) |

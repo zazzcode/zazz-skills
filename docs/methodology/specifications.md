@@ -56,8 +56,8 @@ After implementation is complete and the PR lands, the repo may promote the fina
 current specification to the declared durable completed-spec surface:
 `<DOCS_ROOT>/specifications/`, GitHub Wiki, Confluence, another knowledge base, or a
 tracker-backed archive. Completed specs should keep the final `Implementation And
-Review Change Log` and link the implementation PR, merge commit, feature, milestone,
-roadmap, and architecture context when available.
+Review Change Log` and link the implementation PR, merge commit, feature, project
+milestone, roadmap, and architecture context when available.
 
 ## Execution Records
 
@@ -77,7 +77,7 @@ areas that require ordered work, and any fresh-context QA passes expected.
 | ----- | ----------------------- |
 | `spec-builder` | Produces bounded execution contracts with scope, acceptance criteria, test strategy, implementation guidance, tracking model, implementation prompt, standards, and halt conditions. |
 | `spec-driven-development` | Applies the approved specification after greenlight, including in-place contract updates and the Implementation And Review Change Log. |
-| `feature-doc-builder` | Supplies durable feature and milestone context so the specification does not need to restate long-lived product narrative. |
+| `feature-doc-builder` | Supplies durable feature, roadmap-increment, and related project milestone context so the specification does not need to restate long-lived product narrative. |
 | `architecture-doc-builder` | Supplies design decisions and sequencing constraints that keep implementation aligned with intended system shape. |
 | `jira` | Provides a future Jira-backed context path for issue scope and acceptance criteria; today it documents fallback behavior for user-provided Jira context. |
 | `zazz-board` | Creates or synchronizes board-backed deliverables and specification paths when the repo uses Zazz Board. |

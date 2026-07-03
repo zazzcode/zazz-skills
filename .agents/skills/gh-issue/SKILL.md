@@ -173,7 +173,7 @@ Picking the wrong artifact creates noise. Use this routing:
 - **GitHub issue** — a single, trackable item for a bug, small enhancement, follow-up, or observation tied to one repo. Lightweight; triageable by any collaborator; good for "capture this now, decide later." This is the default when the user says "log this," "file this," "track this for later," or "create an issue."
 - **Proposal** (`proposal-builder`, lives under `<DOCS_ROOT>/proposals/`) — use when product or technical direction is genuinely uncertain and the team needs to work through options and record a decision before building. An issue can point to a proposal, but the proposal is the durable decision artifact.
 - **Deliverable specification** (`spec-builder` / Zazz Board) — use when there is bounded implementation work with acceptance criteria, a test strategy, standards, and halt conditions. An issue is not a spec; if the user is describing a unit of work that would pass through the spec-driven-development lifecycle, steer toward a spec/Zazz Board deliverable and optionally keep an issue as a lightweight pointer.
-- **Feature requirements document** (`feature-doc-builder`) — use for long-lived capability intent and milestone evolution, not for a single follow-up.
+- **Feature requirements document** (`feature-doc-builder`) — use for long-lived capability intent and feature roadmap increments, not for a single follow-up.
 
 When the user's request is ambiguous, ask one clarifying question: "Do you want a quick GitHub issue to track this for later, or a deliverable spec because this is bounded implementation work?" Do not silently upgrade a quick issue into a spec or vice versa.
 

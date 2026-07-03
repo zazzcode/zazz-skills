@@ -48,7 +48,7 @@ directory is for active scratch and execution records.
 | ----- | ----------------------- |
 | `proposal-builder` | Guides option comparison, tradeoff analysis, recommendation drafting, and decision capture without premature implementation. |
 | `architecture-doc-builder` | Turns accepted technical proposals into durable architecture guidance. |
-| `feature-doc-builder` | Turns accepted product proposals into durable feature requirements and milestone direction. |
+| `feature-doc-builder` | Turns accepted product proposals into durable feature requirements and roadmap-increment direction. |
 | `spec-builder` | Converts an approved proposal outcome into the first bounded deliverable when the direction is ready to execute. |
 | `gh-wiki` | Updates proposal pages or accepted-decision summaries when GitHub Wiki is the durable docs surface. |
 | `confluence` | Drafts or updates proposal pages for Confluence-backed repos. |
@@ -56,6 +56,6 @@ directory is for active scratch and execution records.
 
 ## Related Sections
 
-- [Features and Milestones](./features-and-milestones.md)
+- [Features and Project Milestones](./features-and-milestones.md)
 - [Architecture](./architecture.md)
 - [Document Storage](./document-storage.md)

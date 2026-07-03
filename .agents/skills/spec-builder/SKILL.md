@@ -256,8 +256,8 @@ asking for confirmation when the codebase or methodology makes one likely.
 Before presenting a near-final specification, the spec-builder agent must be able to state:
 
 - **Deliverable boundary** — what single deliverable this specification owns.
-- **Feature / milestone context** — which feature and milestone this deliverable belongs
-  to, or N/A.
+- **Feature / project milestone context** — which feature, feature roadmap increment,
+  and project milestone this deliverable belongs to, or N/A.
 - **Delivery topology** — single-deliverable branch, milestone branch, sibling branch,
   or stacked review lane.
 - **Review artifact** — one PR for this specification, one milestone PR with multiple specifications,
@@ -273,7 +273,7 @@ Before presenting a near-final specification, the spec-builder agent must be abl
   single-specification, shared milestone, or stacked-lane.
 - **Documentation operating model** — whether `<DOCS_ROOT>/specifications/` is tracked,
   ignored, mirrored, or promoted; where RUN_LOG files, durable feature/architecture
-  docs, roadmap, and milestones live.
+  docs, roadmap, and project milestones live.
 - **Execution tracking system** — none/local run log only, Zazz Board, Jira, or another
   tracker; include authoritative IDs/URLs, required status updates, and companion skills
   the implementation prompt must load.

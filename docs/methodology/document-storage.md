@@ -31,13 +31,13 @@ Common operating models:
   through PRs.
 - **GitHub plus GitHub Wiki**: committed repo docs hold standards and lightweight
   pointers; GitHub Wiki holds project overview, architecture, features, roadmap,
-  milestones, and completed implemented specs.
+  project milestones, and completed implemented specs.
 - **Zazz Board plus repo/wiki docs**: specifications are stored under
   `<DOCS_ROOT>/specifications/` and may be mirrored or linked to Zazz Board; Zazz Board
   holds tasks, file locks, QA notes, and execution state.
 - **Jira plus Confluence**: Jira holds issue/work tracking and may hold active scope;
   Confluence holds durable project overview, architecture, features, roadmap,
-  milestones, and completed specs.
+  project milestones, and completed specs.
 - **Hybrid**: each document type names its own source of truth.
 
 `<DOCS_ROOT>/specifications/` is the normal local specification directory for
@@ -55,8 +55,8 @@ Durable knowledge includes:
 
 - project overview and product orientation
 - architecture and technical decisions
-- feature requirements and milestone history
-- project plans, roadmap, and milestone direction
+- feature requirements and feature roadmap increments
+- project plans, roadmap, and project milestone direction
 - proposals and accepted decision outcomes
 - standards
 - implemented specifications when the repo's operating model treats specs as durable
@@ -64,9 +64,9 @@ Durable knowledge includes:
 
 When durable docs live outside the application repo, keep a stable lookup path in
 `AGENTS.md`, a repo-tracked index, or another declared entry point. Agents should be
-able to find the current project overview, architecture, features, roadmap, milestones,
-and completed specifications without reading old chats or guessing from repository
-shape.
+able to find the current project overview, architecture, features, roadmap, project
+milestones, and completed specifications without reading old chats or guessing from
+repository shape.
 
 ## Ephemeral Implementation Artifacts
 
@@ -100,7 +100,7 @@ Promoted specs should include or link:
 
 - implementation status and completion date
 - PR URL and merge commit when available
-- linked feature, milestone, roadmap, and architecture context
+- linked feature, project milestone, roadmap, and architecture context
 - final acceptance criteria and evidence summary
 - the `Implementation And Review Change Log`
 
@@ -111,7 +111,7 @@ draft snapshot.
 
 Repository wikis and knowledge bases are useful for agent onboarding because they can
 organize project overview, architecture, features, implemented specs, plans, roadmap,
-and milestones outside the code-review path. They should still be curated.
+and project milestones outside the code-review path. They should still be curated.
 
 Recommended policy:
 
@@ -133,7 +133,7 @@ skills are placeholder workflow guidance unless the repo declares a live integra
 | `confluence` | Drafts or updates durable project docs and completed specs for Confluence-backed repos. |
 | `spec-builder` | Creates deliverable specs under `<DOCS_ROOT>/specifications/` according to the repo's tracked/ignored/mirrored policy. |
 | `spec-driven-development` | Governs active spec updates, run logs, QA feedback, and completed-spec promotion timing. |
-| `feature-doc-builder` | Maintains durable feature and milestone knowledge in the declared storage surface. |
+| `feature-doc-builder` | Maintains durable feature and feature roadmap knowledge in the declared storage surface. |
 | `architecture-doc-builder` | Maintains durable architecture knowledge in the declared storage surface. |
 | `zazz-board` | Updates tracker-backed execution records and specification metadata when the repo uses Zazz Board. |
 | `jira` | Provides Jira-backed context and update guidance when the repo uses Jira. |
@@ -143,6 +143,6 @@ skills are placeholder workflow guidance unless the repo declares a live integra
 
 - [Project Document](./project.md)
 - [Architecture](./architecture.md)
-- [Features and Milestones](./features-and-milestones.md)
+- [Features and Project Milestones](./features-and-milestones.md)
 - [Specifications](./specifications.md)
 - [Spec-Driven Development](./spec-driven-development.md)
