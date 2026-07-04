@@ -139,6 +139,9 @@ The shared skills under [`.agents/skills/`](.agents/skills/) implement the metho
 
 Companion utility skills such as `gh-issue`, `handoff`, `zazz-board`, `jira`, `psql`, and `sqlcmd` provide repo-specific or tool-specific support when a project uses those systems.
 
+Shared skills follow the Agent Skills format. Use [Agent Skills](docs/standards/agent-skills.md) for authoring rules,
+portable front matter, metadata placement, and validation.
+
 ## Authority Gates
 
 Agents can draft docs, implement code, run tests, prepare pull requests, and perform self-review when the governing contract is approved.

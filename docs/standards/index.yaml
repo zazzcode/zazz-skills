@@ -32,6 +32,17 @@ standards:
     purpose: >-
       File-size thresholds, contextual splitting, module cohesion, incrementally discoverable skills and docs, anti-slop structure, and compute-once guidance.
 
+  - file: agent-skills.md
+    applies_to:
+      paths:
+        - .agents/skills/
+      activities:
+        - creating or modifying shared agent skills
+        - editing SKILL.md front matter, descriptions, metadata, scripts, references, or assets
+        - reviewing skill discoverability or cross-harness compatibility
+    purpose: >-
+      Agent Skills directory shape, portable front matter, metadata placement, description quality, progressive disclosure, and validation checks.
+
   - file: http-layer.md
     applies_to:
       paths:

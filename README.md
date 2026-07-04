@@ -144,7 +144,7 @@ Recommended adoption flow:
 
 | Area | Standards |
 | ---- | --------- |
-| Core structure and docs | Generic baseline: [code-structure.md](docs/standards/code-structure.md), [contextual-split.md](docs/standards/contextual-split.md), [docs-hygiene.md](docs/standards/docs-hygiene.md), [docs-hygiene-reference-structure.md](docs/standards/docs-hygiene-reference-structure.md), [spec-hygiene.md](docs/standards/spec-hygiene.md), [pr-process.md](docs/standards/pr-process.md) |
+| Core structure and docs | Generic baseline: [code-structure.md](docs/standards/code-structure.md), [agent-skills.md](docs/standards/agent-skills.md), [contextual-split.md](docs/standards/contextual-split.md), [docs-hygiene.md](docs/standards/docs-hygiene.md), [docs-hygiene-reference-structure.md](docs/standards/docs-hygiene-reference-structure.md), [spec-hygiene.md](docs/standards/spec-hygiene.md), [pr-process.md](docs/standards/pr-process.md) |
 | HTTP/API layer | Stack-specific baseline example: [http-layer.md](docs/standards/http-layer.md), [http-layer-guide.md](docs/standards/http-layer-guide.md), [http-layer-schemas-and-responses.md](docs/standards/http-layer-schemas-and-responses.md), [http-layer-errors-and-auth.md](docs/standards/http-layer-errors-and-auth.md), [http-layer-docs-and-tests.md](docs/standards/http-layer-docs-and-tests.md) |
 | Service layer | Stack-specific baseline example: [service-layer.md](docs/standards/service-layer.md), [service-layer-guide.md](docs/standards/service-layer-guide.md), [service-layer-data-and-exceptions.md](docs/standards/service-layer-data-and-exceptions.md), [service-layer-modules-and-cli.md](docs/standards/service-layer-modules-and-cli.md) |
 | Data layer | Stack-specific baseline example: [data-layer.md](docs/standards/data-layer.md), [data-layer-guide.md](docs/standards/data-layer-guide.md), [data-layer-exec-sproc.md](docs/standards/data-layer-exec-sproc.md), [data-layer-results.md](docs/standards/data-layer-results.md), [data-layer-errors.md](docs/standards/data-layer-errors.md), [data-layer-templates.md](docs/standards/data-layer-templates.md), [data-layer-utilities.md](docs/standards/data-layer-utilities.md), [data-layer-sproc-examples.md](docs/standards/data-layer-sproc-examples.md) |
@@ -161,6 +161,9 @@ These shared skills are baseline workflow implementations. Teams adopting Zazz c
 stack, coding languages, architecture, review workflow, ticketing system, and PR tooling. Keep those customizations
 anchored to the repo's standards and local instructions so agents apply documented team rules instead of personal or
 tool-specific preferences.
+
+Creating or updating shared skills? Follow [agent-skills.md](docs/standards/agent-skills.md) for the portable
+`.agents/skills/<skill-name>/SKILL.md` structure, front matter, metadata, description, and validation rules.
 
 ### Interactive skills
 
