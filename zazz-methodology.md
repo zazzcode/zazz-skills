@@ -132,11 +132,12 @@ The shared skills under [`.agents/skills/`](.agents/skills/) implement the metho
 | Automated self-review | `pr-review` |
 | Stacked PR workflow | `gh-stack` |
 | Worktree setup | `worktree` |
+| Temporary handoff notes | `handoff` |
 | Standard creation | `standard-builder` |
 | Standards conformance | `conformance` |
 | Documentation checks | `doc-check` |
 
-Companion utility skills such as `gh-issue`, `zazz-board`, `jira`, `psql`, and `sqlcmd` provide repo-specific or tool-specific support when a project uses those systems.
+Companion utility skills such as `gh-issue`, `handoff`, `zazz-board`, `jira`, `psql`, and `sqlcmd` provide repo-specific or tool-specific support when a project uses those systems.
 
 ## Authority Gates
 
