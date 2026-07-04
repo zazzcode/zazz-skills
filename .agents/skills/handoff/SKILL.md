@@ -23,7 +23,6 @@ Use this skill when a user asks for a handoff document, continuation note, stale
 - Do not commit handoff documents. The generated handoff file must be ignored by git.
 - Do not silently create `<DOCS_ROOT>/ephemeral/`. If the directory is missing, notify the user with the `<DOCS_ROOT>` you identified because a missing ephemeral directory can mean the agent chose the wrong docs root.
 - If the user confirms creation, or explicitly asked to create the directory, make sure the directory or generated handoff files are ignored by git before finishing. Choose the ignore mechanism from the repo and team's convention: a shared `.gitignore` rule may be right for one repo, while a local exclude file such as `.git/info/exclude` or the bare repo's `info/exclude` in a bare/worktree layout may be right for another. If the convention is unclear, notify the user instead of guessing.
-- Do not change `.zazz/standards/*` while creating a handoff unless the user explicitly confirms the standards change.
 
 ## Workflow
 
