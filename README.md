@@ -189,7 +189,7 @@ tool-specific preferences.
 | `pr-builder` | Produces draft-first PR packaging from diff, docs, stack context, and evidence. |
 | `gh-stack` | Manages stacked branches and dependent PRs for incremental review workflows. |
 | `worktree` | Sets up or manages the methodology's Zazz-style worktree model through the Worktrunk workflow used by the skill. |
-| `handoff` | Creates temporary HANDOFF documents in the OS temp directory so a fresh agent or developer can continue safely. |
+| `handoff` | Creates temporary HANDOFF documents under `<DOCS_ROOT>/ephemeral/` so a fresh agent or developer can continue safely. |
 | `zazz-board` | Companion utility skill for Zazz Board integration. |
 | `jira` | Draft companion utility for Jira-backed repos. |
 | `gh-issue` | Companion utility skill for creating, reading, commenting on, and routing GitHub Issues when a repo uses GitHub issue tracking. |

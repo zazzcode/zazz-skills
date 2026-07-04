@@ -12,8 +12,10 @@ developer continue safely without replaying the whole conversation.
 
 - Write platform-neutral notes. Do not make the handoff Codex-specific,
   Claude-specific, Cursor-specific, or tied to any single agent runtime.
-- Save temporary handoff documents in the user's OS temporary directory, not in the
-  current workspace or repository.
+- Store temporary handoff documents under `<DOCS_ROOT>/ephemeral/` unless the user
+  explicitly specifies another location. Identify `<DOCS_ROOT>` from repo instructions
+  such as `AGENTS.md`; use `.zazz/ephemeral/` when the repo declares `.zazz` as
+  `DOCS_ROOT`.
 - Name every handoff document with local date and time down to seconds, and include
   `HANDOFF` in all caps so the file stands out:
 
@@ -34,15 +36,15 @@ developer continue safely without replaying the whole conversation.
 
 1. Read the current task context, relevant diffs, recent commits, verification output,
    and any artifacts the user referenced.
-2. Identify the OS temp directory:
-   - macOS/Linux: prefer `$TMPDIR` when set; otherwise use `/tmp`.
-   - Windows: prefer `%TEMP%`, then `%TMP%`.
-3. Choose a short topic slug from the work or the user's stated next-session focus.
-4. Generate the timestamp from local time unless the user requests another timezone.
-5. Write a concise Markdown file named `<topic>-HANDOFF-YYYY-MM-DD-HHMMSS.md` in the OS
-   temp directory.
-6. Verify the file is outside the workspace and contains no obvious secrets before
-   reporting the path.
+2. Identify `<DOCS_ROOT>` from repo instructions such as `AGENTS.md`, project docs, or
+   methodology configuration. Prefer the repo-declared value over defaults.
+3. Create `<DOCS_ROOT>/ephemeral/` if it does not exist.
+4. Choose a short topic slug from the work or the user's stated next-session focus.
+5. Generate the timestamp from local time unless the user requests another timezone.
+6. Write a concise Markdown file named `<topic>-HANDOFF-YYYY-MM-DD-HHMMSS.md` under
+   `<DOCS_ROOT>/ephemeral/`.
+7. Verify the file is ignored by git or otherwise follows the repo's declared ephemeral
+   artifact policy before reporting the path.
 
 ## Recommended Content
 

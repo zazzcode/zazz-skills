@@ -138,7 +138,7 @@ skills are placeholder workflow guidance unless the repo declares a live integra
 | `spec-driven` | Governs active spec updates, run logs, QA feedback, and completed-spec promotion timing. |
 | `feature-doc-builder` | Maintains durable feature and feature roadmap knowledge in the declared storage surface. |
 | `architecture-doc-builder` | Maintains durable architecture knowledge in the declared storage surface. |
-| `handoff` | Creates temporary HANDOFF documents outside the workspace when active context must move to a fresh session. |
+| `handoff` | Creates temporary HANDOFF documents under `<DOCS_ROOT>/ephemeral/` when active context must move to a fresh session. |
 | `zazz-board` | Updates tracker-backed execution records and specification metadata when the repo uses Zazz Board. |
 | `jira` | Provides Jira-backed context and update guidance when the repo uses Jira. |
 | `doc-check` | Checks committed Markdown docs before PR review when repo docs are the durable surface. |

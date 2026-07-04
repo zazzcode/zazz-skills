@@ -173,7 +173,7 @@ work into the durable spec archive.
 | `pr-builder` | Packages draft PR evidence, risks, and spec links for review. |
 | `pr-review` | Reviews draft PRs for spec alignment, standards conformance, evidence quality, and maintainability. |
 | `gh-stack` | Manages stacked branch lanes when the approved review shape is a stack. |
-| `handoff` | Captures temporary HANDOFF context outside the workspace when implementation or review needs to resume in a fresh session. |
+| `handoff` | Captures temporary HANDOFF context under `<DOCS_ROOT>/ephemeral/` when implementation or review needs to resume in a fresh session. |
 | `gh-wiki` | Promotes completed specs and updates feature, architecture, roadmap, or project milestone wiki pages after shipped changes. |
 | `confluence` | Drafts durable completed-spec and project-doc updates for Confluence-backed repos. |
 | `zazz-board` | Updates Zazz Board tasks, notes, statuses, locks, and evidence when the repo uses Zazz Board. |
