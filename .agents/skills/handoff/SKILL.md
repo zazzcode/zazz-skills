@@ -20,7 +20,7 @@ Use this skill when a user asks for a handoff document, continuation note, stale
 - Treat any user-provided arguments as the intended focus of the next session and tailor the handoff to that focus.
 - Do not duplicate content already captured in other artifacts such as PRDs, feature docs, architecture docs, ADRs, proposals, issues, commits, diffs, specifications, or PR bodies. Reference them by path, commit, issue URL, PR URL, or document title instead.
 - Redact sensitive information, including API keys, passwords, tokens, secrets, private keys, session identifiers, and unnecessary personally identifiable information.
-- Do not commit handoff documents. The generated handoff file must be ignored by git.
+- Do not commit handoff documents.
 - Do not silently create `<DOCS_ROOT>/ephemeral/`. If the directory is missing, notify the user with the `<DOCS_ROOT>` you identified because a missing ephemeral directory can mean the agent chose the wrong docs root.
 - If the user confirms creation, or explicitly asked to create the directory, make sure the directory or generated handoff files are ignored by git before finishing. Choose the ignore mechanism from the repo and team's convention: a shared `.gitignore` rule may be right for one repo, while a local exclude file such as `.git/info/exclude` or the bare repo's `info/exclude` in a bare/worktree layout may be right for another. If the convention is unclear, notify the user instead of guessing.
 
@@ -29,10 +29,9 @@ Use this skill when a user asks for a handoff document, continuation note, stale
 1. Read the current task context, relevant diffs, recent commits, and test or verification results.
 2. Identify `<DOCS_ROOT>`. Use `.zazz` when the repo has one; otherwise use the repository's documented project-doc root.
 3. Check for `<DOCS_ROOT>/ephemeral/`. If it does not exist, pause and notify the user before creating it, including the resolved `<DOCS_ROOT>` path and why you believe it is correct.
-4. When creating `<DOCS_ROOT>/ephemeral/`, also add or verify an ignore rule before finishing. Follow the repo and team's convention for whether that rule belongs in shared `.gitignore`, `.git/info/exclude`, or the bare repo's `info/exclude`. If the correct location is unclear, notify the user and do not guess. Verify with `git check-ignore` or `git status --ignored`.
+4. When creating `<DOCS_ROOT>/ephemeral/`, also add or verify an ignore rule before finishing. Follow the repo and team's convention for whether that rule belongs in shared `.gitignore`, `.git/info/exclude`, or the bare repo's `info/exclude`. If the correct location is unclear, notify the user and do not guess. If you add or change an ignore rule, verify it with `git check-ignore` or `git status --ignored`.
 5. Generate the timestamp from local time unless the user requests another timezone.
 6. Write a concise Markdown handoff with enough context for another agent or developer to continue safely.
-7. Verify the handoff file is ignored by git before finishing.
 
 ## Recommended Content
 
