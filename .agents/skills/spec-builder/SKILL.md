@@ -1,6 +1,6 @@
 ---
 name: spec-builder
-description: Help a user create, draft, refine, or update the content of a deliverable specification for a bounded feature, component, bug fix, refactor, or milestone slice; use when the user wants to author the specification contract, acceptance criteria, test strategy, review shape, templates, or implementation prompt, not implement the solution. For post-greenlight implementation lifecycle, steering, QA/PR feedback, and change-log protocol, use spec-driven-development.
+description: Help a user create, draft, refine, or update the content of a deliverable specification for a bounded feature, component, bug fix, refactor, or milestone slice; use when the user wants to author the specification contract, acceptance criteria, test strategy, review shape, templates, or implementation prompt, not implement the solution. For post-greenlight implementation lifecycle, steering, QA/PR feedback, and change-log protocol, use spec-driven.
 ---
 
 # Spec Builder Skill
@@ -76,7 +76,7 @@ Before changing this skill's philosophy, read
 active repo also has local methodology docs, use them as project-specific context only;
 do not make them required dependencies for this skill.
 
-For the lifecycle after a specification is greenlit, use `spec-driven-development` when
+For the lifecycle after a specification is greenlit, use `spec-driven` when
 available. This skill defines the specification shape and helps create or refine the
 contract through greenlight; the SDD skill owns implementation loops, Owner steering,
 QA/review feedback, controlled spec updates, re-verification, PR readiness, and final

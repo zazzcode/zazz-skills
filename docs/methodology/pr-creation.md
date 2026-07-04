@@ -41,7 +41,7 @@ Use `gh-stack` when the repo uses GitHub and dependent PRs.
 | Skill | How it helps efficiency |
 | ----- | ----------------------- |
 | `pr-builder` | Assembles draft PR titles and bodies from the diff, specification links, validation evidence, risks, and reviewer instructions. |
-| `spec-driven-development` | Keeps draft PR feedback aligned with the current spec contract and change-log protocol. |
+| `spec-driven` | Keeps draft PR feedback aligned with the current spec contract and change-log protocol. |
 | `gh-stack` | Manages dependent branches and PRs when a deliverable is easier to review as an ordered stack. |
 | `qa-testing` | Supplies concise verification evidence and unresolved findings for the PR body. |
 | `jira` | Provides a future Jira-backed path for issue references; today it documents how to use repo-provided or user-provided Jira context. |

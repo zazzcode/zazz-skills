@@ -1,6 +1,6 @@
 ---
-name: spec-driven-development
-description: Apply or explain the lifecycle after a deliverable specification is greenlit: AC/TDD implementation, Owner steering, in-place spec contract updates, Implementation And Review Change Log entries, run logs, QA/UAT, draft PR feedback, automated review, re-verification, and final human sign-off. Use for questions about how specs, run logs, PRs, reviewers, QA, owners, and implementing agents coordinate around an approved specification.
+name: spec-driven
+description: "Apply or explain the lifecycle after a deliverable specification is greenlit: AC/TDD implementation, Owner steering, in-place spec contract updates, Implementation And Review Change Log entries, run logs, QA/UAT, draft PR feedback, automated review, re-verification, and final human sign-off. Use for questions about how specs, run logs, PRs, reviewers, QA, owners, and implementing agents coordinate around an approved specification."
 ---
 
 # Spec-Driven Development

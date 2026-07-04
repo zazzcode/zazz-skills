@@ -167,7 +167,7 @@ work into the durable spec archive.
 
 | Skill | How it helps efficiency |
 | ----- | ----------------------- |
-| `spec-driven-development` | Applies the post-greenlight lifecycle, contract-change protocol, lead/subagent coordination, and signoff discipline. |
+| `spec-driven` | Applies the post-greenlight lifecycle, contract-change protocol, lead/subagent coordination, and signoff discipline. |
 | `spec-builder` | Creates the greenlit specification, implementation prompt, tracking model, and change-log section that SDD executes against. |
 | `qa-testing` | Runs focused fresh-context verification and produces findings or evidence. |
 | `pr-builder` | Packages draft PR evidence, risks, and spec links for review. |

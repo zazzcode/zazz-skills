@@ -126,7 +126,7 @@ The shared skills under [`.agents/skills/`](.agents/skills/) implement the metho
 | Feature requirements | `feature-doc-builder` |
 | Architecture docs | `architecture-doc-builder` |
 | Deliverable specifications | `spec-builder` |
-| Spec-driven implementation lifecycle | `spec-driven-development` |
+| Spec-driven implementation lifecycle | `spec-driven` |
 | Implementation verification | `qa-testing` |
 | PR packaging | `pr-builder` |
 | Automated self-review | `pr-review` |

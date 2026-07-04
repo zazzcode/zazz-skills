@@ -135,7 +135,7 @@ skills are placeholder workflow guidance unless the repo declares a live integra
 | `gh-wiki` | Reads, updates, and promotes durable project docs and completed specs in a GitHub repo wiki. |
 | `confluence` | Drafts or updates durable project docs and completed specs for Confluence-backed repos. |
 | `spec-builder` | Creates deliverable specs under `<DOCS_ROOT>/specifications/` according to the repo's tracked/ignored/mirrored policy. |
-| `spec-driven-development` | Governs active spec updates, run logs, QA feedback, and completed-spec promotion timing. |
+| `spec-driven` | Governs active spec updates, run logs, QA feedback, and completed-spec promotion timing. |
 | `feature-doc-builder` | Maintains durable feature and feature roadmap knowledge in the declared storage surface. |
 | `architecture-doc-builder` | Maintains durable architecture knowledge in the declared storage surface. |
 | `zazz-board` | Updates tracker-backed execution records and specification metadata when the repo uses Zazz Board. |

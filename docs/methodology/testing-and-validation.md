@@ -63,7 +63,7 @@ Useful evidence includes:
 | Skill | How it helps efficiency |
 | ----- | ----------------------- |
 | `qa-testing` | Independently verifies acceptance criteria, checks evidence quality, identifies rework, and produces reviewer-ready validation notes. |
-| `spec-driven-development` | Routes QA findings into either implementation rework or in-place spec contract updates with change-log entries. |
+| `spec-driven` | Routes QA findings into either implementation rework or in-place spec contract updates with change-log entries. |
 | `pr-review` | Finds gaps in spec alignment, standards conformance, test quality, and maintainability before human review. |
 | `conformance` | Supports small targeted fixes when validation exposes standards drift in a bounded repo area. |
 | `doc-check` | Runs repo-local documentation checks for changed methodology, standards, and other docs. |

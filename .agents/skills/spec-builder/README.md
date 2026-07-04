@@ -155,6 +155,6 @@ reads the specification, resolves open questions, maintains the run log, execute
 and dispatches a verifier when the definition of done is complete.
 
 After greenlight, material contract changes during implementation or review are governed
-by `spec-driven-development`: update the affected specification sections in place,
+by `spec-driven`: update the affected specification sections in place,
 record the audit entry in the Implementation And Review Change Log, and keep progress
 and evidence in the run log.

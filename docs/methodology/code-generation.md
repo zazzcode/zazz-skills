@@ -64,7 +64,7 @@ Stop and ask for owner direction when:
 | Skill | How it helps efficiency |
 | ----- | ----------------------- |
 | `worktree` | Creates or repairs isolated worktree lanes so implementation stays separate, recoverable, and easy to review. |
-| `spec-driven-development` | Governs the post-greenlight implementation loop, contract-change protocol, lead/subagent coordination, and signoff path. |
+| `spec-driven` | Governs the post-greenlight implementation loop, contract-change protocol, lead/subagent coordination, and signoff path. |
 | `spec-builder` | Supplies the approved execution contract, sequencing guidance, standards list, and halt conditions. |
 | `conformance` | Applies one focused standards-alignment fix against a named standard and bounded code area when implementation exposes drift. |
 | `psql` | Speeds safe PostgreSQL schema inspection, read-only checks, query profiling, and function/procedure diagnostics. |

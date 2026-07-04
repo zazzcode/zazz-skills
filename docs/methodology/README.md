@@ -36,7 +36,7 @@ Each section includes a `Relevant Skills` table that explains which skills apply
 | Proposals and decisions | `proposal-builder`, `feature-doc-builder`, `architecture-doc-builder` |
 | Features and project milestones | `feature-doc-builder`, `architecture-doc-builder`, `spec-builder` |
 | Deliverable specifications | `spec-builder`, `zazz-board`, `jira` |
-| Spec-driven development | `spec-driven-development`, `qa-testing`, `pr-builder`, `pr-review`, `zazz-board`, `jira` |
+| Spec-driven development | `spec-driven`, `qa-testing`, `pr-builder`, `pr-review`, `zazz-board`, `jira` |
 | Deterministic quality gates and standards conformance | `standard-builder`, `conformance`, `doc-check`, `qa-testing` |
 | Code generation | `worktree`, `conformance`, `psql`, `sqlcmd`, `zazz-board` |
 | Testing and validation | `qa-testing`, `pr-review`, `conformance`, `psql`, `sqlcmd` |

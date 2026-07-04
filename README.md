@@ -170,7 +170,7 @@ tool-specific preferences.
 | `feature-doc-builder` | Creates and evolves feature requirements documents for long-lived capabilities; the skill keeps its historical name for compatibility. |
 | `architecture-doc-builder` | Creates and evolves project-level or feature-level architecture documents. |
 | `spec-builder` | Guides bounded deliverable specification authoring, including prescriptive execution sequence and implementation guidance. |
-| `spec-driven-development` | Guides the post-greenlight lifecycle: implementation loops, steering, contract updates, QA/PR feedback, and signoff. |
+| `spec-driven` | Guides the post-greenlight lifecycle: implementation loops, steering, contract updates, QA/PR feedback, and signoff. |
 | `gh-wiki` | Placeholder workflow guidance for GitHub Wiki-backed durable docs and completed-spec promotion. |
 | `confluence` | Placeholder workflow guidance for Confluence-backed durable docs and completed-spec promotion. |
 | `standard-builder` | Inspects an existing codebase and drafts repo-specific standards for team review. |
