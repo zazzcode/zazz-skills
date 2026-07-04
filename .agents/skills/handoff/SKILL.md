@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: Create or update platform-neutral handoff documents for agents and developers when work needs to be paused, transferred, resumed in another session, or cataloged as follow-up context; use for ephemeral HANDOFF notes, issue catalogs, continuation plans, next-session briefs, and cross-agent summaries.
+description: Create or update platform-neutral handoff documents for agents and developers when work needs to be paused, transferred, resumed in another session, or cataloged as follow-up context; use for ephemeral HANDOFF notes, issue catalogs, continuation notes, next-session briefs, and cross-agent summaries.
 ---
 
 # Handoff
@@ -18,7 +18,7 @@ Use this skill when a user asks for a handoff document, continuation note, stale
 ```
 
 - Treat any user-provided arguments as the intended focus of the next session and tailor the handoff to that focus.
-- Do not duplicate content already captured in other artifacts such as PRDs, plans, ADRs, issues, commits, diffs, specifications, or PR bodies. Reference them by path, commit, issue URL, PR URL, or document title instead.
+- Do not duplicate content already captured in other artifacts such as PRDs, feature docs, architecture docs, ADRs, proposals, issues, commits, diffs, specifications, or PR bodies. Reference them by path, commit, issue URL, PR URL, or document title instead.
 - Redact sensitive information, including API keys, passwords, tokens, secrets, private keys, session identifiers, and unnecessary personally identifiable information.
 - Do not commit handoff documents. The generated handoff file must be ignored by git.
 - Do not silently create `<DOCS_ROOT>/ephemeral/`. If the directory is missing, notify the user with the `<DOCS_ROOT>` you identified because a missing ephemeral directory can mean the agent chose the wrong docs root.
@@ -44,7 +44,7 @@ Include the sections that fit the situation:
 - **Suggested Skills:** Skills the next agent should invoke and why.
 - **Open Issues:** Bugs, incomplete behavior, questions, or risks that still need investigation.
 - **Files To Inspect:** Key files and why they matter.
-- **Artifacts To Read:** Paths, commits, issues, PRs, specifications, plans, or docs to inspect instead of restating their contents.
+- **Artifacts To Read:** Paths, commits, issues, PRs, PRDs, feature docs, architecture docs, ADRs, proposals, specifications, or docs to inspect instead of restating their contents.
 - **Verification:** Tests run, manual checks performed, and known gaps.
 - **Next Steps:** Ordered, actionable work for the next agent or developer.
 
