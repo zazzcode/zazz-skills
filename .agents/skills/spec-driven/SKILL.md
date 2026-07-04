@@ -28,10 +28,11 @@ The final `Implementation And Review Change Log` records the audit trail for tho
 changes. It points to changed sections and explains source, rationale, summary, and
 verification impact. It is not a competing list of current requirements.
 
-Mutable execution history still belongs in the run log or repo-declared execution
-record. The run log records attempts, phase progress, failures, evidence, QA findings,
-handoffs, and recoveries. The specification records the current contract plus the final
-contract-change audit trail.
+Append-only execution history still belongs in the run log or repo-declared execution
+record. The run log grows as work proceeds; do not rewrite prior entries unless the
+user explicitly asks. The run log records attempts, phase progress, failures, evidence,
+QA findings, handoffs, and recoveries. The specification records the current contract
+plus the final contract-change audit trail.
 
 ## Lifecycle
 
@@ -158,7 +159,7 @@ Use this entry shape:
   feedback changes the contract.
 - **Implementation And Review Change Log**: final spec section; audit trail for
   accepted contract changes after greenlight.
-- **Run log / execution record**: mutable execution history, attempts, phase progress,
+- **Run log / execution record**: append-only execution history, attempts, phase progress,
   evidence locations, failures, recoveries, QA findings, handoffs, and rework notes.
 - **PR body / review thread**: reviewer-facing summary, evidence, open risks, and review
   conversation. Summarize material spec changes and link the specification.

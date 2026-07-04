@@ -20,7 +20,7 @@
 # {{ Deliverable Name }} — Stacked Deliverable Specification
 
 > This specification covers a stacked branch lane. Per-branch sequencing, acceptance
-> criteria, and implementation prompts live here; mutable execution state lives in the
+> criteria, and implementation prompts live here; active execution state lives in the
 > run log or external record declared below.
 
 **Worktree / lane:** `{{ lane-worktree }}`

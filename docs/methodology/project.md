@@ -35,7 +35,7 @@ knowledge-base mode, `AGENTS.md` should point agents at the project overview pag
 the durable docs index.
 
 Do not store the project overview under `<DOCS_ROOT>/ephemeral/`; that directory is for
-active implementation scratch and mutable execution records.
+active implementation scratch and execution records.
 
 ## Relevant Skills
 

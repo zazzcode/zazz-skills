@@ -289,7 +289,7 @@ Repos choose and document their active-artifact policy in `AGENTS.md`:
 
 - Proposals live under `<DOCS_ROOT>/proposals/` by default, but may live in Google Docs, SharePoint, Confluence, or another shared document system when rich images, screenshots, diagrams, comments, or non-engineering stakeholder review make that the better collaboration surface. In that case, keep a stable pointer under the declared docs entry point.
 - Deliverable specifications live under `<DOCS_ROOT>/specifications/` so implementation agents can execute the current spec from the local worktree. The operating model decides whether those files are committed, ignored, mirrored to Zazz Board/Jira, or promoted after merge to GitHub Wiki, Confluence, or another declared durable surface.
-- RUN_LOG files and mutable execution records live under `<DOCS_ROOT>/ephemeral/` when kept on disk. This directory usually stays out of Git and holds run logs, handoff notes, QA findings, recovery notes, evidence, and related active-work records.
+- RUN_LOG files and active execution records live under `<DOCS_ROOT>/ephemeral/` when kept on disk. This directory usually stays out of Git and holds run logs, handoff notes, QA findings, recovery notes, evidence, and related active-work records.
 - Teams that do not use Zazz Board can rely exclusively on `<DOCS_ROOT>/ephemeral/` for local active implementation records.
 - Teams that use Zazz Board may use it as the centralized execution-record service so multiple agents can share run logs, handoff documents, QA findings, task state, specification metadata, and related information across worktrees and sessions.
 
@@ -317,7 +317,7 @@ Added the optional durable storage model for repo Markdown, GitHub Wiki, Conflue
 
 ### 2026-05-24 — Execution artifact location refresh
 
-Renamed the default local mutable execution artifact directory to `<DOCS_ROOT>/ephemeral/`, and clarified that Zazz Board can serve as the centralized execution-record surface for run logs, handoff documents, QA findings, and related information shared across worktrees, agents, and sessions.
+Renamed the default local active execution artifact directory to `<DOCS_ROOT>/ephemeral/`, and clarified that Zazz Board can serve as the centralized execution-record surface for run logs, handoff documents, QA findings, and related information shared across worktrees, agents, and sessions.
 
 ### 2026-05-23 — Methodology and skill alignment refresh
 

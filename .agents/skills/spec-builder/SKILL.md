@@ -135,10 +135,10 @@ genuinely N/A for a deliverable (rare), state so explicitly rather than omitting
 
 ### What the run log contains
 
-One run log per delivery effort when the effort needs a mutable execution
-record. A single-specification branch may have one section. A milestone branch may
-contain multiple deliverables and specifications and uses sections per specification. A
-stacked lane uses sections per branch/specification when needed.
+One run log per delivery effort when the effort needs an append-only execution record
+that grows during implementation. A single-specification branch may have one section. A
+milestone branch may contain multiple deliverables and specifications and uses sections
+per specification. A stacked lane uses sections per branch/specification when needed.
 
 - **Standards verification** — agent confirms the specification's standards prescription matches
   a fresh `<DOCS_ROOT>/standards/index.yaml` lookup.
@@ -644,8 +644,8 @@ description. If a decision reads like a description, it's incomplete.
   or your head — not in the document.
 - Verbatim standards or container-conventions text → cite, don't restate.
 - Speculative future work ("we might want to...") → in or out, no middle.
-- Mutable execution state other than the run log, which is a sibling artifact or external record rather than part of
-  the specification.
+- Execution state, which belongs in the run log or external record rather than the
+  specification.
 
 ## Specification quality bar
 

@@ -53,8 +53,9 @@ contract got there.
 
 ## Execution Records
 
-Mutable execution history belongs in the run log or repo-declared execution system, not
-in the long-lived specification body.
+Append-only execution history belongs in the run log or repo-declared execution system,
+not in the long-lived specification body. The run log grows as work proceeds; do not
+rewrite prior entries unless the user explicitly asks.
 
 Execution records include:
 

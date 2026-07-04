@@ -77,7 +77,7 @@ change log is an audit trail, not a second source of current requirements.
 
 ## Run Logs
 
-Use a run log when the effort needs mutable execution history: open-question answers, phase progress, deviations,
+Use a run log when the effort needs append-only execution history: open-question answers, phase progress, deviations,
 manual evidence, recovery notes, or verifier output.
 
 The run log is not inherently a committed Git document. Store it according to the repo's declared policy: ignored local

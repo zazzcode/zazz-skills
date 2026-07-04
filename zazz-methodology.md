@@ -165,7 +165,7 @@ Supported durable storage modes include:
 - Confluence or a similar knowledge-base system
 - tracker-backed records for issue-specific context
 
-`project.md`, architecture, feature requirements, project plans, roadmaps, project milestones, and final implemented specifications may live in the declared durable storage surface. Local specification working files live under `<DOCS_ROOT>/specifications/`; RUN_LOG files and other mutable execution records live in `<DOCS_ROOT>/ephemeral/` or the declared tracker/service while work is underway. After implementation lands, the final current specification may be promoted to a wiki, Confluence, Jira, Zazz Board, or another durable location if the repo policy calls for it.
+`project.md`, architecture, feature requirements, project plans, roadmaps, project milestones, and final implemented specifications may live in the declared durable storage surface. Local specification working files live under `<DOCS_ROOT>/specifications/`; RUN_LOG files and other active execution records live in `<DOCS_ROOT>/ephemeral/` or the declared tracker/service while work is underway. After implementation lands, the final current specification may be promoted to a wiki, Confluence, Jira, Zazz Board, or another durable location if the repo policy calls for it.
 
 When an external document is the source of truth, keep a stable pointer in `AGENTS.md`, an index page, or a repo-tracked pointer file with title, owner, status, and link. See [Document Storage](docs/methodology/document-storage.md).
 
