@@ -1,7 +1,8 @@
 ---
 name: gh-issue
-type: rule
 description: "CLI-first companion skill for interacting with GitHub Issues via the `gh` CLI under the zazzcode account. Use it to CREATE/log/file a GitHub issue — a bug, follow-up, enhancement, or observation, including when the user hits something while coding and wants to track it for later instead of fixing it now. Use it equally to READ/view/list/search an issue as input to fixing or assessment — including when the user references an issue number or says things like 'read issue #19', 'assess issue N', 'propose a fix for issue N', 'what does issue N say', or 'work on issue N'. Covers the full issue lifecycle (create, view, search, comment, close, reopen), screenshot/attachment handling, methodology-aligned routing of issue-vs-spec-vs-proposal, and the read→assess→propose-fix→feed-back workflow. Operates against GitHub Issues using the active `gh` profile (zazzcode under the zazzcode tree)."
+metadata:
+  type: rule
 ---
 
 # GitHub Issues Skill

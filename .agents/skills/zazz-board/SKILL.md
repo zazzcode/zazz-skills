@@ -1,8 +1,9 @@
 ---
 name: zazz-board
-type: "rule"
 description: "CLI-first companion skill for service-assisted repos that use Zazz Board; use it to create and manage deliverables, tasks, relations, notes, statuses, and file locks through zazzctl, with live OpenAPI as the protocol validation and fallback surface."
-required_for: ["qa-testing", "spec-builder", "pr-builder"]
+metadata:
+  type: rule
+  required_for: ["qa-testing", "spec-builder", "pr-builder"]
 ---
 
 # Zazz Board Skill
