@@ -269,7 +269,18 @@ The GitHub documentation was reviewed on 2026-07-18. It describes GitHub Stacked
 
 ### CLI version check
 
-The extension is evolving. Before running a command, execute `gh stack <command> --help` and use the installed version's flags. In particular, some older extensions require `gh stack init --adopt <branches...>` to track existing branches and use `gh stack submit --auto --draft`; the current website documents branch adoption through `init` and draft creation as the default for non-interactive `submit --auto`. Do not copy an example blindly across extension versions.
+gh-stack evolves. Before running a command, inspect the installed form:
+
+```bash
+gh stack <command> --help
+```
+
+- Older extensions require `gh stack init --adopt <branches...>` for existing branches
+  and `gh stack submit --auto --draft` for draft PRs.
+- Current documentation adopts existing branches through `init` and creates draft PRs by
+  default with non-interactive `submit --auto`.
+
+Use the installed command help rather than copying an example from a different version.
 
 Install the agent skill from the local clone by copying:
 
