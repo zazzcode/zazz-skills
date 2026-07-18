@@ -159,6 +159,34 @@ Branch 1 merged -> gh stack sync, then verify Branch 2 diff
 
 Git itself determines branch contents from commits. That means files are associated with a branch only after you commit those changes on that branch.
 
+Prefer one stack branch to own a file when practical. An upper branch may change the same
+file only for a distinct, reviewable reason.
+
+## Correct misplaced changes
+
+Use Git to move content; gh-stack does not move files or hunks.
+
+- **Uncommitted file or hunk:** save the change, check out the correct lower branch, restore
+  and commit it there. Use path-specific staging; `git add -p` is for a human interactive
+  session when hunks must be separated.
+- **Whole commit:** cherry-pick the misplaced commit onto the correct lower branch.
+- **Mixed committed change:** `gh stack modify` cannot split it. Reconstruct an unpublished
+  correction with Git staging. For published history, agree the rewrite plan with the
+  Deliverable Owner or Lead Contributor Agent.
+
+After every correction, run:
+
+```bash
+gh stack rebase --upstack
+gh stack checkout <corrected-upper-branch>
+git diff --name-only <immediate-parent-branch>...HEAD
+```
+
+Confirm that the immediate-parent diff contains only the upper deliverable, then rerun the
+relevant tests before push or submit.
+
+### Simple lower-branch correction
+
 If you are on the Branch 2 tip and realize a data-layer file belongs in Branch 1:
 
 1. Save or commit any Branch 2 work that should stay on Branch 2.

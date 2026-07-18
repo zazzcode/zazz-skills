@@ -50,6 +50,11 @@ Official CLI reference: https://github.github.com/gh-stack/reference/cli/
 
 GitHub Stacked PRs is preview functionality. Confirm that the repository has it enabled before using this skill. The extension is evolving, so before issuing a state-changing command, run `gh stack <command> --help` and use the flags supported by the installed version. The current website and older installed extensions differ on `init` adoption and draft-PR flags.
 
+This is the Zazz-adapted skill. Do not replace it with the generic upstream gh-stack skill:
+upstream documentation and command help define CLI behavior, while this skill defines the
+Zazz lane, naming, agent, file-placement, and review rules. Update and validate this skill
+deliberately when upstream gh-stack behavior changes.
+
 ## Bundled workflow reference
 
 For the methodology's required local stack-lane workflow, read
@@ -172,6 +177,32 @@ git commit -m "Add user API routes"
 ```
 
 This keeps each branch focused on one concern. Multiple commits per branch are fine — the key is that all commits in a branch relate to the same logical concern, and changes that belong to a different concern go in a different branch.
+
+### Correct misplaced changes
+
+Use Git to place content; `gh-stack` does not move files or hunks. Prefer one branch owner
+per file when practical. An upper branch may change the same file only for a distinct
+reviewable reason.
+
+- **Uncommitted file:** stash the path, check out the correct lower branch, restore it, and
+  commit it there. Use path-specific staging; reserve `git add -p` for a human interactive
+  session when hunks must be separated.
+- **Whole commit:** `git cherry-pick <wrong-commit>` onto the correct lower branch. A later
+  rebase may drop the duplicate patch or require conflict resolution.
+- **Mixed committed change:** `gh stack modify` cannot split it. Reconstruct an unpublished
+  change with normal Git staging. For published history, agree a correction plan with the
+  Deliverable Owner or Lead Contributor Agent before rewriting it.
+
+After every correction, run:
+
+```bash
+gh stack rebase --upstack
+gh stack checkout <corrected-upper-branch>
+git diff --name-only <immediate-parent-branch>...HEAD
+```
+
+Confirm that the immediate-parent diff contains only the upper deliverable, then rerun the
+relevant tests before push or submit.
 
 ### When to create a new branch
 

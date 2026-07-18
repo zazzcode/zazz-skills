@@ -226,38 +226,59 @@ Branch 1 merged -> gh stack sync, then verify Branch 2 diff
 
 Git itself determines branch contents from commits. That means files are associated with a branch only after you commit those changes on that branch.
 
-If you are on the Branch 2 tip and realize a data-layer file belongs in Branch 1:
+Prefer one stack branch to own a file when practical. An upper branch may change the same
+file only for a distinct, reviewable reason. Always review a branch against its immediate
+parent, not merely by its file names.
 
-1. Save or commit any Branch 2 work that should stay on Branch 2.
-1. Navigate down to Branch 1.
-1. Make or stage only the Branch 1 changes.
-1. Commit them on Branch 1.
-1. Rebase the upper branch.
-1. Navigate back to Branch 2.
+## Correct misplaced changes
+
+Use Git to move content between branches. `gh-stack` manages branch order and PR bases; it
+does not move files or hunks.
+
+### Uncommitted file or hunk
+
+Save the misplaced change, move to the intended lower branch, restore and commit it there.
+Use a path-specific stash for a whole file. For mixed uncommitted changes, separate the
+hunks before committing; `git add -p` is suitable for a human interactive session.
 
 Example:
 
 ```bash
-gh stack down
-git add backend/database/sql_migrations/stored-procedure/R__dbo.app_FeatureFoo.sql
-git add backend/src/data/sprocs/app_FeatureFoo.py
-git commit -m "Add Report Foo data layer"
-
-gh stack rebase --upstack
-gh stack up
+git stash push -m "move data layer" -- path/to/data-layer-file
+gh stack checkout <correct-lower-branch>
+git stash pop
+git add path/to/data-layer-file
+git commit -m "Add data layer"
 ```
 
-If your working tree contains mixed changes, use `git add -p` or path-specific `git add` so the current branch receives only the intended hunks.
+### Whole committed change
+
+If a single commit belongs entirely in a lower branch, copy it to that branch with
+`git cherry-pick <wrong-commit>`. Then rebase the upper stack. During rebase, Git may drop
+the duplicate patch or require a conflict resolution. Verify the result before continuing.
+
+### Mixed committed change
+
+`gh stack modify` rearranges whole branches; it does not split a file or commit. For an
+unpublished commit, reconstruct the intended lower-branch change with normal Git staging,
+then rebase the upper stack. For a published commit that needs history rewriting, pause and
+agree the correction plan with the Deliverable Owner or Lead Contributor Agent before
+rewriting it.
+
+### Required after every correction
+
+```bash
+gh stack rebase --upstack
+gh stack checkout <corrected-upper-branch>
+git diff --name-only <immediate-parent-branch>...HEAD
+```
+
+Confirm the remaining diff contains only the upper branch's deliverable. Run the relevant
+tests again before pushing or submitting the stack.
 
 ## Setup
 
-The local clone is at:
-
-```bash
-/path/to/gh-stack
-```
-
-The extension can be installed from GitHub:
+Install the extension from GitHub:
 
 ```bash
 gh extension install github/gh-stack
@@ -282,17 +303,27 @@ gh stack <command> --help
 
 Use the installed command help rather than copying an example from a different version.
 
-Install the agent skill from the local clone by copying:
+### Zazz skill source and maintenance
+
+For a repository using Zazz methodology, install the Zazz-adapted skill from the
+`zazz-skills` clone:
 
 ```bash
-/path/to/gh-stack/skills/gh-stack
+<zazz-skills-clone>/.agents/skills/gh-stack
 ```
 
-into the repo/worktree skill directory:
+Copy it into the target repository or worktree at:
 
 ```bash
 .agents/skills/gh-stack
 ```
+
+Do not replace it with the generic upstream `gh-stack/skills/gh-stack` skill. The upstream
+documentation and command help define CLI capabilities and version-specific flags. The Zazz
+skill defines the required lane, flat naming, agent, file-placement, and review rules.
+
+Keep the Zazz skill current as gh-stack evolves. Review upstream release and CLI changes,
+then deliberately update and validate the Zazz skill before adopting a new workflow.
 
 ## Recommended report workflow
 
