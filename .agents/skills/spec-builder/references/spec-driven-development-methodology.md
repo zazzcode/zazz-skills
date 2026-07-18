@@ -65,7 +65,7 @@ A deliverable specification is the executable contract for one deliverable. It c
 - definition of done
 - implementation prompt
 - implementation and review change log
-- execution tracking system and lead/subagent coordination model
+- execution tracking system and Lead Agent / Contributor Agent coordination model
 
 The specification should distinguish hard constraints from adaptive guidance. It should constrain outcomes, contracts,
 and boundaries without over-prescribing every internal implementation move.
@@ -100,7 +100,7 @@ Use the simplest topology that matches the intended review artifact:
 
 Do not force one worktree per deliverable as a universal rule. Do keep one deliverable per specification.
 Do choose and record the review shape in the specification before implementation starts.
-If implementation reveals the shape is wrong, stop for Owner sign-off, update the
+If implementation reveals the shape is wrong, stop for Deliverable Owner sign-off, update the
 affected specification sections in place, and record the change in the Implementation
 And Review Change Log before continuing.
 
@@ -141,6 +141,6 @@ For stacked branches, this applies to every PR in the stack.
 ## Change Rule
 
 If implementation, QA, UAT, or PR review changes the contract or the approved review
-shape, update the affected specification sections with Owner sign-off and record the
+shape, update the affected specification sections with Deliverable Owner sign-off and record the
 change in the Implementation And Review Change Log. Do not hide contract changes only in
 commits, PR comments, or run-log entries.

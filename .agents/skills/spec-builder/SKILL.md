@@ -34,7 +34,7 @@ append-only execution history and follows the repo's declared policy: local file
 combination when the repo defines that explicitly. Do not invent filenames or
 subdirectories under `ephemeral/`; use the repo's declared operating model. Repos that
 do not use Zazz Board may rely on `<DOCS_ROOT>/ephemeral/` for execution records when
-that is declared. When the Owner uses Zazz Board, treat it
+that is declared. When the Deliverable Owner uses Zazz Board, treat it
 as the centralized execution-record service for run logs, handoff notes, QA findings,
 and related execution information that must be shared across worktrees, agents, and sessions.
 
@@ -51,10 +51,21 @@ specifications are the executable contracts inside that artifact.
 The current operating model is still being refined. If it surfaces problems, revise it.
 Until then, this is the default.
 
+### Roles
+
+Use these roles consistently in every specification:
+
+- **Project Owner** — human accountable for project direction and durable product context.
+- **Deliverable Owner** — human accountable for this deliverable's intent, scope decisions, acceptance, and review or merge readiness.
+- **Contributor** — human engineer contributing to the deliverable.
+- **Contributor Agent** — AI agent explicitly delegated bounded implementation, testing, documentation, or investigation work.
+- **Lead Agent** — designated Contributor Agent that coordinates execution, delegates work to other Contributor Agents and Verifier Agents, integrates their output, and maintains execution evidence. It does not assume Deliverable Owner authority.
+- **Verifier Agent** / **QA Agent** — AI agent that independently evaluates work and does not modify implementation unless explicitly reassigned.
+
 ### Team integration rule
 
-This is a team repository. Agents and implementors work on feature branches. They may
-commit to their branch and push their branch when the deliverable specification says to,
+This is a team repository. Contributors and Contributor Agents work on feature branches.
+They may commit to their branch and push their branch when the deliverable specification says to,
 but **they never merge directly to the integration branch** and specifications must not
 instruct them to do so.
 
@@ -78,14 +89,14 @@ do not make them required dependencies for this skill.
 
 For the lifecycle after a specification is greenlit, use `spec-driven` when
 available. This skill defines the specification shape and helps create or refine the
-contract through greenlight; the SDD skill owns implementation loops, Owner steering,
+contract through greenlight; the SDD skill governs implementation loops, Deliverable Owner steering,
 QA/review feedback, controlled spec updates, re-verification, PR readiness, and final
 sign-off.
 
 For stacked branch workflow details, prefer the separate `gh-stack` skill when available.
 If it is installed, read its `SKILL.md` and bundled references before drafting stacked
 workflow sections. If it is not installed, use the concise stacked-lane guidance bundled
-in this skill and tell the Owner that command-level stack guidance should be reviewed.
+in this skill and tell the Deliverable Owner that command-level stack guidance should be reviewed.
 
 ### What the deliverable specification must contain
 
@@ -122,8 +133,8 @@ template):
     as resolutions in the run log.
 12. **Run Log Protocol** — pointer to the run log when used,
     including storage policy, append rules, sections, and session-start protocol.
-13. **Agent Implementation Prompt** — paste-ready bootstrap for the implementing agent
-    session, including the lead/subagent coordination model and execution-tracking
+13. **Agent Implementation Prompt** — paste-ready bootstrap for the Contributor Agent
+    session, including the Lead Agent / Contributor Agent coordination model and execution-tracking
     system instructions.
 14. **Implementation And Review Change Log** — the final section. Initial specs may say
     "No changes recorded." After greenlight, accepted steering, QA/UAT, PR review, or
@@ -151,7 +162,7 @@ per specification. A stacked lane uses sections per branch/specification when ne
 - **Manual Evidence Locations** — paths to baselines, smoke outputs, screenshots, query
   outputs.
 - **Issues & Recoveries** — load-bearing failed attempts only (not every red test).
-- **Verifier / QA sub-agent report** — pasted PASS/FAIL summary from final or phase-level
+- **Verifier / QA Agent report** — pasted PASS/FAIL summary from final or phase-level
   verification.
 
 The run log is the recovery surface for walk-away execution. A fresh agent
@@ -160,21 +171,21 @@ phase.
 
 ## Role
 
-You produce a deliverable specification through interactive dialogue with the deliverable Owner. The specification is
+You produce a deliverable specification through interactive dialogue with the Deliverable Owner. The specification is
 the complete contract; you do **not** also produce a separate execution document.
 
 You do **not** implement product code in this skill.
 
 ## Delivery topology
 
-The Owner may specify a delivery topology at invocation. If they do not, infer the
+The Deliverable Owner may specify a delivery topology at invocation. If they do not, infer the
 simplest topology and confirm it.
 
 For features and deliverables, decomposition and stacking are specification-time
 decisions. The specification must define the review shape before implementation starts:
 one PR, multiple deliverables in one milestone PR, sibling PRs, a bounded stacked review
 lane, or a large exception. If implementation later shows the approved shape is wrong,
-the implementor must stop and route the change through Owner sign-off, an in-place
+the implementor must stop and route the change through Deliverable Owner sign-off, an in-place
 specification update, and the Implementation And Review Change Log rather than
 inventing a split or stack after coding has started.
 
@@ -186,27 +197,27 @@ Use these topologies:
   one shared run log, one PR. Use when the milestone is reviewed as one artifact.
 - **Sibling branches** — multiple independently reviewable branches/PRs for one
   milestone. Use when deliverables do not require a stack dependency.
-- **Stacked review lane** — multiple branches stacked inside **one lane worktree** using
-  `gh-stack`; each branch is separately reviewed and still requires human sign-off. Use
-  when review boundaries or lower-layer/upper-layer dependency justify stack overhead.
+- **Stacked review lane** — multiple dependent deliverables, each on one branch and one PR,
+  stacked inside **one lane worktree** using `gh-stack`; each branch is separately reviewed
+  and still requires human sign-off. Use when review boundaries or lower-layer/upper-layer
+  dependency justify stack overhead.
 
 Never model a stack as multiple stacked worktrees. That became too difficult to manage
 after even two worktrees. Stacks are branches inside one lane worktree.
 
 For stacked lanes, keep this mental model:
 
-- one worktree = one isolated agent lane, usually for one deliverable, but it may contain
-  multiple deliverables when those deliverables are implemented as a stacked branch lane
-- one stack inside that worktree = multiple review branches for the same deliverable or
-  tightly related deliverable group
-- one branch = one review unit, represented by commits, not by a remembered file list
+- one worktree = one isolated agent lane; a stacked lane is the deliberate exception that
+  contains multiple dependent deliverables
+- one stack inside that worktree = one branch and one reviewable PR per deliverable
+- one branch = one deliverable review unit, represented by commits, not by a remembered file list
 
-If the Owner picks `stacked` for something that should be a milestone branch or sibling
+If the Deliverable Owner picks `stacked` for something that should be a milestone branch or sibling
 branches, flag the concern once and continue with the stated topology if reaffirmed.
 
 ## Startup sequence
 
-1. Confirm the delivery topology the Owner specified, or propose the simplest topology
+1. Confirm the delivery topology the Deliverable Owner specified, or propose the simplest topology
    that fits the intended review artifact.
 2. Load the matching workflow + template from this skill directory:
    - `regular-branch-workflow.md` + `regular-specification-template.md` for single-deliverable,
@@ -217,7 +228,7 @@ branches, flag the concern once and continue with the stated topology if reaffir
    orientation file) if present.
 5. For stacked topology, read the `gh-stack` skill if available. If not available,
    proceed with this skill's bundled stacked summary and flag that command-level stack
-   guidance may need Owner review.
+   guidance may need Deliverable Owner review.
 6. Resolve `DOCS_ROOT` from `AGENTS.md`, the standards index, or another repo-local
    orientation document. Do not assume that a directory literally named `docs/` is the
    docs root; some repos use `.zazz/` as the root and reserve `.zazz/docs/` for imported
@@ -235,19 +246,19 @@ branches, flag the concern once and continue with the stated topology if reaffir
 
 ## Interaction model
 
-Deliverable specification creation is **interactive with the Owner**. Always.
+Deliverable specification creation is **interactive with the Deliverable Owner**. Always.
 
 - Draft, present, redirect, revise. Don't deliver a "finished" specification and ask for
   approval.
 - Ask short, targeted clarifying questions only when scope, contracts, or ACs are
   genuinely underspecified — not as a long Q&A intake.
-- The Owner is the source of truth. If their input contradicts something you derived
+- The Deliverable Owner is the source of truth. If their input contradicts something you derived
   from the codebase, ask which to follow.
 
 ## Intake / interview model
 
-If the Owner's initial prompt does not provide enough information to produce a specification that
-a fresh implementation agent can execute, conduct a focused interview. Do not silently
+If the Deliverable Owner's initial prompt does not provide enough information to produce a specification that
+a fresh Contributor Agent can execute, conduct a focused interview. Do not silently
 fill critical gaps with guesses.
 
 Ask in small batches, usually 1-4 questions at a time. Prefer proposing a default and
@@ -266,7 +277,7 @@ Before presenting a near-final specification, the spec-builder agent must be abl
   rejected, and which review units, stack branches, or sibling specifications are owned
   by this specification.
 - **Integration branch** — the branch all PRs target (e.g. `dev`, `main`, `master`).
-  Confirmed with the Owner; never assumed.
+  Confirmed with the Deliverable Owner; never assumed.
 - **Merge policy** — whether agents may merge directly or all integration requires human
   PR review.
 - **Run-log shape** — run-log path/location and whether it is
@@ -277,21 +288,22 @@ Before presenting a near-final specification, the spec-builder agent must be abl
 - **Execution tracking system** — none/local run log only, Zazz Board, Jira, or another
   tracker; include authoritative IDs/URLs, required status updates, and companion skills
   the implementation prompt must load.
-- **Implementation coordination model** — lead implementation agent only, or lead
-  implementation agent coordinating subagents by phase/task; include what may be
-  delegated, what must remain lead-owned, and how ordered work prevents file conflicts.
+- **Implementation coordination model** — Lead Agent working alone, or Lead Agent
+  delegating bounded phases or tasks to Contributor Agents; include delegation
+  boundaries, integration and evidence responsibilities, and how ordered work prevents
+  file conflicts.
 - **Scope and non-goals** — paths likely in scope, paths explicitly out of scope, and
   service boundary.
 - **Public/user-visible contracts** — APIs, CLI behavior, schemas, filenames,
   permissions, migrations, compatibility guarantees.
 - **Acceptance criteria** — testable outcomes, each with verifying evidence.
 - **Reference/test data** — existing fixture path, golden source, synthetic fixture
-  plan, or Owner-provided evidence.
+  plan, or Deliverable Owner-provided evidence.
 - **Standards** — applicable `<DOCS_ROOT>/standards/` entries based on expected file paths and
   activity.
 - **Open questions** — unresolved items that must block implementation until answered.
 
-If any of these are unknown, either interview the Owner or mark them explicitly as Open
+If any of these are unknown, either interview the Deliverable Owner or mark them explicitly as Open
 Questions. Do not write an implementation prompt that invites a coding agent to proceed
 while these are unresolved.
 
@@ -317,19 +329,19 @@ Use these as prompts, not a rigid questionnaire:
 - "What test, fixture, legacy output, or manual evidence proves each outcome?"
 - "What execution tracking system should implementation use: local run log only, Zazz
   Board, Jira, or another tracker?"
-- "Should the implementation prompt assume one lead agent only, or a lead implementation
-  agent coordinating subagents by phase or task?"
-- "If subagents are allowed, what may they own — tests, service layer, frontend, QA
-  verification, docs, or another slice — and what must the lead agent keep final
-  responsibility for?"
+- "Should the implementation prompt have one Lead Agent working alone, or a Lead Agent
+  delegating bounded phases or tasks to Contributor Agents?"
+- "If Contributor Agents are allowed, which bounded slices may they perform — tests,
+  service layer, frontend, QA verification, docs, or another slice — and what must the
+  Lead Agent integrate and evidence?"
 - "Are there file areas or phases that must be serialized because multiple agents could
   otherwise edit the same files?"
 - "Should QA run as separate fresh-context agents for functionality, performance, code
   hygiene, or another quality dimension?"
 - "Which files or service boundary should be strictly out of scope?"
-- "Should the implementing agent be allowed to adapt internals if ACs and public
+- "Should the Contributor Agent be allowed to adapt internals if ACs and public
   contracts stay fixed?"
-- "What should make the implementing agent stop and ask you instead of continuing?"
+- "What should make the Contributor Agent stop and ask you instead of continuing?"
 
 ## Repo conventions you must respect
 
@@ -338,7 +350,7 @@ Use these as prompts, not a rigid questionnaire:
   documentation surface.
 - **Specification location**: follow the repo's declared documentation operating model.
   Deliverable specifications created by this skill live under
-  `<DOCS_ROOT>/specifications/{slug}.md` so implementation agents can execute the
+  `<DOCS_ROOT>/specifications/{slug}.md` so Contributor Agents can execute the
   current spec from the local worktree, unless the repo declares a more specific naming
   policy. The operating model determines whether that directory is tracked, ignored,
   mirrored, or promoted elsewhere.
@@ -356,12 +368,12 @@ Use these as prompts, not a rigid questionnaire:
   worktrees. A worktree normally has one deliverable, but a stacked lane may contain multiple deliverables and specifications
   when those deliverables are intentionally stacked for review.
 - **Standards** live in `<DOCS_ROOT>/standards/`, gated by `index.yaml`. Specifications prescribe the
-  applicable standards; the implementing agent verifies via its own index lookup.
+  applicable standards; the Contributor Agent verifies via its own index lookup.
 - **Branch scope discipline**: the specification is scoped to the diff between its branch and
   the integration branch (`{{ integration-branch }}`, confirmed during intake).
 - **Approved review shape discipline**: specifications define decomposition and stacking
   before implementation. A PR must show conformance to the approved review shape; a
-  needed topology change requires Owner sign-off, an in-place specification update, and
+  needed topology change requires Deliverable Owner sign-off, an in-place specification update, and
   a change-log entry; it is not a late implementation choice.
 - **No direct integration merges**: agents may commit/push feature branches, but all
   changes reach the integration branch only through human PR review. Do not write specification
@@ -378,7 +390,7 @@ Use these as prompts, not a rigid questionnaire:
 ### Acceptance criteria — TDD-grade detail
 
 Implementers write tests *before* code, against the AC. Each AC must be detailed enough
-that a test can be written from it alone, without re-asking the Owner.
+that a test can be written from it alone, without re-asking the Deliverable Owner.
 
 - ❌ "AC2 — Tests pass."
 - ❌ "AC1 — The page works correctly."
@@ -394,7 +406,7 @@ Tests need concrete reference data. The specification must name where it comes f
 - **Migrations or compatibility work** → the legacy system, existing behavior, prior API contract, or other
   authoritative source. Locked fixtures or baselines should cite the source and case matrix.
 - **New functionality (no legacy reference)** → reference data must be **created**
-  before TDD can begin. Name in the specification how: synthetic fixtures, Owner-supplied
+  before TDD can begin. Name in the specification how: synthetic fixtures, Deliverable Owner-supplied
   golden files, manually-computed expected values, etc.
 - **Locked fixtures already present in the repo** → cite the path; reuse don't
   re-create when prior locked fixtures exist for the area you're touching.
@@ -410,7 +422,7 @@ intent, reference data, realistic edge cases, and verifying commands before
 implementation starts. Implementers may adapt exact test names or local helper mechanics
 to match the repo, but they must not weaken, delete, rewrite, or move the specified test
 coverage just to make implementation pass. Any material change to test intent, covered
-edge cases, reference data, or verification layer requires Owner sign-off, an in-place
+edge cases, reference data, or verification layer requires Deliverable Owner sign-off, an in-place
 specification update, and a change-log entry.
 
 Every proposed automated test must answer:
@@ -460,7 +472,7 @@ clean and gives reviewers a concrete rationale.
 
 If QA later finds that the specified tests are low-signal, missing realistic edge cases,
 or testing the wrong boundary, that is a specification quality issue. QA should route the
-finding back through the owner or governing workflow for test-strategy clarification,
+finding back through the Deliverable Owner or governing workflow for test-strategy clarification,
 in-place specification update, and change-log entry before the implementer proceeds.
 
 ### Acceptance criteria and test strategy come before execution
@@ -504,7 +516,7 @@ Label or phrase content so implementers can distinguish:
 
 Agents may adapt guidance when verified local evidence supports it, but they must keep
 hard constraints intact, keep the diff inside scope, and log meaningful deviations.
-Contract-changing deviations require Owner sign-off, an in-place specification update,
+Contract-changing deviations require Deliverable Owner sign-off, an in-place specification update,
 and a change-log entry.
 
 ### Agent implementation rules section
@@ -516,7 +528,7 @@ point to that section instead of re-copying every rule.
 It includes:
 
 - team integration rule: commit/push feature branches only; never merge to the
-  integration branch (value captured from Owner during intake)
+  integration branch (value captured from Deliverable Owner during intake)
 - commit/push guidance: default one coherent green commit per specification; waypoint commits
   only at green recovery points; push on specification completion or explicit handoff/backup
 - scope verification topology: full `git diff {{ integration-branch }} --stat` for
@@ -526,8 +538,8 @@ It includes:
 - run-log maintenance requirements
 - execution tracking requirements and any companion utility skills to load, such as
   `zazz-board` for Zazz Board repos or `jira` for Jira-backed repos
-- lead/subagent coordination model, including task delegation boundaries and lead-owned
-  integration/evidence responsibilities
+- Lead Agent / Contributor Agent coordination model, including task delegation boundaries
+  and the Lead Agent's integration and evidence responsibilities
 - single-worktree serialization rules: order overlapping phases/tasks so agents do not
   overwrite one another, and make the lead responsible for final integration
 - fresh-context QA/verifier guidance when the specification calls for independent
@@ -538,7 +550,7 @@ It includes:
 ### Halt Conditions (non-negotiable)
 
 Every specification's Agent Implementation Rules include explicit halt conditions. The
-implementing agent must stop and surface to the user when any of these occur. Common
+Contributor Agent must stop and surface to the user when any of these occur. Common
 halt conditions:
 
 1. Any Open Question unresolved before code change.
@@ -554,7 +566,7 @@ Tailor halt conditions to the specification. The list above is the minimum.
 
 ### Definition of Done — binary checklist
 
-Every specification includes a binary Definition of Done checklist the implementing agent works through.
+Every specification includes a binary Definition of Done checklist the Contributor Agent works through.
 Unchecked boxes go to the user, not self-marked. Includes:
 
 - All §1 required reading consumed; standards-index verification performed.
@@ -565,13 +577,13 @@ Unchecked boxes go to the user, not self-marked. Includes:
 - `git diff {{ integration-branch }} --stat` matches §3 exactly.
 - All ACs verified (cite the verifying test or command per AC).
 - Run-log/tracker record for this specification up to date through final phase,
-  including subagent outcomes when subagents were used.
+  including Contributor Agent outcomes when Contributor Agents were used.
 - Verifier sub-agent dispatched and returned all-pass.
 - PR draft body links to the specification or Zazz Board specification record and lists each AC's verification.
 
 ### Agent Implementation Prompt
 
-Every specification includes a paste-ready prompt for the implementing agent session.
+Every specification includes a paste-ready prompt for the Contributor Agent session.
 This section appears immediately before the final Implementation And Review Change Log,
 so the change log remains the final audit trail. The prompt:
 
@@ -582,36 +594,36 @@ so the change log remains the final audit trail. The prompt:
   `zazz-board` when the repo uses Zazz Board, `jira` when the repo uses Jira, or
   repo-specific tracker guidance when another system is declared.
 - Names prior specifications the agent must read (if this specification depends on others).
-- States whether implementation is lead-only or lead-with-subagents.
-- If subagents are allowed, tells the lead implementation agent how to divide phases or
+- States whether the Lead Agent works alone or delegates to Contributor Agents.
+- If Contributor Agents are allowed, tells the Lead Agent how to divide phases or
   tasks, preserve file ownership and scope, collect evidence, reconcile outputs, and
   remain responsible for the final integrated result.
-- Tells the lead implementation agent to serialize overlapping file work in the single
+- Tells the Lead Agent to serialize overlapping file work in the single
   worktree, so delegated tasks do not overwrite each other.
 - Names any fresh-context QA agents or verifier agents that should evaluate different
   quality dimensions independently.
 - Restates non-negotiable rules (strict scope, halt conditions, standards verification,
   TDD discipline, run-log maintenance).
 - Orders the work (read the specification; resolve OQs; execute phases; dispatch verifier).
-- Includes the verifier sub-agent prompt verbatim.
+- Includes the Verifier Agent prompt verbatim.
 - Names the deliverable (working code, passing tests, run-log section populated,
   PR draft).
 
-The prompt is paste-ready — the Owner can copy it into a fresh agent session and the session bootstraps cleanly.
+The prompt is paste-ready — the Deliverable Owner can copy it into a fresh agent session and the session bootstraps cleanly.
 
 Tracking-system guidance must be conditional, not Zazz-specific by default. If the repo
 uses Zazz Board, instruct the implementation session to load `zazz-board`, use the
 repo-declared project/deliverable/task identifiers, and update implementation progress,
-subagent task progress, notes, locks, and status through that skill. If the repo uses
+Contributor Agent task progress, notes, locks, and status through that skill. If the repo uses
 Jira, instruct the implementation session to load `jira` and use repo-provided or
-Owner-provided Jira issue context; do not imply live Jira access unless the repo has
+Deliverable Owner-provided Jira issue context; do not imply live Jira access unless the repo has
 a real integration. If the repo uses another tracker, name the tracker and point to the
 repo-declared workflow. If no tracker is used, rely on the run log and PR evidence.
 
 ### Implementation And Review Change Log
 
 Every specification ends with an Implementation And Review Change Log. Initial drafts
-may say "No changes recorded." After greenlight, accepted Owner steering, QA/UAT
+may say "No changes recorded." After greenlight, accepted Deliverable Owner steering, QA/UAT
 findings, PR review feedback, or implementation-discovered bugs that change scope, ACs,
 test strategy, execution sequence, public contracts, validation, branch topology, or
 user-facing behavior update the relevant specification sections in place.
@@ -667,8 +679,8 @@ A deliverable specification is complete when:
   implementation prompt.
 - **Execution tracking** captured in the implementation rules and prompt, including
   local run log, Zazz Board, Jira, or another tracker plus companion skill guidance.
-- **Lead/subagent coordination model** captured in the implementation rules and prompt,
-  including delegation boundaries when subagents are allowed.
+- **Lead Agent / Contributor Agent coordination model** captured in the implementation rules and prompt,
+  including delegation boundaries when Contributor Agents are allowed.
 - **Single-worktree conflict discipline** captured in the implementation rules and
   prompt, including ordered work for overlapping file ownership.
 - **Fresh-context QA/verifier guidance** captured when independent quality checks are
@@ -680,8 +692,8 @@ A deliverable specification is complete when:
 - **Applicable standards** from `<DOCS_ROOT>/standards/` cited (prescribed + verify pattern).
 - For stacked: **integration seam** (locked public symbols, types, contracts) concrete
   enough that an upper branch can build on a lower branch through the branch stack.
-- **Ownership** identified (per-specification deliverable for regular/milestone; per-branch for
-  stacked).
+- **Deliverable and branch responsibility** identified (per-specification deliverable for
+  regular/milestone; per-branch for stacked).
 - Sequence diagram included where appropriate.
 
 ## Stacked mode — additional concerns
@@ -707,7 +719,7 @@ one combined branch. Good reasons include:
 
 Stacked review must be approved in the specification before implementation starts. Do
 not convert an oversized or drifting implementation into a stack during PR cleanup
-without revising the specification and getting Owner sign-off.
+without revising the specification and getting Deliverable Owner sign-off.
 
 ### Stack reviewability
 

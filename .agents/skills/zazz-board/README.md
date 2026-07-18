@@ -39,7 +39,7 @@ The skill is intentionally CLI-first.
 
 Typical indirect use:
 - `spec-builder` syncing a specification path to a board-backed deliverable
-- an implementation agent updating task status or locks
+- a Contributor Agent updating task status or locks
 - an agent creating tasks or dependency edges from an approved execution contract
 - `qa-testing` appending validation findings or evidence
 

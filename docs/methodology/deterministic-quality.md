@@ -119,7 +119,7 @@ Standards should distinguish between:
 - rules enforced by tooling
 - rules verified by tests
 - rules requiring human review
-- rules requiring owner or subject-matter signoff
+- rules requiring Deliverable Owner or subject-matter signoff
 
 Specifications should name the checks that apply to the deliverable. For example:
 

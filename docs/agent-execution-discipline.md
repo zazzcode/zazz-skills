@@ -115,7 +115,7 @@ Record:
 - open-question resolutions
 - standards verification
 - phase completions and verifying command results
-- deviations from the specification and Owner decisions
+- deviations from the specification and Deliverable Owner decisions
 - manual evidence locations
 - QA findings and rework
 - verifier sub-agent summaries
@@ -136,7 +136,7 @@ Rules:
 
 ## Halt Conditions
 
-Stop and surface to the Owner when:
+Stop and surface to the Deliverable Owner when:
 
 - an open question blocks implementation
 - scope needs to change materially

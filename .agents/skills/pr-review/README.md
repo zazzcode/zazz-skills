@@ -65,7 +65,7 @@ orchestration and load only the task-specific file needed for the current review
 Use this skill when:
 
 - an implementation branch is ready for author-side review
-- a draft PR needs cleanup before the Owner marks it ready
+- a draft PR needs cleanup before the Deliverable Owner marks it ready
 - an AI-generated or agent-assisted PR has grown large enough that the human wants the agent to understand it first
 - a human wants a second pass focused on risks and test quality
 - a stack branch needs review before submitting or after a rebase

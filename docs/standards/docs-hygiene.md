@@ -238,7 +238,7 @@ for the canonical patterns.
 ## Cleanup discipline
 
 Agent guides covering migrations, stored procedure changes, schema changes, or any operation that might tempt an
-implementation agent into adjacent cleanup work include an explicit clause separating cleanup from the feature work.
+contributor agent into adjacent cleanup work include an explicit clause separating cleanup from the feature work.
 Without it, agents over-eagerly chain cleanup into feature changes — renaming columns, dropping unused indexes,
 reformatting unrelated code — and the PR drifts past its intended scope
 (review precedent).

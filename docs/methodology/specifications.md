@@ -4,7 +4,7 @@ Deliverable specifications are the execution contracts for bounded work. They tr
 
 ## Purpose
 
-A specification should let a fresh agent or contributor implement the deliverable without reconstructing intent from chat history. It is not the permanent product narrative; durable product knowledge belongs in `project.md`, feature requirements documents, architecture, and standards.
+A specification should let a fresh Contributor or Contributor Agent implement the deliverable without reconstructing intent from chat history. It is not the permanent product narrative; durable product knowledge belongs in `project.md`, feature requirements documents, architecture, and standards.
 
 The specification body should read as the current implementation contract. After
 greenlight, accepted steering or review feedback that changes the contract updates the
@@ -14,17 +14,17 @@ Development](./spec-driven-development.md).
 
 ## Required Contents
 
-- Deliverable title and ownership context
+- Deliverable title and Project Owner / Deliverable Owner context
 - Source context and required reading
 - Scope and exclusions
 - Approved review shape and decomposition rationale
 - Acceptance criteria
 - Test strategy and required evidence
-- Agent implementation rules, including lead/subagent coordination and tracking system
+- Contributor Agent implementation rules, including Lead Agent coordination and tracking system
 - Implementation guidance, including important sequencing
 - Standards that must be loaded
 - Halt conditions
-- Owner signoff requirements
+- Deliverable Owner signoff requirements
 - Run log or execution-record location
 - Paste-ready implementation prompt
 - Implementation And Review Change Log
@@ -67,8 +67,8 @@ system. Do not bury execution state in specifications, long-lived feature docs,
 architecture, roadmap, or completed-spec documents.
 
 The specification should name the execution-record surface and tracking system: local
-run log only, Zazz Board, Jira, or another tracker. If implementation may use subagents,
-the spec should name the lead agent's responsibilities, delegation boundaries, file
+run log only, Zazz Board, Jira, or another tracker. If implementation may use Contributor
+Agents, the spec should name the Lead Agent's responsibilities, delegation boundaries, file
 areas that require ordered work, and any fresh-context QA passes expected.
 
 ## Relevant Skills

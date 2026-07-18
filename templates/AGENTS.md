@@ -136,7 +136,7 @@ Per-artifact source of truth:
 
 Rules:
 
-- `<DOCS_ROOT>/specifications/` is the local worktree directory for deliverable specifications authored by spec-builder and executed by implementation agents. Declare whether it is tracked, ignored, mirrored, or promoted elsewhere.
+- `<DOCS_ROOT>/specifications/` is the local worktree directory for deliverable specifications authored by spec-builder and executed by Contributor Agents. Declare whether it is tracked, ignored, mirrored, or promoted elsewhere.
 - `<DOCS_ROOT>/ephemeral/` is the optional local scratch surface for RUN_LOG files, QA notes, handoffs, evidence, recovery notes, and scratch work. Ephemeral means uncommitted and non-durable, not necessarily memory-only; these files may persist locally until the worktree is removed. Do not create or assume subdirectories inside it unless this file declares them.
 - If final specs live in GitHub Wiki, Confluence, Zazz Board, Jira, or another durable surface, keep `<DOCS_ROOT>/specifications/` excluded from Git unless the repo also wants local specs committed.
 - When a feature, architecture, feature roadmap increment, project milestone, or completed spec changes, update the declared source of truth through the appropriate skill or repo process.
@@ -203,7 +203,7 @@ When relevant, also state how to resolve the tracker's project identifier:
 
 Example:
 
-- `Tracking system: Zazz Board for service-assisted execution, board project code comes from ZAZZ_PROJECT_CODE, execution records live in Zazz Board unless the owner asks for local files; specification files still live under <DOCS_ROOT>/specifications/.`
+- `Tracking system: Zazz Board for service-assisted execution, board project code comes from ZAZZ_PROJECT_CODE, execution records live in Zazz Board unless the Deliverable Owner asks for local files; specification files still live under <DOCS_ROOT>/specifications/.`
 - `Tracking system: Jira for issue management, Jira project key is PROJ, Jira issue link required at the top of PRs, completed specs are promoted to Confluence after merge.`
 - `Tracking system: Avaza for PR-facing task links; specification files live under <DOCS_ROOT>/specifications/ and include Avaza task URL in PR context when provided.`
 

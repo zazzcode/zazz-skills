@@ -33,16 +33,18 @@
 **Feature:** {{ feature-name }}
 **Milestone:** {{ milestone-name-or-N/A }}
 **Deliverable:** {{ deliverable-name }}
+**Project Owner:** {{ name-or-role }}
+**Deliverable Owner:** {{ name-or-role }}
 **Delivery topology:** {{ single-deliverable branch | milestone branch | sibling branch }}
 **Review artifact:** {{ one PR for this specification | one milestone PR with sibling specifications | separate sibling PR }}
 **Approved review shape:** {{ one PR | milestone PR | sibling PRs | large exception }}
 **Decomposition rationale:** {{ why this review shape is correct; alternatives rejected }}
-**Integration branch:** `{{ integration-branch }}` (e.g. `dev`, `main`, `master` — confirmed with Owner)
+**Integration branch:** `{{ integration-branch }}` (e.g. `dev`, `main`, `master` — confirmed with Deliverable Owner)
 **Merge policy:** PR review required — agents commit/push feature branches only
 **Drafted:** {{ YYYY-MM-DD }}
 **Shared run log:** {{ `<DOCS_ROOT>/ephemeral/<slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }} ({{ section-name }} section).
 **Execution tracking:** {{ local run log only | Zazz Board project/deliverable/task IDs | Jira issue key/URL | other tracker reference }}
-**Implementation coordination:** {{ lead implementation agent only | lead implementation agent coordinating subagents by phase/task }}
+**Implementation coordination:** {{ Lead Agent working alone | Lead Agent coordinating Contributor Agents by phase/task }}
 **Companion skills for implementation:** {{ `zazz-board` | `jira` | repo-specific tracker skill/guidance | N/A }}
 
 ---
@@ -83,7 +85,7 @@ Per `<DOCS_ROOT>/standards/index.yaml`, the following standards apply to this sp
 
 **Verification step before writing code:** run the standards lookup yourself against the
 file list in §3. If an applicable standard is missing from this table, stop and surface
-it to the Owner before proceeding.
+it to the Deliverable Owner before proceeding.
 
 ### 1.e Existing Code References
 
@@ -119,7 +121,7 @@ These are load-bearing and must hold verbatim. Restate them in the PR body when 
 This specification is approved for {{ one PR | one milestone PR | sibling PRs | large exception }}.
 Implementation must follow this review shape. If implementation surfaces a need to split,
 stack, combine, or treat the work as a large exception differently than described here,
-stop for Owner sign-off, update the affected specification sections in place, and record
+stop for Deliverable Owner sign-off, update the affected specification sections in place, and record
 the change in §13 before continuing.
 
 **Rationale.** {{ Explain why this review unit is honest for human review. Name rejected
@@ -132,7 +134,7 @@ alternatives, such as stacked PRs, sibling PRs, one milestone PR, or a large exc
 ### Strict Scope Constraint
 
 {{ Every file modification in this specification lives under ... }} If implementation surfaces a
-need to modify outside this scope, stop and surface to the Owner.
+need to modify outside this scope, stop and surface to the Deliverable Owner.
 
 ### In Scope
 
@@ -200,11 +202,11 @@ Do not push after every phase by default.
 ### Scope Verification
 
 For a single-specification branch, `git diff {{ integration-branch }} --stat` should list
-exactly the files in §3 unless the Owner approved a contract change and the change is
+exactly the files in §3 unless the Deliverable Owner approved a contract change and the change is
 recorded in §13.
 
 For a milestone branch with multiple specifications, verify this specification's slice with its commit(s),
-path list, or an Owner-approved slice-diff base. The full branch diff may include other
+path list, or a Deliverable Owner-approved slice-diff base. The full branch diff may include other
 specifications in the same milestone branch.
 
 ### Autonomy Boundaries
@@ -229,7 +231,7 @@ Adaptive guidance:
 
 The agent may adapt guidance when verified local evidence supports it, provided hard
 constraints still hold. Meaningful deviations go in the run log. Contract-changing
-deviations require Owner sign-off, in-place specification updates, and a §13 change-log
+deviations require Deliverable Owner sign-off, in-place specification updates, and a §13 change-log
 entry.
 
 ### Run Log
@@ -244,27 +246,29 @@ Use {{ local run log only | Zazz Board | Jira | other tracker }} as the executio
 tracking system for this specification.
 
 - **Authoritative record:** {{ run log path, Zazz Board deliverable/task IDs, Jira issue key/URL, or other tracker reference }}.
-- **Required updates:** {{ status changes, task notes, subagent progress, evidence links, lock updates, or N/A }}.
+- **Required updates:** {{ status changes, task notes, Contributor Agent progress, evidence links, lock updates, or N/A }}.
 - **Companion skill:** {{ `zazz-board` when using Zazz Board; `jira` when using Jira; repo-specific guidance; N/A }}.
 - **Fallback:** {{ what to do when tracker access is unavailable }}.
 
-### Lead / Subagent Coordination
+### Lead Agent / Contributor Agent Coordination
 
-Implementation uses {{ lead implementation agent only | lead implementation agent coordinating subagents }}.
+Implementation uses {{ Lead Agent working alone | Lead Agent coordinating Contributor Agents }}.
 
-All implementation happens in the single active worktree named above. If subagents are
-used, the lead implementation agent owns final scope control, file-conflict
+All implementation happens in the single active worktree named above. The Lead Agent is
+a designated Contributor Agent and coordinates execution against the current
+specification. If it delegates work, it remains responsible for file-conflict
 serialization, integration, evidence quality, run-log/tracker updates, and PR-ready
-output. Subagents may own only the delegated phases/tasks below and must return concise
-evidence and changed-file summaries to the lead before integration.
+output. Contributor Agents may perform only the delegated phases or tasks below and
+must return concise evidence and changed-file summaries to the Lead Agent before
+integration.
 
 Order work so overlapping file ownership is serialized. Do not run or merge delegated
 tasks in a way that lets agents overwrite each other's edits. When two tasks may touch
-the same file, the lead agent sequences them and reconciles the diff before continuing.
+the same file, the Lead Agent sequences them and reconciles the diff before continuing.
 
-| Phase / task | Owner | Allowed scope | Required evidence |
+| Phase / task | Responsible agent | Allowed scope | Required evidence |
 | --- | --- | --- | --- |
-| {{ phase/task }} | {{ lead agent | subagent role }} | {{ paths/contract boundary }} | {{ tests/checks/output }} |
+| {{ phase/task }} | {{ Lead Agent | Contributor Agent }} | {{ paths/contract boundary }} | {{ tests/checks/output }} |
 
 ### Independent QA / Verification Agents
 
@@ -276,7 +280,7 @@ PASS/FAIL findings with evidence and rework recommendations.
 
 ### Halt Conditions
 
-The agent must stop and surface to the Owner if any of these occur:
+The Lead Agent or assigned Contributor Agent must stop and surface to the Deliverable Owner if any of these occur:
 
 1. Any Open Question in §10 is unresolved before code change.
 2. Same automated test fails 3 iterations in a row.
@@ -311,7 +315,7 @@ proves an AC or edge case, cite it here instead of adding a new test.
 Test contract rule: this section defines the required test intent, reference data,
 realistic edge cases, and verification layer before implementation starts. Implementers
 may adapt local mechanics, but they must not weaken or rewrite this coverage to make the
-implementation pass. Material changes require Owner sign-off, in-place specification
+implementation pass. Material changes require Deliverable Owner sign-off, in-place specification
 updates, and a §13 change-log entry.
 
 Reference data sources:
@@ -375,15 +379,15 @@ deviations.
 ## 9. Definition Of Done
 
 - [ ] All §1 required reading consumed; standards-index verification performed.
-- [ ] All §10 Open Questions resolved with the Owner and logged.
+- [ ] All §10 Open Questions resolved with the Deliverable Owner and logged.
 - [ ] Scoped tests green: `{{ command }}`.
 - [ ] Manual verification complete: {{ command/path or N/A }}.
 - [ ] `{{ format/check command }}` exits 0.
 - [ ] Scope verification lists exactly the files in §3 for this specification slice.
 - [ ] PR shape matches the approved review shape in §3.
 - [ ] All AC1–ACn verified, with evidence cited.
-- [ ] Run-log/tracker record for this specification is up to date, including subagent
-      outcomes when subagents were used.
+- [ ] Run-log/tracker record for this specification is up to date, including Contributor Agent
+      outcomes when Contributor Agents were used.
 - [ ] Verifier sub-agent dispatched and returned all-pass.
 - [ ] PR draft body links this specification and lists each AC's verification.
 
@@ -410,11 +414,11 @@ chooses committed execution history.
 Repos that do not use Zazz Board may rely exclusively on `<DOCS_ROOT>/ephemeral/` for
 run logs, handoff notes, QA findings, and related execution records.
 
-When the Owner uses Zazz Board, the run log, handoff notes, QA findings, and related
+When the Deliverable Owner uses Zazz Board, the run log, handoff notes, QA findings, and related
 execution information may live there instead so multiple agents can share the same
 record across worktrees and sessions.
 
-When the Owner uses Jira or another tracker, follow the repo-declared tracker workflow
+When the Deliverable Owner uses Jira or another tracker, follow the repo-declared tracker workflow
 and keep enough stable identifiers here for implementors and reviewers to find the
 authoritative issue, task, or execution record. Jira live integration is not assumed
 unless the repo declares one.
@@ -438,7 +442,7 @@ Session start protocol:
 2. Read the entire run log, including prior specification sections when this is a milestone
    branch.
 3. Confirm the next phase based on the most recent Phase Completion entry.
-4. Resolve open questions with the Owner before writing code.
+4. Resolve open questions with the Deliverable Owner before writing code.
 5. Begin implementation.
 
 ---
@@ -454,7 +458,7 @@ Your task is to implement {{ deliverable-name }}.
 Specification: {{ specification path or external record }}
 Shared run log: {{ `<DOCS_ROOT>/ephemeral/<slug>-run-log.md`, Zazz Board note, external tracker record, or N/A }}
 Execution tracking: {{ local run log only | Zazz Board IDs | Jira issue | other tracker reference }}
-Implementation coordination: {{ lead implementation agent only | lead implementation agent coordinating subagents }}
+Implementation coordination: {{ Lead Agent working alone | Lead Agent coordinating Contributor Agents }}
 Companion skills to load: {{ `zazz-board` | `jira` | repo-specific tracker guidance | N/A }}
 
 Read the specification end to end before doing anything else. Then read the shared run log in
@@ -463,28 +467,28 @@ run-log sections because earlier decisions, QA findings, and deviations may affe
 
 TRACKING SYSTEM
 - If execution tracking is Zazz Board, load `zazz-board` and use the repo-declared
-  project/deliverable/task identifiers. Update status, task notes, subagent progress,
+  project/deliverable/task identifiers. Update status, task notes, Contributor Agent progress,
   file locks when required, and evidence links through that skill.
 - If execution tracking is Jira, load `jira` and use the repo-provided or
-  Owner-provided issue key/URL and acceptance context. Do not assume live Jira
+  Deliverable Owner-provided issue key/URL and acceptance context. Do not assume live Jira
   access unless the repo declares it.
 - If execution tracking is another tracker, follow the repo-declared workflow named in
   this specification.
 - If execution tracking is local run log only, keep the run log and PR evidence current.
 
-LEAD / SUBAGENT OPERATING MODEL
+LEAD AGENT / CONTRIBUTOR AGENT OPERATING MODEL
 - Work in the single active worktree named by the specification.
-- The lead implementation agent owns the specification, scope control, file-conflict
-  serialization, integration, evidence quality, run-log/tracker updates, and final
-  PR-ready output.
-- If this specification allows subagents, delegate only the phases/tasks listed in §5.
-  Give each subagent its scope, ACs, required evidence, and halt conditions.
-- Require every subagent to return changed-file summaries, commands run, evidence, risks,
-  and unresolved questions. The lead reconciles subagent output before declaring any AC
+- The Lead Agent is a designated Contributor Agent. It coordinates execution against the
+  specification and is responsible for file-conflict serialization, integration,
+  evidence quality, run-log/tracker updates, and final PR-ready output.
+- If this specification allows Contributor Agents, delegate only the phases/tasks listed in §5.
+  Give each Contributor Agent its scope, ACs, required evidence, and halt conditions.
+- Require every Contributor Agent to return changed-file summaries, commands run, evidence, risks,
+  and unresolved questions. The Lead Agent reconciles Contributor Agent output before declaring any AC
   complete.
 - Order overlapping file work so delegated tasks do not overwrite each other. If two
   tasks may touch the same file, serialize them and reconcile the diff before continuing.
-- If subagents are not available in the active harness, the lead implementation agent
+- If Contributor Agents are not available in the active harness, the Lead Agent
   performs the phases directly and records that in the run log.
 
 FRESH-CONTEXT QA / VERIFICATION
@@ -538,7 +542,7 @@ No changes recorded. Delete this line when adding the first change-log entry.
 
 ### {{ YYYY-MM-DD HH:MM TZ }} — {{ Short Change Title }}
 
-**Source.** {{ Owner steering, QA/UAT, PR review, implementation-discovered bug, or other source. }}
+**Source.** {{ Deliverable Owner steering, QA/UAT, PR review, implementation-discovered bug, or other source. }}
 
 **Changed Sections.** {{ Links or section numbers, e.g. [§6 Acceptance Criteria](#6-acceptance-criteria), [§7 Test Strategy](#7-test-strategy). }}
 

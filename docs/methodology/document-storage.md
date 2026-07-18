@@ -41,7 +41,7 @@ Common operating models:
 - **Hybrid**: each document type names its own source of truth.
 
 `<DOCS_ROOT>/specifications/` is the normal local directory for deliverable
-specifications authored by spec-builder and executed by implementation agents inside the
+specifications authored by spec-builder and executed by Contributor Agents inside the
 worktree. It exists even when final specifications are stored in GitHub Wiki, Jira,
 Confluence, Zazz Board, or another durable system. The operating model determines
 whether the local `specifications/` files are tracked in Git, ignored locally, mirrored
@@ -49,7 +49,7 @@ to another system, or promoted elsewhere after implementation.
 
 ## Durable Knowledge
 
-Durable docs are onboarding and alignment material for contributors and agents. They are
+Durable docs are onboarding and alignment material for Contributors and Contributor Agents. They are
 not transient implementation logs.
 
 Durable knowledge includes:
@@ -107,7 +107,7 @@ Promoted specs should include or link:
 - final acceptance criteria and evidence summary
 - the `Implementation And Review Change Log`
 
-Do not promote incomplete specs as durable history unless the owner explicitly wants a
+Do not promote incomplete specs as durable history unless the Deliverable Owner explicitly wants a
 draft snapshot.
 
 ## Wiki And Knowledge Base Curation

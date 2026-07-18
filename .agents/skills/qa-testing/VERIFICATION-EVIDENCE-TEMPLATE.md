@@ -36,7 +36,7 @@
 | -------- | ------- | ------------ | -------- | ------ | ---------------------- |
 | | | | | | |
 
-## Manual Or Owner Signoff
+## Manual Or Deliverable Owner Signoff
 
 - Item:
 - Signoff status:

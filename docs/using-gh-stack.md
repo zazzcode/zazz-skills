@@ -1,18 +1,52 @@
-# Using gh-stack with a Single Worktree Lane
+# Using gh-stack with Worktree Lanes
 
-This note captures the workflow assessment for using one git worktree as an agent lane while managing two stacked branches inside that same directory.
+This guide defines how the methodology uses GitHub Stacked PRs with Git worktrees. A stack is a chain of two or more PRs: the bottom PR targets the integration branch and each higher PR targets the branch below it. Each branch and PR is therefore an independently reviewable deliverable layer.
+
+> **Scope:** Use the locally managed `gh-stack` workflow only for a traditional Git branch stack in which every stacked branch is available from one shared stack-lane worktree. Do not use it for a set of stacked branches that are separately checked out into individual worktrees. Use separate worktrees and ordinary PRs for that case.
+
+GitHub Stacked PRs is currently preview functionality. Use the workflow below when the repository has the feature enabled; keep the same branch and worktree discipline when it is not.
 
 ## Assessment
 
-Yes: a single long-lived worktree lane plus stacked branches is a viable workflow for a complex deliverable. The worktree gives the agent a private filesystem, dependency install, IDE state, build cache, and scratch space. The stack gives GitHub two small reviewable PRs instead of one large migration PR.
+Yes: GitHub can represent the PR dependency chain regardless of local worktree layout. The methodology, however, requires one shared stack-lane worktree when using gh-stack's full local workflow.
+
+| Topology | Use it when | Operating model |
+| --- | --- | --- |
+| **Shared stack-lane worktree** | A complex initiative contains dependent deliverables that should be managed with gh-stack. | **Required for the full gh-stack workflow.** One worktree moves through the ordered stack; each branch remains one deliverable and one PR. |
+| **One worktree per branch** | Work is independent, or separate contributors need concurrent isolation. | Use ordinary branch/PR workflow. Do not treat these independently checked-out branches as a locally managed gh-stack lane. |
+
+Do not use a stack merely because work is large. Use it when the deliverables have a real dependency order and each layer remains atomic and reviewable. Use independent worktrees and ordinary PRs for unrelated work.
+
+### Example: a complex report initiative
+
+One report initiative can be decomposed into deliverables whose PRs form one stack:
+
+```text
+dev
+└── deliverable-report-data          PR: database contract and independently testable data layer
+    └── deliverable-report-api       PR: service and API layer
+        └── deliverable-report-ui    PR: UI layer
+            └── deliverable-report-follow-up PR: dependent follow-on capability
+```
+
+The Project Owner places these deliverables in the applicable milestone. The Deliverable Owner retains intent, scope, acceptance, and readiness accountability for each deliverable. A Lead Agent, when assigned, coordinates Contributor Agents and QA / Verifier Agents; it does not become a human owner.
 
 The useful mental model is:
 
-- **One worktree = one isolated agent lane / deliverable workspace.**
-- **One stack inside that worktree = multiple review branches for the same deliverable.**
-- **One branch = one review unit, represented by commits, not by a remembered file list.**
+- **One branch = one deliverable and one review unit, represented by commits, not by a remembered file list.**
+- **One PR = one atomic review and merge unit in an ordered dependency chain.**
+- **A worktree is an execution workspace, not the definition of the PR stack.**
 
-This is a better fit for the next slice than two separate worktrees when the two branches are tightly related. The previous two-worktree model made it easy to isolate Branch 1 and Branch 2, but it was cumbersome when the Branch 2 work needed to react to Branch 1 changes. A single lane keeps the code physically in one place and lets `gh stack rebase --upstack` carry lower-branch updates forward.
+The shared lane is required for a locally managed gh-stack workflow. Separate worktrees remain the standard pattern for independent or concurrent work. gh-stack manages branch/PR relationships; Git worktrees manage checked-out copies of branches.
+
+### Recommended stack-lane names
+
+As a recommendation rather than a requirement, name the shared worktree after the
+initiative and number the stacked branches in dependency order. For example, use
+worktree `my-feature` with branches `my-feature-1`, `my-feature-2`, and
+`my-feature-3`. The `-1` branch is the bottom branch based on the integration branch;
+each later number is stacked on the branch before it. This makes the lane and its order
+clear from ordinary Git output.
 
 ## Worktree versus branch
 
@@ -34,7 +68,8 @@ git worktree add ../feature-next-report-lane -b feature-next-report-svc-1 dev
 cd ../feature-next-report-lane
 # currently on feature-next-report-svc-1
 
-gh stack init --base dev --adopt feature-next-report-svc-1
+gh stack init --base dev feature-next-report-svc-1
+# Older extensions: gh stack init --base dev --adopt feature-next-report-svc-1
 gh stack add feature-next-report-svc-2
 # same directory, now checked out to feature-next-report-svc-2
 ```
@@ -42,6 +77,21 @@ gh stack add feature-next-report-svc-2
 After that, `gh stack bottom`, `gh stack top`, `gh stack up`, and `gh stack down` are controlled branch checkouts inside the same worktree. Dependencies, scratch output, venvs, IDE indexing, and build artifacts stay in the same folder; the checked-out branch content changes as you move up and down the stack.
 
 Git generally does not let the same branch be checked out in two worktrees at once. That is fine for the lane workflow because the stack branches are unique to the lane.
+
+### Constraint for one-worktree-per-branch stacks
+
+The GitHub PR stack itself works when each stacked branch has its own worktree: the PR base relationships are remote branch relationships, not worktree relationships. However, the full local gh-stack workflow does **not** work reliably across those worktrees. Local commands such as `up`, `down`, `top`, `bottom`, and `checkout` need to check out stack branches in the current worktree; Git blocks that when a target branch is already checked out elsewhere. The official [`link` command](https://github.github.com/gh-stack/reference/cli/) is specifically for externally managed local branches, but it does not provide local stack tracking or navigation. See also the [gh-stack FAQ](https://github.github.com/gh-stack/faq/).
+
+Therefore the methodology uses these explicit operating modes:
+
+1. **gh-stack lane:** use local gh-stack tracking and navigation in one worktree that owns every branch in the stack. This is required for the methodology's gh-stack workflow.
+2. **Separate worktrees:** keep each contributor in its assigned branch worktree for independent PRs. Do not call this a gh-stack lane.
+
+`gh stack link` is a documented advanced command for teams that use another tool to manage local branches. It creates or updates the remote PR stack but deliberately does not establish local gh-stack tracking. It is not the methodology's default separate-worktree workflow.
+
+### Stack map in the PR UI
+
+When GitHub Stacked PRs is enabled and a PR belongs to a stack, GitHub displays a **stack map** at the top of the PR page. It shows every PR in the stack, its status, and lets reviewers navigate to each layer. Treat this preview UI as useful review context, not as a replacement for the specification, acceptance evidence, or normal PR review.
 
 ## When Branch 2 sees Branch 1 changes
 
@@ -197,7 +247,11 @@ gh extension install github/gh-stack
 
 Official reference: [GitHub Stacked PRs CLI Commands](https://github.github.com/gh-stack/reference/cli/). The page includes installation, stack management, remote operations, navigation, utilities, and exit codes.
 
-The README currently notes that GitHub stacked PR support is in private preview and the CLI will not work unless the repository has the feature enabled. If the repository does not have access yet, the same lane model is still useful, but stacked PR submission may need a different tool or manual PR bases.
+The GitHub documentation was reviewed on 2026-07-18. It describes GitHub Stacked PRs as preview functionality, so the repository must have it enabled. If it does not have access yet, use ordinary PRs with explicit base branches instead of treating the workflow as an active gh-stack lane.
+
+### CLI version check
+
+The extension is evolving. Before running a command, execute `gh stack <command> --help` and use the installed version's flags. In particular, some older extensions require `gh stack init --adopt <branches...>` to track existing branches and use `gh stack submit --auto --draft`; the current website documents branch adoption through `init` and draft creation as the default for non-interactive `submit --auto`. Do not copy an example blindly across extension versions.
 
 Install the agent skill from the local clone by copying:
 
@@ -224,7 +278,8 @@ cd ../feature-<feature-slug>-lane
 Initialize the stack using the current Branch 1 branch, then add Branch 2:
 
 ```bash
-gh stack init --base dev --adopt feature-<feature-slug>-svc-1
+gh stack init --base dev feature-<feature-slug>-svc-1
+# Older extensions: gh stack init --base dev --adopt feature-<feature-slug>-svc-1
 gh stack add feature-<feature-slug>-svc-2
 ```
 
@@ -258,7 +313,8 @@ Push / submit:
 
 ```bash
 gh stack push
-gh stack submit --auto --draft
+gh stack submit --auto
+# Older extensions may require: gh stack submit --auto --draft
 gh stack view --json
 ```
 
@@ -273,7 +329,7 @@ git diff --name-only <integration-branch>...HEAD
 
 For agents, prefer non-interactive forms:
 
-- `gh stack init --base dev --adopt <branch>`
+- `gh stack init --base dev <branch>` (older extensions: add `--adopt`)
 - `gh stack add <branch>`
 - `gh stack sync`
 - `gh stack submit --auto`

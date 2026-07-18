@@ -6,7 +6,7 @@ review workflow.
 ## What It Does
 
 The PR Builder skill drafts or updates the PR title and body for draft PR creation and
-later review. It is primarily a PR-document skill: implementation agents, QA agents, or
+later review. It is primarily a PR-document skill: contributor agents, QA agents, or
 the PR author use it to turn the diff, governing work item, specification, stack context,
 and verification evidence into clear reviewer-facing PR content.
 
@@ -29,7 +29,7 @@ on behalf of the Deliverable Owner.
 ## When to Use It
 
 Use this skill when:
-- an implementation agent needs to open or refresh a draft PR
+- a Contributor Agent needs to open or refresh a draft PR
 - author-side or reviewer-side review needs a clear PR package to review
 - an agent running the `qa-testing` skill needs to prepare the PR package from completed verification evidence
 - the repo has PR templates or review conventions
@@ -73,7 +73,7 @@ The skill should produce:
 - a body that starts with the governing context the reviewer needs
 - a concise explanation of why the PR exists
 - a functional overview of what changed without overwhelming file-level detail
-- a clear draft indicator and what remains before the owner can mark it ready
+- a clear draft indicator and what remains before the Deliverable Owner can mark it ready
 - stack map and parent assumptions when this is part of a GH-stack
 - a reviewer-notes checklist that a human can quickly work through in the PR
 - reviewer instructions for validating acceptance criteria, grounded in the specification or tracker record when available
@@ -134,7 +134,7 @@ That makes the same baseline PR structure available to both:
 That template is intentionally focused on:
 - why the PR exists
 - what changed functionally
-- why it is draft by default and what remains before owner-controlled ready-for-review
+- why it is draft by default and what remains before Deliverable Owner-controlled ready-for-review
 - stack context when relevant
 - how a reviewer should validate the acceptance criteria from the specification or tracker record when available
 - what automated tests were run, whether they passed, and what still needs manual confirmation

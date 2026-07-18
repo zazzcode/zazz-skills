@@ -15,7 +15,7 @@ also orchestrate infrastructure, but this example assumes durable infrastructure
 infrastructure-as-code tool such as Terraform.
 
 Adopting teams must pin and document the Serverless major version they use. If the selected major version is past end
-of life, the standard must also document the upgrade blocker, the owner, and the plan for replacing or upgrading it.
+of life, the standard must also document the upgrade blocker, the responsible maintainer, and the plan for replacing or upgrading it.
 
 AWS Lambda's core contract is that it expects application code to have an entrypoint of the below shape:
 

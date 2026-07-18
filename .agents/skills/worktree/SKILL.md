@@ -47,7 +47,7 @@ This skill exists to solve two related problems:
 1. How to establish a clean, opinionated bare-repo container with sibling worktrees.
 2. How to operate that layout safely over time with a consistent Worktrunk workflow.
 
-Its value is consistency, isolation, and recoverability. It helps teams keep one active deliverable or document effort per branch/worktree, avoid naming patterns that fight the filesystem layout, and preserve a clear rollback path when execution goes wrong.
+Its value is consistency, isolation, and recoverability. It helps teams keep one active deliverable or document effort per branch/worktree in the normal case, avoid naming patterns that fight the filesystem layout, and preserve a clear rollback path when execution goes wrong.
 
 It is also a convenience skill for humans. Most of the underlying work can be done directly by a human with the right commands; this skill exists to make that workflow easier for people who want the methodology behavior without having to remember or type every command themselves.
 
@@ -58,7 +58,8 @@ That includes simple human requests such as "I need to review PR 193" or "create
 - Worktrees are required by the methodology.
 - The required model is a bare-repo container with sibling worktrees.
 - Durable docs belong in Git; execution artifacts follow the repo's declared active-artifact policy.
-- One active deliverable or document effort must map to one branch and one worktree.
+- One active deliverable or document effort maps to one branch and one worktree in the normal case.
+- A complex initiative may use one shared gh-stack lane worktree for multiple dependent deliverables; each deliverable still maps to its own branch and PR within that lane.
 - Flat branch names are preferred because they map cleanly to sibling worktree directory names.
 - Worktrunk is optional in the methodology, but required to use this skill.
 
@@ -137,11 +138,13 @@ Conventions:
 - `.bare/` is the shared Git directory
 - the container directory is not itself the active checkout
 - every active worktree is a sibling directory
-- one active effort maps to one branch and one worktree
+- one active effort maps to one branch and one worktree in the normal case
 
-For deliverables, do not create multiple worktrees for one active deliverable. If several agents are working different tasks from the same deliverable, they coordinate inside that single deliverable worktree.
+For ordinary deliverables, do not create multiple worktrees for one active deliverable. If several agents are working different tasks from the same deliverable, they coordinate inside that single deliverable worktree.
 
-If the user wants multiple versions or competing implementations, treat them as separate deliverables. Each deliverable gets its own worktree.
+For a gh-stack initiative, create one dedicated **stack-lane worktree** and keep every branch in that stack available to that worktree. Each dependent deliverable has its own branch and PR, while the Lead Agent uses gh-stack navigation and rebase commands inside the shared lane. Do not separately check out those stack branches into sibling worktrees: Git prevents gh-stack from navigating to a branch already checked out elsewhere.
+
+If the user wants multiple versions, competing implementations, or independent concurrent deliverables, treat them as separate deliverables. Each gets its own sibling worktree and ordinary PR; do not use a locally managed gh-stack lane for that work.
 
 ## Branch Naming Guidance
 

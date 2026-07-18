@@ -13,7 +13,7 @@ Zazz gives executives and engineering teams:
 - **Faster delivery with control:** agents can implement and verify bounded work, while humans keep scope, product signoff, review, approval, and merge authority.
 - **Clearer product intent:** `project.md`, proposals, architecture docs, feature requirements, and project milestones preserve why the work matters and when stakeholders should expect outcomes.
 - **Executable delivery contracts:** deliverable specifications turn intent into scoped implementation work with acceptance criteria, test strategies, standards, and halt conditions.
-- **Spec-driven implementation:** approved specifications stay current through implementation, Owner steering, QA, and PR review by updating the spec body in place and recording contract changes.
+- **Spec-driven implementation:** approved specifications stay current through implementation, Deliverable Owner steering, QA, and PR review by updating the spec body in place and recording contract changes.
 - **Ongoing standards conformance:** localized, evidence-backed maintenance PRs keep legacy and existing code aligned with adopted standards instead of letting drift accumulate.
 - **Cleaner parallel execution:** isolated worktrees keep active agent work separate, recoverable, and easier to coordinate across teams or branches.
 - **Stronger review signal:** `qa-testing` verifies behavior and evidence, `pr-builder` packages the pull request, and `pr-review` runs automated self-review before human review and merge.
@@ -88,7 +88,7 @@ Each document type exists to solve a different coordination problem:
 - `features/` contains long-lived feature requirements documents for capability intent and feature roadmap increments.
 - Project milestones are project-owned timeline containers that communicate when work is expected to land; a single project milestone can contain deliverables from multiple features.
 - `architecture/` contains project-level or feature-level technical design.
-- `specifications/` contains deliverable specifications authored by spec-builder and executed by implementation agents inside the worktree; the repo decides whether they are committed, ignored, mirrored, or promoted elsewhere.
+- `specifications/` contains deliverable specifications authored by spec-builder and executed by Contributor Agents inside the worktree; the repo decides whether they are committed, ignored, mirrored, or promoted elsewhere.
 - `ephemeral/` contains active implementation scratch such as RUN_LOG files, handoff notes, QA findings, recovery notes, evidence, and scratch analysis. Ephemeral means uncommitted and non-durable, not necessarily memory-only; these files may persist locally until the worktree is removed.
 
 For the methodology progression and section table of contents, read [zazz-methodology.md](zazz-methodology.md).
@@ -288,7 +288,7 @@ Supported durable surfaces:
 Repos choose and document their active-artifact policy in `AGENTS.md`:
 
 - Proposals live under `<DOCS_ROOT>/proposals/` by default, but may live in Google Docs, SharePoint, Confluence, or another shared document system when rich images, screenshots, diagrams, comments, or non-engineering stakeholder review make that the better collaboration surface. In that case, keep a stable pointer under the declared docs entry point.
-- Deliverable specifications live under `<DOCS_ROOT>/specifications/` so implementation agents can execute the current spec from the local worktree. The operating model decides whether those files are committed, ignored, mirrored to Zazz Board/Jira, or promoted after merge to GitHub Wiki, Confluence, or another declared durable surface.
+- Deliverable specifications live under `<DOCS_ROOT>/specifications/` so Contributor Agents can execute the current spec from the local worktree. The operating model decides whether those files are committed, ignored, mirrored to Zazz Board/Jira, or promoted after merge to GitHub Wiki, Confluence, or another declared durable surface.
 - RUN_LOG files and active execution records live under `<DOCS_ROOT>/ephemeral/` when kept on disk. This directory usually stays out of Git and holds run logs, handoff notes, QA findings, recovery notes, evidence, and related active-work records.
 - Teams that do not use Zazz Board can rely exclusively on `<DOCS_ROOT>/ephemeral/` for local active implementation records.
 - Teams that use Zazz Board may use it as the centralized execution-record service so multiple agents can share run logs, handoff documents, QA findings, task state, specification metadata, and related information across worktrees and sessions.

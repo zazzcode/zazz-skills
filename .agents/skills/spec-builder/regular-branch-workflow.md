@@ -30,7 +30,7 @@ before drafting implementation guidance.
 - Run log path/location: follow the repo's declared policy; use an ignored local file,
   committed support artifact, Zazz Board note, external tracker entry, or combination.
   Repos that do not use Zazz Board may rely exclusively on `<DOCS_ROOT>/ephemeral/`.
-  When the Owner uses Zazz Board, prefer it for execution records that need to be shared
+  When the Deliverable Owner uses Zazz Board, prefer it for execution records that need to be shared
   across worktrees, agents, and sessions.
 - The integration branch worktree (e.g. `dev/`, `main/`) is read-only except for sync.
   Never write specifications or implementation files into it — always work from your feature
@@ -54,7 +54,7 @@ before drafting implementation guidance.
 7. Read this skill's bundled `references/spec-driven-development-methodology.md`.
 8. Read `<DOCS_ROOT>/standards/index.yaml` from the active worktree when present; load standards whose
    `applies_to` matches files this specification will affect.
-9. Iterate to Owner approval.
+9. Iterate to Deliverable Owner approval.
 
 ## Output
 

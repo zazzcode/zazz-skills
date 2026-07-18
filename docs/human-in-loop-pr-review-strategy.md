@@ -333,7 +333,7 @@ remove the human gate.
 
 ### Stacked PR Process
 
-1. The responsible owner approves a specification that says this deliverable will use a
+1. The Deliverable Owner approves a specification that says this deliverable will use a
    stack.
 2. The specification defines the stack map: slice names, dependency order, acceptance
    criteria covered by each slice, expected reviewers, evidence expectations, and merge

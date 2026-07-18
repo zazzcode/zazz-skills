@@ -38,23 +38,23 @@ The PR package should accurately explain:
 - how it was verified
 - which acceptance criteria were covered by automated tests versus manual confirmation
 - whether the relevant automated tests passed
-- why the PR is draft, or why it is ready if the owner has explicitly moved it out of draft
+- why the PR is draft, or why it is ready if the Deliverable Owner has explicitly moved it out of draft
 - what review-relevant risks or constraints remain
 - for stacked PRs, where this PR sits in the stack and what parent assumptions it relies on
 
 This skill packages work for review. It is a PR-document skill for creating and
 maintaining PR descriptions, especially draft PR descriptions used by the
-human-in-the-loop review workflow. It can be used by an implementation agent before
+human-in-the-loop review workflow. It can be used by a Contributor Agent before
 `pr-review` or by an agent running the `qa-testing` skill after verification work converges.
 
 It does not review code, replace implementation, QA judgment, Deliverable Owner
 judgment, approval, or merge authority. It may help create or refine PR content, but it
-must never approve, mark ready on behalf of the owner, or merge a PR.
+must never approve, mark ready on behalf of the Deliverable Owner, or merge a PR.
 
 ## Use This Skill When
 
 - the user or another agent asks to create, draft, update, or polish a PR
-- an implementation agent needs a draft PR package before `pr-review` or human review
+- a Contributor Agent needs a draft PR package before `pr-review` or human review
 - an agent running the `qa-testing` skill has completed verification and needs a high-quality PR description
 - a deliverable needs consistent reviewer-facing evidence
 - the repo has templates or conventions that should be applied reliably
@@ -96,7 +96,7 @@ If the PR is draft:
 
 1. Make the draft state obvious near the top of the PR body.
 2. Prefer a clear draft marker in the title only when repo conventions allow or expect it. Do not over-prefix titles if GitHub draft state is enough.
-3. Briefly state what remains before the owner can mark it ready: author-side agent review, missing evidence, unresolved findings, stack dependency, or owner review.
+3. Briefly state what remains before the Deliverable Owner can mark it ready: author-side agent review, missing evidence, unresolved findings, stack dependency, or Deliverable Owner review.
 4. Include an author-side review checklist: checks to run, automated review to request, findings to resolve, and evidence to update.
 5. Keep the rest of the PR focused on the current change and current review ask.
 
@@ -107,7 +107,7 @@ If the PR is ready for review:
 3. Present the PR as a bounded, reviewable change with verification evidence.
 
 The skill may explain what is missing before ready-for-review, but it should not decide to convert a PR from draft to
-ready on its own. That transition is interactive and owner-controlled.
+ready on its own. That transition is interactive and Deliverable Owner-controlled.
 
 ## Tracking Context Detection
 
@@ -179,7 +179,7 @@ If the user does not have the answer or prefers not to provide it:
    - context and links
    - why this PR exists
    - functional behavior summary
-   - draft state and author-side review checklist by default; ready-for-review state only when owner-confirmed
+   - draft state and author-side review checklist by default; ready-for-review state only when confirmed by the Deliverable Owner
    - stack map when relevant
    - reviewer notes with checklist-style review items
    - acceptance-criteria review checklist sourced from the specification when available
@@ -245,7 +245,7 @@ Instead:
   - a reminder to do a cursory code-quality inspection in the touched areas
 - When a repo PR template exists, strongly incorporate it rather than generating a competing structure.
 - Do not imply that agent-generated PR content replaces Deliverable Owner approval or human merge authority.
-- Do not imply the PR is ready for formal review unless the owner has said so.
+- Do not imply the PR is ready for formal review unless the Deliverable Owner has said so.
 - For draft PRs, include a compact author-side review checklist before the formal reviewer notes.
 - For stacked PRs, include a compact stack map and clarify whether the PR is lower, middle, or upper in the stack.
 

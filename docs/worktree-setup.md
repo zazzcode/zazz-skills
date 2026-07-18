@@ -45,9 +45,9 @@ Required conventions:
 
 For deliverable execution, the default rule is one active deliverable equals one worktree. If multiple agents work tasks from the same deliverable, they still coordinate inside that single deliverable worktree rather than creating separate worktrees for the same deliverable.
 
-A single worktree may host a deliberate stacked branch lane when related review branches need to share one filesystem, dependency install, scratch space, and build cache. In that case, the worktree has one checked-out branch at a time, and the stack tool moves the same working directory through the ordered branch stack.
+A complex initiative may use a deliberate **gh-stack lane** when its deliverables have a real dependency order. The lane is one dedicated worktree containing every branch in the stack. Each branch and PR is one deliverable; the worktree has one checked-out branch at a time, and gh-stack moves the same working directory through the ordered branch stack. Keep all stack branches out of other worktrees, because Git cannot check out the same branch in two worktrees and gh-stack navigation needs to check out every layer in its lane.
 
-If the team wants multiple versions or competing implementations, model them as separate deliverables. Each alternative gets its own worktree unless the team is explicitly stacking dependent deliverables for review sequencing.
+If the team wants multiple versions, competing implementations, or independent concurrent delivery, model them as separate deliverables. Each gets its own worktree and ordinary PR. This is not a locally managed gh-stack lane.
 
 ## Why This Pattern
 
@@ -300,7 +300,7 @@ One of the reasons the methodology requires worktrees is recovery.
 If a session of work:
 
 - goes down the wrong path
-- fails owner review
+- fails human review
 - reveals that the proposal, feature requirements document, or deliverable specification is wrong
 
 then the worktree can be abandoned and the team can return to the governing documents, revise the contract, and start a new worktree for the corrected approach.

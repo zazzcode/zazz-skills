@@ -26,13 +26,13 @@ A good PR body includes:
 - screenshots or API examples when useful
 - migration/deployment notes when relevant
 - known risks or checks not run
-- owner manual verification instructions when human signoff is needed
+- Deliverable Owner manual-verification instructions when human signoff is needed
 
 Use `pr-builder` when the repo has enough evidence for an agent to assemble or refresh the PR body.
 
 ## Stacked PRs
 
-Use a stacked branch lane when a deliverable is easier to review as ordered layers. Each branch should be reviewable independently and depend only on the branches below it.
+Use a stacked branch lane when a complex initiative contains dependent deliverables that are easier to review as ordered layers. Each branch and PR represents one deliverable, should be reviewable independently, and should depend only on the branches below it. Keep every branch in the stack available to the same dedicated worktree so the local gh-stack workflow can navigate and rebase the lane.
 
 Use `gh-stack` when the repo uses GitHub and dependent PRs.
 
@@ -42,7 +42,7 @@ Use `gh-stack` when the repo uses GitHub and dependent PRs.
 | ----- | ----------------------- |
 | `pr-builder` | Assembles draft PR titles and bodies from the diff, specification links, validation evidence, risks, and reviewer instructions. |
 | `spec-driven` | Keeps draft PR feedback aligned with the current spec contract and change-log protocol. |
-| `gh-stack` | Manages dependent branches and PRs when a deliverable is easier to review as an ordered stack. |
+| `gh-stack` | Manages dependent deliverable branches and PRs inside one dedicated stack-lane worktree. |
 | `qa-testing` | Supplies concise verification evidence and unresolved findings for the PR body. |
 | `jira` | Provides a future Jira-backed path for issue references; today it documents how to use repo-provided or user-provided Jira context. |
 | `zazz-board` | Supplies board-backed deliverable and task context when the repo uses Zazz Board. |

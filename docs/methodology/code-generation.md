@@ -1,8 +1,8 @@
 # Code Generation
 
 Code generation is the implementation work inside the spec-driven development lifecycle.
-The agent or contributor works from the current specification, relevant standards, repo
-instructions, and execution record.
+A Contributor or Contributor Agent works from the current specification, relevant
+standards, repo instructions, and execution record.
 
 ## Required Inputs
 
@@ -18,9 +18,10 @@ instructions, and execution record.
 ## Worktree Discipline
 
 Active implementation happens in an isolated worktree or approved stacked branch lane.
-The lead implementation agent owns the current specification, work ordering, and
-file-conflict serialization. When subagents are used, overlapping file work must be
-ordered so agents do not overwrite one another.
+A gh-stack lane is one dedicated worktree containing every stack branch; each branch and
+PR is one dependent deliverable. The Lead Agent coordinates work ordering and file-conflict
+serialization against the current specification. When Contributor Agents are delegated
+work, overlapping file work must be ordered so they do not overwrite one another.
 
 Before editing:
 
@@ -43,13 +44,13 @@ accessibility checks, doc checks, and targeted tests as soon as they are useful.
 silence rules, or skip failing gates just to converge.
 
 If implementation reveals a needed contract change, follow [Spec-Driven
-Development](./spec-driven-development.md): get Owner signoff, update the affected
+Development](./spec-driven-development.md): get Deliverable Owner signoff, update the affected
 specification sections in place, record an Implementation And Review Change Log entry,
 and re-verify affected evidence.
 
 ## Halt Conditions
 
-Stop and ask for owner direction when:
+Stop and ask the Deliverable Owner for direction when:
 
 - an open question blocks implementation
 - the implementation requires scope outside the specification
@@ -64,7 +65,7 @@ Stop and ask for owner direction when:
 | Skill | How it helps efficiency |
 | ----- | ----------------------- |
 | `worktree` | Creates or repairs isolated worktree lanes so implementation stays separate, recoverable, and easy to review. |
-| `spec-driven` | Governs the post-greenlight implementation loop, contract-change protocol, lead/subagent coordination, and signoff path. |
+| `spec-driven` | Governs the post-greenlight implementation loop, contract-change protocol, Lead Agent / Contributor Agent coordination, and signoff path. |
 | `spec-builder` | Supplies the approved execution contract, sequencing guidance, standards list, and halt conditions. |
 | `conformance` | Applies one focused standards-alignment fix against a named standard and bounded code area when implementation exposes drift. |
 | `psql` | Speeds safe PostgreSQL schema inspection, read-only checks, query profiling, and function/procedure diagnostics. |

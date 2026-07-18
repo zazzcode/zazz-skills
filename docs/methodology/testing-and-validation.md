@@ -17,7 +17,7 @@ Passing tests are not enough if the tests do not prove the acceptance criteria.
 
 ## Test Strategy
 
-The specification owns the test intent. Implementation may adapt mechanics, but it must not weaken the test contract without owner approval.
+The specification defines the test intent. Implementation may adapt mechanics, but it must not weaken the test contract without Deliverable Owner approval.
 
 Good test strategies:
 
@@ -56,7 +56,7 @@ Useful evidence includes:
 - API request/response samples
 - logs or traces for operational behavior
 - performance measurements when thresholds exist
-- owner signoff for subjective UX or product requirements
+- Deliverable Owner signoff for subjective UX or product requirements
 
 ## Relevant Skills
 

@@ -17,9 +17,9 @@ Default to repo-local commands and tooling. Do not install global tools unless t
 
 ## Verification Loop
 
-1. Read the requirement source completely enough to identify every acceptance criterion, explicit non-goal, required test, and owner-signoff item.
+1. Read the requirement source completely enough to identify every acceptance criterion, explicit non-goal, required test, and Deliverable Owner signoff item.
 2. Inspect the implementation diff and changed files before running broad tests. Note the likely blast radius and any shared contracts touched.
-3. Verify each acceptance criterion with evidence. Evidence can be automated test output, command output, API response samples, screenshots, accessibility reports, logs, or manual owner signoff.
+3. Verify each acceptance criterion with evidence. Evidence can be automated test output, command output, API response samples, screenshots, accessibility reports, logs, or manual Deliverable Owner signoff.
 4. Review test quality. Tests must prove behavior, not just increase count.
 5. Run required tests first, then risk-relevant adjacent tests when shared behavior, migrations, security, compatibility, or user journeys justify them.
 6. Record failures as rework findings with reproduction steps, expected vs actual behavior, relevant files, and the criterion or standard violated.
@@ -41,7 +41,7 @@ Flag tests that:
 - skip migration, fixture, or environment failures that should be fixed or documented
 - create broad fixture worlds when a smaller table-driven matrix would prove the same behavior
 
-When the specified test strategy is weak, treat that as a requirements gap. Ask the owner to approve a stronger test contract instead of silently accepting easier tests.
+When the specified test strategy is weak, treat that as a requirements gap. Ask the Deliverable Owner to approve a stronger test contract instead of silently accepting easier tests.
 
 ## Verification Lenses
 
@@ -67,7 +67,7 @@ Use only the lenses that match the work.
 - Check loading, empty, error, permission, validation, optimistic-update, refresh, and navigation states.
 - Inspect accessibility basics: keyboard path, focus management, labels/names, contrast-sensitive states, announcements, and reduced-motion behavior when relevant.
 - Cover responsive viewports and screenshot evidence when visual layout or interaction feel is part of the acceptance criteria.
-- Use owner signoff for subjective visual, copy, or interaction requirements that cannot be fully automated.
+- Use Deliverable Owner signoff for subjective visual, copy, or interaction requirements that cannot be fully automated.
 
 ### CLI, Batch, And Background Work
 
@@ -103,7 +103,7 @@ Return:
 - pass/fail recommendation
 - acceptance-criterion matrix
 - tests and checks run, with commands and results
-- manual or owner signoff items
+- manual or Deliverable Owner signoff items
 - test-quality assessment
 - standards and security/performance notes
 - rework findings, if any

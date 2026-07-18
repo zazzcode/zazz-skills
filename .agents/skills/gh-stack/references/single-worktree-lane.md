@@ -1,18 +1,18 @@
 # Using gh-stack with a Single Worktree Lane
 
-This note captures the workflow assessment for using one git worktree as an agent lane while managing two stacked branches inside that same directory.
+This reference defines the required local-worktree model for a gh-stack initiative: one dedicated worktree contains every branch in the stack. Each branch and PR is one dependent, independently reviewable deliverable.
 
 ## Assessment
 
-Yes: a single long-lived worktree lane plus stacked branches is a viable workflow for a complex deliverable. The worktree gives the agent a private filesystem, dependency install, IDE state, build cache, and scratch space. The stack gives GitHub two small reviewable PRs instead of one large migration PR.
+Use this model when a complex initiative has dependent deliverables—for example, a database layer, service/API layer, UI layer, and a dependent follow-on. The worktree gives the Contributor or Lead Agent one private filesystem, dependency install, IDE state, build cache, and scratch space. The stack gives GitHub small, atomic PRs with explicit dependency order.
 
 The useful mental model is:
 
-- **One worktree = one isolated agent lane / deliverable workspace.**
-- **One stack inside that worktree = multiple review branches for the same deliverable.**
+- **One shared worktree = one locally managed gh-stack execution lane.**
+- **One stack inside that worktree = multiple dependent deliverables, each with one branch and one PR.**
 - **One branch = one review unit, represented by commits, not by a remembered file list.**
 
-This is a better fit for the next slice than two separate worktrees when the two branches are tightly related. The previous two-worktree model made it easy to isolate Branch 1 and Branch 2, but it was cumbersome when the Branch 2 work needed to react to Branch 1 changes. A single lane keeps the code physically in one place and lets `gh stack rebase --upstack` carry lower-branch updates forward.
+This is required for the methodology's full local gh-stack workflow. Do not separately check out a stack branch into another worktree: Git prevents a branch from being checked out in two worktrees, and gh-stack navigation must check out each layer in the shared lane. Use sibling worktrees and ordinary PRs for independent or concurrent work.
 
 ## Worktree versus branch
 
@@ -34,7 +34,8 @@ git worktree add ../feature-next-report-lane -b feature-next-report-svc-1 <integ
 cd ../feature-next-report-lane
 # currently on feature-next-report-svc-1
 
-gh stack init --base <integration-branch> --adopt feature-next-report-svc-1
+gh stack init --base <integration-branch> feature-next-report-svc-1
+# Older extensions: gh stack init --base <integration-branch> --adopt feature-next-report-svc-1
 gh stack add feature-next-report-svc-2
 # same directory, now checked out to feature-next-report-svc-2
 ```
@@ -214,7 +215,8 @@ cd ../feature-<feature-slug>-lane
 Initialize the stack using the current Branch 1 branch, then add Branch 2:
 
 ```bash
-gh stack init --base <integration-branch> --adopt feature-<feature-slug>-svc-1
+gh stack init --base <integration-branch> feature-<feature-slug>-svc-1
+# Older extensions: gh stack init --base <integration-branch> --adopt feature-<feature-slug>-svc-1
 gh stack add feature-<feature-slug>-svc-2
 ```
 
@@ -248,7 +250,8 @@ Push / submit:
 
 ```bash
 gh stack push
-gh stack submit --auto --draft
+gh stack submit --auto
+# Older extensions: gh stack submit --auto --draft
 gh stack view --json
 ```
 
@@ -263,7 +266,7 @@ git diff --name-only <integration-branch>...HEAD
 
 For agents, prefer non-interactive forms:
 
-- `gh stack init --base dev --adopt <branch>`
+- `gh stack init --base dev <branch>` (older extensions: add `--adopt`)
 - `gh stack add <branch>`
 - `gh stack sync`
 - `gh stack submit --auto`
@@ -528,6 +531,6 @@ That command should print nothing for a clean Branch 2.
 
 ## When not to use this
 
-Use separate worktrees instead when two agents must work concurrently on different branches. A single worktree has one checked-out branch and one index. Two agents editing it at the same time will collide.
+Use separate sibling worktrees and ordinary PRs when contributors must work concurrently on independent branches. A single gh-stack lane has one checked-out branch and one index; two agents editing it at the same time will collide. Do not spread a locally managed stack across separate checked-out worktrees.
 
 For one agent implementing one report, the single-lane stack is the better default.

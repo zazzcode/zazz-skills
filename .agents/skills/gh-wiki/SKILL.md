@@ -21,7 +21,7 @@ instructions are explicit.
 3. Find the wiki entry point, page naming convention, and update authority declared by
    the repo.
 4. Read the current wiki page or repo pointer before drafting changes.
-5. If wiki access, naming, or ownership is unclear, ask the owner instead of inventing a
+5. If wiki access, naming, or responsibility is unclear, ask the responsible human instead of inventing a
    page path.
 
 ## Rules

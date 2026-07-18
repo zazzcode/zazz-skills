@@ -20,7 +20,7 @@ Use repo-declared Confluence spaces, page naming, ownership, and update processe
 3. Find the Confluence space, parent page, naming convention, and update authority
    declared by the repo.
 4. Read the current page or repo pointer before drafting changes.
-5. If access, naming, or ownership is unclear, ask the owner instead of inventing a page.
+5. If access, naming, or responsibility is unclear, ask the responsible human instead of inventing a page.
 
 ## Rules
 

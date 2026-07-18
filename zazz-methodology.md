@@ -12,7 +12,7 @@ Zazz gives teams a repeatable path from product intent to a human-reviewed, merg
 
 - Durable docs explain the product, architecture, decisions, features, and standards.
 - Deliverable specifications turn intent into bounded implementation contracts with acceptance criteria, test strategies, standards, and halt conditions.
-- Spec-driven development keeps approved specifications, implementation evidence, Owner steering, QA feedback, and PR review aligned through a controlled lifecycle.
+- Spec-driven development keeps approved specifications, implementation evidence, Deliverable Owner steering, QA feedback, and PR review aligned through a controlled lifecycle.
 - Deterministic quality gates turn enforceable code, documentation, accessibility, type-safety, and formatting rules into repeatable checks before probabilistic agent or human review.
 - Standards conformance work keeps legacy and existing code moving toward adopted standards through small, reviewable,
   evidence-backed maintenance PRs.
@@ -21,6 +21,19 @@ Zazz gives teams a repeatable path from product intent to a human-reviewed, merg
 - Durable docs are updated when shipped work changes the product, architecture, or standards.
 
 The result is faster agent-assisted delivery with clearer scope, stronger review signal, less rework, and durable knowledge that stays useful after the PR is merged.
+
+## Roles
+
+Zazz reserves ownership for human accountability and names AI participation explicitly:
+
+- A **Project Owner** is the human accountable for project direction and durable product context.
+- A **Deliverable Owner** is the human accountable for a deliverable's intent, scope decisions, acceptance, and review or merge readiness. A Project Owner may also be a Deliverable Owner.
+- A **Contributor** is a human engineer contributing to a deliverable. A Contributor may also be its Deliverable Owner.
+- A **Contributor Agent** is an AI agent assigned explicitly to bounded implementation, testing, documentation, or investigation work.
+- A **Lead Agent** is a designated Contributor Agent that coordinates execution. It may delegate work to other Contributor Agents and Verifier Agents, but remains responsible for integrating agent-produced work and evidence.
+- A **Verifier Agent** or **QA Agent** is an AI agent performing independent verification. It does not modify implementation unless explicitly assigned that work.
+
+The Deliverable Owner retains authority for contract changes, acceptance, and review or merge readiness. A Lead Agent coordinates execution; it does not gain Deliverable Owner authority.
 
 ## Progression
 
@@ -44,6 +57,50 @@ project.md
 ```
 
 Not every step is needed for every change. Small fixes may start at a specification. Uncertain product or technical direction should start with a proposal. Long-lived capabilities should have feature and architecture context before deliverables are sliced.
+
+## Specification-Driven Delivery Cycle
+
+Specification-driven delivery is the core execution segment of the SDLC, not the
+entire SDLC. It begins when a Deliverable Owner greenlights a bounded deliverable
+specification and ends when that deliverable is human-reviewed, merged, and its durable
+knowledge is updated. It connects pre-delivery product planning to post-delivery
+operational oversight.
+
+```text
+Project Owner establishes project direction and project milestones
+  -> proposals resolve uncertainty when needed
+  -> features and architecture establish durable capability context
+  -> deliverables are assigned to project milestone time boxes
+  -> Deliverable Owner greenlights a deliverable specification
+  -> Lead Agent coordinates Contributor Agents and Verifier Agents
+  -> implementation, evidence, QA, and draft-PR feedback refine the current contract
+  -> human review, approval, and merge
+  -> deployment, operational review, maintenance, and durable-doc updates
+```
+
+Within this cycle, a Lead Agent may implement directly or delegate bounded work to
+Contributor Agents. The Lead Agent integrates agent-produced work and evidence; the
+Deliverable Owner remains the human authority for scope changes, acceptance, and review
+or merge readiness. QA and Verifier Agents provide independent evidence but do not
+change implementation unless explicitly reassigned.
+
+The cycle does not replace the work before a specification exists—project direction,
+proposals, features, architecture, and milestone planning—nor the work after merge:
+deployment, monitoring, support, maintenance, and subsequent planning. Those stages
+inform the next deliverables and may reopen proposals, feature documents, architecture,
+or standards when the product or operating environment changes.
+
+## Project Milestones And Deliverables
+
+Project milestones are project-owned time boxes for communicating planned delivery.
+They belong to the project plan, not to an individual feature. A milestone can contain
+deliverables from multiple features, as well as bug fixes, chores, or technical
+investments. A deliverable may contribute to a feature for capability context while also
+being assigned to a project milestone for timeline and stakeholder planning.
+
+Every deliverable should record its Project Owner, Deliverable Owner, feature context
+when applicable, and assigned project milestone or an explicit `N/A`. The milestone is
+the time box; the deliverable is the bounded, reviewable execution unit inside it.
 
 The section docs are designed for incremental discovery. Read the entry point to choose
 the current stage, then load the focused section for that stage rather than pulling the
@@ -77,7 +134,7 @@ Zazz uses a project-first document model:
 - `architecture/` explains intended technical shape and important system decisions.
 - `proposals/` records decisions when the path is uncertain.
 - `features/` describes long-lived capabilities and feature roadmap increments.
-- `specifications/` contains deliverable specifications authored by spec-builder and executed by implementation agents inside the worktree. The repo decides whether this directory is tracked, ignored, mirrored, or promoted elsewhere.
+- `specifications/` contains deliverable specifications authored by spec-builder and executed by Contributor Agents inside the worktree. The repo decides whether this directory is tracked, ignored, mirrored, or promoted elsewhere.
 - `ephemeral/` contains active implementation scratch: run logs, QA findings, handoff notes, recovery notes, evidence, and other records that normally stay out of Git. Ephemeral means uncommitted and non-durable, not necessarily memory-only; these files may persist locally until the worktree is removed.
 - `standards/` defines how the software should be built.
 
@@ -108,7 +165,7 @@ GitHub Wiki, Confluence, or another system.
    repo areas.
 6. Acceptance criteria and test evidence are required for convergence.
 7. Agents may operate autonomously inside approved contracts, but humans retain scope, approval, signoff, and merge authority.
-8. Active implementation happens in isolated worktrees or approved stacked lanes, with one lead agent owning file-conflict serialization.
+8. Active implementation happens in isolated worktrees or approved stacked lanes, with one Lead Agent coordinating file-conflict serialization. A gh-stack lane is one dedicated worktree containing every stacked branch; each branch and PR represents one dependent deliverable.
 9. Draft PRs are the normal packaging surface for agent-generated work.
 10. Automated self-review runs before a PR is marked ready for human review.
 11. Active implementation artifacts live in `<DOCS_ROOT>/ephemeral/` or a declared tracker/service, and only durable knowledge is promoted into the repo, wiki, Confluence, or another declared knowledge base.
@@ -167,7 +224,7 @@ Supported durable storage modes include:
 
 `project.md`, architecture, feature requirements, project plans, roadmaps, project milestones, and final implemented specifications may live in the declared durable storage surface. Local specification working files live under `<DOCS_ROOT>/specifications/`; RUN_LOG files and other active execution records live in `<DOCS_ROOT>/ephemeral/` or the declared tracker/service while work is underway. After implementation lands, the final current specification may be promoted to a wiki, Confluence, Jira, Zazz Board, or another durable location if the repo policy calls for it.
 
-When an external document is the source of truth, keep a stable pointer in `AGENTS.md`, an index page, or a repo-tracked pointer file with title, owner, status, and link. See [Document Storage](docs/methodology/document-storage.md).
+When an external document is the source of truth, keep a stable pointer in `AGENTS.md`, an index page, or a repo-tracked pointer file with title, responsible human, status, and link. See [Document Storage](docs/methodology/document-storage.md).
 
 ## Reference Implementation
 

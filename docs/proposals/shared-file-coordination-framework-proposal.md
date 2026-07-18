@@ -165,7 +165,7 @@ Use a simple two-layer model.
    - safe parallel streams
    - steps that must not overlap
    - phase and step sequencing implications
-3. The implementation agent should apply the repo policy and the specification's sequencing guidance during execution.
+3. The contributor agent should apply the repo policy and the specification's sequencing guidance during execution.
 
 Methodology default:
 

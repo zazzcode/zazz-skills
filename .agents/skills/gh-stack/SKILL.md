@@ -13,12 +13,20 @@ description: >
 
 ```
 main (trunk)
- └── feat/auth-layer     → PR #1 (base: main)               - bottom (closest to trunk)
-  └── feat/api-endpoints → PR #2 (base: feat/auth-layer)
-   └── feat/frontend     → PR #3 (base: feat/api-endpoints) - top (furthest from trunk)
+ └── feature-auth-1 → PR #1 (base: main)           - bottom (closest to trunk)
+  └── feature-auth-2 → PR #2 (base: feature-auth-1)
+   └── feature-auth-3 → PR #3 (base: feature-auth-2) - top (furthest from trunk)
 ```
 
 The **bottom** of the stack is the branch closest to the trunk, and the **top** is the branch furthest from the trunk. Each branch inherits from the one below it. Navigation commands (`up`, `down`, `top`, `bottom`) follow this model: `up` moves away from trunk, `down` moves toward it.
+
+## Scope: one shared stack-lane worktree
+
+Use the locally managed `gh-stack` workflow only for a traditional Git branch stack in
+which every stacked branch is available from one shared stack-lane worktree. Do **not**
+use it for a set of stacked branches separately checked out into individual worktrees;
+use separate worktrees and ordinary PRs for that case. This guardrail applies before any
+`init`, `checkout`, navigation, rebase, push, sync, or submit command is run.
 
 ## When to use this skill
 
@@ -30,7 +38,7 @@ Use this skill when the user wants to:
 - View the status of stacked PRs
 - Tear down and rebuild a stack to remove, reorder, or rename branches
 
-## Prerequisites
+## Prerequisites and version check
 
 The GitHub CLI (`gh`) v2.0+ must be installed and authenticated. Install the extension with:
 
@@ -40,16 +48,30 @@ gh extension install github/gh-stack
 
 Official CLI reference: https://github.github.com/gh-stack/reference/cli/
 
+GitHub Stacked PRs is preview functionality. Confirm that the repository has it enabled before using this skill. The extension is evolving, so before issuing a state-changing command, run `gh stack <command> --help` and use the flags supported by the installed version. The current website and older installed extensions differ on `init` adoption and draft-PR flags.
+
 ## Bundled workflow reference
 
-For the local single-worktree-lane workflow, read
+For the methodology's required local stack-lane workflow, read
 `references/single-worktree-lane.md` in this skill directory. It explains the preferred
 model for agent work:
 
-- one worktree = one isolated agent lane / deliverable workspace
-- one stack inside that worktree = multiple review branches for the same deliverable or
-  tightly related deliverable group
-- one branch = one review unit, represented by commits, not by a remembered file list
+- one shared worktree = one gh-stack execution lane for a complex initiative
+- one stack inside that worktree = multiple dependent deliverables, each with one branch
+  and one reviewable PR
+- one branch = one deliverable review unit, represented by commits, not by a remembered file list
+
+Full local gh-stack operations require all branches in the stack to be available to the
+same worktree. Do not put stack branches in separately checked-out worktrees: Git blocks
+the navigation commands from checking out a branch already checked out elsewhere. Use
+separate sibling worktrees and ordinary PRs for independent concurrent work. `gh stack
+link` is an advanced remote-only option when another tool owns local branch management;
+it is not the methodology's default separate-worktree workflow.
+
+When the repository has GitHub Stacked PRs enabled, a PR in a stack shows a **stack map**
+at the top of its PR page. It exposes the PRs in the stack, their status, and direct
+navigation between layers. This preview UI is reviewer context only; the specification,
+acceptance evidence, and normal PR review remain required.
 
 Use that reference for methodology and examples; use this `SKILL.md` for command rules
 and non-interactive `gh stack` usage.
@@ -66,7 +88,7 @@ git config remote.pushDefault origin     # if multiple remotes exist (skips remo
 **All `gh stack` commands must be run non-interactively.** Every command invocation must include the flags and positional arguments needed to avoid prompts, TUIs, and interactive menus. If a command would prompt for input, it will hang indefinitely.
 
 1. **Always supply branch names as positional arguments** to `init`, `add`, and `checkout`. Running these commands without arguments triggers interactive prompts.
-2. **When a prefix is set, pass only the suffix to `add`.** `gh stack add auth` with prefix `feat` → `feat/auth`. Passing `feat/auth` creates `feat/feat/auth`.
+2. **Use flat, dash-separated branch names.** Do not use `/` in a branch name. Older gh-stack versions offer `gh stack init -p`; do not use that mode in this methodology because it creates slash-separated names.
 3. **Always use `--auto` with `gh stack submit`** to auto-generate PR titles. Without `--auto`, `submit` prompts for a title for each new PR.
 4. **Always use `--json` with `gh stack view`.** Without `--json`, the command launches an interactive TUI that cannot be operated by agents. There is no other appropriate flag — always pass `--json`.
 5. **Use `--remote <name>` when multiple remotes are configured**, or pre-configure `git config remote.pushDefault origin`. Without this, `push`, `submit`, `sync`, `link`, and `checkout` trigger an interactive remote picker.
@@ -96,24 +118,46 @@ Stacked branches form a dependency chain: each branch builds on the one below it
 
 ```
 main (trunk)
- └── feat/data-models    ← shared types, database schema
-  └── feat/api-endpoints ← API routes that use the models
-   └── feat/frontend-ui  ← UI components that call the APIs
-    └── feat/integration ← tests that exercise the full stack
+ └── feature-auth-1 ← shared types, database schema
+  └── feature-auth-2 ← API routes that use the models
+   └── feature-auth-3 ← UI components that call the APIs
+    └── feature-auth-4 ← end-to-end tests
 ```
 
 This is illustrative — choose branch names and layer boundaries that reflect the specific work you're doing. The key principle is: if code in one layer depends on code in another, the dependency must be in the same branch or a lower one.
 
 ### Branch naming
 
-Prefer initializing stacks with a prefix (`-p`). Prefixes group branches under a namespace (e.g., `feat/auth`, `feat/api`) and keep branch names clean and consistent. When a prefix is set, pass only the suffix to subsequent `add` calls — the prefix is applied automatically. Without a prefix, you'll need to pass the full branch name each time.
+For a Zazz stack lane, the recommended (not required) convention is to name the worktree
+after the initiative and number its stack branches in dependency order:
+
+```text
+worktree: my-feature
+branches: my-feature-1 → my-feature-2 → my-feature-3
+```
+
+For example, `my-feature-1` is the bottom branch based on the integration branch, and
+`my-feature-2` is created on top of it. This makes stack membership and order visible
+without relying on the gh-stack UI:
+
+```bash
+git worktree add ../my-feature -b my-feature-1 <integration-branch>
+cd ../my-feature
+gh stack init --base <integration-branch> my-feature-1
+# Older extensions: gh stack init --base <integration-branch> --adopt my-feature-1
+gh stack add my-feature-2
+gh stack add my-feature-3
+```
+
+Always pass the complete flat branch name to `gh stack add`. Do not use the `-p` prefix
+mode offered by older gh-stack versions because it creates slash-separated branch names.
 
 ### Staging changes deliberately
 
 The main reason to use `git add` and `git commit` directly is to control **which changes go into which branch**. When you have multiple files in your working tree, you can stage a subset for the current branch, commit them, then create a new branch and stage the rest there:
 
 ```bash
-# You're on feat/data-models with several new files in your working tree.
+# You're on feature-auth-1 with several new files in your working tree.
 # Stage only the model files for this branch:
 git add internal/models/user.go internal/models/session.go
 git commit -m "Add user and session models"
@@ -122,7 +166,7 @@ git add db/migrations/001_create_users.sql
 git commit -m "Add user table migration"
 
 # Now create a new branch for the API layer and stage the API files there:
-gh stack add api-routes # created & switched to feat/api-routes branch
+gh stack add feature-auth-2
 git add internal/api/routes.go internal/api/handlers.go
 git commit -m "Add user API routes"
 ```
@@ -152,16 +196,15 @@ Small, incidental fixes (e.g., fixing a typo you noticed) can go in the current 
 
 | Task | Command |
 |------|---------|
-| Create a stack (recommended) | `gh stack init -p feat auth` |
-| Create a stack without prefix | `gh stack init auth` |
-| Adopt existing branches | `gh stack init --adopt branch-a branch-b` |
+| Create a stack | `gh stack init feature-auth-1` |
+| Initialize an existing branch sequence | `gh stack init branch-a branch-b` (older extensions: add `--adopt`) |
 | Set custom trunk | `gh stack init --base develop branch-a` |
-| Add a branch to stack (suffix only if prefix set) | `gh stack add api-routes` |
-| Add branch + stage all + commit | `gh stack add -Am "message" api-routes` |
+| Add a branch to stack | `gh stack add feature-auth-2` |
+| Add branch + stage all + commit | `gh stack add -Am "message" feature-auth-2` |
 | Push branches to remote | `gh stack push` |
 | Push to specific remote | `gh stack push --remote origin` |
 | Push branches + create PRs | `gh stack submit --auto` |
-| Create PRs as drafts | `gh stack submit --auto --draft` |
+| Create draft PRs | `gh stack submit --auto` (older extensions: add `--draft`) |
 | Sync (fetch, rebase, push) | `gh stack sync` |
 | Sync with specific remote | `gh stack sync --remote origin` |
 | Rebase entire stack | `gh stack rebase` |
@@ -182,9 +225,9 @@ Small, incidental fixes (e.g., fixing a typo you noticed) can go in the current 
 ### End-to-end: create a stack from scratch
 
 ```bash
-# 1. Initialize a stack with the first branch
-gh stack init -p feat auth
-# → creates feat/auth and checks it out
+# 1. Initialize a stack with the first flat branch
+gh stack init feature-auth-1
+# → creates feature-auth-1 and checks it out
 
 # 2. Write code for the first layer (auth)
 cat > auth.go << 'EOF'
@@ -214,8 +257,8 @@ git add auth_test.go
 git commit -m "Add auth middleware tests"
 
 # 4. When you're ready for a new concern, add the next branch
-gh stack add api-routes
-# → creates feat/api-routes (prefix applied automatically — just pass the suffix)
+gh stack add feature-auth-2
+# → creates feature-auth-2
 
 # 5. Write code for the API layer
 cat > api.go << 'EOF'
@@ -229,8 +272,8 @@ git add api.go
 git commit -m "Add API routes"
 
 # 6. Add a third layer for frontend
-gh stack add frontend
-# → creates feat/frontend (just the suffix — prefix is automatic)
+gh stack add feature-auth-3
+# → creates feature-auth-3
 
 cat > frontend.go << 'EOF'
 package frontend
@@ -242,10 +285,11 @@ EOF
 git add frontend.go
 git commit -m "Add frontend dashboard"
 
-# ── Stack complete: feat/auth → feat/api-routes → feat/frontend ──
+# ── Stack complete: feature-auth-1 → feature-auth-2 → feature-auth-3 ──
 
-# 7. Push everything and create draft PRs
-gh stack submit --auto --draft
+# 7. Push everything and create draft PRs (current website default)
+gh stack submit --auto
+# Older extensions: gh stack submit --auto --draft
 
 # 8. Verify the stack
 gh stack view --json
@@ -258,11 +302,11 @@ gh stack view --json
 This is a critical workflow for agents. When you're working on a higher layer and realize you need to change something in a lower layer (e.g., you're building frontend components but need to add an API endpoint), **navigate down to the correct branch, make the change there, and rebase**.
 
 ```bash
-# You're on feat/frontend but need to add an API endpoint
+# You're on feature-auth-3 but need to add an API endpoint
 
 # 1. Navigate to the API branch
 gh stack down
-# or: gh stack checkout feat/api-routes
+# or: gh stack checkout feature-auth-2
 
 # 2. Make the change where it belongs
 cat > users_api.go << 'EOF'
@@ -280,7 +324,7 @@ gh stack rebase --upstack
 
 # 4. Navigate back to where you were working
 gh stack top
-# or: gh stack checkout feat/frontend
+# or: gh stack checkout feature-auth-3
 
 # 5. Continue working — the API changes are now available
 ```
@@ -294,7 +338,7 @@ When you need to revisit a branch after the initial creation (e.g., responding t
 ```bash
 # 1. Navigate to the branch that needs changes
 gh stack bottom
-# or: gh stack checkout feat/auth
+# or: gh stack checkout feature-auth-1
 # or: gh stack checkout 42  (by PR number)
 
 # 2. Make changes and commit
@@ -324,18 +368,18 @@ gh stack sync
 When a PR is squash-merged on GitHub, the original branch's commits no longer exist in the trunk history. `gh stack` detects this automatically and uses `git rebase --onto` to correctly replay remaining commits.
 
 ```bash
-# After PR #1 (feat/auth) is squash-merged on GitHub:
+# After PR #1 (feature-auth-1) is squash-merged on GitHub:
 gh stack sync
 # → fetches latest, detects the merge, fast-forwards trunk
-# → rebases feat/api-routes onto updated trunk (skips merged branch)
-# → rebases feat/frontend onto feat/api-routes
+# → rebases feature-auth-2 onto updated trunk (skips merged branch)
+# → rebases feature-auth-3 onto feature-auth-2
 # → pushes updated branches
 # → reports: "Merged: #1"
 
 # Verify the result
 gh stack view --json
-# → feat/auth shows "isMerged": true, "state": "MERGED"
-# → feat/api-routes and feat/frontend show updated heads
+# → feature-auth-1 shows "isMerged": true, "state": "MERGED"
+# → feature-auth-2 and feature-auth-3 show updated heads
 ```
 
 If `sync` hits a conflict during this process, it restores all branches to their pre-rebase state and exits with code 3. See [Handle rebase conflicts](#handle-rebase-conflicts-agent-workflow) for the resolution workflow.
@@ -400,7 +444,8 @@ gh stack unstack
 git branch -m old-branch-1 new-branch-1
 
 # 3. Re-create the stack with the new structure
-gh stack init --base main --adopt new-branch-1 new-branch-2 new-branch-3
+gh stack init --base main new-branch-1 new-branch-2 new-branch-3
+# Older extensions: add --adopt
 ```
 
 ---
@@ -416,35 +461,26 @@ gh stack init [flags] <branches...>
 ```
 
 ```bash
-# Set a branch prefix (recommended — subsequent `add` calls only need the suffix)
-gh stack init -p feat auth
-# → creates feat/auth
-
-# Multi-part prefix (slashes are fine — suffix-only rule still applies)
-gh stack init -p monalisa/billing auth
-# → creates monalisa/billing/auth
-
-# Create a stack with new branches (no prefix — use full branch names)
-gh stack init branch-a branch-b branch-c
+# Create a stack with flat names in dependency order
+gh stack init my-feature-1 my-feature-2 my-feature-3
 
 # Use a different trunk branch
-gh stack init --base develop branch-a branch-b
+gh stack init --base develop my-feature-1 my-feature-2
 
-# Adopt existing branches into a stack
-gh stack init --adopt branch-a branch-b branch-c
+# Initialize existing branches into a stack (current website behavior)
+gh stack init my-feature-1 my-feature-2 my-feature-3
+# Older extensions: gh stack init --adopt my-feature-1 my-feature-2 my-feature-3
 ```
 
 | Flag | Description |
 |------|-------------|
 | `-b, --base <branch>` | Trunk branch (defaults to the repo's default branch) |
-| `-a, --adopt` | Adopt existing branches instead of creating new ones |
-| `-p, --prefix <string>` | Branch name prefix. Subsequent `add` calls only need the suffix (e.g., with `-p feat`, `gh stack add auth` creates `feat/auth`) |
 
 **Behavior:**
 
-- Using `-p` is recommended — it simplifies branch naming for subsequent `add` calls
+- Use flat names such as `my-feature-1`; do not use `-p` in this methodology.
 - Creates any branches that don't already exist (branching from the trunk branch)
-- In `--adopt` mode: validates all branches exist, rejects if any is already in a stack or has an existing PR
+- Current website: existing branch names are adopted and missing names are created. Older extensions expose `--adopt` for the existing-branch case; check `gh stack init --help`.
 - Checks out the last branch in the list
 - Enables `git rerere` so conflict resolutions are remembered across rebases. On first run in a repo, this may trigger a confirmation prompt — pre-configure with `git config rerere.enabled true` to avoid it
 
@@ -461,8 +497,8 @@ gh stack add [flags] <branch>
 **Recommended workflow — create the branch, then use standard git:**
 
 ```bash
-# Create a new branch and switch to it (just the suffix — prefix is applied automatically)
-gh stack add api-routes
+# Create a new flat branch and switch to it
+gh stack add my-feature-2
 
 # Write code, stage deliberately, and commit
 git add internal/api/routes.go internal/api/handlers.go
@@ -493,7 +529,7 @@ gh stack add -um "Fix auth bug" auth-fix
 
 - `-A` and `-u` are mutually exclusive.
 - When the current branch has no commits (e.g., right after `init`), `add -Am` commits directly on the current branch instead of creating a new one.
-- **Prefix handling:** Only pass the suffix when a prefix is set. `gh stack add api` with prefix `todo` → `todo/api`. Passing `todo/api` creates `todo/todo/api`. Without a prefix, pass the full branch name.
+- **Branch names:** Always pass the full flat branch name, for example `my-feature-2`. Do not use `/` or prefix mode.
 - If called from a branch that is not the topmost in the stack, exits with code 5: `"can only add branches on top of the stack"`. Use `gh stack top` to switch first.
 - **Uncommitted changes:** When using `gh stack add branch-name` without `-Am`, any uncommitted changes (staged or unstaged) in your working tree carry over to the new branch. This is standard git behavior — the working tree is not touched. Commit or stash changes on the current branch before running `add` if you want a clean starting point on the new branch.
 
@@ -538,14 +574,15 @@ Push all stack branches and create PRs on GitHub. **Always pass `--auto`** — w
 # Submit and auto-title new PRs (required for non-interactive use)
 gh stack submit --auto
 
-# Submit and create PRs as drafts
-gh stack submit --auto --draft
+# Current website: non-interactive submit creates drafts by default
+gh stack submit --auto
+# Older extensions: gh stack submit --auto --draft
 ```
 
 | Flag | Description |
 |------|-------------|
 | `--auto` | Auto-generate PR titles without prompting (**required** for non-interactive use) |
-| `--draft` | Create new PRs as drafts |
+| `--open` | Mark new PRs ready for review, when supported by the installed version |
 | `--remote <name>` | Remote to push to (use if multiple remotes exist) |
 
 **Behavior:**
@@ -581,8 +618,8 @@ gh stack link [flags] <branch-or-pr> <branch-or-pr> [...]
 # Link branches into a stack (pushes, creates PRs, creates stack)
 gh stack link branch-a branch-b branch-c
 
-# Use a different base branch and create PRs as drafts
-gh stack link --base develop --draft branch-a branch-b branch-c
+# Use a different base branch
+gh stack link --base develop branch-a branch-b branch-c
 
 # Link existing PRs by number
 gh stack link 10 20 30
@@ -594,7 +631,7 @@ gh stack link 42 43 feature-auth feature-ui
 | Flag | Description |
 |------|---------|
 | `--base <branch>` | Base branch for the bottom of the stack (default: `main`) |
-| `--draft` | Create new PRs as drafts |
+| `--draft` | Create new PRs as drafts when supported by the installed version |
 | `--remote <name>` | Remote to push to (use if multiple remotes exist) |
 
 **Behavior:**
@@ -712,11 +749,10 @@ gh stack view --json
 ```json
 {
   "trunk": "main",
-  "prefix": "feat",
-  "currentBranch": "feat/api-routes",
+  "currentBranch": "my-feature-2",
   "branches": [
     {
-      "name": "feat/auth",
+      "name": "my-feature-1",
       "head": "abc1234...",
       "base": "def5678...",
       "isCurrent": false,
@@ -729,7 +765,7 @@ gh stack view --json
       }
     },
     {
-      "name": "feat/api-routes",
+      "name": "my-feature-2",
       "head": "789abcd...",
       "base": "abc1234...",
       "isCurrent": true,
@@ -808,7 +844,8 @@ gh stack unstack [flags] [branch]
 ```bash
 # Tear down the stack (locally and on GitHub), then rebuild
 gh stack unstack
-gh stack init --base main --adopt branch-2 branch-1 branch-3 # reordered
+gh stack init --base main branch-2 branch-1 branch-3 # reordered
+# Older extensions: add --adopt
 
 # Only remove local tracking (keep the stack on GitHub)
 gh stack unstack --local

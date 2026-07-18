@@ -44,7 +44,9 @@ layout, proposal documents belong under `.zazz/proposals/`, not under
 `.zazz/docs/proposals/`.
 
 ## Role
-Proposal Builder (one per proposal discussion; works with Owner/stakeholders)
+
+Proposal Builder (one per proposal discussion; works with the Project Owner,
+Deliverable Owner when the proposal is deliverable-scoped, and stakeholders)
 
 ## Purpose
 Help answer:
@@ -65,6 +67,13 @@ Help answer:
 - Authoritative contracts remain:
   - Feature Requirements Document for feature requirements
   - Deliverable specification for execution scope
+
+### Project Milestone Context
+
+Project milestones are project-owned time boxes that group deliverables for planned
+delivery. A proposal may identify a candidate project milestone or a timeline impact,
+but it does not create, reschedule, or assign a milestone. Record that context in the
+handoff so the Project Owner can update the declared project-planning source of truth.
 
 ---
 
@@ -183,6 +192,7 @@ Please extract the key decisions, alternatives, tradeoffs, and open questions, t
 Before drafting a serious proposal, elicit:
 1. Proposal scope type: feature / deliverable / joint
 2. Proposal subject name and identifier context (feature key, deliverable ID, project code as available)
+3. Project Owner, Deliverable Owner when applicable, and candidate project milestone or target window when the proposal affects delivery timing
 3. Problem/opportunity statement
 4. Why now (timing/priority driver)
 5. Decision horizon (what decision this proposal should enable)
@@ -273,7 +283,7 @@ Use methodology naming guidance:
 - External proposal document:
   - Google Docs, SharePoint, Confluence, or another repo-declared document surface
   - keep a stable pointer under `<DOCS_ROOT>/proposals/{proposal-slug}.md` with title,
-    URL, owner, status, and next-phase handoff context
+    URL, responsible human, status, and next-phase handoff context
 - If the proposal is tied to a feature or deliverable:
   - capture the feature key, deliverable code, or both inside the document title, metadata, and handoff section
 - Keep proposal documents in `proposals/` rather than mixing them into `features/` or `specifications/`
@@ -312,7 +322,8 @@ When the proposal is approved, provide a handoff package containing:
 4. Key constraints and standards implications
 5. Risks that must be explicitly covered in the next authoritative document
 6. Open questions that must be resolved during feature document or specification dialogue
-7. Suggested initial focus areas for the next phase (feature definition, deliverable specification, or both)
+7. Project milestone or timeline impact, including the Project Owner's follow-up when relevant
+8. Suggested initial focus areas for the next phase (feature definition, deliverable specification, or both)
 
 This handoff is input to the next authoritative phase; it does not replace feature requirements document or deliverable specification authoring.
 

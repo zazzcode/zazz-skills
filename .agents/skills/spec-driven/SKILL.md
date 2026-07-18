@@ -1,13 +1,13 @@
 ---
 name: spec-driven
-description: "Apply or explain the lifecycle after a deliverable specification is greenlit: AC/TDD implementation, Owner steering, in-place spec contract updates, Implementation And Review Change Log entries, run logs, QA/UAT, draft PR feedback, automated review, re-verification, and final human sign-off. Use for questions about how specs, run logs, PRs, reviewers, QA, owners, and implementing agents coordinate around an approved specification."
+description: "Apply or explain the lifecycle after a deliverable specification is greenlit: Lead Agent coordination, Contributor Agent implementation, Deliverable Owner steering, AC/TDD, in-place spec contract updates, run logs, QA/UAT, PR feedback, re-verification, and final human sign-off. Use for questions about how the specification-driven cycle coordinates Project Owners, Deliverable Owners, Contributors, and AI agents."
 ---
 
 # Spec-Driven Development
 
 Use this skill for the lifecycle around an approved deliverable specification from
 greenlight through human-reviewed merge. It does not replace `spec-builder`,
-`qa-testing`, `pr-builder`, `pr-review`, `gh-stack`, or implementation agents. It defines
+`qa-testing`, `pr-builder`, `pr-review`, `gh-stack`, or Contributor Agents. It defines
 how those roles coordinate around the specification as the current implementation
 contract.
 
@@ -20,7 +20,7 @@ re-verification, and sign-off, use this skill.
 
 A deliverable specification is the executable contract for one deliverable. After
 greenlight, the body of the specification should continue to read as the current
-contract. Accepted Owner steering, QA/UAT findings, PR review feedback, or
+contract. Accepted Deliverable Owner steering, QA/UAT findings, PR review feedback, or
 implementation-discovered bugs that change the contract update the affected
 specification sections in place.
 
@@ -34,20 +34,29 @@ user explicitly asks. The run log records attempts, phase progress, failures, ev
 QA findings, handoffs, and recoveries. The specification records the current contract
 plus the final contract-change audit trail.
 
+## Roles In This Cycle
+
+- The **Project Owner** remains accountable for project direction and durable product context.
+- The **Deliverable Owner** is the human authority for a deliverable's scope, contract changes, acceptance, and review or merge readiness.
+- A **Contributor** is a human engineer contributing to the deliverable.
+- A **Contributor Agent** is an AI agent explicitly delegated bounded work.
+- The **Lead Agent** is a designated Contributor Agent. It coordinates execution, delegates to other Contributor Agents and Verifier Agents, integrates their output, and maintains execution evidence. It does not assume Deliverable Owner authority.
+- A **Verifier Agent** or **QA Agent** independently evaluates work and does not modify implementation unless explicitly reassigned.
+
 ## Lifecycle
 
 ```mermaid
 flowchart TD
-    A["Spec creation and refinement<br/>(spec-builder)"] --> B["Owner greenlights specification"]
+    A["Spec creation and refinement<br/>(spec-builder)"] --> B["Deliverable Owner greenlights specification"]
     B --> C["Implement through AC/TDD loop"]
-    C --> D{"Owner steering,<br/>QA/UAT, PR review,<br/>or discovered bug changes contract?"}
+    C --> D{"Deliverable Owner steering,<br/>QA/UAT, PR review,<br/>or discovered bug changes contract?"}
     D -- "No" --> E["Record progress and evidence<br/>in run log"]
     E --> F["Draft PR and author-side review"]
     F --> G{"Review feedback changes contract?"}
     G -- "No" --> H["Rework implementation only<br/>and re-verify"]
     H --> I["Final evidence and human sign-off"]
     I --> J["Merge through human PR process"]
-    D -- "Yes" --> K["Get Owner sign-off"]
+    D -- "Yes" --> K["Get Deliverable Owner sign-off"]
     G -- "Yes" --> K
     K --> L["Update affected spec sections in place"]
     L --> M["Append Implementation And Review Change Log entry"]
@@ -61,7 +70,7 @@ the audit trail coherent.
 
 ## AC/TDD Implementation Loop
 
-The implementing agent should:
+The Lead Agent carries out or delegates this loop to Contributor Agents:
 
 1. read the greenlit specification and required references
 2. verify applicable standards from the repo standards index
@@ -76,32 +85,33 @@ If an implementation detail can adapt without changing scope, public behavior, A
 strategy, approved review shape, or invariants, log meaningful deviations in the run log
 and continue. If the contract changes, use the change protocol below.
 
-## Lead Agent, Subagents, And Tracking
+## Lead Agent, Contributor Agents, And Tracking
 
-The implementation prompt should name the coordination model. A lead implementation
-agent may work alone or coordinate subagents when the active agent harness supports
-delegation and the specification allows it.
+The implementation prompt should name the coordination model. The Lead Agent may work
+alone or delegate bounded work to Contributor Agents when the active harness supports
+delegation and the specification allows it. A harness may call delegated Contributor
+Agents *subagents*, but Contributor Agent is the methodology term.
 
-The lead implementation agent always owns:
+The Lead Agent is responsible for:
 
-- scope control against the current specification
+- keeping execution within the current specification
 - task/phase delegation boundaries
 - file-conflict serialization inside the active worktree
-- integration of subagent output
+- integration of Contributor Agent output
 - evidence quality and AC mapping
 - run-log and tracker updates
 - final PR-ready output
 
-Subagents may own bounded phases, tasks, branch slices, tests, QA checks, or docs only
-when the specification names those boundaries. They should return changed-file
-summaries, commands run, evidence, risks, and unresolved questions. If subagents are not
-available, the lead implementation agent performs the phases directly and records that
-in the run log.
+Contributor Agents may perform bounded phases, tasks, branch slices, tests, QA checks,
+or documentation only when the specification names those boundaries. They return
+changed-file summaries, commands run, evidence, risks, and unresolved questions. If
+they are not available, the Lead Agent performs the phases directly and records that in
+the run log.
 
 Work runs in a single active worktree or stack lane for the approved review artifact.
-The lead implementation agent orders delegated work so overlapping file ownership is
-serialized. Do not let subagents overwrite one another's edits. When two tasks may touch
-the same file, sequence the tasks and reconcile the diff before continuing.
+The Lead Agent orders delegated work so overlapping file work is serialized. Do not let
+Contributor Agents overwrite one another's edits. When two tasks may touch the same
+file, sequence the tasks and reconcile the diff before continuing.
 
 Prefer fresh-context agents for independent QA and verification passes. A QA agent may
 focus on functionality, performance, code hygiene, security, accessibility, standards,
@@ -111,10 +121,10 @@ do not modify code.
 
 Execution tracking follows the repo's declared system:
 
-- **Zazz Board**: load `zazz-board` and update implementation progress, subagent
-  task progress, notes, locks when required, statuses, and evidence links through the
-  board.
-- **Jira**: load `jira` and use repo-provided or Owner-provided Jira issue context;
+- **Zazz Board**: load `zazz-board` and update implementation progress, delegated
+  Contributor Agent task progress, notes, locks when required, statuses, and evidence
+  links through the board.
+- **Jira**: load `jira` and use repo-provided or Deliverable Owner-provided Jira issue context;
   do not assume live Jira access unless the repo declares it.
 - **Other tracker**: follow the repo-declared tracker workflow.
 - **Local run log only**: keep the run log and PR evidence current.
@@ -127,7 +137,7 @@ approved review shape, branch contract, invariants, or acceptance criteria.
 
 1. Stop coding the affected slice.
 2. Identify the sections that need to change.
-3. Get Owner sign-off for the contract change.
+3. Get Deliverable Owner sign-off for the contract change.
 4. Update the affected specification sections in place so they describe the current
    contract.
 5. Append an `Implementation And Review Change Log` entry at the end of the
@@ -142,7 +152,7 @@ Use this entry shape:
 ```markdown
 ### YYYY-MM-DD HH:MM TZ — Short Change Title
 
-**Source.** Owner steering, QA/UAT, PR review, implementation-discovered bug, or other source.
+**Source.** Deliverable Owner steering, QA/UAT, PR review, implementation-discovered bug, or other source.
 
 **Changed Sections.** Links or section numbers.
 
@@ -214,4 +224,5 @@ authority.
 - Use `pr-builder` for draft-first PR packaging.
 - Use `pr-review` for standards/spec compliance review.
 - Use `gh-stack` for stacked branch command details when the approved review shape is a
-  stack.
+  stack. A gh-stack lane keeps every stacked branch in one dedicated worktree; each branch
+  and PR represents one dependent deliverable.

@@ -1,6 +1,6 @@
 ---
 name: feature-doc-builder
-description: Help a user create, draft, refine, or update a long-lived feature document for a product capability; use when the user wants to define or improve feature purpose, current state, feature roadmap increments, related project milestone context, and feature-level direction before or alongside deliverable specification.
+description: Help a Project Owner create, draft, refine, or update a long-lived feature document for a product capability; use when defining or improving feature purpose, current state, feature roadmap increments, related project milestone context, and feature-level direction before deliverable specification.
 ---
 
 # Feature Doc Builder Skill
@@ -33,16 +33,16 @@ The feature requirements document should help answer:
 This skill is for feature definition and feature evolution. It is not a deliverable-specification skill and it does not
 replace deliverable specification authoring.
 
-It should help the Product Owner articulate feature-level success criteria and roadmap-increment outcomes that later
+It should help the Project Owner articulate feature-level success criteria and roadmap-increment outcomes that later
 inform deliverable acceptance criteria. If project milestones exist, treat them as project timeline context, not as
-feature-owned containers.
+feature-managed containers.
 
 ## Primary Audience
 
 Work primarily with:
 
-- product owner
-- project owner
+- Project Owner
+- Deliverable Owner when a planned delivery needs feature context
 - stakeholders with domain context
 
 Secondary audiences for the resulting feature requirements document:
@@ -104,9 +104,9 @@ Artifact boundaries:
 
 ## Interaction Modes
 
-### Mode A: Live owner dialogue (default)
+### Mode A: Live Project Owner dialogue (default)
 
-Use a conversational process with a product owner, project owner, or stakeholder to draw out the feature's why, current
+Use a conversational process with a Project Owner, Deliverable Owner, or stakeholder to draw out the feature's why, current
 state, and future roadmap increments.
 
 ### Mode B: Transcript ingestion
@@ -129,20 +129,20 @@ When the user already has a feature document:
 
 ### Mode D: Development mode
 
-If the owner says "development mode" or equivalent, the focus is on improving this skill itself. In development mode,
+If the user says "development mode" or equivalent, the focus is on improving this skill itself. In development mode,
 you may edit `.agents/skills/feature-doc-builder/SKILL.md`. Outside development mode, this file is read-only.
 
 ## Human-Facing Usage Guidance
 
 This is an interactive, back-and-forth skill.
 
-The owner does not need to provide a complete feature document up front. A strong starting prompt plus iterative
+The Project Owner does not need to provide a complete feature document up front. A strong starting prompt plus iterative
 dialogue is enough. The agent should:
 
 - ask clarifying questions about the feature's value and current state
 - help distinguish current behavior from planned future behavior
 - help define or revise the next few meaningful feature roadmap increments
-- draft the feature document early enough that the owner can react to a concrete document
+- draft the feature document early enough that the Project Owner can react to a concrete document
 
 This skill should feel like a structured product-definition conversation, not a deliverable-specification session.
 
@@ -271,7 +271,7 @@ increment. This is one of the most important distinctions between a feature docu
 A feature roadmap increment is a meaningful feature increment that advances the capability. It may identify one or
 more candidate deliverables, and those deliverables may later be slotted into one or more project milestones. The
 feature document should make the feature evolution intelligible to both stakeholders and the development team without
-turning project milestone dates or membership into feature-owned data.
+turning project milestone dates or membership into feature-managed data.
 
 Every roadmap increment must have **all three** of:
 
@@ -288,16 +288,18 @@ When a roadmap increment ships, update the current-state sections and mark the i
 milestone also closed, update the declared project milestone source of truth rather than duplicating that state in the
 feature document.
 
-### Feature documents do not own project milestones
+### Feature documents do not define project milestones
 
-The feature document owns feature purpose, current state, feature roadmap increments, capability statements, and
-feature-level success criteria. It may link to project milestones, but it does not own project milestone names, dates,
-membership, or order.
+The feature document is authoritative for feature purpose, current state, feature
+roadmap increments, capability statements, and feature-level success criteria. It may
+link to project milestones, but it does not define their names, dates, membership, or
+order.
 
 Project milestones are project-scoped timeline containers. A single project milestone may contain deliverables from
 multiple features, and one feature roadmap increment may contribute deliverables to more than one project milestone
-when the project plan requires it. If a project milestone needs to be added, removed, renamed, rescheduled, or
-rescoped, update the declared project milestone source of truth first.
+when the project plan requires it. If a project milestone needs to be added, removed,
+renamed, rescheduled, or rescoped, the Project Owner updates the declared project
+milestone source of truth first.
 
 ### Roadmap increments should be coherent sections
 
@@ -323,7 +325,7 @@ deliverable-level testability requirements.
 
 ## Recommended Feature Document Sections
 
-Use this section order unless the owner explicitly asks for a different structure:
+Use this section order unless the Project Owner explicitly asks for a different structure:
 
 1. Title
 1. Feature summary
@@ -470,7 +472,7 @@ A feature document draft is high quality when:
 1. the major concepts and flows are understandable to a new developer
 1. roadmap increments are meaningful, ordered, and not just arbitrary task buckets
 1. every roadmap increment has a timeline note, a one-sentence capability statement, and a candidate deliverables list
-1. related project milestones are referenced as project-scoped timeline containers, not redefined as feature-owned milestones
+1. related project milestones are referenced as project-scoped timeline containers, not redefined as feature-managed milestones
 1. the document helps both stakeholders and the development team
 1. the handoff to later deliverables is clear without collapsing into implementation detail
 

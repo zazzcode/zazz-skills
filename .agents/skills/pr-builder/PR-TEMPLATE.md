@@ -36,7 +36,7 @@ Avoid file-by-file inventories unless a specific file or subsystem deserves revi
 - Author-side automated review:
 - Critical or important findings still open:
 - Evidence still missing:
-- Owner action needed before marking ready:
+- Deliverable Owner action needed before marking ready:
 
 Remove this section only when the Deliverable Owner has explicitly confirmed the PR is ready for formal review.
 

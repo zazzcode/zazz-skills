@@ -13,7 +13,8 @@ The important distinction is:
   meaningful outcomes, and a single project milestone can contain deliverables from
   multiple features, bug fixes, chores, or technical investments.
 - Deliverables connect the two worlds: a deliverable may contribute to a feature while
-  also being assigned to the project milestone where the owner expects it to land.
+  also being assigned to the project milestone where the Project Owner expects it to
+  land.
 
 ## Feature Requirements Documents
 
@@ -75,9 +76,11 @@ project milestones and their associated deliverables. The core methodology conce
 simpler: projects have milestones, and deliverables are assigned to those milestones for
 timeline communication.
 
-## Time-Boxed Deliverables
+## Deliverables Within Project Milestones
 
-Deliverables are time-boxed execution units. Each one gets a deliverable specification and should fit inside one worktree unless the team intentionally uses a stacked branch lane.
+Project milestones are the time boxes. Deliverables are the bounded execution units
+placed inside those milestones. Each deliverable gets a deliverable specification and
+should fit inside one worktree unless the team intentionally uses a stacked branch lane.
 
 Good deliverables:
 

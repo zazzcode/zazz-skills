@@ -30,7 +30,7 @@ Store proposals in the repo's declared durable storage surface. In committed Mar
 mode, use `<DOCS_ROOT>/proposals/` by default. If the team uses GitHub Wiki,
 Confluence, Google Docs, SharePoint, or another document surface for stakeholder
 review, keep a stable pointer in `AGENTS.md`, an index page, or a repo-tracked pointer
-with title, owner, status, and link.
+with title, responsible human, status, and link.
 
 Do not store accepted proposal outcomes only under `<DOCS_ROOT>/ephemeral/`; that
 directory is for active scratch and execution records.

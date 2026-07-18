@@ -8,7 +8,7 @@ Stacked work is implemented as **multiple branches inside one lane worktree** us
 after even two worktrees.
 
 Do not use this workflow as PR-time cleanup for an oversized implementation. If coding
-has already started and a stack now seems necessary, stop for Owner sign-off, update the
+has already started and a stack now seems necessary, stop for Deliverable Owner sign-off, update the
 affected specification sections in place, and record the change in the Implementation
 And Review Change Log before continuing.
 
@@ -17,17 +17,16 @@ merge directly to the repo's confirmed integration branch. Lower branches reach 
 integration branch only after human PR review and the PR lands.
 
 For command-level stack guidance, prefer the separate `gh-stack` skill when available.
-If that skill is not available, use the summary in this file and ask the Owner to
+If that skill is not available, use the summary in this file and ask the Deliverable Owner to
 review command details before implementation.
 
 Mental model:
 
-- **One worktree** = one isolated agent lane, usually for one deliverable, but it may
-  contain multiple deliverables when they are intentionally implemented as one stack.
-- **One stack inside that worktree** = multiple review branches for the same deliverable
-  or tightly related deliverable group.
-- **One branch** = one review unit, represented by commits, not by a remembered file
-  list.
+- **One worktree** = one isolated agent lane; a gh-stack lane is the deliberate
+  exception containing multiple dependent deliverables.
+- **One stack inside that worktree** = one review branch and PR per dependent deliverable.
+- **One branch** = one deliverable review unit, represented by commits, not by a remembered
+  file list.
 - The worktree has one working directory, one index, and one checked-out branch at a
   time. `gh stack bottom/top/up/down` are controlled branch checkouts inside the same
   directory.
@@ -41,9 +40,10 @@ concerns" section. This file is workflow only.
   declares a more specific naming policy. The operating model determines whether
   `specifications/` is tracked, ignored, mirrored, or promoted elsewhere.
 - **Lane worktree dir**: repo-conventional flat worktree name, usually matching the
-  deliverable or branch slug where practical.
-- **Stacked branch names**: flat branch names managed by `gh-stack`; avoid `/` so branch
-  names map cleanly to sibling worktree directories and tooling.
+  initiative slug where practical (for example, `my-feature`).
+- **Stacked branch names**: recommended, not required: use the lane name plus dependency
+  order (`my-feature-1`, `my-feature-2`, `my-feature-3`). Keep names flat; avoid `/` so
+  they remain easy to associate with the lane worktree and tooling.
 - **Run log**: follow the repo's declared storage policy; use sections per branch or per
   deliverable when useful.
 
@@ -79,13 +79,13 @@ section list.
 4. Read this skill's bundled `references/spec-driven-development-methodology.md`.
 5. Read the `gh-stack` skill if present; use its bundled single-worktree-lane reference
    and non-interactive command rules for stack setup examples.
-6. Read a project-local prior stacked specification if the Owner points to one for calibration.
+6. Read a project-local prior stacked specification if the Deliverable Owner points to one for calibration.
 7. If no `gh-stack` skill is available, continue with this workflow's summary and flag
-   command-level stack guidance for Owner review.
+   command-level stack guidance for Deliverable Owner review.
 8. Read `<DOCS_ROOT>/standards/index.yaml` from the active lane worktree; load only relevant
    standards.
 9. Copy `stacked-specification-template.md` to the specification path or external record and fill placeholders
-   interactively with the Owner.
+   interactively with the Deliverable Owner.
 10. Iterate until the seam contract is concrete. Upper branches build on lower branches
    through the stack; vague seams create expensive upstack propagation.
 11. Run the calibration check from SKILL.md before presenting.
@@ -98,8 +98,8 @@ non-interactive rules from the `gh-stack` skill:
 - Always provide branch names to `gh stack init`, `gh stack add`, and
   `gh stack checkout`.
 - Always use `gh stack view --json`; plain `gh stack view` opens an interactive TUI.
-- Always use `gh stack submit --auto` when creating PRs; add `--draft` when draft PRs
-  are desired.
+- Always use `gh stack submit --auto` when creating PRs. Current gh-stack creates drafts
+  by default; older extensions may require `--draft`. Check `gh stack submit --help`.
 - Use `--remote origin` for `push`, `submit`, `sync`, `link`, or `checkout` when the
   repo has multiple remotes, or preconfigure `git config remote.pushDefault origin`.
 - Configure `git config rerere.enabled true` before stack setup to avoid rerere prompts

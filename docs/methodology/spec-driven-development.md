@@ -1,8 +1,9 @@
 # Spec-Driven Development
 
 Spec-driven development is the lifecycle after a deliverable specification is greenlit.
-The specification remains the current implementation contract while agents implement,
-verify, absorb Owner steering, respond to QA and PR feedback, and prepare for human
+The specification remains the current implementation contract while Contributors and
+Contributor Agents implement, verify, absorb Deliverable Owner steering, respond to QA
+and PR feedback, and prepare for human
 signoff.
 
 ## Purpose
@@ -18,9 +19,9 @@ greenlight. Use this section once the contract is approved and implementation be
 
 ```text
 spec creation and refinement
-  -> Owner greenlight
+  -> Deliverable Owner greenlight
   -> AC/TDD implementation loop
-  -> Owner steering, QA/UAT, or PR feedback
+  -> Deliverable Owner steering, QA/UAT, or PR feedback
   -> in-place spec updates when the contract changes
   -> Implementation And Review Change Log entry
   -> rework and re-verification
@@ -75,26 +76,29 @@ declared filenames and layout; do not invent subdirectories inside `ephemeral/`.
 ## Lead Agent And Worktree Discipline
 
 Implementation runs in one active worktree or one stacked branch lane for the approved
-review artifact. A lead implementation agent owns the specification during execution.
+review artifact. A Lead Agent coordinates execution against the current specification.
 
-The lead implementation agent owns:
+The Lead Agent is responsible for:
 
-- scope control against the current specification
+- keeping execution within the current specification
 - ordering of phases and tasks
 - file-conflict serialization inside the active worktree
-- integration of delegated work
+- integration of delegated Contributor Agent work
 - evidence quality and acceptance-criteria mapping
 - run-log or tracker updates
 - PR-ready output
 
-Subagents may help with bounded phases, tasks, branch slices, tests, documentation, or
-QA checks when the specification allows it. The lead must order overlapping file work so
-agents do not overwrite one another. If two tasks may touch the same file, serialize the
-tasks and reconcile the diff before continuing.
+The Lead Agent may delegate bounded phases, tasks, branch slices, tests, documentation,
+or QA checks to Contributor Agents when the specification allows it. In harnesses that
+use the term *subagent*, a delegated Contributor Agent is a subagent. The Lead Agent
+must order overlapping file work so Contributor Agents do not overwrite one another. If
+two tasks may touch the same file, serialize the tasks and reconcile the diff before
+continuing.
 
-Subagents should return changed-file summaries, commands run, evidence, risks, and
-unresolved questions. If subagents are not available in the active harness, the lead
-agent performs the work directly and records that in the execution record.
+Delegated Contributor Agents should return changed-file summaries, commands run,
+evidence, risks, and unresolved questions. If they are not available in the active
+harness, the Lead Agent performs the work directly and records that in the execution
+record.
 
 ## AC/TDD Loop
 
@@ -168,7 +172,7 @@ work into the durable spec archive.
 
 | Skill | How it helps efficiency |
 | ----- | ----------------------- |
-| `spec-driven` | Applies the post-greenlight lifecycle, contract-change protocol, lead/subagent coordination, and signoff discipline. |
+| `spec-driven` | Applies the post-greenlight lifecycle, contract-change protocol, Lead Agent / Contributor Agent coordination, and signoff discipline. |
 | `spec-builder` | Creates the greenlit specification, implementation prompt, tracking model, and change-log section that SDD executes against. |
 | `qa-testing` | Runs focused fresh-context verification and produces findings or evidence. |
 | `pr-builder` | Packages draft PR evidence, risks, and spec links for review. |

@@ -47,7 +47,7 @@ PR lands" rather than instructing an agent to merge.
 - You are defining sibling deliverables that will be reviewed as separate PRs.
 - You are defining a stacked review lane where branches are stacked inside one lane
   worktree using `gh-stack`.
-- You are updating an existing specification after Owner-approved scope or contract changes.
+- You are updating an existing specification after Deliverable Owner-approved scope or contract changes.
 
 ## Delivery topologies
 
@@ -69,7 +69,7 @@ Do not create stacked worktrees. Stacks are branches inside one worktree.
 For features and deliverables, this topology decision is made during specification. The
 approved specification must say whether the work will be reviewed as one PR, one
 milestone PR, sibling PRs, stacked PRs, or a large exception. If implementation later
-needs a different shape, stop for Owner sign-off, update the affected specification
+needs a different shape, stop for Deliverable Owner sign-off, update the affected specification
 sections in place, and record the change in the Implementation And Review Change Log
 before continuing.
 
@@ -92,21 +92,21 @@ State these up front when you know them:
   were rejected.
 - **Execution tracking system** — local run log only, Zazz Board, Jira, or another
   tracker, including stable IDs/URLs when known.
-- **Implementation coordination** — one lead implementation agent only, or a lead
-  implementation agent coordinating subagents by phase, task, branch, or verification
+- **Implementation coordination** — one Lead Agent working alone, or a Lead Agent
+  delegating bounded Contributor Agent work by phase, task, branch, or verification
   slice.
 - **Conflict and QA model** — file areas that require ordered work to avoid overwrites,
   and whether fresh-context QA agents should check functionality, performance, code
   hygiene, standards, or another quality dimension.
 
 The skill will ask follow-ups on scope boundaries, decisions, acceptance criteria,
-run-log shape, execution tracking, subagent delegation boundaries, and review
+run-log shape, execution tracking, Contributor Agent delegation boundaries, and review
 boundaries.
 
 You do not need to arrive with every answer. If topology, deliverable boundaries,
 reference data, acceptance criteria, or test evidence are unclear, the skill should
 interview you in small batches and propose defaults for confirmation. It should not
-produce a final specification that leaves an implementation agent guessing about what proves the
+produce a final specification that leaves a Contributor Agent guessing about what proves the
 deliverable is done.
 
 ## Output paths
@@ -118,14 +118,14 @@ deliverable is done.
   Confluence, or another durable surface.
 - **Milestone branch specifications**:
   `<DOCS_ROOT>/specifications/<milestone>-spec-<n>-<slug>.md` or another
-  Owner-approved consistent naming pattern under `specifications/`.
+  Deliverable Owner-approved consistent naming pattern under `specifications/`.
 - **Run log**:
   default local path: `<DOCS_ROOT>/ephemeral/<slug>-run-log.md`; for milestones or
   stacks, use `<DOCS_ROOT>/ephemeral/<milestone-or-lane-slug>-run-log.md`. This
   directory is usually excluded from Git by repo-local or bare-repo exclude rules unless
   the repo explicitly chooses committed execution history. Zazz Board notes and external
   tracker records are also valid when declared. Repos that do not use Zazz Board may rely
-  exclusively on `<DOCS_ROOT>/ephemeral/`. When the Owner uses Zazz Board, use it as the
+  exclusively on `<DOCS_ROOT>/ephemeral/`. When the Deliverable Owner uses Zazz Board, use it as the
   centralized place for run logs, handoff notes, QA findings, and related execution
   information that must be available across worktrees, agents, and sessions.
 - **External specification mirror or final storage**:
@@ -139,8 +139,8 @@ deliverable is done.
   large exception.
 - Whether implementation progress should be tracked only in the run log, in Zazz Board,
   in Jira, or in another system.
-- Whether the implementation prompt should assume a single lead agent or a lead agent
-  that may delegate scoped phases/tasks to subagents.
+- Whether the implementation prompt should have a Lead Agent working alone or a Lead
+  Agent that may delegate scoped phases or tasks to Contributor Agents.
 - Any file ownership risks where work should be ordered in one worktree instead of
   delegated concurrently.
 - Which independent QA passes should run with fresh context.
@@ -150,7 +150,7 @@ deliverable is done.
 
 ## After approval
 
-Implementation starts from the specification itself and the run log. A fresh implementing agent
+Implementation starts from the specification itself and the run log. A fresh Contributor Agent
 reads the specification, resolves open questions, maintains the run log, executes the phases,
 and dispatches a verifier when the definition of done is complete.
 
