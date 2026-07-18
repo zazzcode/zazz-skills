@@ -88,7 +88,17 @@ Git generally does not let the same branch be checked out in two worktrees at on
 
 ### Constraint for one-worktree-per-branch stacks
 
-The GitHub PR stack itself works when each stacked branch has its own worktree: the PR base relationships are remote branch relationships, not worktree relationships. However, the full local gh-stack workflow does **not** work reliably across those worktrees. Local commands such as `up`, `down`, `top`, `bottom`, and `checkout` need to check out stack branches in the current worktree; Git blocks that when a target branch is already checked out elsewhere. The official [`link` command](https://github.github.com/gh-stack/reference/cli/) is specifically for externally managed local branches, but it does not provide local stack tracking or navigation. See also the [gh-stack FAQ](https://github.github.com/gh-stack/faq/).
+GitHub can represent a PR stack when its branches are checked out in separate worktrees.
+PR base relationships are remote branch relationships, not worktree relationships.
+
+The full local gh-stack workflow does **not** work reliably in that layout. Commands such
+as `up`, `down`, `top`, `bottom`, and `checkout` must check out the target branch in the
+current worktree. Git blocks that checkout when the target branch is already checked out
+elsewhere.
+
+The official [`gh stack link` command](https://github.github.com/gh-stack/reference/cli/)
+supports externally managed local branches. It creates or updates the remote PR stack, but
+does not provide local gh-stack tracking or navigation. See the [gh-stack FAQ](https://github.github.com/gh-stack/faq/) for the external-tool workflow.
 
 Therefore the methodology uses these explicit operating modes:
 
