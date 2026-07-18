@@ -41,12 +41,20 @@ The shared lane is required for a locally managed gh-stack workflow. Separate wo
 
 ### Recommended stack-lane names
 
-As a recommendation rather than a requirement, name the shared worktree after the
-initiative and number the stacked branches in dependency order. For example, use
-worktree `my-feature` with branches `my-feature-1`, `my-feature-2`, and
-`my-feature-3`. The `-1` branch is the bottom branch based on the integration branch;
-each later number is stacked on the branch before it. This makes the lane and its order
-clear from ordinary Git output.
+Recommended, not required: name the shared worktree after the initiative and number its
+branches in dependency order.
+
+```text
+worktree: my-feature/
+
+<integration-branch>
+└── my-feature-1  bottom branch / PR #1
+    └── my-feature-2  PR #2
+        └── my-feature-3  top branch / PR #3
+```
+
+`my-feature-1` is based on the integration branch; every later number is stacked on the
+branch before it. The names make the lane and its order visible in ordinary Git output.
 
 ## Worktree versus branch
 
