@@ -1,6 +1,6 @@
 ---
 name: qa-testing
-description: Verify a completed change, deliverable, pull request, or local diff against its requirements, acceptance criteria, tests, and project standards. Use when the user wants rigorous QA evidence, test-quality review, rework findings, frontend or backend verification, API collection checks, accessibility checks, performance/security spot checks, or reviewer-ready validation notes.
+description: "Verify a completed change, deliverable, pull request, or local diff against its requirements, acceptance criteria, tests, and project standards. Use when the user wants rigorous QA evidence, test-quality review, rework findings, frontend or backend verification, API collection checks, accessibility checks, performance/security spot checks, or reviewer-ready validation notes."
 ---
 
 # QA Testing

@@ -1,10 +1,6 @@
 ---
 name: architecture-doc-builder
-description: >-
-  Help a user create, draft, refine, or update a long-lived architecture document for a feature or subsystem; use when
-  the user wants to define or improve system design, module placement, per-roadmap-increment sequence diagrams, data model
-  vision, and technical open questions. Can be project-level or paired with a feature requirements document; does
-  not replace feature-doc-builder.
+description: "Help a user create, draft, refine, or update a long-lived architecture document for a feature or subsystem; use when the user wants to define or improve system design, module placement, per-roadmap-increment sequence diagrams, data model vision, and technical open questions. Can be project-level or paired with a feature requirements document; does not replace feature-doc-builder."
 ---
 
 # Architecture Doc Builder Skill

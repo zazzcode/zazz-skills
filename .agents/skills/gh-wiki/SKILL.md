@@ -1,6 +1,6 @@
 ---
 name: gh-wiki
-description: Placeholder workflow guidance for repos that use GitHub Wiki as a durable documentation surface; use when updating, promoting, or reviewing project overview, architecture, feature, roadmap, milestone, proposal, standard-summary, or completed-specification wiki pages. Does not assume live automation beyond repo-declared GitHub Wiki access.
+description: "Placeholder workflow guidance for repos that use GitHub Wiki as a durable documentation surface; use when updating, promoting, or reviewing project overview, architecture, feature, roadmap, milestone, proposal, standard-summary, or completed-specification wiki pages. Does not assume live automation beyond repo-declared GitHub Wiki access."
 ---
 
 # GitHub Wiki Skill

@@ -1,6 +1,6 @@
 ---
 name: conformance
-description: Identify and apply a small, PR-sized code or documentation change that brings a bounded area of a repo into conformance with a named standard, guide, or convention document, then verify and prepare PR-ready evidence. Use when the user wants standards-driven maintenance, legacy-code cleanup, drift prevention, an automated or on-demand conformance pass, a ready-for-review conformance PR, a focused conformance fix, or an incremental cleanup against standards for a specific package, service, module, file, or docs area.
+description: "Identify and apply a small, PR-sized code or documentation change that brings a bounded area of a repo into conformance with a named standard, guide, or convention document, then verify and prepare PR-ready evidence. Use when the user wants standards-driven maintenance, legacy-code cleanup, drift prevention, an automated or on-demand conformance pass, a ready-for-review conformance PR, a focused conformance fix, or an incremental cleanup against standards for a specific package, service, module, file, or docs area."
 ---
 
 # Conformance

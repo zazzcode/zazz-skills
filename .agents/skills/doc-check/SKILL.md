@@ -1,6 +1,6 @@
 ---
 name: doc-check
-description: Run or choose repository-local formatting, linting, and consistency checks for markdown, text, and documentation files before committing. Use when documentation files changed, standards docs were edited, or the user asks to verify docs formatting.
+description: "Run or choose repository-local formatting, linting, and consistency checks for markdown, text, and documentation files before committing. Use when documentation files changed, standards docs were edited, or the user asks to verify docs formatting."
 ---
 
 # Document Check

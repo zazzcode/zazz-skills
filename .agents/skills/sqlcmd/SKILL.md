@@ -1,6 +1,6 @@
 ---
 name: sqlcmd
-description: Run ad-hoc SQL Server diagnostics safely from an agent shell. Use before invoking sqlcmd directly when the task needs schema inspection, read-only data checks, stored procedure execution, tSQLt runs, timing probes, or quote/env handling guidance.
+description: "Run ad-hoc SQL Server diagnostics safely from an agent shell. Use before invoking sqlcmd directly when the task needs schema inspection, read-only data checks, stored procedure execution, tSQLt runs, timing probes, or quote/env handling guidance."
 ---
 
 # sqlcmd

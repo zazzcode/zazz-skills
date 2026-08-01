@@ -1,6 +1,6 @@
 ---
 name: gh-issue
-description: "CLI-first companion skill for interacting with GitHub Issues via the `gh` CLI under the zazzcode account. Use it to CREATE/log/file a GitHub issue — a bug, follow-up, enhancement, or observation, including when the user hits something while coding and wants to track it for later instead of fixing it now. Use it equally to READ/view/list/search an issue as input to fixing or assessment — including when the user references an issue number or says things like 'read issue #19', 'assess issue N', 'propose a fix for issue N', 'what does issue N say', or 'work on issue N'. Covers the full issue lifecycle (create, view, search, comment, close, reopen), screenshot/attachment handling, methodology-aligned routing of issue-vs-spec-vs-proposal, and the read→assess→propose-fix→feed-back workflow. Operates against GitHub Issues using the active `gh` profile (zazzcode under the zazzcode tree)."
+description: "CLI-first companion skill for interacting with GitHub Issues via the `gh` CLI. Use it to create, read, assess, comment on, and route GitHub Issues when a repository uses GitHub issue tracking; covers the issue lifecycle, authority boundaries, and methodology-aware issue-to-specification or PR handoff."
 metadata:
   type: rule
 ---
@@ -20,22 +20,23 @@ GitHub Issues are lightweight, single-repo, collaborator-triageable records. The
 
 ## How to load this skill
 
-This skill is a file on disk, not necessarily registered in your runtime's available-skills list. If a `read_skill` call returns "Skill not found" for this path, load it directly with `read_files` against the `SKILL.md` path. Do not treat a `read_skill` miss as a reason to skip the skill — its guidance still applies.
+Use the active runtime's normal skill discovery. If this skill is not registered automatically, open this `SKILL.md`
+through the runtime's available file-reading mechanism. A discovery miss does not make the guidance inapplicable.
 
 ## Startup sequence
 
 Before any mutating action (create/comment/close/reopen) or a read-for-fixing assessment, do this every time:
 
-1. Confirm the active GitHub account matches the workspace. Run `gh auth status` and read the `Logged in to github.com account <name>` line. Under the `/Users/michael/Dev/zazzcode` tree the `gh()` shell wrapper routes to the `zazzcode` profile automatically, but verify rather than assume — issues are attributed to whichever account creates them. If the account is wrong, stop and tell the user instead of filing or editing under the wrong identity. If for any reason the wrapper is not active in your shell, run gh commands in the explicit form `GH_CONFIG_DIR="$HOME/.config/gh-zazzcode" gh ...`. Do not pass tokens inline; the credential helper handles auth.
-2. Identify the target repo. `gh issue` commands target the repo in the current directory by default. If the user is in a worktree or a different repo than they mean to act on, or they named a repo, pass `--repo zazzcode/<repo>` (shorthand `-R`). Resolve the repo from `git remote -v` when in doubt, or ask.
+1. Confirm the active GitHub account matches the repository. Run `gh auth status` and check the reported account. If the account is wrong, stop and tell the user instead of filing or editing under the wrong identity. Follow a repository-declared multi-account wrapper when one exists; never pass tokens inline.
+2. Identify the target repo. `gh issue` commands target the repo in the current directory by default. If the user is in a worktree or a different repo than they mean to act on, or they named a repo, pass `--repo <owner>/<repo>` (shorthand `-R`). Resolve the repo from `git remote -v` when in doubt, or ask.
 3. Read `AGENTS.md` for repo-specific issue conventions: labels, templates, project codes, milestone conventions, and the repo's tracking-system policy. `AGENTS.md` is the source of truth for repo-specific settings; honor its conventions over any generic default here. If `AGENTS.md` declares Zazz Board (or Jira) as the authoritative tracking system but that system is currently down or unavailable, GitHub Issues are an acceptable active tracker for development follow-ups — surface that fallback to the user rather than silently routing around the declared policy.
 4. Make only the issue updates the user asked for. Do not close, reopen, or edit issues the user did not mention.
 
 ## Authentication and multi-account context
 
-This skill assumes the multi-account setup in `github-multi-account-setup.md` is in effect: a separate `gh` profile at `~/.config/gh-zazzcode` is used under the zazzcode tree, and a `gh()` shell wrapper routes commands there. The `repo` scope on the zazzcode token covers all issue operations (create, comment, close, reopen, edit, list, view) for repos zazzcode owns or has write access to.
-
-If `gh auth status` fails or reports a non-zazzcode account under the zazzcode tree, surface that to the user rather than working around it.
+Use the repository's declared authentication and multi-account convention. `gh auth status` must identify an account
+with the needed repository access. If it fails or reports the wrong account, surface that to the user rather than
+working around it. Tokens and credential-store paths are local configuration, not shared skill content.
 
 ---
 
@@ -47,7 +48,7 @@ Use this section when the user wants to log, file, create, or track something as
 
 ```bash path=null start=null
 gh issue create \
-  --repo zazzcode/<repo> \
+  --repo <owner>/<repo> \
   --title "<concise imperative title>" \
   --body-file <path-to-body.md> \
   --label <label> \
@@ -73,7 +74,7 @@ Use this template. It is intentionally lightweight so the agent can fill it quic
 <one or two sentences: what this is about>
 
 ## Context
-- Repo: zazzcode/<repo>
+- Repo: <owner>/<repo>
 - Branch / worktree: <branch or path>
 - File(s): <path:line>
 - Steps to reproduce / how to get here: <if a bug>
@@ -199,7 +200,7 @@ Agents should not:
 ## Execution discipline
 
 - Operate from the user's current working directory or an explicit `--repo`. Do not `cd` into a repo just to file an issue; use `--repo` instead.
-- Use the `gh()` wrapper as-is under the zazzcode tree. Do not set `GH_CONFIG_DIR` or `GH_TOKEN` manually unless the wrapper is not active in your shell.
+- Follow a repo-declared `gh` wrapper or credential profile when one exists. Do not set tokens manually or expose them in commands, issue bodies, or output.
 - For long bodies, write to a file and use `--body-file`; clean up only temp files, not persistent ones the user asked to keep.
 - After any mutating action (create/comment/close/reopen), re-fetch with `gh issue view <number>` and confirm the result before reporting success.
 - Report issue numbers and URLs back to the user so they can open or share them.
@@ -214,7 +215,7 @@ Common failure modes and what to do:
 - `403` / `Resource not accessible` — the active account lacks write access to the repo. Check `gh auth status`; if it is the wrong account, tell the user rather than filing under the wrong identity.
 - `label not found` — a requested label does not exist. List real labels with `gh label list` and either use an existing one or file without a label and flag the gap.
 - Rate limit (`403` with rate-limit message) — wait and retry once; if it persists, report it.
-- Wrong repo detected — if `gh issue create` targets the wrong repo, re-run with an explicit `--repo zazzcode/<repo>`.
+- Wrong repo detected — if `gh issue create` targets the wrong repo, re-run with an explicit `--repo <owner>/<repo>`.
 
 ## Non-goals
 

@@ -1,6 +1,6 @@
 ---
 name: worktree
-description: Set up or manage worktrees for a Zazz-style repo; use when the user wants the opinionated bare-repo plus sibling-worktree pattern, needs help creating or repairing worktrees and flat branch names, or wants guidance on the Worktrunk workflow used with the Zazz methodology.
+description: "Set up or manage worktrees for a Zazz-style repo; use when the user wants the opinionated bare-repo plus sibling-worktree pattern, needs help creating or repairing worktrees and flat branch names, or wants guidance on the Worktrunk workflow used with the Zazz methodology."
 ---
 
 # Worktree Skill

@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: Create or update platform-neutral handoff documents for agents and developers when work needs to be paused, transferred, resumed in another session, or cataloged as follow-up context; use for ephemeral HANDOFF notes, issue catalogs, continuation notes, next-session briefs, and cross-agent summaries.
+description: "Create or update platform-neutral handoff documents for agents and developers when work needs to be paused, transferred, resumed in another session, or cataloged as follow-up context; use for ephemeral HANDOFF notes, issue catalogs, continuation notes, next-session briefs, and cross-agent summaries."
 ---
 
 # Handoff

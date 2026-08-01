@@ -1,6 +1,6 @@
 ---
 name: feature-doc-builder
-description: Help a Project Owner create, draft, refine, or update a long-lived feature document for a product capability; use when defining or improving feature purpose, current state, feature roadmap increments, related project milestone context, and feature-level direction before deliverable specification.
+description: "Help a Project Owner create, draft, refine, or update a long-lived feature document for a product capability; use when defining or improving feature purpose, current state, feature roadmap increments, related project milestone context, and feature-level direction before deliverable specification."
 ---
 
 # Feature Doc Builder Skill

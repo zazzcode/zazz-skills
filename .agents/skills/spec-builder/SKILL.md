@@ -1,6 +1,6 @@
 ---
 name: spec-builder
-description: Help a user create, draft, refine, or update the content of a deliverable specification for a bounded feature, component, bug fix, refactor, or milestone slice; use when the user wants to author the specification contract, acceptance criteria, test strategy, review shape, templates, or implementation prompt, not implement the solution. For post-greenlight implementation lifecycle, steering, QA/PR feedback, and change-log protocol, use spec-driven.
+description: "Help a user create, draft, refine, or update the content of a deliverable specification for a bounded feature, component, bug fix, refactor, or milestone slice; use when the user wants to author the specification contract, acceptance criteria, test strategy, review shape, templates, or implementation prompt, not implement the solution. For post-greenlight implementation lifecycle, steering, QA/PR feedback, and change-log protocol, use spec-driven."
 ---
 
 # Spec Builder Skill
