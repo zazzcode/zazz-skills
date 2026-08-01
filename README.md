@@ -307,13 +307,17 @@ rsync -avc --delete /path/to/zazz-skills/docs/ /path/to/consumer-repo/docs/
 
 ## Changelog
 
-### 2026-06-18 — Public methodology and standards refresh
+### 2026-08-01 — Portable skill metadata and lighter repository guidance
 
-Split the methodology into a concise executive overview plus focused workflow sections, refreshed the README with the current skill and standards inventory, consolidated QA guidance under `qa-testing`, and added PostgreSQL/SQL Server diagnostic utility skills.
+Hardened all shared skill front matter against YAML parsing failures by standardizing safe description quoting and adding portable validation guidance. Updated the Agent Skills standard with cross-runtime authoring and skill-admission rules, removed runtime-specific assumptions from shared review and GitHub Issue workflows, and replaced the large `AGENTS.md` example with a lightweight routing template. Added an ignored local scratch area and a handoff for the separately scoped standards-library analysis.
 
 ### 2026-07-03 — Ephemeral and wiki-backed docs model
 
 Added the optional durable storage model for repo Markdown, GitHub Wiki, Confluence, and tracker-backed records. Specifications remain local working files under `<DOCS_ROOT>/specifications/`, with the repo deciding whether that directory is tracked, ignored, mirrored, or promoted elsewhere. RUN_LOG files, QA notes, handoffs, recovery notes, evidence, and scratch artifacts now default to `<DOCS_ROOT>/ephemeral/`.
+
+### 2026-06-18 — Public methodology and standards refresh
+
+Split the methodology into a concise executive overview plus focused workflow sections, refreshed the README with the current skill and standards inventory, consolidated QA guidance under `qa-testing`, and added PostgreSQL/SQL Server diagnostic utility skills.
 
 ### 2026-05-24 — Execution artifact location refresh
 
