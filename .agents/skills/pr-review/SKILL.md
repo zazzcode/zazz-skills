@@ -1,6 +1,6 @@
 ---
 name: pr-review
-description: Review a pull request, branch, or local diff along two independent axes — Standards (does the code follow documented coding standards?) and Spec (does the code match what was asked for?) — using parallel sub-agents; use when the user wants draft-PR self-review, reviewer-side PR feedback, standards-guided findings, or review readiness assessment.
+description: "Review a pull request, branch, or local diff along two independent axes — Standards (does the code follow documented coding standards?) and Spec (does the code match what was asked for?) — using parallel sub-agents; use when the user wants draft-PR self-review, reviewer-side PR feedback, standards-guided findings, or review readiness assessment."
 ---
 
 # PR Review Skill
@@ -169,8 +169,9 @@ repo has AGENTS.md with standards, and the PR body links a spec), the preamble m
 
 ### 8. Dispatch Sub-Agents
 
-Send a **single message with two `Agent` tool calls** so both axes run in parallel. Use `general-purpose` subagent type
-for both.
+When the active runtime supports parallel delegates, dispatch the two axes concurrently using its native mechanism.
+Otherwise, run the axes sequentially while keeping their inputs and findings separate. The review contract is the two
+independent axes and a separate aggregation, not a particular agent API or delegate type.
 
 Read the following files from this skill's directory:
 

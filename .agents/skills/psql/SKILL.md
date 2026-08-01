@@ -1,6 +1,6 @@
 ---
 name: psql
-description: Safely query, inspect, validate, and diagnose PostgreSQL from an agent shell. Use only when the project or target uses PostgreSQL; do not use for another database. Covers data/schema checks, views/functions/procedures, migrations, profiling, locks, and connection/quoting guidance.
+description: "Safely query, inspect, validate, and diagnose PostgreSQL from an agent shell. Use only when the project or target uses PostgreSQL; do not use for another database. Covers data/schema checks, views/functions/procedures, migrations, profiling, locks, and connection/quoting guidance."
 ---
 
 # psql

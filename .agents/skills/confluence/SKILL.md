@@ -1,6 +1,6 @@
 ---
 name: confluence
-description: Placeholder workflow guidance for repos that use Confluence as a durable documentation surface; use when drafting, updating, promoting, or reviewing project overview, architecture, feature, roadmap, milestone, proposal, standard-summary, or completed-specification Confluence pages. Does not assume live Confluence API access unless the repo declares it.
+description: "Placeholder workflow guidance for repos that use Confluence as a durable documentation surface; use when drafting, updating, promoting, or reviewing project overview, architecture, feature, roadmap, milestone, proposal, standard-summary, or completed-specification Confluence pages. Does not assume live Confluence API access unless the repo declares it."
 ---
 
 # Confluence Skill

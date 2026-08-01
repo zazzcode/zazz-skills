@@ -1,6 +1,6 @@
 ---
 name: jira
-description: Draft only, not yet implemented. Future companion utility skill for Jira-backed repos, intended to eventually fetch story details, acceptance criteria, links, and workflow metadata through an MCP or CLI interface.
+description: "Draft only, not yet implemented. Future companion utility skill for Jira-backed repos, intended to eventually fetch story details, acceptance criteria, links, and workflow metadata through an MCP or CLI interface."
 ---
 
 # Jira Skill

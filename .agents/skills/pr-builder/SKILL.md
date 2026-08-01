@@ -1,6 +1,6 @@
 ---
 name: pr-builder
-description: Help an agent create, draft, refine, or update a pull request title and body from the current changes and verification evidence, with draft PR creation as the default Zazz workflow.
+description: "Help an agent create, draft, refine, or update a pull request title and body from the current changes and verification evidence, with draft PR creation as the default Zazz workflow."
 ---
 
 # PR Builder Skill

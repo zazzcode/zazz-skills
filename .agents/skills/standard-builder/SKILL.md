@@ -1,6 +1,6 @@
 ---
 name: standard-builder
-description: Help a user create, draft, refine, or update engineering standards by inspecting an existing codebase for stack-specific patterns, architecture boundaries, tests, mocking, API behavior, service design, and review evidence; use when the user asks to infer standards from a repo, codify existing team patterns, tailor the Zazz standards library to an organization, split standards by domain, or draft standards such as TypeScript Express microservice patterns, API testing and mocking, unit/integration testing, frontend conventions, data access, CI, deployment, or observability.
+description: "Help a user create, draft, refine, or update engineering standards by inspecting an existing codebase for stack-specific patterns, architecture boundaries, tests, mocking, API behavior, service design, and review evidence; use when the user asks to infer standards from a repo, codify existing team patterns, tailor the Zazz standards library to an organization, split standards by domain, or draft standards such as TypeScript Express microservice patterns, API testing and mocking, unit/integration testing, frontend conventions, data access, CI, deployment, or observability."
 ---
 
 # Standards Builder

@@ -1,6 +1,6 @@
 ---
 name: proposal-builder
-description: Help one or more stakeholders create, draft, refine, or update a proposal for a feature, deliverable, or technical direction; use when the user wants to explore an idea, compare options, weigh tradeoffs, and improve a proposal before committing to a feature document or deliverable specification.
+description: "Help one or more stakeholders create, draft, refine, or update a proposal for a feature, deliverable, or technical direction; use when the user wants to explore an idea, compare options, weigh tradeoffs, and improve a proposal before committing to a feature document or deliverable specification."
 ---
 
 # Proposal Builder Skill
