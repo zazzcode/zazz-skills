@@ -70,4 +70,4 @@ Before committing a repository's `AGENTS.md`, confirm that it identifies:
 - only current, verifiable repository facts.
 
 For shared-skill authoring rules and portable YAML validation, see
-[Agent Skills](../docs/standards/agent-skills.md).
+[Agent Skills](docs/standards/agent-skills.md).
