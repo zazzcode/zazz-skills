@@ -99,6 +99,44 @@ deployment, and logging rules unless those concerns are inseparable.
 - Add index entry updates when creating or splitting standards.
 - If modifying public/shared standards, run a sensitive-reference scan before finishing.
 
+## Bootstrapping A New Standards Directory
+
+When the adopting repo has no standards directory yet, the constraint is judgment about what to write first, not
+evidence collection. Do not attempt to cover the repo in one pass.
+
+1. Create the standards directory and its index under the declared docs root. Take the entry shape from the
+   methodology's own `standards/index.yaml`, which documents its fields in its header comment, rather than inventing
+   entry fields.
+1. Choose the three to five highest-value standards to write first, preferring rules that are:
+   - non-obvious — a capable model would not infer them from the code and the applicable language conventions.
+   - already the subject of repeated correction, rework, or review comments in the repo's history.
+   - tied to an activity agents perform often in this repo.
+1. Draft those standards in priority order, adding each index entry as its standard is drafted so the index never
+   describes a document that does not exist.
+1. Stop there and let real usage surface the next gap. A large speculative standards set is harder to review, and
+   unused standards decay into stale guidance.
+
+Skipping straight to a broad standards set is the common failure here. Prefer a small adopted set over a complete
+ignored one.
+
+## Restructuring The Index
+
+Sometimes the standards themselves are sound and only their routing is wrong: an agent loads standards that do not
+apply to its task, or misses one that does. Treat that as its own mode, distinct from drafting.
+
+1. Read every existing `applies_to` entry against the repo's current directory layout, since paths drift as the repo
+   is reorganized.
+1. Narrow entries that match far more of the repo than the standard actually governs. An over-broad entry is loaded on
+   unrelated tasks, which costs context and trains agents to skim standards rather than apply them.
+1. Add or sharpen `applies_to` activities so a scanning agent can tell from the entry alone whether the standard is
+   relevant to the task in hand.
+1. Split a standard into separate documents when one entry has to claim several unrelated paths or activities to
+   describe what the document covers. That is usually evidence the document covers more than one work context.
+1. Do not change the rules inside a standard while restructuring. Routing changes and normative changes should be
+   reviewable separately.
+
+See the `docs-hygiene` standard for how agents consume the index when selecting standards to load.
+
 ## Halt Conditions
 
 Stop and ask for human direction when:
