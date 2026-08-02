@@ -110,28 +110,15 @@ When multiple people are participating:
 - avoid collapsing dissent into false consensus
 
 ### Mode C: Transcript ingestion
-If the user provides transcript text (from meetings/Zoom/etc.):
+If the user provides transcript text from a meeting, call, or recorded session:
 1. Summarize key arguments and decisions.
 2. Extract alternatives, risks, constraints, and open questions.
 3. Identify gaps requiring follow-up questions.
 4. Generate/refresh the proposal draft.
-### Mode D: Zoom live facilitation (experimental when integration exists)
-If a Zoom integration is available, operate as a live facilitator/scribe:
-1. Listen to the live discussion stream/transcript.
-2. Capture arguments, options, tradeoffs, and unresolved points in real time.
-3. Ask clarifying/probing questions in Zoom chat at controlled intervals.
-4. Track participant responses and reflect them into the proposal draft.
-5. Periodically summarize current consensus and unresolved decisions.
 
-Zoom chat-question protocol:
-- ask one focused question at a time
-- avoid flooding chat with multiple simultaneous prompts
-- label questions by topic (`scope`, `value`, `alternatives`, `risk`, `decision`)
-- explicitly call out when input is still needed from specific participants/roles
-
-If Zoom integration is not available:
-- fall back to transcript ingestion + interactive Q&A mode.
-Real-time meeting/Zoom listening can be treated as a future extension. In the current model, transcript ingestion is the supported path.
+This skill has no live-meeting capability. It reads transcript text the user supplies; it does not join, listen to, or
+post into a meeting. Where a discussion is still in progress, the supported path is transcript ingestion followed by
+interactive Q&A.
 
 ## Human-Facing Usage Guidance
 
@@ -348,7 +335,7 @@ A proposal draft is high quality when:
 - Do not erase stakeholder disagreement.
 - Do not skip alternatives analysis unless explicitly directed and documented.
 - Do not jump straight to deliverable specification.
-- Do not claim live Zoom listening/chat capability unless integration is actually available; otherwise use transcript + Q&A workflow.
+- Do not claim or imply live meeting listening, chat participation, or any real-time facilitation capability. Use the transcript ingestion and interactive Q&A workflow.
 
 ---
 
