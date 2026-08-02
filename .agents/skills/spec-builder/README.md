@@ -26,6 +26,13 @@ review shape and decomposition rationale, execution sequence, definition of done
 conditions, run-log protocol, paste-ready implementation prompt, and final
 Implementation And Review Change Log. There is no separate execution document.
 
+The paste-ready implementation prompt is the handoff boundary, and it doubles as the
+completeness test for the rest of the specification. Implementation begins by handing that
+prompt to a Contributor Agent session, so anything the agent needs that is not in the
+specification has to be supplied by a human at that moment. If drafting the prompt surfaces
+context you would have to explain out of band, the specification is not finished yet. Once
+execution is under way, the run log carries the resumption state.
+
 The skill writes deliverable specifications. It does **not** implement product code.
 
 ## Team integration rule
