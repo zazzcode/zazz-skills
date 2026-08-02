@@ -17,6 +17,8 @@ Before starting the dialogue:
 1. Identify whether you are creating a new architecture document, evolving an existing one, or converting a proposal
    or transcript into a draft.
 1. Find the standards index and any existing architecture documents that should shape the discussion.
+1. For a feature-level architecture document, read the [Mirror rule](#mirror-rule) below before producing any output.
+   It constrains roadmap increment names and ordering and forbids recording project milestone dates here.
 1. Then begin the dialogue and keep the conversation at architecture scope rather than implementation-task scope.
 
 ## Mission
