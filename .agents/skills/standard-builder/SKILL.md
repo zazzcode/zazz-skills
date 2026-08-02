@@ -104,8 +104,8 @@ deployment, and logging rules unless those concerns are inseparable.
 When the adopting repo has no standards directory yet, the constraint is judgment about what to write first, not
 evidence collection. Do not attempt to cover the repo in one pass.
 
-1. Create the standards directory and its index under the declared docs root. Follow the field shape already documented
-   in the index file's own header rather than inventing entry fields.
+1. Create the standards directory and its index under the declared docs root. Take the entry shape from the methodology's
+   own `standards/index.yaml`, which documents its fields in its header comment, rather than inventing entry fields.
 1. Choose the three to five highest-value standards to write first, preferring rules that are:
    - non-obvious — a capable model would not infer them from the code and the applicable language conventions.
    - already the subject of repeated correction, rework, or review comments in the repo's history.
